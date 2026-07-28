@@ -1,28 +1,71 @@
 import { prisma } from "../config/prisma";
 
+import { Prisma } from "../generated";
+
 class AllocationDocumentRepository {
-  create(data: any) {
+  /*
+  =====================================
+  Create
+  =====================================
+  */
+
+  async create(
+    data: Prisma.AllocationDocumentCreateInput
+  ) {
     return prisma.allocationDocument.create({
       data,
     });
   }
 
-  findByAllocation(allocationId: string) {
+  /*
+  =====================================
+  Find By Allocation
+  =====================================
+  */
+
+  async findByAllocation(
+    allocationId: string
+  ) {
     return prisma.allocationDocument.findMany({
-      where: { allocationId },
-      orderBy: { uploadedAt: "desc" },
+      where: {
+        allocationId,
+      },
+
+      orderBy: {
+        uploadedAt: "desc",
+      },
     });
   }
 
-  async findById(id: string) {
+  /*
+  =====================================
+  Find By Id
+  =====================================
+  */
+
+  async findById(
+    id: string
+  ) {
     return prisma.allocationDocument.findUnique({
-      where: { id },
+      where: {
+        id,
+      },
     });
   }
 
-  async delete(id: string) {
+  /*
+  =====================================
+  Delete
+  =====================================
+  */
+
+  async delete(
+    id: string
+  ) {
     return prisma.allocationDocument.delete({
-      where: { id },
+      where: {
+        id,
+      },
     });
   }
 }

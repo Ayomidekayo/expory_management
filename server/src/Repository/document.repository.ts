@@ -10,6 +10,15 @@ import {
   DocumentQuery,
 } from "../validations/document-query.validation";
 
+type CreateDocumentData = CreateDocumentDto & {
+  fileName: string;
+  originalName?: string;
+  fileUrl: string;
+  publicId: string;
+  mimeType?: string;
+  fileSize?: number;
+};
+
 class DocumentRepository {
   /*
   =====================================
@@ -18,12 +27,7 @@ class DocumentRepository {
   */
 
   async create(
-    data: CreateDocumentDto & {
-      fileName: string;
-      fileUrl: string;
-      mimeType?: string;
-      fileSize?: number;
-    }
+    data: CreateDocumentData
   ) {
     return prisma.document.create({
       data: {
@@ -31,13 +35,19 @@ class DocumentRepository {
 
         fileName: data.fileName,
 
+        originalName: data.originalName,
+
         fileUrl: data.fileUrl,
+
+        publicId: data.publicId,
 
         mimeType: data.mimeType,
 
         fileSize: data.fileSize,
 
         remarks: data.remarks,
+
+        allocationId: data.allocationId,
 
         shipmentId: data.shipmentId,
 
@@ -48,7 +58,6 @@ class DocumentRepository {
         invoiceId: data.invoiceId,
 
         transitId: data.transitId,
-        allocationId: data.allocationId,
       },
 
       include: this.detailsInclude,
@@ -68,17 +77,31 @@ class DocumentRepository {
       page,
       limit,
       search,
+
+      allocationId,
+
       shipmentId,
+
       containerId,
+
       packingListId,
+
       invoiceId,
+
       transitId,
+
       type,
+
       sortBy,
+
       sortOrder,
     } = query;
 
     const where: Prisma.DocumentWhereInput = {
+      ...(allocationId && {
+        allocationId,
+      }),
+
       ...(shipmentId && {
         shipmentId,
       }),
@@ -111,7 +134,12 @@ class DocumentRepository {
               mode: "insensitive",
             },
           },
-
+          {
+            originalName: {
+              contains: search,
+              mode: "insensitive",
+            },
+          },
           {
             remarks: {
               contains: search,
@@ -133,8 +161,7 @@ class DocumentRepository {
             [sortBy]: sortOrder,
           },
 
-          skip:
-            (page - 1) * limit,
+          skip: (page - 1) * limit,
 
           take: limit,
         }),
@@ -167,16 +194,17 @@ class DocumentRepository {
   =====================================
   */
 
-async findById(id: string) {
-  console.log("REPOSITORY FIND:", id);
+  async findById(
+    id: string
+  ) {
+    return prisma.document.findUnique({
+      where: {
+        id,
+      },
 
-  return prisma.document.findUnique({
-    where: {
-      id,
-    },
-    include: this.detailsInclude,
-  });
-}
+      include: this.detailsInclude,
+    });
+  }
 
   /*
   =====================================
@@ -205,7 +233,9 @@ async findById(id: string) {
   =====================================
   */
 
-  async delete(id: string) {
+  async delete(
+    id: string
+  ) {
     return prisma.document.delete({
       where: {
         id,
@@ -220,6 +250,13 @@ async findById(id: string) {
   */
 
   private listInclude = {
+    allocation: {
+      select: {
+        id: true,
+        allocationNumber: true,
+      },
+    },
+
     shipment: {
       select: {
         id: true,
@@ -264,11 +301,12 @@ async findById(id: string) {
 
   private detailsInclude = {
     allocation: {
-  select: {
-    id: true,
-    allocationNumber: true,
-  },
-},
+      select: {
+        id: true,
+        allocationNumber: true,
+      },
+    },
+
     shipment: true,
 
     container: true,

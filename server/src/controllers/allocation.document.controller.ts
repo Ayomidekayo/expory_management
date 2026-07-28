@@ -10,63 +10,77 @@ class AllocationDocumentController {
   =====================================
   */
 
-  async create(
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ) {
-    try {
-      const allocationId = String(req.params.id);
+ async create(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  try {
+    const allocationId = String(
+      req.params.id
+    );
 
-      const body =
-        createAllocationDocumentSchema.parse(
-          req.body
-        );
+    const body =
+      createAllocationDocumentSchema.parse(
+        req.body
+      );
 
-      if (!req.file) {
-        return res.status(400).json({
-          success: false,
-          message: "Document is required.",
-        });
-      }
-
-      const document =
-        await allocationDocumentService.create({
-          allocationId,
-
-          type: body.type,
-
-          remarks: body.remarks,
-
-          fileName: req.file.filename,
-
-          originalName: req.file.originalname,
-
-          fileUrl: `/uploads/allocations/${req.file.filename}`,
-
-          mimeType: req.file.mimetype,
-
-          extension:
-            req.file.originalname
-              .split(".")
-              .pop(),
-
-          fileSize: req.file.size,
-
-          uploadedById:
-            req.user?.id ?? null,
-        });
-
-      res.status(201).json({
-        success: true,
+    if (!req.file) {
+      return res.status(400).json({
+        success: false,
         message:
-          "Document uploaded successfully.",
-        data: document,
+          "Document is required.",
       });
-    } catch (error) {
-      next(error);
     }
+
+    const file =
+      req.file as Express.Multer.File & {
+        path: string;
+        filename: string;
+      };
+
+    const document =
+      await allocationDocumentService.create({
+        allocationId,
+
+        type: body.type,
+
+        remarks: body.remarks,
+
+        fileName: file.filename,
+
+        originalName:
+          file.originalname,
+
+        fileUrl: file.path,
+
+        publicId: file.filename,
+
+        mimeType:
+          file.mimetype,
+
+        extension:
+          file.originalname
+            .split(".")
+            .pop(),
+
+        fileSize: file.size,
+
+        uploadedById:
+          req.user?.id ?? null,
+      });
+
+    return res.status(201).json({
+      success: true,
+      message:
+        "Document uploaded successfully.",
+      data: document,
+    });
+
+  } catch (error) {
+    next(error);
   }
+}
 
   /*
   =====================================

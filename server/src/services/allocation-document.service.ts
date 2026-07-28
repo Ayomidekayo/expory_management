@@ -1,31 +1,59 @@
-
-import fs from "fs";
-import path from "path";
+import cloudinary from "../config/cloudinary";
 import allocationDocumentRepository from "../Repository/allocation-document.repository";
 
 class AllocationDocumentService {
+  /*
+  =====================================
+  Create
+  =====================================
+  */
+
   async create(data: any) {
     return allocationDocumentRepository.create(data);
   }
 
+  /*
+  =====================================
+  List
+  =====================================
+  */
+
   async list(allocationId: string) {
-    return allocationDocumentRepository.findByAllocation(allocationId);
+    return allocationDocumentRepository.findByAllocation(
+      allocationId
+    );
   }
+
+  /*
+  =====================================
+  Delete
+  =====================================
+  */
 
   async delete(id: string) {
-    const doc = await allocationDocumentRepository.findById(id);
+    const document =
+      await allocationDocumentRepository.findById(
+        id
+      );
 
-    if (doc?.fileUrl) {
-  const filePath = path.join(
-    process.cwd(),
-    doc.fileUrl
-  );
+    if (!document) {
+      throw new Error(
+        "Document not found."
+      );
+    }
 
-  if (fs.existsSync(filePath)) {
-    await fs.promises.unlink(filePath);
-  }
-}
-    return allocationDocumentRepository.delete(id);
+    if (document.publicId) {
+      await cloudinary.uploader.destroy(
+        document.publicId,
+        {
+          resource_type: "raw",
+        }
+      );
+    }
+
+    return allocationDocumentRepository.delete(
+      id
+    );
   }
 }
 

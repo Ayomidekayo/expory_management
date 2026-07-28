@@ -1,43 +1,71 @@
 import { z } from "zod";
 import { DocumentType } from "../generated";
 
-export const DocumentQueryDto =
-  z.object({
-    page: z.coerce.number().min(1).default(1),
+/*
+=====================================
+Helpers
+=====================================
+*/
 
-    limit: z.coerce.number().min(1).max(100).default(10),
+const optionalString = z.preprocess(
+  (value) => (value === "" ? undefined : value),
+  z.string().optional()
+);
 
-    search: z.string().optional(),
+/*
+=====================================
+Document Query
+=====================================
+*/
 
-    shipmentId: z.string().optional(),
+export const DocumentQueryDto = z.object({
+  page: z.coerce
+    .number()
+    .min(1)
+    .default(1),
 
-    containerId: z.string().optional(),
+  limit: z.coerce
+    .number()
+    .min(1)
+    .max(100)
+    .default(10),
 
-    packingListId: z.string().optional(),
+  search: optionalString,
 
-    invoiceId: z.string().optional(),
+  allocationId: optionalString,
 
-    transitId: z.string().optional(),
+  shipmentId: optionalString,
 
-    type: z
-      .nativeEnum(DocumentType)
-      .optional(),
+  containerId: optionalString,
 
-    sortBy: z
-      .enum([
-        "uploadedAt",
-        "fileName",
-        "type",
-      ])
-      .default("uploadedAt"),
+  packingListId: optionalString,
 
-    sortOrder: z
-      .enum([
-        "asc",
-        "desc",
-      ])
-      .default("desc"),
-  });
+  invoiceId: optionalString,
+
+  transitId: optionalString,
+
+  type: z
+    .preprocess(
+      (value) => (value === "" ? undefined : value),
+      z.nativeEnum(DocumentType).optional()
+    ),
+
+  sortBy: z
+    .enum([
+      "uploadedAt",
+      "updatedAt",
+      "fileName",
+      "type",
+    ])
+    .default("uploadedAt"),
+
+  sortOrder: z
+    .enum([
+      "asc",
+      "desc",
+    ])
+    .default("desc"),
+});
 
 export type DocumentQuery =
   z.infer<typeof DocumentQueryDto>;

@@ -25,19 +25,29 @@ model User {
 
 model AllocationDocument {
   id           String       @id @default(cuid())
+
   allocationId String
+
   type         DocumentType @default(OTHER)
+
   fileName     String
   originalName String?
   fileUrl      String
+  publicId     String?
+
   mimeType     String?
   extension    String?
   fileSize     Int?
+
   remarks      String?
+
   uploadedById String?
+
   uploadedAt   DateTime     @default(now())
   updatedAt    DateTime     @updatedAt
+
   allocation   Allocation   @relation(fields: [allocationId], references: [id], onDelete: Cascade)
+
   uploadedBy   User?        @relation(fields: [uploadedById], references: [id])
 
   @@index([allocationId])
@@ -351,20 +361,28 @@ model Client {
 
 model Document {
   id            String       @id @default(cuid())
+
   type          DocumentType
+
   fileName      String
+  originalName  String?
   fileUrl       String
+  publicId      String?
+
   mimeType      String?
   fileSize      Int?
   remarks       String?
+
   allocationId  String?
   shipmentId    String?
   containerId   String?
   invoiceId     String?
   packingListId String?
   transitId     String?
+
   uploadedAt    DateTime     @default(now())
   updatedAt     DateTime     @updatedAt
+
   allocation    Allocation?  @relation(fields: [allocationId], references: [id])
   container     Container?   @relation(fields: [containerId], references: [id])
   invoice       Invoice?     @relation(fields: [invoiceId], references: [id])

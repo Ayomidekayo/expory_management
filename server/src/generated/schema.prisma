@@ -7,6 +7,396 @@ datasource db {
   provider = "postgresql"
 }
 
+model User {
+  id                  String               @id @default(cuid())
+  name                String
+  email               String               @unique
+  password            String
+  role                Role                 @default(STAFF)
+  isActive            Boolean              @default(true)
+  createdAt           DateTime             @default(now())
+  updatedAt           DateTime             @updatedAt
+  approvedAllocations Allocation[]         @relation("ApprovedAllocations")
+  assignedAllocations Allocation[]         @relation("AssignedAllocations")
+  createdAllocations  Allocation[]         @relation("CreatedAllocations")
+  uploadedDocuments   AllocationDocument[]
+  shipments           Shipment[]
+}
+
+model AllocationDocument {
+  id String @id @default(cuid())
+
+  allocationId String
+
+  type DocumentType @default(OTHER)
+
+  fileName     String
+  originalName String?
+  fileUrl      String
+  publicId     String?
+
+  mimeType  String?
+  extension String?
+  fileSize  Int?
+
+  remarks String?
+
+  uploadedById String?
+
+  uploadedAt DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  allocation Allocation @relation(fields: [allocationId], references: [id], onDelete: Cascade)
+
+  uploadedBy User? @relation(fields: [uploadedById], references: [id])
+
+  @@index([allocationId])
+  @@index([type])
+}
+
+model Exporter {
+  id            String       @id @default(cuid())
+  name          String
+  address       String?
+  phone         String?
+  email         String?
+  contactPerson String?
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+  allocations   Allocation[]
+  shipments     Shipment[]
+}
+
+model Consignee {
+  id              String        @id @default(cuid())
+  name            String
+  contactPerson   String?
+  address         String?
+  phone           String?
+  email           String?
+  transporter     String?
+  placeOfLoading  String
+  transitRoute    String
+  portOfDischarge String
+  transportMode   TransportMode
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+  allocations     Allocation[]
+  shipments       Shipment[]
+}
+
+model Shipment {
+  id                String         @id @default(cuid())
+  shipmentNumber    String         @unique
+  shipmentDate      DateTime
+  xfNumber          String?
+  nxpNumber         String?
+  cciNumber         String?
+  eNumber           String?
+  bookingNumber     String?
+  transportMode     TransportMode
+  shippingLine      String?
+  vesselName        String?
+  voyageNumber      String?
+  portOfLoading     String?
+  portOfDischarge   String?
+  expectedDeparture DateTime?
+  expectedArrival   DateTime?
+  actualDeparture   DateTime?
+  actualArrival     DateTime?
+  remarks           String?
+  status            ShipmentStatus @default(DRAFT)
+  clientId          String
+  exporterId        String
+  consigneeId       String
+  createdById       String
+  allocationId      String?        @unique
+  createdAt         DateTime       @default(now())
+  updatedAt         DateTime       @updatedAt
+  containers        Container[]
+  documents         Document[]
+  invoice           Invoice?
+  packingList       PackingList?
+  allocation        Allocation?    @relation(fields: [allocationId], references: [id])
+  client            Client         @relation(fields: [clientId], references: [id])
+  consignee         Consignee      @relation(fields: [consigneeId], references: [id])
+  createdBy         User           @relation(fields: [createdById], references: [id])
+  exporter          Exporter       @relation(fields: [exporterId], references: [id])
+  transits          Transit[]
+
+  @@index([shipmentDate])
+  @@index([status])
+  @@index([transportMode])
+  @@index([clientId])
+  @@index([exporterId])
+  @@index([consigneeId])
+}
+
+model Invoice {
+  id                  String        @id @default(cuid())
+  shipmentId          String        @unique
+  invoiceNumber       String        @unique
+  invoiceDate         DateTime
+  currency            Currency
+  exchangeRate        Decimal?      @db.Decimal(18, 4)
+  status              InvoiceStatus @default(DRAFT)
+  paymentTerms        PaymentTerms?
+  incoterm            String?
+  commercialReference String?
+  transportUnits      Int?
+  freight             Decimal       @db.Decimal(18, 2)
+  subtotal            Decimal       @db.Decimal(18, 2)
+  totalAmount         Decimal       @db.Decimal(18, 2)
+  remarks             String?
+  createdAt           DateTime      @default(now())
+  updatedAt           DateTime      @updatedAt
+  documents           Document[]
+  shipment            Shipment      @relation(fields: [shipmentId], references: [id], onDelete: Cascade)
+  items               InvoiceItem[]
+
+  @@index([invoiceDate])
+  @@index([status])
+  @@index([currency])
+}
+
+model Container {
+  id                 String          @id @default(cuid())
+  shipmentId         String
+  packingListId      String?
+  containerNumber    String          @unique
+  sealNumber         String?
+  containerType      ContainerType
+  containerSize      ContainerSize
+  grossWeight        Decimal?        @db.Decimal(18, 2)
+  netWeight          Decimal?        @db.Decimal(18, 2)
+  tareWeight         Decimal?        @db.Decimal(18, 2)
+  volume             Decimal?        @db.Decimal(18, 2)
+  loadingLocation    String?
+  destination        String?
+  status             ContainerStatus @default(EMPTY)
+  shippingLine       String?
+  bookingReference   String?
+  containerCondition String?
+  createdAt          DateTime        @default(now())
+  updatedAt          DateTime        @updatedAt
+  packingList        PackingList?    @relation(fields: [packingListId], references: [id])
+  shipment           Shipment        @relation(fields: [shipmentId], references: [id], onDelete: Cascade)
+  documents          Document[]
+  transits           Transit[]
+}
+
+model InvoiceItem {
+  id          String   @id @default(cuid())
+  invoiceId   String
+  description String
+  hsCode      String?
+  packageType String?
+  packages    Int?
+  grossWeight Decimal? @db.Decimal(18, 2)
+  netWeight   Decimal? @db.Decimal(18, 2)
+  quantity    Decimal  @db.Decimal(18, 2)
+  unit        String?
+  unitPrice   Decimal  @db.Decimal(18, 2)
+  total       Decimal  @db.Decimal(18, 2)
+  remarks     String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  invoice     Invoice  @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+
+  @@index([invoiceId])
+  @@index([hsCode])
+}
+
+model PackingList {
+  id                String            @id @default(cuid())
+  shipmentId        String            @unique
+  packingListNumber String            @unique
+  packingDate       DateTime
+  packageType       String?
+  totalPackages     Int?
+  grossWeight       Decimal           @db.Decimal(18, 2)
+  netWeight         Decimal           @db.Decimal(18, 2)
+  marksAndNumbers   String?
+  remarks           String?
+  createdAt         DateTime          @default(now())
+  updatedAt         DateTime          @updatedAt
+  containers        Container[]
+  documents         Document[]
+  shipment          Shipment          @relation(fields: [shipmentId], references: [id], onDelete: Cascade)
+  items             PackingListItem[]
+}
+
+model PackingListItem {
+  id            String      @id @default(cuid())
+  packingListId String
+  description   String
+  packageType   String?
+  packages      Int?
+  grossWeight   Decimal?    @db.Decimal(18, 2)
+  netWeight     Decimal?    @db.Decimal(18, 2)
+  remarks       String?
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+  packingList   PackingList @relation(fields: [packingListId], references: [id], onDelete: Cascade)
+}
+
+model Transit {
+  id             String        @id @default(cuid())
+  transitNumber  String        @unique
+  shipmentId     String
+  containerId    String
+  origin         String
+  destination    String
+  transportMode  TransportMode
+  transporter    String?
+  transitInvoice String?
+  agentNumber    String?
+  exporterNumber String?
+  wibNumber      String?
+  quantity       Decimal?      @db.Decimal(18, 2)
+  description    String?
+  unitPrice      Decimal?      @db.Decimal(18, 2)
+  totalPrice     Decimal?      @db.Decimal(18, 2)
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+  documents      Document[]
+  container      Container     @relation(fields: [containerId], references: [id])
+  shipment       Shipment      @relation(fields: [shipmentId], references: [id], onDelete: Cascade)
+}
+
+model Allocation {
+  id                   String               @id @default(cuid())
+  allocationNumber     String               @unique
+  clientId             String
+  exporterId           String?
+  consigneeId          String?
+  serviceType          ServiceType
+  priority             AllocationPriority   @default(MEDIUM)
+  status               AllocationStatus     @default(PENDING)
+  cargoDescription     String
+  cargoType            String?
+  commodityCode        String?
+  commodityName        String?
+  quantity             Decimal?             @db.Decimal(18, 2)
+  packageType          String?
+  numberOfPackages     Int?
+  grossWeight          Decimal?             @db.Decimal(18, 2)
+  netWeight            Decimal?             @db.Decimal(18, 2)
+  volume               Decimal?             @db.Decimal(18, 2)
+  originCountry        String?
+  originCity           String?
+  pickupAddress        String?
+  pickupDate           DateTime?
+  destinationCountry   String
+  destinationCity      String?
+  portOfLoading        String?
+  portOfDischarge      String?
+  transportMode        TransportMode?
+  shippingLine         String?
+  incoterm             String?
+  deliveryAddress      String?
+  expectedShipmentDate DateTime?
+  estimatedValue       Decimal?             @db.Decimal(18, 2)
+  currency             String?
+  paymentTerms         String?
+  freightType          String?
+  insuranceRequired    Boolean              @default(false)
+  specialInstruction   String?
+  internalRemark       String?
+  destinationPort      String?
+  createdById          String
+  assignedToId         String?
+  approvedById         String?
+  assignedAt           DateTime?
+  approvedAt           DateTime?
+  completedAt          DateTime?
+  isActive             Boolean              @default(true)
+  createdAt            DateTime             @default(now())
+  updatedAt            DateTime             @updatedAt
+  approvedBy           User?                @relation("ApprovedAllocations", fields: [approvedById], references: [id])
+  assignedTo           User?                @relation("AssignedAllocations", fields: [assignedToId], references: [id])
+  client               Client               @relation(fields: [clientId], references: [id])
+  consignee            Consignee?           @relation(fields: [consigneeId], references: [id])
+  createdBy            User                 @relation("CreatedAllocations", fields: [createdById], references: [id])
+  exporter             Exporter?            @relation(fields: [exporterId], references: [id])
+  documents            AllocationDocument[]
+  attachedDocuments    Document[]
+  shipment             Shipment?
+
+  @@index([clientId])
+  @@index([exporterId])
+  @@index([consigneeId])
+  @@index([status])
+  @@index([priority])
+  @@index([serviceType])
+  @@index([createdById])
+  @@index([assignedToId])
+  @@index([approvedById])
+  @@index([expectedShipmentDate])
+  @@index([createdAt])
+}
+
+model Client {
+  id             String       @id @default(cuid())
+  clientCode     String       @unique
+  companyName    String
+  clientType     ClientType   @default(COMPANY)
+  contactPerson  String?
+  email          String?
+  phone          String?
+  alternatePhone String?
+  address        String?
+  city           String?
+  state          String?
+  country        String?
+  website        String?
+  taxNumber      String?
+  remarks        String?
+  isActive       Boolean      @default(true)
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+  allocations    Allocation[]
+  shipments      Shipment[]
+}
+
+model Document {
+  id String @id @default(cuid())
+
+  type DocumentType
+
+  fileName     String
+  originalName String?
+  fileUrl      String
+  publicId     String?
+
+  mimeType String?
+  fileSize Int?
+  remarks  String?
+
+  allocationId  String?
+  shipmentId    String?
+  containerId   String?
+  invoiceId     String?
+  packingListId String?
+  transitId     String?
+
+  uploadedAt DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  allocation  Allocation?  @relation(fields: [allocationId], references: [id])
+  container   Container?   @relation(fields: [containerId], references: [id])
+  invoice     Invoice?     @relation(fields: [invoiceId], references: [id])
+  packingList PackingList? @relation(fields: [packingListId], references: [id])
+  shipment    Shipment?    @relation(fields: [shipmentId], references: [id], onDelete: Cascade)
+  transit     Transit?     @relation(fields: [transitId], references: [id])
+
+  @@index([shipmentId])
+  @@index([containerId])
+  @@index([invoiceId])
+  @@index([packingListId])
+  @@index([transitId])
+}
+
 enum Role {
   ADMIN
   CLIENT
@@ -129,519 +519,4 @@ enum InvoiceStatus {
   APPROVED
   PAID
   CANCELLED
-}
-
-model User {
-  id       String  @id @default(cuid())
-  name     String
-  email    String  @unique
-  password String
-  role     Role    @default(STAFF)
-  isActive Boolean @default(true)
-
-  shipments Shipment[]
-
-  createdAllocations  Allocation[]         @relation("CreatedAllocations")
-  assignedAllocations Allocation[]         @relation("AssignedAllocations")
-  approvedAllocations Allocation[]         @relation("ApprovedAllocations")
-  uploadedDocuments   AllocationDocument[] // ✅ opposite side of relation
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
-model AllocationDocument {
-  id           String     @id @default(cuid())
-  allocationId String
-  allocation   Allocation @relation(fields: [allocationId], references: [id], onDelete: Cascade)
-
-  type         DocumentType @default(OTHER) // ✅ safer: default value prevents NOT NULL errors
-  fileName     String
-  originalName String?
-  fileUrl      String
-  mimeType     String?
-  extension    String?
-  fileSize     Int?
-  remarks      String?
-
-  uploadedById String?
-  uploadedBy   User?   @relation(fields: [uploadedById], references: [id])
-
-  uploadedAt DateTime @default(now())
-  updatedAt  DateTime @updatedAt
-
-  @@index([allocationId])
-  @@index([type])
-}
-
-model Exporter {
-  id            String  @id @default(cuid())
-  name          String
-  address       String?
-  phone         String?
-  email         String?
-  contactPerson String?
-
-  shipments   Shipment[]
-  allocations Allocation[]
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
-model Consignee {
-  id              String        @id @default(cuid())
-  name            String
-  contactPerson   String?
-  address         String?
-  phone           String?
-  email           String?
-  transporter     String?
-  placeOfLoading  String
-  transitRoute    String
-  portOfDischarge String
-  transportMode   TransportMode
-
-  shipments   Shipment[]
-  allocations Allocation[]
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
-model Shipment {
-  id             String @id @default(cuid())
-  shipmentNumber String @unique
-
-  shipmentDate DateTime
-
-  // Export Documents
-  xfNumber  String?
-  nxpNumber String?
-  cciNumber String?
-  eNumber   String?
-
-  // Booking
-  bookingNumber String?
-
-  // Transport
-  transportMode TransportMode
-  shippingLine  String?
-  vesselName    String?
-  voyageNumber  String?
-
-  // Ports
-  portOfLoading   String?
-  portOfDischarge String?
-
-  // Schedule
-  expectedDeparture DateTime?
-  expectedArrival   DateTime?
-  actualDeparture   DateTime?
-  actualArrival     DateTime?
-
-  // Misc
-  remarks String?
-
-  status ShipmentStatus @default(DRAFT)
-
-  // Relationships
-  // Relationships
-  clientId String
-  client   Client @relation(fields: [clientId], references: [id])
-
-  exporterId String
-  exporter   Exporter @relation(fields: [exporterId], references: [id])
-
-  consigneeId String
-  consignee   Consignee @relation(fields: [consigneeId], references: [id])
-
-  createdById String
-  createdBy   User   @relation(fields: [createdById], references: [id])
-
-  allocationId String?     @unique
-  allocation   Allocation? @relation(fields: [allocationId], references: [id])
-
-  invoice     Invoice?
-  packingList PackingList?
-  transits    Transit[]
-  documents   Document[]
-  containers  Container[]
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@index([shipmentDate])
-  @@index([status])
-  @@index([transportMode])
-  @@index([clientId])
-  @@index([exporterId])
-  @@index([consigneeId])
-}
-
-model Invoice {
-  id String @id @default(cuid())
-
-  // Relationship
-  shipmentId String   @unique
-  shipment   Shipment @relation(fields: [shipmentId], references: [id], onDelete: Cascade)
-
-  // Invoice Information
-  invoiceNumber String   @unique
-  invoiceDate   DateTime
-
-  currency     Currency
-  exchangeRate Decimal? @db.Decimal(18, 4)
-
-  status InvoiceStatus @default(DRAFT)
-
-  // Commercial Information
-  paymentTerms        PaymentTerms?
-  incoterm            String?
-  commercialReference String?
-
-  // Transport
-  transportUnits Int?
-
-  // Charges
-  freight     Decimal @db.Decimal(18, 2)
-  subtotal    Decimal @db.Decimal(18, 2)
-  totalAmount Decimal @db.Decimal(18, 2)
-
-  // Remarks
-  remarks String?
-
-  // Relationships
-  items     InvoiceItem[]
-  documents Document[]
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@index([invoiceDate])
-  @@index([status])
-  @@index([currency])
-}
-
-model Container {
-  id         String   @id @default(cuid())
-  shipmentId String
-  shipment   Shipment @relation(fields: [shipmentId], references: [id], onDelete: Cascade)
-
-  packingListId String?
-  packingList   PackingList? @relation(fields: [packingListId], references: [id])
-
-  containerNumber    String          @unique
-  sealNumber         String?
-  containerType      ContainerType
-  containerSize      ContainerSize
-  grossWeight        Decimal?        @db.Decimal(18, 2)
-  netWeight          Decimal?        @db.Decimal(18, 2)
-  tareWeight         Decimal?        @db.Decimal(18, 2)
-  volume             Decimal?        @db.Decimal(18, 2)
-  loadingLocation    String?
-  destination        String?
-  status             ContainerStatus @default(EMPTY)
-  shippingLine       String?
-  bookingReference   String?
-  containerCondition String?
-
-  transits  Transit[]
-  documents Document[]
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
-model InvoiceItem {
-  id String @id @default(cuid())
-
-  invoiceId String
-  invoice   Invoice @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
-
-  // Product Information
-  description String
-  hsCode      String?
-
-  // Packaging
-  packageType String?
-  packages    Int?
-
-  // Weight
-  grossWeight Decimal? @db.Decimal(18, 2)
-  netWeight   Decimal? @db.Decimal(18, 2)
-
-  // Quantity & Pricing
-  quantity  Decimal @db.Decimal(18, 2)
-  unit      String?
-  unitPrice Decimal @db.Decimal(18, 2)
-
-  // Auto Calculated
-  total Decimal @db.Decimal(18, 2)
-
-  // Optional Notes
-  remarks String?
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@index([invoiceId])
-  @@index([hsCode])
-}
-
-model PackingList {
-  id String @id @default(cuid())
-
-  shipmentId String   @unique
-  shipment   Shipment @relation(fields: [shipmentId], references: [id], onDelete: Cascade)
-
-  packingListNumber String   @unique
-  packingDate       DateTime
-
-  packageType   String?
-  totalPackages Int?
-
-  grossWeight Decimal @db.Decimal(18, 2)
-  netWeight   Decimal @db.Decimal(18, 2)
-
-  marksAndNumbers String?
-  remarks         String?
-
-  items PackingListItem[]
-
-  documents  Document[]
-  containers Container[]
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
-model PackingListItem {
-  id String @id @default(cuid())
-
-  packingListId String
-  packingList   PackingList @relation(fields: [packingListId], references: [id], onDelete: Cascade)
-
-  description String
-
-  packageType String?
-
-  packages Int?
-
-  grossWeight Decimal? @db.Decimal(18, 2)
-
-  netWeight Decimal? @db.Decimal(18, 2)
-
-  remarks String?
-
-  createdAt DateTime @default(now())
-
-  updatedAt DateTime @updatedAt
-}
-
-model Transit {
-  id String @id @default(cuid())
-
-  transitNumber String @unique
-
-  shipmentId String
-
-  shipment Shipment @relation(fields: [shipmentId], references: [id], onDelete: Cascade)
-
-  containerId String
-
-  container Container @relation(fields: [containerId], references: [id])
-
-  origin String
-
-  destination String
-
-  transportMode TransportMode
-
-  transporter String?
-
-  transitInvoice String?
-
-  agentNumber String?
-
-  exporterNumber String?
-
-  wibNumber String?
-
-  quantity Decimal? @db.Decimal(18, 2)
-
-  description String?
-
-  unitPrice Decimal? @db.Decimal(18, 2)
-
-  totalPrice Decimal? @db.Decimal(18, 2)
-
-  documents Document[]
-
-  createdAt DateTime @default(now())
-
-  updatedAt DateTime @updatedAt
-}
-
-model Allocation {
-  id               String @id @default(cuid())
-  allocationNumber String @unique
-
-  // CLIENT INFORMATION
-  clientId String
-  client   Client @relation(fields: [clientId], references: [id])
-
-  exporterId String?
-  exporter   Exporter? @relation(fields: [exporterId], references: [id])
-
-  consigneeId String?
-  consignee   Consignee? @relation(fields: [consigneeId], references: [id])
-
-  // SHIPMENT
-  shipment Shipment?
-
-  // SERVICE INFORMATION
-  serviceType ServiceType
-  priority    AllocationPriority @default(MEDIUM)
-  status      AllocationStatus   @default(PENDING)
-
-  // CARGO INFORMATION
-  cargoDescription String
-  cargoType        String?
-  commodityCode    String?
-  commodityName    String?
-  quantity         Decimal? @db.Decimal(18, 2)
-  packageType      String?
-  numberOfPackages Int?
-  grossWeight      Decimal? @db.Decimal(18, 2)
-  netWeight        Decimal? @db.Decimal(18, 2)
-  volume           Decimal? @db.Decimal(18, 2)
-
-  // SHIPPING INFORMATION
-  originCountry        String?
-  originCity           String?
-  pickupAddress        String?
-  pickupDate           DateTime?
-  destinationCountry   String
-  destinationCity      String?
-  portOfLoading        String?
-  portOfDischarge      String?
-  transportMode        TransportMode?
-  shippingLine         String?
-  incoterm             String?
-  deliveryAddress      String?
-  expectedShipmentDate DateTime?
-
-  // FINANCIAL INFORMATION
-  estimatedValue    Decimal? @db.Decimal(18, 2)
-  currency          String?
-  paymentTerms      String?
-  freightType       String?
-  insuranceRequired Boolean  @default(false)
-
-  // REMARKS
-  specialInstruction String?
-  internalRemark     String?
-
-  // DOCUMENTS
-  documents         AllocationDocument[]
-  attachedDocuments Document[]
-
-  destinationPort String?
-
-  // USERS
-  createdById String
-  createdBy   User   @relation("CreatedAllocations", fields: [createdById], references: [id])
-
-  assignedToId String?
-  assignedTo   User?   @relation("AssignedAllocations", fields: [assignedToId], references: [id])
-
-  approvedById String?
-  approvedBy   User?   @relation("ApprovedAllocations", fields: [approvedById], references: [id])
-
-  // WORKFLOW
-  assignedAt  DateTime?
-  approvedAt  DateTime?
-  completedAt DateTime?
-
-  // AUDIT
-  isActive  Boolean  @default(true)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  // INDEXES
-  @@index([clientId])
-  @@index([exporterId])
-  @@index([consigneeId])
-  @@index([status])
-  @@index([priority])
-  @@index([serviceType])
-  @@index([createdById])
-  @@index([assignedToId])
-  @@index([approvedById])
-  @@index([expectedShipmentDate])
-  @@index([createdAt])
-}
-
-model Client {
-  id             String     @id @default(cuid())
-  clientCode     String     @unique
-  companyName    String
-  clientType     ClientType @default(COMPANY)
-  contactPerson  String?
-  email          String?
-  phone          String?
-  alternatePhone String?
-  address        String?
-  city           String?
-  state          String?
-  country        String?
-  website        String?
-  taxNumber      String?
-  remarks        String?
-  isActive       Boolean    @default(true)
-
-  allocations Allocation[]
-
-  shipments Shipment[]
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
-model Document {
-  id       String       @id @default(cuid())
-  type     DocumentType
-  fileName String
-  fileUrl  String
-  mimeType String?
-  fileSize Int?
-  remarks  String?
-
-  allocationId String?
-  allocation   Allocation? @relation(fields: [allocationId], references: [id])
-
-  shipmentId String?
-  shipment   Shipment? @relation(fields: [shipmentId], references: [id], onDelete: Cascade)
-
-  containerId String?
-  container   Container? @relation(fields: [containerId], references: [id])
-
-  invoiceId String?
-  invoice   Invoice? @relation(fields: [invoiceId], references: [id])
-
-  packingListId String?
-  packingList   PackingList? @relation(fields: [packingListId], references: [id])
-
-  transitId String?
-  transit   Transit? @relation(fields: [transitId], references: [id])
-
-  uploadedAt DateTime @default(now())
-  updatedAt  DateTime @updatedAt
-
-  @@index([shipmentId])
-  @@index([containerId])
-  @@index([invoiceId])
-  @@index([packingListId])
-  @@index([transitId])
 }

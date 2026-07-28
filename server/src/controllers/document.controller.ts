@@ -15,6 +15,10 @@ import {
   DocumentQueryDto,
 } from "../validations/document-query.validation";
 
+interface DocumentParams {
+  id: string;
+}
+
 class DocumentController {
   /*
   =====================================
@@ -22,39 +26,44 @@ class DocumentController {
   =====================================
   */
 
-  async create(
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ) {
-    try {
-      if (!req.file) {
-        throw new Error(
-          "Please upload a document."
-        );
-      }
-
-      const data =
-        createDocumentSchema.parse(
-          req.body
-        );
-
-      const document =
-        await documentService.create(
-          req.file,
-          data
-        );
-
-      res.status(201).json({
-        success: true,
-        message:
-          "Document uploaded successfully.",
-        data: document,
+async create(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  try {
+    if (!req.file) {
+      return res.status(400).json({
+        success: false,
+        message: "Please upload a document.",
       });
-    } catch (error) {
-      next(error);
     }
+
+    console.log("========== DOCUMENT UPLOAD ==========");
+    console.log("BODY:", req.body);
+    console.log("FILE:", req.file);
+    console.log("=====================================");
+
+    const body =
+      createDocumentSchema.parse(req.body);
+
+    const document =
+      await documentService.create(
+        req.file,
+        body
+      );
+
+    return res.status(201).json({
+      success: true,
+      message:
+        "Document uploaded successfully.",
+      data: document,
+    });
+  } catch (error) {
+    console.error(error);
+    next(error);
   }
+}
 
   /*
   =====================================
@@ -69,16 +78,14 @@ class DocumentController {
   ) {
     try {
       const query =
-        DocumentQueryDto.parse(
-          req.query
-        );
+        DocumentQueryDto.parse(req.query);
 
       const result =
         await documentService.findAll(
           query
         );
 
-      res.status(200).json({
+      return res.status(200).json({
         success: true,
         ...result,
       });
@@ -94,19 +101,17 @@ class DocumentController {
   */
 
   async findById(
-    req: Request,
+    req: Request<DocumentParams>,
     res: Response,
     next: NextFunction
   ) {
     try {
-      const id = String(req.params.id);
-
       const document =
         await documentService.findById(
-          id
+          req.params.id
         );
 
-      res.status(200).json({
+      return res.status(200).json({
         success: true,
         data: document,
       });
@@ -122,25 +127,21 @@ class DocumentController {
   */
 
   async update(
-    req: Request,
+    req: Request<DocumentParams>,
     res: Response,
     next: NextFunction
   ) {
     try {
-      const id = String(req.params.id);
-
-      const data =
-        updateDocumentSchema.parse(
-          req.body
-        );
+      const body =
+        updateDocumentSchema.parse(req.body);
 
       const document =
         await documentService.update(
-          id,
-          data
+          req.params.id,
+          body
         );
 
-      res.status(200).json({
+      return res.status(200).json({
         success: true,
         message:
           "Document updated successfully.",
@@ -158,16 +159,16 @@ class DocumentController {
   */
 
   async delete(
-    req: Request,
+    req: Request<DocumentParams>,
     res: Response,
     next: NextFunction
   ) {
     try {
-      const id = String(req.params.id);
+      await documentService.delete(
+        req.params.id
+      );
 
-      await documentService.delete(id);
-
-      res.status(200).json({
+      return res.status(200).json({
         success: true,
         message:
           "Document deleted successfully.",

@@ -19,7 +19,6 @@ Base Schema
 */
 
 const documentSchema = z.object({
-
   type: z.nativeEnum(DocumentType),
 
   remarks: optionalString,
@@ -35,7 +34,6 @@ const documentSchema = z.object({
   invoiceId: optionalString,
 
   transitId: optionalString,
-
 });
 
 /*
@@ -45,25 +43,34 @@ Create
 */
 
 export const createDocumentSchema =
-  documentSchema.refine(
-    (data) => {
-      const ids = [
-  data.allocationId,
-  data.shipmentId,
-  data.containerId,
-  data.packingListId,
-  data.invoiceId,
-  data.transitId,
-].filter(Boolean);
+  documentSchema.superRefine((data, ctx) => {
+    const parentIds = [
+      data.allocationId,
+      data.shipmentId,
+      data.containerId,
+      data.packingListId,
+      data.invoiceId,
+      data.transitId,
+    ].filter(Boolean);
 
-return ids.length === 1;
-    },
-    {
-      message:
-        "A document must belong to exactly one record.",
-      path: ["shipmentId"],
+    if (parentIds.length === 0) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message:
+          "A document must belong to one record (Allocation, Shipment, Container, Packing List, Invoice or Transit).",
+        path: ["allocationId"],
+      });
     }
-  );
+
+    if (parentIds.length > 1) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message:
+          "A document can belong to only one record.",
+        path: ["allocationId"],
+      });
+    }
+  });
 
 /*
 =====================================
@@ -74,24 +81,25 @@ Update
 export const updateDocumentSchema =
   documentSchema
     .partial()
-    .refine(
-      (data) => {
-        const ids = [
-          data.shipmentId,
-          data.containerId,
-          data.packingListId,
-          data.invoiceId,
-          data.transitId,
-        ].filter(Boolean);
+    .superRefine((data, ctx) => {
+      const parentIds = [
+        data.allocationId,
+        data.shipmentId,
+        data.containerId,
+        data.packingListId,
+        data.invoiceId,
+        data.transitId,
+      ].filter(Boolean);
 
-        return ids.length <= 1;
-      },
-      {
-        message:
-          "A document can belong to only one record.",
-        path: ["shipmentId"],
+      if (parentIds.length > 1) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message:
+            "A document can belong to only one record.",
+          path: ["allocationId"],
+        });
       }
-    );
+    });
 
 /*
 =====================================
