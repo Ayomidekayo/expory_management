@@ -8,8 +8,7 @@ import {
 } from "../validations/allocation.validation";
 
 import { AllocationQueryDto } from "../validations/allocation-query.validation";
-import { AllocationStatus } from "../generated";
-import allocationRepository from "../Repository/allocation.repository";
+
 
 class AllocationController {
 

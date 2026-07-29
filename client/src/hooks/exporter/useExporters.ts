@@ -2,8 +2,8 @@ import { useQuery } from "@tanstack/react-query";
 
 import { getExporters } from "../../api/exporter.api";
 import { queryKeys } from "../../lib/queryKeys";
+import type { ExporterQuery } from "../../types/exporter.types";
 
-import type { ExporterQuery } from "../../types";
 
 export function useExporters(
   params?: ExporterQuery

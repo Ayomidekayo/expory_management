@@ -1,10 +1,9 @@
+import { useDeleteContainer } from "../../hooks/container/useDeleteContainer";
 import DeleteDialog from "../common/DeleteDialog";
 
 import { toast } from "sonner";
 
-import {
-  useDeleteContainer,
-} from "../../hooks/container/useContainers";
+
 
 interface Props {
   id?: string;

@@ -8,16 +8,18 @@ export async function uploadToCloudinary(
     url: string;
     publicId: string;
   }>((resolve, reject) => {
-   const stream = cloudinary.uploader.upload_stream(
+  const stream = cloudinary.uploader.upload_stream(
   {
     folder,
     resource_type: "auto",
     use_filename: true,
     unique_filename: true,
+    filename_override: file.originalname,
   },
+
   (error, result) => {
     console.log("========== CLOUDINARY ==========");
-    console.log("RESULT:", result);
+  console.dir(result, { depth: null });
     console.dir(error, { depth: null });
     console.log("===============================");
 

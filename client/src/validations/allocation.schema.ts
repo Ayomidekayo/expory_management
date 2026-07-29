@@ -180,13 +180,18 @@ export const updateAllocationSchema =
 /* ===========================================
    TYPES
 =========================================== */
+/* ===========================================
+   TYPES
+=========================================== */
 
 export type CreateAllocationInput =
-  z.infer<
-    typeof createAllocationSchema
-  >;
+  z.input<typeof createAllocationSchema>;
+
+export type CreateAllocationOutput =
+  z.output<typeof createAllocationSchema>;
 
 export type UpdateAllocationInput =
-  z.infer<
-    typeof updateAllocationSchema
-  >;
+  z.input<typeof updateAllocationSchema>;
+
+export type UpdateAllocationOutput =
+  z.output<typeof updateAllocationSchema>;

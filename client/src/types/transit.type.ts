@@ -1,67 +1,107 @@
-import { z } from "zod";
+import type { TransportMode } from "./enums";
+import type { Shipment } from "./shipment.types";
+import type { Container } from "./container.type";
+import type { Document } from "./document";
 
-export const transportModes = [
-  "ROAD",
-  "SEA",
-  "AIR",
-] as const;
+export interface Transit {
+  id: string;
 
-export const createTransitSchema =
-  z.object({
+  transitNumber: string;
 
-    shipmentId: z
-      .string()
-      .min(1, "Shipment is required"),
+  shipmentId: string;
+  shipment?: Shipment;
 
-    containerId: z
-      .string()
-      .min(1, "Container is required"),
+  containerId: string;
+  container?: Container;
 
-    origin: z
-      .string()
-      .min(2, "Origin is required"),
+  origin: string;
 
-    destination: z
-      .string()
-      .min(2, "Destination is required"),
+  destination: string;
 
-    transportMode:
-      z.enum(transportModes),
+  transportMode: TransportMode;
 
-    transporter:
-      z.string().optional(),
+  transporter?: string;
 
-    transitInvoice:
-      z.string().optional(),
+  transitInvoice?: string;
 
-    agentNumber:
-      z.string().optional(),
+  agentNumber?: string;
 
-    exporterNumber:
-      z.string().optional(),
+  exporterNumber?: string;
 
-    wibNumber:
-      z.string().optional(),
+  wibNumber?: string;
 
-    description:
-      z.string().optional(),
+  description?: string;
 
-    quantity:
-      z.coerce.number().optional(),
+  quantity?: number;
 
-    unitPrice:
-      z.coerce.number().optional(),
+  unitPrice?: number;
 
-    totalPrice:
-      z.coerce.number().optional(),
+  totalPrice?: number;
 
-  });
+  documents?: Document[];
 
-export const updateTransitSchema =
-  createTransitSchema.partial();
+  createdAt: string;
 
-export type CreateTransitInput =
-  z.infer<typeof createTransitSchema>;
+  updatedAt: string;
 
-export type UpdateTransitInput =
-  z.infer<typeof updateTransitSchema>;
+  _count?: {
+    documents: number;
+  };
+}
+
+export interface CreateTransitDto {
+  shipmentId: string;
+
+  containerId: string;
+
+  origin: string;
+
+  destination: string;
+
+  transportMode: TransportMode;
+
+  transporter?: string;
+
+  transitInvoice?: string;
+
+  agentNumber?: string;
+
+  exporterNumber?: string;
+
+  wibNumber?: string;
+
+  description?: string;
+
+  quantity?: number;
+
+  unitPrice?: number;
+
+  totalPrice?: number;
+}
+
+export type UpdateTransitDto =
+  Partial<CreateTransitDto>;
+
+export interface TransitQuery {
+  page?: number;
+
+  limit?: number;
+
+  search?: string;
+
+  shipmentId?: string;
+
+  containerId?: string;
+
+  transportMode?: TransportMode;
+
+  sortBy?:
+    | "createdAt"
+    | "origin"
+    | "destination"
+    | "transportMode"
+    | "quantity"
+    | "totalPrice";
+
+  sortOrder?: "asc" | "desc";
+}

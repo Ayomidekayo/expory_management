@@ -5,7 +5,8 @@
 =========================================== */
 
 import z from "zod";
-import type { Shipment } from "../types";
+import type { Shipment } from "../types/shipment.types";
+
 
 export type Currency =
   | "NGN"

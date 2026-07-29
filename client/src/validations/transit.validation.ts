@@ -6,6 +6,9 @@ export const transportModes = {
   AIR: "AIR",
 } as const;
 
+export type TransportMode =
+  (typeof transportModes)[keyof typeof transportModes];
+
 export const createTransitSchema = z.object({
   shipmentId: z
     .string()
@@ -23,7 +26,7 @@ export const createTransitSchema = z.object({
     .string()
     .min(2, "Destination is required"),
 
-  transportMode: z.enum(transportModes),
+  transportMode: z.nativeEnum(transportModes),
 
   transporter: z.string().optional(),
 
@@ -52,6 +55,3 @@ export type CreateTransitInput =
 
 export type UpdateTransitInput =
   z.infer<typeof updateTransitSchema>;
-
-export type TransportMode =
-  (typeof transportModes)[keyof typeof transportModes];

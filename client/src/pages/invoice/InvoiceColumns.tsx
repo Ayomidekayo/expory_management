@@ -1,11 +1,7 @@
 
 import { MoreHorizontal } from "lucide-react";
 import dayjs from "dayjs";
-
-import type { Invoice } from "../../api/invoice.api";
-
 import { Button } from "../../components/ui/button";
-
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -13,6 +9,7 @@ import {
   DropdownMenuTrigger,
 } from "../../components/ui/dropdown-menu";
 import type { ColumnDef } from "@tanstack/react-table";
+import type { Invoice } from "../../types";
 
 interface Props {
   onView: (invoice: Invoice) => void;

@@ -1,26 +1,14 @@
-import type {
-  DocumentType,
-} from "./enums";
+import type { DocumentType } from "./enums";
 
-import type {
-  Shipment,
-} from "./shipment.types";
+import type { Shipment } from "./shipment.types";
 
-import type {
-  Container,
-} from "./container.type";
+import type { Container } from "./container.type";
 
-import type {
-  PackingList,
-} from "./packing-list";
+import type { PackingList } from "./packing-list";
 
-import type {
-  Invoice,
-} from "./invoice";
-
-import type {
-  Transit,
-} from "./transit";
+import type { Invoice } from "./invoice";
+import type { Allocation } from "./allocation.types";
+import type { Transit } from "./transit.type";
 
 /*
 ===========================================
@@ -35,6 +23,8 @@ export interface DocumentQuery {
 
   search?: string;
 
+  allocationId?: string;
+
   shipmentId?: string;
 
   containerId?: string;
@@ -47,10 +37,7 @@ export interface DocumentQuery {
 
   type?: DocumentType;
 
-  sortBy?:
-    | "uploadedAt"
-    | "fileName"
-    | "type";
+  sortBy?: "uploadedAt" | "fileName" | "type";
 
   sortOrder?: "asc" | "desc";
 }
@@ -69,7 +56,6 @@ export interface DocumentQuery {
 DOCUMENT
 ===========================================
 */
-
 export interface Document {
   id: string;
 
@@ -87,6 +73,8 @@ export interface Document {
 
   shipmentId?: string;
 
+  allocationId?: string;
+
   containerId?: string;
 
   packingListId?: string;
@@ -96,6 +84,8 @@ export interface Document {
   transitId?: string;
 
   shipment?: Shipment;
+
+  allocation?: Allocation;
 
   container?: Container;
 
@@ -119,9 +109,19 @@ CREATE
 export interface CreateDocumentDto {
   type: DocumentType;
 
+  attachTo:
+    | "SHIPMENT"
+    | "ALLOCATION"
+    | "CONTAINER"
+    | "PACKING_LIST"
+    | "TRANSIT"
+    | "INVOICE";
+
   remarks?: string;
 
   shipmentId?: string;
+
+  allocationId?: string;
 
   containerId?: string;
 
@@ -140,5 +140,4 @@ UPDATE
 ===========================================
 */
 
-export type UpdateDocumentDto =
-  Partial<CreateDocumentDto>;
+export type UpdateDocumentDto = Partial<CreateDocumentDto>;

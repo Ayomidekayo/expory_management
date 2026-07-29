@@ -32,13 +32,13 @@ export default function ShipmentForm({
   loading = false,
   onSubmit,
 }: Props) {
-  const form =
-    useForm<CreateShipmentInput>({
-      resolver: zodResolver(
-        createShipmentSchema
-      ),
-
-      defaultValues: {
+ const form = useForm<
+  CreateShipmentInput,
+  any,
+  CreateShipmentInput
+>({
+  resolver: zodResolver(createShipmentSchema),
+  defaultValues: {
         shipmentDate: "",
 
         clientId: "",

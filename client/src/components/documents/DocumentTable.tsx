@@ -19,7 +19,6 @@ import { Button } from "../ui/button";
 
 import type { Document } from "../../types/document";
 import DeleteDocumentDialog from "./DeleteDocumentDialog";
-import { downloadDocument, getFileUrl } from "../../api/document.api";
 
 // ✅ import your helpers
 
@@ -89,15 +88,14 @@ export default function DocumentTable({ data, loading = false }: Props) {
                   </Link>
 
                   <Button
-                    size="icon"
-                    variant="outline"
-                    onClick={() => {
-                      console.log(getFileUrl(document.fileUrl));
-                      downloadDocument(document.fileUrl, document.fileName);
-                    }}
-                  >
-                    <Download className="h-4 w-4" />
-                  </Button>
+  size="icon"
+  variant="outline"
+  onClick={() =>
+    window.open(document.fileUrl, "_blank")
+  }
+>
+  <Download className="h-4 w-4" />
+</Button>
 
                   <DeleteDocumentDialog id={document.id} />
                 </div>

@@ -1,18 +1,14 @@
 import { useEffect } from "react";
 
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "../ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog";
 
 import TransitForm from "./TransitForm";
-import type {
-  CreateTransitDto,
-  UpdateTransitDto,
-} from "../../types/transit";
-import { useCreateTransit, useTransit, useUpdateTransit } from "../../hooks/transit/useTransits";
+import type { CreateTransitDto, UpdateTransitDto } from "../../lib/transit";
+import {
+  useCreateTransit,
+  useTransit,
+  useUpdateTransit,
+} from "../../hooks/transit/useTransits";
 
 interface Props {
   open: boolean;
@@ -32,21 +28,13 @@ export default function TransitDialog({
 }: Props) {
   const isEditing = !!transitId;
 
-  const { data: transit } = useTransit(
-    transitId ?? ""
-  );
+  const { data: transit } = useTransit(transitId ?? "");
 
-  const createMutation =
-    useCreateTransit();
+  const createMutation = useCreateTransit();
 
-  const updateMutation =
-    useUpdateTransit();
+  const updateMutation = useUpdateTransit();
 
-  function handleSubmit(
-    data:
-      | CreateTransitDto
-      | UpdateTransitDto
-  ) {
+  function handleSubmit(data: CreateTransitDto | UpdateTransitDto) {
     if (isEditing) {
       updateMutation.mutate(
         {
@@ -57,20 +45,17 @@ export default function TransitDialog({
           onSuccess() {
             onOpenChange(false);
           },
-        }
+        },
       );
 
       return;
     }
 
-    createMutation.mutate(
-      data as CreateTransitDto,
-      {
-        onSuccess() {
-          onOpenChange(false);
-        },
-      }
-    );
+    createMutation.mutate(data as CreateTransitDto, {
+      onSuccess() {
+        onOpenChange(false);
+      },
+    });
   }
 
   useEffect(() => {
@@ -78,75 +63,49 @@ export default function TransitDialog({
   }, [open]);
 
   return (
-    <Dialog
-      open={open}
-      onOpenChange={onOpenChange}
-    >
+    <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-4xl">
-
         <DialogHeader>
-
           <DialogTitle>
-
-            {isEditing
-              ? "Edit Transit"
-              : "Add Transit"}
-
+            {isEditing ? "Edit Transit" : "Add Transit"}
           </DialogTitle>
-
         </DialogHeader>
 
         <TransitForm
           shipmentId={shipmentId}
           isEditing={isEditing}
-          loading={
-            createMutation.isPending ||
-            updateMutation.isPending
-          }
+          loading={createMutation.isPending || updateMutation.isPending}
           defaultValues={
             transit
               ? {
-                  shipmentId:
-                    transit.shipmentId,
+                  shipmentId: transit.shipmentId,
 
-                  origin:
-                    transit.origin,
+                  origin: transit.origin,
 
-                  destination:
-                    transit.destination,
+                  destination: transit.destination,
 
-                  transportMode:
-                    transit.transportMode,
+                  transportMode: transit.transportMode,
 
-                  transporter:
-                    transit.transporter,
+                  transporter: transit.transporter,
 
-                  transitInvoice:
-                    transit.transitInvoice,
+                  transitInvoice: transit.transitInvoice,
 
-                  agentNumber:
-                    transit.agentNumber,
+                  agentNumber: transit.agentNumber,
 
-                  exporterNumber:
-                    transit.exporterNumber,
+                  exporterNumber: transit.exporterNumber,
 
-                  wibNumber:
-                    transit.wibNumber,
+                  wibNumber: transit.wibNumber,
 
-                  quantity:
-                    transit.quantity,
+                  quantity: transit.quantity,
 
-                  unitPrice:
-                    transit.unitPrice,
+                  unitPrice: transit.unitPrice,
 
-                  description:
-                    transit.description,
+                  description: transit.description,
                 }
               : undefined
           }
           onSubmit={handleSubmit}
         />
-
       </DialogContent>
     </Dialog>
   );

@@ -8,10 +8,12 @@ import TransitTable from "../../components/transit/TransitTable";
 
 import { useTransits } from "../../hooks/transit/useTransits";
 import TransitFilters from "./TransitFilters";
-import type { TransitQuery } from "../../types";
+
 import { useState } from "react";
+import type { TransitQuery } from "../../types/transit.type";
 
 export default function TransitsPage() {
+  
     const [filters, setFilters] =
   useState<TransitQuery>({
 

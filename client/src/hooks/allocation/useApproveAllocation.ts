@@ -2,29 +2,21 @@ import {
   useMutation,
   useQueryClient,
 } from "@tanstack/react-query";
-import { approveAllocation } from "../../api/allocation.api";
+
+import { updateAllocationStatus } from "../../api/allocation.api";
 import { queryKeys } from "../../lib/queryKeys";
 
-export const useApproveAllocation =
-  () => {
+export const useApproveAllocation = () => {
+  const queryClient = useQueryClient();
 
-    const queryClient =
-      useQueryClient();
+  return useMutation({
+    mutationFn: (id: string) =>
+      updateAllocationStatus(id, "APPROVED"),
 
-    return useMutation({
-
-      mutationFn:
-        approveAllocation,
-
-      onSuccess: () => {
-
-        queryClient.invalidateQueries({
-          queryKey:
-            queryKeys.allocations.all,
-        });
-
-      },
-
-    });
-
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.allocations.all,
+      });
+    },
+  });
 };

@@ -1,5 +1,4 @@
 import { Badge } from "../ui/badge";
-
 import type { ShipmentStatus } from "../../types/shipment.types";
 
 interface Props {
@@ -19,16 +18,46 @@ const statusConfig: Record<
       "bg-slate-100 text-slate-700 border-slate-300",
   },
 
-  PENDING: {
-    label: "Pending",
+  READY: {
+    label: "Ready",
     className:
-      "bg-yellow-100 text-yellow-800 border-yellow-300",
+      "bg-indigo-100 text-indigo-700 border-indigo-300",
+  },
+
+  BOOKED: {
+    label: "Booked",
+    className:
+      "bg-purple-100 text-purple-700 border-purple-300",
+  },
+
+  LOADED: {
+    label: "Loaded",
+    className:
+      "bg-cyan-100 text-cyan-700 border-cyan-300",
   },
 
   IN_TRANSIT: {
     label: "In Transit",
     className:
       "bg-blue-100 text-blue-800 border-blue-300",
+  },
+
+  ARRIVED: {
+    label: "Arrived",
+    className:
+      "bg-amber-100 text-amber-800 border-amber-300",
+  },
+
+  CUSTOMS_CLEARANCE: {
+    label: "Customs Clearance",
+    className:
+      "bg-orange-100 text-orange-800 border-orange-300",
+  },
+
+  DELIVERED: {
+    label: "Delivered",
+    className:
+      "bg-emerald-100 text-emerald-800 border-emerald-300",
   },
 
   COMPLETED: {
@@ -47,8 +76,7 @@ const statusConfig: Record<
 export default function ShipmentStatusBadge({
   status,
 }: Props) {
-  const config =
-    statusConfig[status];
+  const config = statusConfig[status];
 
   return (
     <Badge

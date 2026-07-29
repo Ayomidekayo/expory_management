@@ -3,11 +3,11 @@
 =========================================== */
 
 import type {
-  Shipment,
   PackingList,
-  Transit,
   Document,
 } from ".";
+import type { Shipment } from "./shipment.types";
+import type { Transit } from "./transit.type";
 
 export type ContainerType =
   | "DRY"
@@ -15,11 +15,11 @@ export type ContainerType =
   | "OPEN_TOP"
   | "FLAT_RACK"
   | "TANK"
-  | "HIGH_CUBE";
 
 export type ContainerSize =
   | "FT20"
   | "FT40"
+  | "FT40_HC"
   | "FT45";
 
 export type ContainerStatus =

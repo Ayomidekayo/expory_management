@@ -8,7 +8,7 @@ import {
   TableHeader,
   TableRow,
 } from "../ui/table";
-import type { Transit } from "../../types/transit";
+import type { Transit } from "../../lib/transit";
 import DeleteTransitDialog from "./DeleteTransitDialog";
 import { Link } from "react-router-dom";
 
@@ -75,24 +75,18 @@ export default function TransitTable({
             <TableCell>
               <div className="flex justify-end gap-2">
                 <Link to={`/transits/${transit.id}`}>
-  <Button
-    size="icon"
-    variant="ghost"
-  >
-    <Eye className="h-4 w-4" />
-  </Button>
-</Link>
+                  <Button size="icon" variant="ghost">
+                    <Eye className="h-4 w-4" />
+                  </Button>
+                </Link>
 
-<Link to={`/transits/${transit.id}/edit`}>
-  <Button
-    size="icon"
-    variant="ghost"
-  >
-    <Pencil className="h-4 w-4" />
-  </Button>
-</Link>
+                <Link to={`/transits/${transit.id}/edit`}>
+                  <Button size="icon" variant="ghost">
+                    <Pencil className="h-4 w-4" />
+                  </Button>
+                </Link>
 
-<DeleteTransitDialog id={transit.id} />
+                <DeleteTransitDialog id={transit.id} />
                 <DeleteTransitDialog id={transit.id} />
               </div>
             </TableCell>

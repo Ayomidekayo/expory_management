@@ -1,5 +1,6 @@
 import type { Container } from "./container.type";
-import type { Shipment, Document } from "./index";
+import type { Document } from "./index";
+import type { Shipment } from "./shipment.types";
 
 export interface PackingListQuery {
   page?: number;

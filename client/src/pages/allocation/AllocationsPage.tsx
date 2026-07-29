@@ -30,21 +30,18 @@ import {
   TableRow,
 } from "../../components/ui/table";
 
-import AllocationStats from "../../components/allocation/AllocationStats";
-
 import AllocationDialog from "../../components/allocation/AllocationDialog";
 
-import { allocationColumns } from "../../components/allocation/allocation.columns";
+
 
 import { useAllocations } from "../../hooks/allocation/useAllocations";
 
-import { useGenerateShipment } from "../../hooks/allocation/useGenerateShipment";
 
 import type { Allocation } from "../../types/allocation.types";
 import AllocationDetailsDialog from "../../components/allocation/AllocationDetailsDialog";
-import AssignOfficerDialog from "./AssignOfficerDialog";
-import ApproveAllocationDialog from "./ApproveAllocationDialog";
+
 import DeleteAllocationDialog from "./DeleteAllocationDialog";
+import AllocationStatusChart from "../../components/dashboard/AllocationStatusChart";
 
 export default function AllocationPage() {
 
@@ -202,7 +199,7 @@ export default function AllocationPage() {
 
       </div>
 
-      <AllocationStats
+      <AllocationStatusChart
         allocations={allocations}
       />
 
@@ -422,23 +419,7 @@ export default function AllocationPage() {
         onOpenChange={setDetailsOpen}
       />
 
-      <AssignOfficerDialog
-        open={assignOpen}
-        allocation={
-          selectedAllocation ??
-          undefined
-        }
-        onOpenChange={setAssignOpen}
-      />
 
-      <ApproveAllocationDialog
-        open={approveOpen}
-        allocation={
-          selectedAllocation ??
-          undefined
-        }
-        onOpenChange={setApproveOpen}
-      />
 
       <DeleteAllocationDialog
         id={deleteId}

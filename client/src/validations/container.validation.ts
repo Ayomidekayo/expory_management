@@ -1,11 +1,19 @@
 import { z } from "zod";
 
+/*
+=====================================
+Create Container
+=====================================
+*/
+
 export const createContainerSchema = z.object({
   shipmentId: z.string().cuid(),
 
   packingListId: z.string().cuid().optional(),
 
-  containerNumber: z.string().min(1, "Container number is required"),
+  containerNumber: z
+    .string()
+    .min(1, "Container number is required"),
 
   sealNumber: z.string().optional(),
 
@@ -50,11 +58,31 @@ export const createContainerSchema = z.object({
   ]),
 });
 
+/*
+=====================================
+Update Container
+=====================================
+*/
+
 export const updateContainerSchema =
   createContainerSchema.partial();
 
+/*
+=====================================
+Types
+=====================================
+*/
+
+// Raw values received from the form
 export type CreateContainerInput =
-  z.infer<typeof createContainerSchema>;
+  z.input<typeof createContainerSchema>;
+
+// Values after Zod has parsed/coerced them
+export type CreateContainerOutput =
+  z.output<typeof createContainerSchema>;
 
 export type UpdateContainerInput =
-  z.infer<typeof updateContainerSchema>;
+  z.input<typeof updateContainerSchema>;
+
+export type UpdateContainerOutput =
+  z.output<typeof updateContainerSchema>;

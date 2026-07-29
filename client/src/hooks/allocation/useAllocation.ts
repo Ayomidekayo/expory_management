@@ -1,5 +1,4 @@
 import { useQuery } from "@tanstack/react-query";
-
 import { getAllocation } from "../../api/allocation.api";
 import { queryKeys } from "../../lib/queryKeys";
 

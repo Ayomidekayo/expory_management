@@ -14,7 +14,7 @@ import {
   TableHeader,
   TableRow,
 } from "../ui/table";
-import type { Shipment } from "../../types/shipment";
+import type { Shipment } from "../../types/shipment.types";
 
 interface Props {
   shipment: Shipment;

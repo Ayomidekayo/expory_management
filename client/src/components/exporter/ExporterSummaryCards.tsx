@@ -5,8 +5,8 @@ import {
   Calendar,
 } from "lucide-react";
 
-import type { Exporter } from "../../types";
 import SummaryCard from "../common/SummaryCard";
+import type { Exporter } from "../../types/exporter.types";
 
 interface Props {
   exporters: Exporter[];

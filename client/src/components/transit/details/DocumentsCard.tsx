@@ -1,10 +1,9 @@
 import {
   FileText,
 } from "lucide-react";
+import type { Document } from "../../../types/document";
 
-import type {
-  Document,
-} from "../../../types";
+
 
 interface Props {
   documents: Document[];
@@ -64,7 +63,7 @@ export default function DocumentsCard({
 
                   <p className="text-sm text-muted-foreground">
 
-                    {doc.documentType}
+                    {doc.type}
 
                   </p>
 

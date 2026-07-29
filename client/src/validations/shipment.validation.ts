@@ -1,105 +1,61 @@
 import { z } from "zod";
 
-const optionalString = z.preprocess(
-  (value) => (value === "" ? undefined : value),
-  z.string().optional()
-);
+const optionalString = z.string().optional();
 
-const optionalDate = z.preprocess(
-  (value) => (value === "" ? undefined : value),
-  z.string().optional()
-);
+const optionalDate = z.string().optional();
 
-export const createShipmentSchema =
-  z.object({
-    shipmentDate: z
-      .string()
-      .min(1, "Shipment date is required."),
+export const transportModes = [
+  "ROAD",
+  "SEA",
+  "AIR",
+  "RAIL",
+] as const;
 
-    clientId: z
-      .string()
-      .min(1, "Client is required."),
+export const shipmentStatuses = [
+  "DRAFT",
+  "READY",
+  "BOOKED",
+  "LOADED",
+  "IN_TRANSIT",
+  "ARRIVED",
+  "CUSTOMS_CLEARANCE",
+  "DELIVERED",
+  "COMPLETED",
+  "CANCELLED",
+] as const;
 
-    exporterId: z
-      .string()
-      .min(1, "Exporter is required."),
+export const createShipmentSchema = z.object({
+  shipmentDate: z.string().min(1),
+  clientId: z.string().min(1),
+  exporterId: z.string().min(1),
+  consigneeId: z.string().min(1),
 
-    consigneeId: z
-      .string()
-      .min(1, "Consignee is required."),
+  allocationId: optionalString,
 
-    allocationId: optionalString,
+  transportMode: z.enum(transportModes),
 
-    transportMode: z
-      .enum([
-        "ROAD",
-        "SEA",
-        "AIR",
-        "RAIL",
-      ], {
-        required_error:
-          "Transport mode is required.",
-      }),
+  status: z.enum(shipmentStatuses),
 
-    xfNumber: optionalString,
+  xfNumber: optionalString,
+  nxpNumber: optionalString,
+  cciNumber: optionalString,
+  eNumber: optionalString,
 
-    nxpNumber: optionalString,
+  bookingNumber: optionalString,
+  shippingLine: optionalString,
+  vesselName: optionalString,
+  voyageNumber: optionalString,
 
-    cciNumber: optionalString,
+  portOfLoading: optionalString,
+  portOfDischarge: optionalString,
 
-    eNumber: optionalString,
+  expectedDeparture: optionalDate,
+  expectedArrival: optionalDate,
+  actualDeparture: optionalDate,
+  actualArrival: optionalDate,
 
-    bookingNumber: optionalString,
-
-    shippingLine: optionalString,
-
-    vesselName: optionalString,
-
-    voyageNumber: optionalString,
-
-    portOfLoading: optionalString,
-
-    portOfDischarge: optionalString,
-
-    expectedDeparture:
-      optionalDate,
-
-    expectedArrival:
-      optionalDate,
-
-    actualDeparture:
-      optionalDate,
-
-    actualArrival:
-      optionalDate,
-
-    remarks: optionalString,
-
-    status: z
-      .enum([
-        "DRAFT",
-        "READY",
-        "BOOKED",
-        "LOADED",
-        "IN_TRANSIT",
-        "ARRIVED",
-        "CUSTOMS_CLEARANCE",
-        "DELIVERED",
-        "COMPLETED",
-        "CANCELLED",
-      ])
-      .default("DRAFT"),
-  });
-
-export const updateShipmentSchema =
-  createShipmentSchema.partial();
+  remarks: optionalString,
+});
 
 export type CreateShipmentInput =
-  z.infer<
-    typeof createShipmentSchema
-  >;
-
-export type UpdateShipmentInput =
-  z.infer<
-    typeof updateShipmentSchema
-  >;
+  z.output<typeof createShipmentSchema>;

@@ -41,13 +41,8 @@ export default function ContainerForm({
   onSubmit,
 }: Props) {
 
-  const form =
-    useForm<CreateContainerInput>({
-
-      resolver: zodResolver(
-        createContainerSchema
-      ),
-
+ const form = useForm<CreateContainerInput>({
+  resolver: zodResolver(createContainerSchema),
       defaultValues: {
 
         shipmentId: "",

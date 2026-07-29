@@ -1,9 +1,3 @@
-export const TransportMode = {
-  ROAD: "ROAD",
-  SEA: "SEA",
-  AIR: "AIR",
-} as const;
-
 export const ContainerType = {
   DRY: "DRY",
   REEFER: "REEFER",
@@ -18,3 +12,29 @@ export const ContainerSize = {
   FT40_HC: "FT40_HC",
   FT45: "FT45",
 } as const;
+
+export const transportModes = [
+  "ROAD",
+  "SEA",
+  "AIR",
+  "RAIL",
+] as const;
+
+export type TransportMode =
+  (typeof transportModes)[number];
+
+export const shipmentStatuses = [
+  "DRAFT",
+  "READY",
+  "BOOKED",
+  "LOADED",
+  "IN_TRANSIT",
+  "ARRIVED",
+  "CUSTOMS_CLEARANCE",
+  "DELIVERED",
+  "COMPLETED",
+  "CANCELLED",
+] as const;
+
+export type ShipmentStatus =
+  (typeof shipmentStatuses)[number];

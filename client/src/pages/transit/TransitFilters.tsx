@@ -7,9 +7,9 @@ import {
 import { useShipments } from "../../hooks/shipments/useShipments";
 import { useContainers } from "../../hooks/container/useContainers";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../components/ui/select";
-import type { TransitQuery } from "../../types";
 import { Input } from "../../components/ui/input";
 import { Button } from "../../components/ui/button";
+import type { TransitQuery } from "../../types/transit.type";
 
 interface Props {
 

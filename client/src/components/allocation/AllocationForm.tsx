@@ -71,11 +71,97 @@ export default function AllocationForm({
       },
     });
 
-  useEffect(() => {
-    if (defaultValues) {
-      form.reset(defaultValues);
-    }
-  }, [defaultValues, form]);
+ useEffect(() => {
+  if (!defaultValues) return;
+
+  form.reset({
+    clientId: defaultValues.clientId ?? "",
+    exporterId: defaultValues.exporterId ?? undefined,
+    consigneeId: defaultValues.consigneeId ?? undefined,
+
+    serviceType: defaultValues.serviceType,
+    priority: defaultValues.priority,
+
+    cargoDescription: defaultValues.cargoDescription,
+
+    cargoType: defaultValues.cargoType ?? undefined,
+    commodityCode: defaultValues.commodityCode ?? undefined,
+    commodityName: defaultValues.commodityName ?? undefined,
+
+    quantity: defaultValues.quantity,
+    packageType: defaultValues.packageType ?? undefined,
+    numberOfPackages: defaultValues.numberOfPackages,
+
+    grossWeight: defaultValues.grossWeight,
+    netWeight: defaultValues.netWeight,
+    volume: defaultValues.volume,
+
+    originCountry: defaultValues.originCountry ?? undefined,
+    originCity: defaultValues.originCity ?? undefined,
+
+    pickupAddress: defaultValues.pickupAddress ?? undefined,
+    pickupDate: defaultValues.pickupDate ?? undefined,
+
+    destinationCountry:
+      defaultValues.destinationCountry,
+
+    destinationCity:
+      defaultValues.destinationCity ?? undefined,
+
+    portOfLoading:
+      defaultValues.portOfLoading ?? undefined,
+
+    portOfDischarge:
+      defaultValues.portOfDischarge ?? undefined,
+
+    transportMode:
+      defaultValues.transportMode ?? undefined,
+
+    shippingLine:
+      defaultValues.shippingLine ?? undefined,
+
+    incoterm:
+      defaultValues.incoterm ?? undefined,
+
+    deliveryAddress:
+      defaultValues.deliveryAddress ?? undefined,
+
+    expectedShipmentDate:
+      defaultValues.expectedShipmentDate ??
+      undefined,
+
+    estimatedValue:
+      defaultValues.estimatedValue,
+
+    currency:
+      defaultValues.currency ?? undefined,
+
+    paymentTerms:
+      defaultValues.paymentTerms ?? undefined,
+
+    freightType:
+      defaultValues.freightType ?? undefined,
+
+    insuranceRequired:
+      defaultValues.insuranceRequired ?? false,
+
+    specialInstruction:
+      defaultValues.specialInstruction ??
+      undefined,
+
+    internalRemark:
+      defaultValues.internalRemark ??
+      undefined,
+
+    destinationPort:
+      defaultValues.destinationPort ??
+      undefined,
+
+    assignedToId:
+      defaultValues.assignedToId ??
+      undefined,
+  });
+}, [defaultValues, form]);
 
   return (
     <Form {...form}>

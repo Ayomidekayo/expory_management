@@ -1,9 +1,7 @@
 import {
   Scale,
 } from "lucide-react";
-import type { Container } from "react-dom/client";
-
-
+import type { Container } from "../../../types/container.type";
 
 interface Props {
   container: Container;

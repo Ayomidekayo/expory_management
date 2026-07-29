@@ -9,11 +9,15 @@ import { Separator } from "../../components/ui/separator";
 import InvoiceItemsTable from "./InvoiceItemsTable";
 
 export default function InvoiceDetailsPage() {
-  const { id } = useParams();
 
-  const { data: invoice, isLoading } =
-    useInvoice(id!);
+const { id } = useParams();
 
+const {
+  data: response,
+  isLoading,
+} = useInvoice(id!);
+
+const invoice = response?.data;
   if (isLoading) {
     return (
       <div className="p-8">
@@ -103,18 +107,6 @@ export default function InvoiceDetailsPage() {
 
             <p className="font-medium">
               {invoice.currency}
-            </p>
-
-          </div>
-
-          <div>
-
-            <p className="text-muted-foreground text-sm">
-              Number of Trucks
-            </p>
-
-            <p className="font-medium">
-              {invoice.numberOfTrucks}
             </p>
 
           </div>

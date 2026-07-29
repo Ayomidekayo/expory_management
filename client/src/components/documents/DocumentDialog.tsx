@@ -1,7 +1,14 @@
-import { useCreateDocument, useDocument, useUpdateDocument } from "../../hooks/document/useDocuments";
-import type { CreateDocumentInput } from "../../validations/document.validation";
-import type { UpdateDocumentInput } from "../../validations/invoice.validation";
+import { useCreateDocument } from "../../hooks/document/useCreateDocument";
+import { useDocument } from "../../hooks/document/useDocument";
+import { useUpdateDocument } from "../../hooks/document/useUpdateDocuments";
+
+import type {
+  CreateDocumentInput,
+  UpdateDocumentInput,
+} from "../../validations/document.validation";
+
 import DocumentForm from "../form/DocumentForm";
+
 import {
   Dialog,
   DialogContent,
@@ -9,18 +16,18 @@ import {
   DialogTitle,
 } from "../ui/dialog";
 
-
-
 interface Props {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   documentId?: string;
+  shipmentId: string;
 }
 
 export default function DocumentDialog({
   open,
   onOpenChange,
   documentId,
+  shipmentId,
 }: Props) {
   const isEditing = Boolean(documentId);
 
@@ -31,15 +38,13 @@ export default function DocumentDialog({
   const updateMutation = useUpdateDocument();
 
   function handleSubmit(
-    data:
-      | CreateDocumentInput
-      | UpdateDocumentInput
+    data: CreateDocumentInput | UpdateDocumentInput
   ) {
     if (isEditing && documentId) {
       updateMutation.mutate(
         {
           id: documentId,
-          data,
+          payload: data as UpdateDocumentInput,
         },
         {
           onSuccess: () => {
@@ -51,14 +56,75 @@ export default function DocumentDialog({
       return;
     }
 
-    createMutation.mutate(
-      data as CreateDocumentInput,
-      {
-        onSuccess: () => {
-          onOpenChange(false);
-        },
-      }
+    const createData =
+      data as CreateDocumentInput;
+
+    const formData = new FormData();
+
+    formData.append("type", createData.type);
+
+    formData.append(
+      "attachTo",
+      "SHIPMENT"
     );
+
+    formData.append(
+      "shipmentId",
+      shipmentId
+    );
+
+    if (createData.allocationId) {
+      formData.append(
+        "allocationId",
+        createData.allocationId
+      );
+    }
+
+    if (createData.containerId) {
+      formData.append(
+        "containerId",
+        createData.containerId
+      );
+    }
+
+    if (createData.packingListId) {
+      formData.append(
+        "packingListId",
+        createData.packingListId
+      );
+    }
+
+    if (createData.invoiceId) {
+      formData.append(
+        "invoiceId",
+        createData.invoiceId
+      );
+    }
+
+    if (createData.transitId) {
+      formData.append(
+        "transitId",
+        createData.transitId
+      );
+    }
+
+    if (createData.remarks) {
+      formData.append(
+        "remarks",
+        createData.remarks
+      );
+    }
+
+    formData.append(
+      "file",
+      createData.file
+    );
+
+    createMutation.mutate(formData, {
+      onSuccess: () => {
+        onOpenChange(false);
+      },
+    });
   }
 
   return (
@@ -85,14 +151,21 @@ export default function DocumentDialog({
             document
               ? {
                   shipmentId:
-                    document.shipmentId,
-                  type: document.type,
+                    document.shipmentId ??
+                    "",
+                  attachTo:
+                    "SHIPMENT",
+                  type:
+                    document.type,
                   remarks:
-                    document.remarks ?? "",
-                  fileName:
-                    document.fileName,
+                    document.remarks ??
+                    "",
                 }
-              : undefined
+              : {
+                  shipmentId,
+                  attachTo:
+                    "SHIPMENT",
+                }
           }
           onSubmit={handleSubmit}
         />

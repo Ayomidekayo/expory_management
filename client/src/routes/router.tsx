@@ -2,7 +2,7 @@ import { createBrowserRouter, Navigate } from "react-router-dom";
 
 import LoginPage from "../pages/auth/LoginPage";
 import RegisterPage from "../pages/auth/RegisterPage";
-import { DashboardPage } from "../pages/dashboard/DashboardPage";
+
 import ProtectedRoute from "./ProtectedRoute";
 
 import DashboardLayout from "../components/layout/DashboardLayout";
@@ -46,6 +46,7 @@ import ClientListPage from "../pages/client/ClientListPage";
 import ClientDetailsPage from "../pages/client/ClientDetailsPage";
 import CreateClientPage from "../pages/client/CreateClientPage";
 import EditClientPage from "../pages/client/EditClientPage";
+import { DashboardPage } from "../pages/dashboard/Dashboard";
 
 
 
@@ -86,18 +87,17 @@ export const router = createBrowserRouter([
               {
             path: "/exporters/:id/edit",
             element: <EditExporterPage/>,
-            // element: <ExportersPage />,
           },
            {
             path: "/exporters/new",
             element: <CreateExporterPage/>,
-            // element: <ExportersPage />,
+
           },
 
            {
             path: "/exporters/:id",
             element: <ExporterDetailsPage/>,
-            // element: <ExportersPage />,
+         
           },
 
           {

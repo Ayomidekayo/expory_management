@@ -1,15 +1,21 @@
 import type {
-  Allocation,
-  Client,
   Consignee,
-  Exporter,
   Invoice,
   PackingList,
-  Container,
-  Transit,
   Document,
   User,
 } from ".";
+import type { Allocation } from "./allocation.types";
+import type { Client } from "./client.types";
+import type { Container } from "./container.type";
+import type { Exporter } from "./exporter.types";
+import type { Transit } from "./transit.type";
+
+/*
+=====================================
+Enums
+=====================================
+*/
 
 export type ShipmentStatus =
   | "DRAFT"
@@ -29,6 +35,12 @@ export type TransportMode =
   | "AIR"
   | "RAIL";
 
+/*
+=====================================
+Shipment
+=====================================
+*/
+
 export interface Shipment {
   id: string;
 
@@ -36,61 +48,45 @@ export interface Shipment {
 
   shipmentDate: string;
 
-  xfNumber?: string;
-
-  nxpNumber?: string;
-
-  cciNumber?: string;
-
-  eNumber?: string;
-
-  bookingNumber?: string;
-
-  transportMode: TransportMode;
-
-  shippingLine?: string;
-
-  vesselName?: string;
-
-  voyageNumber?: string;
-
-  portOfLoading?: string;
-
-  portOfDischarge?: string;
-
-  expectedDeparture?: string;
-
-  expectedArrival?: string;
-
-  actualDeparture?: string;
-
-  actualArrival?: string;
-  
-
-  remarks?: string;
-
-  status: ShipmentStatus;
-
   clientId: string;
-
   exporterId: string;
-
   consigneeId: string;
-
   allocationId?: string;
 
   createdById: string;
 
+  transportMode: TransportMode;
+
+  status: ShipmentStatus;
+
+  xfNumber?: string;
+  nxpNumber?: string;
+  cciNumber?: string;
+  eNumber?: string;
+
+  bookingNumber?: string;
+
+  shippingLine?: string;
+  vesselName?: string;
+  voyageNumber?: string;
+
+  portOfLoading?: string;
+  portOfDischarge?: string;
+
+  expectedDeparture?: string;
+  expectedArrival?: string;
+
+  actualDeparture?: string;
+  actualArrival?: string;
+
+  remarks?: string;
+
   client: Client;
-
   exporter: Exporter;
-
   consignee: Consignee;
-
   allocation?: Allocation;
 
   invoice?: Invoice;
-
   packingList?: PackingList;
 
   containers: Container[];
@@ -107,12 +103,16 @@ export interface Shipment {
 
   _count: {
     containers: number;
-
     documents: number;
-
     transits: number;
   };
 }
+
+/*
+=====================================
+Queries
+=====================================
+*/
 
 export interface ShipmentQuery {
   page?: number;
@@ -141,8 +141,26 @@ export interface ShipmentQuery {
   sortOrder?: "asc" | "desc";
 }
 
+/*
+=====================================
+Create
+=====================================
+*/
+
 export interface CreateShipmentDto {
   shipmentDate: string;
+
+  clientId: string;
+
+  exporterId: string;
+
+  consigneeId: string;
+
+  allocationId?: string;
+
+  transportMode: TransportMode;
+
+  status?: ShipmentStatus;
 
   xfNumber?: string;
 
@@ -153,8 +171,6 @@ export interface CreateShipmentDto {
   eNumber?: string;
 
   bookingNumber?: string;
-
-  transportMode: TransportMode;
 
   shippingLine?: string;
 
@@ -175,17 +191,13 @@ export interface CreateShipmentDto {
   actualArrival?: string;
 
   remarks?: string;
-
-  status?: ShipmentStatus;
-
-  clientId: string;
-
-  exporterId: string;
-
-  consigneeId: string;
-
-  allocationId?: string;
 }
 
-export interface UpdateShipmentDto
-  extends Partial<CreateShipmentDto> {}
+/*
+=====================================
+Update
+=====================================
+*/
+
+export type UpdateShipmentDto =
+  Partial<CreateShipmentDto>;

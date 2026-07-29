@@ -1,3 +1,4 @@
+import type { TransportMode } from "../enums";
 
 
 
@@ -22,10 +23,7 @@ export interface Consignee {
 
   portOfDischarge: string;
 
-  transportMode:
-    | "ROAD"
-    | "SEA"
-    | "AIR";
+  transportMode?: TransportMode;
 
   createdAt: string;
 

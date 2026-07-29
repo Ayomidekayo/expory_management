@@ -8,169 +8,193 @@ export function printPackingList(
 ) {
   const doc = new jsPDF();
 
-  // We'll build it step by step...
+  // ==========================================
+  // Header
+  // ==========================================
 
   doc.setFontSize(18);
 
-doc.text(
-  "EXPORT SERVICES",
-  105,
-  20,
-  { align: "center" }
-);
+  doc.text(
+    "EXPORT SERVICES",
+    105,
+    20,
+    { align: "center" }
+  );
 
-doc.setFontSize(15);
+  doc.setFontSize(15);
 
-doc.text(
-  "PACKING LIST",
-  105,
-  30,
-  { align: "center" }
-);
+  doc.text(
+    "PACKING LIST",
+    105,
+    30,
+    { align: "center" }
+  );
 
-doc.line(15, 35, 195, 35);
+  doc.line(15, 35, 195, 35);
 
-doc.setFontSize(11);
+  // ==========================================
+  // Basic Information
+  // ==========================================
 
-doc.text(
-  `Packing List No: ${packingList.packingListNumber}`,
-  15,
-  45
-);
+  doc.setFontSize(11);
 
-doc.text(
-  `Shipment No: ${packingList.shipment.shipmentNumber}`,
-  15,
-  52
-);
+  doc.text(
+    `Packing List No: ${packingList.packingListNumber ?? "-"}`,
+    15,
+    45
+  );
 
-doc.text(
-  `Packing Date: ${new Date(
-    packingList.packingDate
-  ).toLocaleDateString()}`,
-  15,
-  59
-);
+  doc.text(
+    `Shipment No: ${packingList.shipment?.shipmentNumber ?? "-"}`,
+    15,
+    52
+  );
 
-doc.text(
-  `Exporter: ${
-    packingList.shipment.exporter?.name ??
-    "-"
-  }`,
-  15,
-  72
-);
+  doc.text(
+    `Packing Date: ${
+      packingList.packingDate
+        ? new Date(packingList.packingDate).toLocaleDateString()
+        : "-"
+    }`,
+    15,
+    59
+  );
 
-doc.text(
-  `Consignee: ${
-    packingList.shipment.consignee?.name ??
-    "-"
-  }`,
-  15,
-  80
-);
-autoTable(doc, {
+  doc.text(
+    `Exporter: ${
+      packingList.shipment?.exporter?.name ?? "-"
+    }`,
+    15,
+    72
+  );
 
-  startY: 90,
+  doc.text(
+    `Consignee: ${
+      packingList.shipment?.consignee?.name ?? "-"
+    }`,
+    15,
+    80
+  );
 
-  head: [[
-    "Description",
-    "Package",
-    "Packages",
-    "Gross",
-    "Net",
-  ]],
+  // ==========================================
+  // Items Table
+  // ==========================================
 
-  body:
-    packingList.items.map(item => [
+  autoTable(doc, {
+    startY: 90,
 
-      item.description,
+    head: [[
+      "Description",
+      "Package",
+      "Packages",
+      "Gross",
+      "Net",
+    ]],
 
-      item.packageType,
-
-      item.packages,
-
-      item.grossWeight,
-
-      item.netWeight,
-
+    body: (packingList.items ?? []).map((item) => [
+      item.description ?? "-",
+      item.packageType ?? "-",
+      item.packages ?? 0,
+      item.grossWeight ?? 0,
+      item.netWeight ?? 0,
     ]),
+  });
 
-});
+  const finalY =
+    (doc as jsPDF & {
+      lastAutoTable: { finalY: number };
+    }).lastAutoTable.finalY + 15;
 
-const finalY =
-  (doc as any).lastAutoTable.finalY + 15;
+  // ==========================================
+  // Summary
+  // ==========================================
 
-doc.text(
-  `Total Packages: ${packingList.totalPackages}`,
-  15,
-  finalY
-);
+  doc.text(
+    `Total Packages: ${packingList.totalPackages ?? 0}`,
+    15,
+    finalY
+  );
 
-doc.text(
-  `Gross Weight: ${packingList.grossWeight} KG`,
-  15,
-  finalY + 8
-);
+  doc.text(
+    `Gross Weight: ${packingList.grossWeight ?? 0} KG`,
+    15,
+    finalY + 8
+  );
 
-doc.text(
-  `Net Weight: ${packingList.netWeight} KG`,
-  15,
-  finalY + 16
-);
-doc.text(
-  "Marks & Numbers",
-  15,
-  finalY + 32
-);
+  doc.text(
+    `Net Weight: ${packingList.netWeight ?? 0} KG`,
+    15,
+    finalY + 16
+  );
 
-doc.rect(
-  15,
-  finalY + 36,
-  180,
-  22
-);
+  // ==========================================
+  // Marks & Numbers
+  // ==========================================
 
-doc.text(
-  packingList.marksAndNumbers ?? "-",
-  20,
-  finalY + 46
-);
+  doc.text(
+    "Marks & Numbers",
+    15,
+    finalY + 32
+  );
 
-doc.text(
-  "Remarks",
-  15,
-  finalY + 70
-);
+  doc.rect(
+    15,
+    finalY + 36,
+    180,
+    22
+  );
 
-doc.rect(
-  15,
-  finalY + 74,
-  180,
-  25
-);
+  doc.text(
+    packingList.marksAndNumbers ?? "-",
+    20,
+    finalY + 46
+  );
 
-doc.text(
-  packingList.remarks ?? "-",
-  20,
-  finalY + 84
-);
+  // ==========================================
+  // Remarks
+  // ==========================================
 
-doc.line(
-  135,
-  finalY + 125,
-  190,
-  finalY + 125
-);
+  doc.text(
+    "Remarks",
+    15,
+    finalY + 70
+  );
 
-doc.text(
-  "Authorized Signature",
-  138,
-  finalY + 132
-);
+  doc.rect(
+    15,
+    finalY + 74,
+    180,
+    25
+  );
 
-doc.save(
-  `${packingList.packingListNumber}.pdf`
-);
+  doc.text(
+    packingList.remarks ?? "-",
+    20,
+    finalY + 84
+  );
+
+  // ==========================================
+  // Signature
+  // ==========================================
+
+  doc.line(
+    135,
+    finalY + 125,
+    190,
+    finalY + 125
+  );
+
+  doc.text(
+    "Authorized Signature",
+    138,
+    finalY + 132
+  );
+
+  // ==========================================
+  // Save
+  // ==========================================
+
+  doc.save(
+    `${packingList.packingListNumber ?? "packing-list"}.pdf`
+  );
 }
-

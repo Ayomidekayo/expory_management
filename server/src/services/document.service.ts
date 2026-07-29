@@ -41,7 +41,7 @@ async create(
   const uploaded =
     await uploadToCloudinary(
       file,
-      "obest/documents"
+      "documents"
     );
 
   console.log(uploaded);
@@ -141,7 +141,7 @@ async create(
   document.publicId,
   {
     invalidate: true,
-    resource_type: "auto",
+    resource_type: "image",
   }
 );
       

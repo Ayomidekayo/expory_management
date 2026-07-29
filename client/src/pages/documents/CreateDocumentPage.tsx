@@ -128,7 +128,9 @@ export default function CreateDocumentPage() {
             values.invoiceId!
         );
       }
-
+for (const [key, value] of formData.entries()) {
+  console.log(key, value);
+}
       await createMutation.mutateAsync(
         formData
       );

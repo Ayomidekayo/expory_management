@@ -191,7 +191,7 @@ export function downloadDocument(
 
   link.href =
     getFileUrl(fileUrl);
-
+console.log(getFileUrl)
   link.download = fileName;
 
   document.body.appendChild(link);

@@ -1,5 +1,4 @@
 import type { ColumnDef } from "@tanstack/react-table";
-
 import type { Exporter } from "../types/exporter.types";
 import DataTableActions from "./data-table/DataTableActions";
 

@@ -12,7 +12,7 @@ import { Button } from "../../components/ui/button";
 
 import DocumentList from "../../components/documents/DocumentList";
 import DocumentDialog from "../../components/documents/DocumentDialog";
-import type { Shipment } from "../../types/shipment";
+import type { Shipment } from "../../types/shipment.types";
 
 interface Props {
   shipment: Shipment;

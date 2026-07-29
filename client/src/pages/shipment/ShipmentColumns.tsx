@@ -1,7 +1,6 @@
 import { MoreHorizontal } from "lucide-react";
 import { format } from "date-fns";
 
-import type { Shipment } from "../../types/shipment";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -11,6 +10,7 @@ import {
 import type { ColumnDef } from "@tanstack/react-table";
 import { Button } from "../../components/ui/button";
 import { Badge } from "../../components/ui/badge";
+import type { Shipment } from "../../types/shipment.types";
 
 interface Props {
   onView: (shipment: Shipment) => void;
@@ -25,8 +25,6 @@ function getStatusVariant(status: Shipment["status"]) {
     case "COMPLETED":
       return "default";
 
-    case "PENDING":
-      return "secondary";
 
     case "IN_TRANSIT":
       return "outline";

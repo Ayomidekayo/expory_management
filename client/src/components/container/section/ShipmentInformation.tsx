@@ -23,9 +23,6 @@ import type {
   CreateContainerInput,
 } from "../../../validations/container.validation";
 
-import {
-  useAvailableShipments,
-} from "../../../hooks/shipments/useAvailableShipments";
 
 import {
   useShipment,
@@ -330,11 +327,12 @@ useEffect(() => {
                 Packing List
 
               </FormLabel>
-
-             <Select
+<Select
   disabled={!shipmentId}
   value={field.value ?? ""}
-  onValueChange={field.onChange}
+  onValueChange={(value) => {
+    field.onChange(value || undefined);
+  }}
 >
 
                 <FormControl>
