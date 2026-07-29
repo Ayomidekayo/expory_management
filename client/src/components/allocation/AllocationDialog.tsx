@@ -1,60 +1,3 @@
-// import {
-//   Dialog,
-//   DialogContent,
-//   DialogHeader,
-//   DialogTitle,
-//   DialogDescription,
-// } from "../ui/dialog";
-
-// import AllocationForm from "./AllocationForm";
-
-// import type { Allocation } from "../../types/allocation.types";
-
-// interface AllocationDialogProps {
-//   open: boolean;
-//   onOpenChange: (open: boolean) => void;
-//   allocation?: Allocation;
-// }
-
-// export default function AllocationDialog({
-//   open,
-//   onOpenChange,
-//   allocation,
-// }: AllocationDialogProps) {
-//   const isEdit = !!allocation;
-
-//   return (
-//     <Dialog
-//       open={open}
-//       onOpenChange={onOpenChange}
-      
-//     >
-//       <DialogContent className="max-w max-h-[95vh] overflow-y-auto">
-
-//         <DialogHeader>
-
-//           <DialogTitle>
-//             {isEdit
-//               ? "Edit Allocation"
-//               : "Create New Allocation"}
-//           </DialogTitle>
-
-//           <DialogDescription>
-//             {isEdit
-//               ? "Update the allocation details below."
-//               : "Fill in the details below to create a new export allocation."}
-//           </DialogDescription>
-
-//         </DialogHeader>
-
-//         <AllocationForm
-//           allocation={allocation}
-//         />
-
-//       </DialogContent>
-//     </Dialog>
-//   );
-// }
 
 import {
   Dialog,
@@ -110,9 +53,13 @@ export default function AllocationDialog({
             </DialogDescription>
           </DialogHeader>
 
-          <AllocationForm
-            allocation={allocation}
-          />
+<AllocationForm
+  defaultValues={allocation}
+  isEditing={!!allocation}
+  onSubmit={(values) => {
+    console.log(values);
+  }}
+/>
         </div>
       </DialogContent>
     </Dialog>
