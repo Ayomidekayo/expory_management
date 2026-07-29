@@ -8,6 +8,7 @@ import { Form } from "../ui/form";
 import {
   createPackingListSchema,
   type CreatePackingListInput,
+  type CreatePackingListOutput,
 } from "../../validations/packing-list.validation";
 import PackingInformation from "./section/PackingInformation";
 import PackingItems from "./section/PackingItems";
@@ -34,11 +35,12 @@ export default function PackingListForm({
   loading = false,
   onSubmit,
 }: Props) {
-  const form =
-    useForm<CreatePackingListInput>({
-      resolver: zodResolver(
-        createPackingListSchema
-      ),
+ const form = useForm<
+  CreatePackingListInput,
+  any,
+  CreatePackingListOutput
+>({
+  resolver: zodResolver(createPackingListSchema),
 
       defaultValues: {
         shipmentId: "",

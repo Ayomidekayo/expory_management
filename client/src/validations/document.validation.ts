@@ -1,5 +1,6 @@
 import z from "zod";
-import { DocumentType } from "../types";
+import { DocumentType } from "../types/enums";
+
 
 
 export const createDocumentSchema = z.object({

@@ -1,7 +1,6 @@
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
-
-import type { PackingList } from "../types";
+import type { PackingList } from "../types/packing-list";
 
 export function printPackingList(
   packingList: PackingList

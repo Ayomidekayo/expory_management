@@ -1,28 +1,4 @@
-// import type { InvoiceItem } from "./invoice-item";
 
-// export interface Invoice {
-//   id: string;
-
-//   shipmentId: string;
-
-//   invoiceNumber: string;
-
-//   invoiceDate: string;
-
-//   currency: string;
-
-//   numberOfTrucks: number;
-
-//   freight: number;
-
-//   totalAmount: number;
-
-//   items: InvoiceItem[];
-
-//   createdAt: string;
-
-//   updatedAt: string;
-// }
 
 import type { Shipment } from "./shipment.types";
 

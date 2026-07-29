@@ -17,22 +17,16 @@ import FormActions from "./sections/FormActions";
 import {
   createAllocationSchema,
   type CreateAllocationInput,
+  type CreateAllocationOutput,
 } from "../../validations/allocation.schema";
 
-import type {
-  Allocation,
-} from "../../types/allocation.types";
+import type { Allocation } from "../../types/allocation.types";
 
 interface Props {
   defaultValues?: Partial<Allocation>;
-
   loading?: boolean;
-
   isEditing?: boolean;
-
-  onSubmit: (
-    values: CreateAllocationInput
-  ) => void;
+  onSubmit: (values: CreateAllocationOutput) => void;
 }
 
 export default function AllocationForm({
@@ -43,168 +37,169 @@ export default function AllocationForm({
 }: Props) {
   const navigate = useNavigate();
 
-  const form =
-    useForm<CreateAllocationInput>({
-      resolver: zodResolver(
-        createAllocationSchema
-      ),
+  const form = useForm<
+    CreateAllocationInput,
+    undefined,
+    CreateAllocationOutput
+  >({
+    resolver: zodResolver(createAllocationSchema),
 
-      defaultValues: {
-        clientId: "",
+    defaultValues: {
+      clientId: "",
+      exporterId: undefined,
+      consigneeId: undefined,
 
-        exporterId: "",
+      serviceType: "EXPORT_DOCUMENTATION",
+      priority: "MEDIUM",
 
-        consigneeId: "",
+      cargoDescription: "",
 
-        serviceType:
-          "EXPORT_DOCUMENTATION",
+      destinationCountry: "",
 
-        priority: "MEDIUM",
+      insuranceRequired: false,
 
-        cargoDescription: "",
-
-        destinationCountry: "",
-
-        insuranceRequired: false,
-
-        ...defaultValues,
-      },
-    });
-
- useEffect(() => {
-  if (!defaultValues) return;
-
-  form.reset({
-    clientId: defaultValues.clientId ?? "",
-    exporterId: defaultValues.exporterId ?? undefined,
-    consigneeId: defaultValues.consigneeId ?? undefined,
-
-    serviceType: defaultValues.serviceType,
-    priority: defaultValues.priority,
-
-    cargoDescription: defaultValues.cargoDescription,
-
-    cargoType: defaultValues.cargoType ?? undefined,
-    commodityCode: defaultValues.commodityCode ?? undefined,
-    commodityName: defaultValues.commodityName ?? undefined,
-
-    quantity: defaultValues.quantity,
-    packageType: defaultValues.packageType ?? undefined,
-    numberOfPackages: defaultValues.numberOfPackages,
-
-    grossWeight: defaultValues.grossWeight,
-    netWeight: defaultValues.netWeight,
-    volume: defaultValues.volume,
-
-    originCountry: defaultValues.originCountry ?? undefined,
-    originCity: defaultValues.originCity ?? undefined,
-
-    pickupAddress: defaultValues.pickupAddress ?? undefined,
-    pickupDate: defaultValues.pickupDate ?? undefined,
-
-    destinationCountry:
-      defaultValues.destinationCountry,
-
-    destinationCity:
-      defaultValues.destinationCity ?? undefined,
-
-    portOfLoading:
-      defaultValues.portOfLoading ?? undefined,
-
-    portOfDischarge:
-      defaultValues.portOfDischarge ?? undefined,
-
-    transportMode:
-      defaultValues.transportMode ?? undefined,
-
-    shippingLine:
-      defaultValues.shippingLine ?? undefined,
-
-    incoterm:
-      defaultValues.incoterm ?? undefined,
-
-    deliveryAddress:
-      defaultValues.deliveryAddress ?? undefined,
-
-    expectedShipmentDate:
-      defaultValues.expectedShipmentDate ??
-      undefined,
-
-    estimatedValue:
-      defaultValues.estimatedValue,
-
-    currency:
-      defaultValues.currency ?? undefined,
-
-    paymentTerms:
-      defaultValues.paymentTerms ?? undefined,
-
-    freightType:
-      defaultValues.freightType ?? undefined,
-
-    insuranceRequired:
-      defaultValues.insuranceRequired ?? false,
-
-    specialInstruction:
-      defaultValues.specialInstruction ??
-      undefined,
-
-    internalRemark:
-      defaultValues.internalRemark ??
-      undefined,
-
-    destinationPort:
-      defaultValues.destinationPort ??
-      undefined,
-
-    assignedToId:
-      defaultValues.assignedToId ??
-      undefined,
+      ...defaultValues,
+    },
   });
-}, [defaultValues, form]);
+
+  useEffect(() => {
+    if (!defaultValues) return;
+
+    form.reset({
+      clientId: defaultValues.clientId ?? "",
+
+      exporterId: defaultValues.exporterId || undefined,
+      consigneeId: defaultValues.consigneeId || undefined,
+
+      serviceType:
+        defaultValues.serviceType ?? "EXPORT_DOCUMENTATION",
+
+      priority:
+        defaultValues.priority ?? "MEDIUM",
+
+      cargoDescription:
+        defaultValues.cargoDescription ?? "",
+
+      cargoType:
+        defaultValues.cargoType ?? "",
+
+      commodityCode:
+        defaultValues.commodityCode ?? "",
+
+      commodityName:
+        defaultValues.commodityName ?? "",
+
+      quantity: defaultValues.quantity,
+
+      packageType:
+        defaultValues.packageType ?? "",
+
+      numberOfPackages:
+        defaultValues.numberOfPackages,
+
+      grossWeight:
+        defaultValues.grossWeight,
+
+      netWeight:
+        defaultValues.netWeight,
+
+      volume:
+        defaultValues.volume,
+
+      originCountry:
+        defaultValues.originCountry ?? "",
+
+      originCity:
+        defaultValues.originCity ?? "",
+
+      pickupAddress:
+        defaultValues.pickupAddress ?? "",
+
+      pickupDate:
+        defaultValues.pickupDate ?? "",
+
+      destinationCountry:
+        defaultValues.destinationCountry ?? "",
+
+      destinationCity:
+        defaultValues.destinationCity ?? "",
+
+      portOfLoading:
+        defaultValues.portOfLoading ?? "",
+
+      portOfDischarge:
+        defaultValues.portOfDischarge ?? "",
+
+      transportMode:
+        defaultValues.transportMode ?? undefined,
+
+      shippingLine:
+        defaultValues.shippingLine ?? "",
+
+      incoterm:
+        defaultValues.incoterm ?? "",
+
+      deliveryAddress:
+        defaultValues.deliveryAddress ?? "",
+
+      expectedShipmentDate:
+        defaultValues.expectedShipmentDate ?? "",
+
+      destinationPort:
+        defaultValues.destinationPort ?? "",
+
+      estimatedValue:
+        defaultValues.estimatedValue,
+
+      currency:
+        defaultValues.currency ?? "",
+
+      paymentTerms:
+        defaultValues.paymentTerms ?? "",
+
+      freightType:
+        defaultValues.freightType ?? "",
+
+      insuranceRequired:
+        defaultValues.insuranceRequired ?? false,
+
+      specialInstruction:
+        defaultValues.specialInstruction ?? "",
+
+      internalRemark:
+        defaultValues.internalRemark ?? "",
+
+      assignedToId:
+        defaultValues.assignedToId || undefined,
+    });
+  }, [defaultValues, form]);
 
   return (
     <Form {...form}>
       <form
-        onSubmit={form.handleSubmit(
-          onSubmit
-        )}
+        onSubmit={form.handleSubmit((values) => {
+          onSubmit(values);
+        })}
         className="space-y-6"
       >
-        <ClientInformation
-          form={form}
-        />
+        <ClientInformation form={form} />
 
-        <ServiceInformation
-          form={form}
-        />
+        <ServiceInformation form={form} />
 
-        <CargoInformation
-          form={form}
-        />
+        <CargoInformation form={form} />
 
-        <ShippingInformation
-          form={form}
-        />
+        <ShippingInformation form={form} />
 
-        <FinancialInformation
-          form={form}
-        />
+        <FinancialInformation form={form} />
 
-        <RemarksSection
-          form={form}
-        />
+        <RemarksSection form={form} />
 
-        <WorkflowInformation
-          form={form}
-        />
+        <WorkflowInformation form={form} />
 
         <FormActions
           isLoading={loading}
           isEdit={isEditing}
-          onCancel={() =>
-            navigate("/allocations")
-          }
+          onCancel={() => navigate("/allocations")}
         />
       </form>
     </Form>

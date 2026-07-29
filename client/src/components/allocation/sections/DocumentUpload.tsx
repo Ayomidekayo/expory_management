@@ -1,178 +1,171 @@
+import { useState } from "react";
 import { Upload, X, FileText } from "lucide-react";
 
 import { Button } from "../../ui/button";
-
 import FormSection from "../../form/FormSection";
+import type { AllocationSectionProps } from "../../../types/allocation.types";
 
-import { useState } from "react";
-import type { AllocationSectionProps } from "./types";
 
+
+const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10 MB
+
+const ACCEPTED_TYPES = [
+  "application/pdf",
+  "application/msword",
+  "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+  "application/vnd.ms-excel",
+  "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+  "image/png",
+  "image/jpeg",
+];
 
 export default function DocumentUpload({
   form: _form,
 }: AllocationSectionProps) {
   const [files, setFiles] = useState<File[]>([]);
 
-const handleFileChange = (
-  e: React.ChangeEvent<HTMLInputElement>
-) => {
-  if (!e.target.files) return;
+  const handleFileChange = (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    if (!e.target.files) return;
 
-  const selectedFiles = Array.from(e.target.files);
+    const selectedFiles = Array.from(e.target.files);
 
-  setFiles((prev) => {
-    const existingNames = new Set(
-      prev.map((f) => f.name)
+    setFiles((prev) => {
+      const existingNames = new Set(
+        prev.map((file) => file.name)
+      );
+
+      const newFiles = selectedFiles.filter((file) => {
+        if (existingNames.has(file.name)) {
+          return false;
+        }
+
+        if (!ACCEPTED_TYPES.includes(file.type)) {
+          return false;
+        }
+
+        if (file.size > MAX_FILE_SIZE) {
+          return false;
+        }
+
+        return true;
+      });
+
+      return [...prev, ...newFiles];
+    });
+
+    e.target.value = "";
+  };
+
+  const removeFile = (index: number) => {
+    setFiles((prev) =>
+      prev.filter((_, i) => i !== index)
     );
+  };
 
-    const newFiles = selectedFiles.filter(
-      (file) => !existingNames.has(file.name)
-    );
+  const formatFileSize = (size: number) => {
+    if (size >= 1024 * 1024) {
+      return `${(size / (1024 * 1024)).toFixed(2)} MB`;
+    }
 
-    return [...prev, ...newFiles];
-  });
+    return `${(size / 1024).toFixed(2)} KB`;
+  };
 
-  e.target.value = "";
-};
-const removeFile = (index: number) => {
+  return (
+    <FormSection
+      title="Supporting Documents"
+      description="Upload invoices, permits, certificates and other supporting documents."
+    >
+      <div className="space-y-6">
+        <label
+          className="
+            flex
+            cursor-pointer
+            flex-col
+            items-center
+            justify-center
+            rounded-xl
+            border-2
+            border-dashed
+            border-slate-300
+            p-12
+            transition
+            hover:border-emerald-500
+            hover:bg-emerald-50
+          "
+        >
+          <Upload
+            className="mb-4 text-slate-400"
+            size={48}
+          />
 
-  setFiles((prev) =>
-    prev.filter((_, i) => i !== index)
+          <h3 className="font-semibold">
+            Upload Documents
+          </h3>
+
+          <p className="mt-2 text-sm text-slate-500">
+            Click or drag files here
+          </p>
+
+          <input
+            type="file"
+            multiple
+            className="hidden"
+            accept=".pdf,.doc,.docx,.xls,.xlsx,.png,.jpg,.jpeg"
+            onChange={handleFileChange}
+          />
+        </label>
+
+        <div className="space-y-3">
+          {files.map((file, index) => (
+            <div
+              key={`${file.name}-${file.size}`}
+              className="flex items-center justify-between rounded-lg border p-4"
+            >
+              <div className="flex items-center gap-3">
+                <FileText
+                  size={20}
+                  className="text-blue-600"
+                />
+
+                <div>
+                  <p className="font-medium">
+                    {file.name}
+                  </p>
+
+                  <p className="text-sm text-slate-500">
+                    {formatFileSize(file.size)}
+                  </p>
+                </div>
+              </div>
+
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon"
+                onClick={() => removeFile(index)}
+              >
+                <X size={18} />
+              </Button>
+            </div>
+          ))}
+        </div>
+
+        <div className="rounded-lg bg-slate-100 p-4">
+          <p className="font-medium">
+            Accepted Files
+          </p>
+
+          <ul className="mt-2 list-disc pl-6 text-sm text-slate-600">
+            <li>PDF</li>
+            <li>Word (.doc, .docx)</li>
+            <li>Excel (.xls, .xlsx)</li>
+            <li>Images (.png, .jpg, .jpeg)</li>
+            <li>Maximum 10 MB each</li>
+          </ul>
+        </div>
+      </div>
+    </FormSection>
   );
-
-};
-return (
-
-<FormSection
-    title="Supporting Documents"
-    description="Upload invoices, permits, certificates and other supporting documents."
->
-
-<div className="space-y-6">
-    <label
-  className="
-      flex
-      cursor-pointer
-      flex-col
-      items-center
-      justify-center
-      rounded-xl
-      border-2
-      border-dashed
-      border-slate-300
-      p-12
-      transition
-      hover:border-emerald-500
-      hover:bg-emerald-50
-  "
->
-
-<Upload
-    className="mb-4 text-slate-400"
-    size={48}
-/>
-
-<h3 className="font-semibold">
-
-Upload Documents
-
-</h3>
-
-<p className="mt-2 text-sm text-slate-500">
-
-Click or drag files here
-
-</p>
-
-<input
-
-type="file"
-
-multiple
-
-className="hidden"
-
-onChange={handleFileChange}
-
-/>
-
-</label>
-<div className="space-y-3">
-
-{files.map((file, index)=>(
-
-<div
-
-key={index}
-
-className="flex items-center justify-between rounded-lg border p-4"
-
->
-
-<div className="flex items-center gap-3">
-
-<FileText
-size={20}
-className="text-blue-600"
-/>
-
-<div>
-
-<p className="font-medium">
-
-{file.name}
-
-</p>
-
-<p className="text-sm text-slate-500">
-
-{(file.size/1024).toFixed(2)} KB
-
-</p>
-
-</div>
-
-</div>
-<Button
-  type="button"
-  variant="ghost"
-  size="icon"
-  onClick={() => removeFile(index)}
->
-  <X size={18} />
-</Button>
-
-</div>
-
-))}
-
-</div>
-<div className="rounded-lg bg-slate-100 p-4">
-
-<p className="font-medium">
-
-Accepted Files
-
-</p>
-
-<ul className="mt-2 list-disc pl-6 text-sm text-slate-600">
-
-<li>PDF</li>
-
-<li>Word (.doc, .docx)</li>
-
-<li>Excel (.xls, .xlsx)</li>
-
-<li>Images (.png, .jpg)</li>
-
-<li>Maximum 10MB each</li>
-
-</ul>
-
-</div>
-</div>
-
-</FormSection>
-
-);
 }

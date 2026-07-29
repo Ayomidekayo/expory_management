@@ -31,144 +31,130 @@ const transportModes = [
 ] as const;
 
 /* ===========================================
+   REUSABLE SCHEMAS
+=========================================== */
+
+const optionalString = z.preprocess(
+  (value) => (value === "" ? undefined : value),
+  z.string().optional()
+);
+
+const optionalNumber = z.preprocess(
+  (value) => (value === "" ? undefined : value),
+  z.coerce.number().nonnegative().optional()
+);
+
+const optionalInteger = z.preprocess(
+  (value) => (value === "" ? undefined : value),
+  z.coerce.number().int().nonnegative().optional()
+);
+
+const optionalDate = z.preprocess(
+  (value) => (value === "" ? undefined : value),
+  z.string().datetime().optional()
+);
+
+/* ===========================================
    CREATE ALLOCATION
 =========================================== */
 
-export const createAllocationSchema =
-  z.object({
-    /* CLIENT */
+export const createAllocationSchema = z.object({
+  /* CLIENT */
 
-    clientId: z
-      .string()
-      .min(1, "Client is required."),
+  clientId: z
+    .string()
+    .min(1, "Client is required."),
 
-    exporterId: z.string().optional(),
+  exporterId: optionalString,
 
-    consigneeId: z.string().optional(),
+  consigneeId: optionalString,
 
-    /* SERVICE */
+  /* SERVICE */
 
-    serviceType: z.enum(serviceTypes),
+  serviceType: z.enum(serviceTypes),
 
-    priority: z.enum(priorities),
+  priority: z.enum(priorities),
 
-    /* CARGO */
+  /* CARGO */
 
-    cargoDescription: z
-      .string()
-      .min(
-        3,
-        "Cargo description is required."
-      ),
+  cargoDescription: z
+    .string()
+    .min(3, "Cargo description is required."),
 
-    cargoType: z.string().optional(),
+  cargoType: optionalString,
 
-    commodityCode: z.string().optional(),
+  commodityCode: optionalString,
 
-    commodityName: z.string().optional(),
+  commodityName: optionalString,
 
-    quantity: z.coerce
-      .number()
-      .nonnegative()
-      .optional(),
+  quantity: optionalNumber,
 
-    packageType: z.string().optional(),
+  packageType: optionalString,
 
-    numberOfPackages: z.coerce
-      .number()
-      .int()
-      .nonnegative()
-      .optional(),
+  numberOfPackages: optionalInteger,
 
-    grossWeight: z.coerce
-      .number()
-      .nonnegative()
-      .optional(),
+  grossWeight: optionalNumber,
 
-    netWeight: z.coerce
-      .number()
-      .nonnegative()
-      .optional(),
+  netWeight: optionalNumber,
 
-    volume: z.coerce
-      .number()
-      .nonnegative()
-      .optional(),
+  volume: optionalNumber,
 
-    /* SHIPPING */
+  /* SHIPPING */
 
-    originCountry: z.string().optional(),
+  originCountry: optionalString,
 
-    originCity: z.string().optional(),
+  originCity: optionalString,
 
-    pickupAddress: z.string().optional(),
+  pickupAddress: optionalString,
 
-   pickupDate: z.preprocess(
-  (value) => (value === "" ? undefined : value),
-  z.string().datetime().optional()
-),
+  pickupDate: optionalDate,
 
+  destinationCountry: z
+    .string()
+    .min(1, "Destination country is required."),
 
-    destinationCountry: z
-      .string()
-      .min(
-        1,
-        "Destination country is required."
-      ),
+  destinationCity: optionalString,
 
-    destinationCity: z.string().optional(),
+  portOfLoading: optionalString,
 
-    portOfLoading: z.string().optional(),
+  portOfDischarge: optionalString,
 
-    portOfDischarge: z.string().optional(),
+  transportMode: z
+    .enum(transportModes)
+    .optional(),
 
-    transportMode: z
-      .enum(transportModes)
-      .optional(),
+  shippingLine: optionalString,
 
-    shippingLine: z.string().optional(),
+  incoterm: optionalString,
 
-    incoterm: z.string().optional(),
+  deliveryAddress: optionalString,
 
-    deliveryAddress: z.string().optional(),
+  expectedShipmentDate: optionalDate,
 
-    expectedShipmentDate: z.preprocess(
-  (value) => (value === "" ? undefined : value),
-  z.string().datetime().optional()
-),
+  destinationPort: optionalString,
 
-    destinationPort:
-      z.string().optional(),
+  /* FINANCIAL */
 
-    /* FINANCIAL */
+  estimatedValue: optionalNumber,
 
-    estimatedValue: z.coerce
-      .number()
-      .nonnegative()
-      .optional(),
+  currency: optionalString,
 
-    currency: z.string().optional(),
+  paymentTerms: optionalString,
 
-    paymentTerms: z.string().optional(),
+  freightType: optionalString,
 
-    freightType: z.string().optional(),
+  insuranceRequired: z.boolean().default(false),
 
-    insuranceRequired:
-      z.boolean().default(false),
+  /* REMARKS */
 
-    /* REMARKS */
+  specialInstruction: optionalString,
 
-    specialInstruction:
-      z.string().optional(),
+  internalRemark: optionalString,
 
-    internalRemark:
-      z.string().optional(),
+  /* WORKFLOW */
 
-    /* WORKFLOW */
-
-    assignedToId:
-      z.string().optional(),
-  });
+  assignedToId: optionalString,
+});
 
 /* ===========================================
    UPDATE
@@ -177,9 +163,6 @@ export const createAllocationSchema =
 export const updateAllocationSchema =
   createAllocationSchema.partial();
 
-/* ===========================================
-   TYPES
-=========================================== */
 /* ===========================================
    TYPES
 =========================================== */

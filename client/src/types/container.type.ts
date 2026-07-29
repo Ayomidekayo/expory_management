@@ -2,10 +2,8 @@
    ENUMS
 =========================================== */
 
-import type {
-  PackingList,
-  Document,
-} from ".";
+
+import type { PackingList } from "./packing-list";
 import type { Shipment } from "./shipment.types";
 import type { Transit } from "./transit.type";
 

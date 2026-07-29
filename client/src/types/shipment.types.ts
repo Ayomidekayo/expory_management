@@ -1,15 +1,12 @@
-import type {
-  Consignee,
-  Invoice,
-  PackingList,
-  Document,
-  User,
-} from ".";
 import type { Allocation } from "./allocation.types";
 import type { Client } from "./client.types";
+import type { Consignee } from "./consignee";
 import type { Container } from "./container.type";
 import type { Exporter } from "./exporter.types";
+import type { Invoice } from "./invoice";
+import type { PackingList } from "./packing-list";
 import type { Transit } from "./transit.type";
+import type { User } from "./user";
 
 /*
 =====================================

@@ -1,3 +1,5 @@
+import type { UseFormReturn } from "react-hook-form";
+import type { CreateAllocationInput, CreateAllocationOutput } from "../validations/allocation.schema";
 import type {
   Client,
 } from "./client.types";
@@ -269,4 +271,12 @@ export interface AllocationQuery {
   sortBy?: string;
 
   sortOrder?: "asc" | "desc";
+}
+
+export interface AllocationSectionProps {
+  form: UseFormReturn<
+    CreateAllocationInput,
+    any,
+    CreateAllocationOutput
+  >;
 }

@@ -1,73 +1,60 @@
 import { z } from "zod";
 
 const optionalString = z.preprocess(
-  value => value === "" ? undefined : value,
+  (value) => (value === "" ? undefined : value),
   z.string().optional()
 );
 
 const optionalNumber = z.preprocess(
-  value => value === "" ? undefined : value,
-  z.coerce.number().optional()
+  (value) => (value === "" ? undefined : value),
+  z.number().optional()
 );
 
-export const createPackingListSchema =
-  z.object({
+export const createPackingListSchema = z.object({
+  shipmentId: z.string().min(1, "Shipment is required"),
 
-    shipmentId: z.string().min(1),
+  packingDate: z.string().min(1, "Packing date is required"),
 
-    packingDate: z.string().min(1),
+  packageType: optionalString,
 
-    packageType: optionalString,
+  totalPackages: optionalNumber,
 
-    totalPackages: optionalNumber,
+  grossWeight: z.coerce.number(),
 
-    grossWeight: z.coerce.number(),
+  netWeight: z.coerce.number(),
 
-    netWeight: z.coerce.number(),
+  marksAndNumbers: optionalString,
 
-    marksAndNumbers:
-      optionalString,
+  remarks: optionalString,
 
-    remarks:
-      optionalString,
+  items: z.array(
+    z.object({
+      description: z.string().min(1, "Description is required"),
 
-    items: z.array(
+      packageType: optionalString,
 
-      z.object({
+      packages: optionalNumber,
 
-        description:
-          z.string().min(1),
+      grossWeight: optionalNumber,
 
-        packageType:
-          optionalString,
+      netWeight: optionalNumber,
 
-        packages:
-          optionalNumber,
-
-        grossWeight:
-          optionalNumber,
-
-        netWeight:
-          optionalNumber,
-
-        remarks:
-          optionalString,
-
-      })
-
-    ),
-
-  });
+      remarks: optionalString,
+    })
+  ),
+});
 
 export const updatePackingListSchema =
   createPackingListSchema.partial();
 
 export type CreatePackingListInput =
-  z.infer<
-    typeof createPackingListSchema
-  >;
+  z.input<typeof createPackingListSchema>;
+
+export type CreatePackingListOutput =
+  z.output<typeof createPackingListSchema>;
 
 export type UpdatePackingListInput =
-  z.infer<
-    typeof updatePackingListSchema
-  >;
+  z.input<typeof updatePackingListSchema>;
+
+export type UpdatePackingListOutput =
+  z.output<typeof updatePackingListSchema>;

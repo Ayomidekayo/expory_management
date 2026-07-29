@@ -1,4 +1,3 @@
-
 import {
   Check,
   ChevronsUpDown,
@@ -36,11 +35,20 @@ import { useAllocationLookups } from "../../../hooks/allocation/useAllocationLoo
 
 import type {
   CreateAllocationInput,
+  CreateAllocationOutput,
 } from "../../../validations/allocation.schema";
-import type { UseFormReturn } from "react-hook-form";
+
+import type {
+  UseFormReturn,
+  FieldPath,
+} from "react-hook-form";
 
 interface Props {
-  form: UseFormReturn<CreateAllocationInput>;
+  form: UseFormReturn<
+    CreateAllocationInput,
+    any,
+    CreateAllocationOutput
+  >;
 }
 
 export default function ClientInformation({
@@ -51,14 +59,10 @@ export default function ClientInformation({
     exporters,
     consignees,
   } = useAllocationLookups();
-  console.log("Allocation ClientInformation");
-console.log(form);
 
   return (
     <div className="rounded-xl border bg-white p-6 space-y-6">
-
       <div>
-
         <h2 className="text-xl font-semibold">
           Client Information
         </h2>
@@ -66,13 +70,9 @@ console.log(form);
         <p className="text-sm text-slate-500">
           Select the client, exporter and consignee.
         </p>
-
       </div>
 
       <div className="grid gap-6 md:grid-cols-3">
-
-        {/* CLIENT */}
-
         <SearchableSelect
           form={form}
           name="clientId"
@@ -82,8 +82,6 @@ console.log(form);
             label: client.companyName,
           }))}
         />
-
-        {/* EXPORTER */}
 
         <SearchableSelect
           form={form}
@@ -95,8 +93,6 @@ console.log(form);
           }))}
         />
 
-        {/* CONSIGNEE */}
-
         <SearchableSelect
           form={form}
           name="consigneeId"
@@ -106,9 +102,7 @@ console.log(form);
             label: consignee.name,
           }))}
         />
-
       </div>
-
     </div>
   );
 }
@@ -119,53 +113,38 @@ interface Option {
 }
 
 interface SearchableSelectProps {
-  form: UseFormReturn<any>;
+  form: UseFormReturn<
+    CreateAllocationInput,
+    any,
+    CreateAllocationOutput
+  >;
 
-  name: string;
+  name: FieldPath<CreateAllocationInput>;
 
   label: string;
 
   options: Option[];
 }
+
 function SearchableSelect({
   form,
   name,
   label,
   options,
 }: SearchableSelectProps) {
-  console.log("SearchableSelect:", {
-    form,
-    name,
-    label,
-  });
-
-  if (!form) {
-    return (
-      <div className="text-red-500">
-        Form is undefined
-      </div>
-    );
-  }
-
   return (
     <FormField
       control={form.control}
       name={name}
       render={({ field }) => (
-
         <FormItem className="flex flex-col">
-
-          <FormLabel>
-            {label}
-          </FormLabel>
+          <FormLabel>{label}</FormLabel>
 
           <Popover>
-
             <PopoverTrigger asChild>
-
               <FormControl>
-
                 <Button
+                  type="button"
                   variant="outline"
                   role="combobox"
                   className={cn(
@@ -174,26 +153,21 @@ function SearchableSelect({
                       "text-muted-foreground"
                   )}
                 >
-                  {field.value
-                    ? options.find(
-                        (item) =>
-                          item.value ===
-                          field.value
-                      )?.label
-                    : `Select ${label}`}
+                  {options.find(
+                    (item) =>
+                      item.value === field.value
+                  )?.label ?? `Select ${label}`}
 
-                  <ChevronsUpDown className="h-4 w-4 opacity-50" />
-
+                  <ChevronsUpDown className="h-4 w-4 shrink-0 opacity-50" />
                 </Button>
-
               </FormControl>
-
             </PopoverTrigger>
 
-            <PopoverContent className="w-full p-0">
-
+            <PopoverContent
+              className="w-full p-0"
+              align="start"
+            >
               <Command>
-
                 <CommandInput
                   placeholder={`Search ${label}`}
                 />
@@ -203,46 +177,37 @@ function SearchableSelect({
                 </CommandEmpty>
 
                 <CommandGroup>
-
                   {options.map((option) => (
-
                     <CommandItem
                       key={option.value}
                       value={option.label}
                       onSelect={() =>
                         field.onChange(
-                          option.value
+                          option.value === field.value
+                            ? undefined
+                            : option.value
                         )
                       }
                     >
                       <Check
                         className={cn(
                           "mr-2 h-4 w-4",
-                          option.value ===
-                            field.value
+                          option.value === field.value
                             ? "opacity-100"
                             : "opacity-0"
                         )}
                       />
 
                       {option.label}
-
                     </CommandItem>
-
                   ))}
-
                 </CommandGroup>
-
               </Command>
-
             </PopoverContent>
-
           </Popover>
 
           <FormMessage />
-
         </FormItem>
-
       )}
     />
   );
