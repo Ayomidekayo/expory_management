@@ -1,28 +1,6 @@
 import api from "../lib/axios";
-import type { PackingList, PackingListQuery } from "../types";
+import type { PackingList, PackingListQuery } from "../types/packing-list";
 
-// export interface PackingList {
-//   id: string;
-
-//   shipmentId: string;
-
-//   packingListNumber?: string;
-
-//   grossWeight: number;
-
-//   netWeight: number;
-
-//   shipment: {
-//     id: string;
-//     shipmentNumber: string;
-//     shipmentDate: string;
-//     status: string;
-//   };
-
-//   createdAt: string;
-
-//   updatedAt: string;
-// }
 interface PackingListListResponse {
   success: boolean;
 

@@ -1,10 +1,10 @@
 import axiosInstance from "../lib/axios";
-import type { ExporterQuery } from "../types";
 
 import type {
   Exporter,
   CreateExporterDto,
   UpdateExporterDto,
+  ExporterQuery,
 } from "../types/exporter.types";
 
 interface ExporterListResponse {

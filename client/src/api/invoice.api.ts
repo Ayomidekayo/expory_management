@@ -1,5 +1,5 @@
 import axiosInstance from "../lib/axios";
-import type { CreateInvoiceDto, Invoice, InvoiceQuery, UpdateInvoiceDto } from "../types";
+import type { CreateInvoiceDto, Invoice, InvoiceQuery, UpdateInvoiceDto } from "../types/invoice";
 
 interface InvoiceListResponse {
   success: boolean;

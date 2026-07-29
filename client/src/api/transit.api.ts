@@ -1,11 +1,6 @@
 import axiosInstance from "../lib/axios";
 
-import type {
-  Transit,
-  CreateTransitDto,
-  UpdateTransitDto,
-} from "../types";
-import type { TransitQuery } from "../types/transit.type";
+import type { CreateTransitDto, Transit, TransitQuery, UpdateTransitDto } from "../types/transit.type";
 
 /* ===========================================
    RESPONSES

@@ -1,5 +1,5 @@
 import axiosInstance from "../lib/axios";
-import type { Consignee, ConsigneeQuery, CreateConsigneeDto, UpdateConsigneeDto } from "../types";
+import type { Consignee, ConsigneeQuery, CreateConsigneeDto, UpdateConsigneeDto } from "../types/consignee";
 
 
 interface ConsigneeListResponse {
