@@ -23,7 +23,6 @@ import FinancialInformationCard from "../../components/allocation/details/Financ
 import AllocationDocumentsCard from "../../components/allocation/AllocationDocumentsCard";
 import AllocationTimeline from "../../components/allocation/details/AllocationTimeline";
 import CreateShipmentCard from "../../components/allocation/details/CreateShipmentCard";
-import WorkflowCard from "../../components/allocation/details/WokflowCard";
 import AllocationDetailsStatistics from "../../components/allocation/details/AllocationDetailsStatistics";
 
 export default function AllocationDetailsPage() {
@@ -141,10 +140,6 @@ export default function AllocationDetailsPage() {
       />
 
       <RemarksCard
-        allocation={allocation}
-      />
-
-      <WorkflowCard
         allocation={allocation}
       />
 

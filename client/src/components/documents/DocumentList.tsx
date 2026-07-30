@@ -1,7 +1,8 @@
 import { Eye, Download, Trash2 } from "lucide-react";
 
 import { Button } from "../ui/button";
-import { useDeleteDocument, useShipmentDocuments } from "../../hooks/document/useDocuments";
+import { useDeleteDocument } from "../../hooks/document/useDeleteDocument";
+
 
 interface Props {
   shipmentId: string;

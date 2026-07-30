@@ -11,10 +11,10 @@ import { Link, useNavigate } from "react-router-dom";
 import { Button } from "../../ui/button";
 import { Badge } from "../../ui/badge";
 
-import type { PackingList } from "../../../types";
 import { useDeletePackingList } from "../../../hooks/packingList/useDeletePackingList";
 import DeletePackingListDialog from "../../../pages/packingList/DeletePackingListDialog";
 import { printPackingList } from "../../../utils/packing-list-pdf";
+import type { PackingList } from "../../../types/packing-list";
 
 interface Props {
   packingList: PackingList;

@@ -2,8 +2,9 @@ import type { ColumnDef } from "@tanstack/react-table";
 
 
 import InvoiceStatusBadge from "./InvoiceStatusBadge";
-import type { Invoice } from "../../../types";
+
 import InvoiceActions from "./InvoiceAction";
+import type { Invoice } from "../../../types/invoice";
 
 export const invoiceColumns: ColumnDef<Invoice>[] =
   [

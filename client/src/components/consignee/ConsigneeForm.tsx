@@ -6,13 +6,14 @@ import { useNavigate } from "react-router-dom";
 import {
   Form,
 } from "../ui/form";
-import type { Consignee } from "../../types";
+
 import { createConsigneeSchema, type CreateConsigneeInput } from "../../validations/consignee.validation";
 import BasicInformation from "./section/BasicInformation";
 import ContactInformation from "./section/ContactInformation";
 import AddressInformation from "./section/AddressInformation";
 import TransportInformation from "./section/TransportInformation";
 import FormActions from "./section/FormActions";
+import type { Consignee } from "../../types/consignee";
 
 
 interface Props {

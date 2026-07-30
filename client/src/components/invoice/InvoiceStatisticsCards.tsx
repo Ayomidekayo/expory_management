@@ -8,8 +8,8 @@ import {
 } from "lucide-react";
 
 import SummaryCard from "../common/SummaryCard";
+import type { Invoice } from "../../types/invoice";
 
-import type { Invoice } from "../../types";
 
 interface Props {
   invoices: Invoice[];

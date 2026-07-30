@@ -14,8 +14,9 @@ import {
   TableHeader,
   TableRow,
 } from "../../ui/table";
+import type { PackingList } from "../../../types/packing-list";
 
-import type { PackingList } from "../../../types";
+
 
 interface Props {
   packingList: PackingList;
@@ -115,14 +116,14 @@ export default function DocumentsCard({
 
                     <TableCell>
 
-                      {document.documentType}
+                      {document.type}
 
                     </TableCell>
 
                     <TableCell>
 
                       {new Date(
-                        document.createdAt
+                        document.updatedAt 
                       ).toLocaleDateString()}
 
                     </TableCell>
@@ -138,7 +139,7 @@ export default function DocumentsCard({
                         >
 
                           <a
-                            href={document.fileUrl}
+                            href={document.id}
                             target="_blank"
                             rel="noreferrer"
                           >

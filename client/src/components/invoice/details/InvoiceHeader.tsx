@@ -10,7 +10,8 @@ import { Link } from "react-router-dom";
 
 import { Button } from "../../ui/button";
 import { Badge } from "../../ui/badge";
-import type { Invoice } from "../../../types";
+import type { Invoice } from "../../../types/invoice";
+
 interface Props {
   invoice: Invoice;
 

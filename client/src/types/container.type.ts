@@ -25,7 +25,6 @@ export type ContainerStatus =
   | "LOADED"
   | "IN_TRANSIT"
   | "DELIVERED"
-  | "RETURNED";
 
 /* ===========================================
    CONTAINER

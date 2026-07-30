@@ -10,7 +10,8 @@ import { Separator } from "../ui/separator";
 import { Badge } from "../ui/badge";
 
 import { format } from "date-fns";
-import { useTransit } from "../../hooks/transit/useTransits";
+import { useTransit } from "../../hooks/transit/useTransit";
+
 
 interface Props {
   open: boolean;

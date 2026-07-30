@@ -1,5 +1,4 @@
-import type { Exporter } from "../../../types";
-
+import type { Exporter } from "../../../types/exporter.types";
 
 interface Props {
   exporter: Exporter;

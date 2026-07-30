@@ -15,7 +15,8 @@ import {
 
 import { Button } from "../../ui/button";
 import DeleteInvoiceDialog from "./DeleteInvoiceDialog";
-import type { Invoice } from "../../../types";
+import type { Invoice } from "../../../types/invoice";
+
 
 interface Props {
   invoice: Invoice;

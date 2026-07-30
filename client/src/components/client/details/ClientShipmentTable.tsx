@@ -38,9 +38,6 @@ function statusVariant(status: Shipment["status"]) {
     case "IN_TRANSIT":
       return "secondary";
 
-    case "PENDING":
-      return "outline";
-
     case "CANCELLED":
       return "destructive";
 

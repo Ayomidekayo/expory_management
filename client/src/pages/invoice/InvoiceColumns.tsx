@@ -9,7 +9,8 @@ import {
   DropdownMenuTrigger,
 } from "../../components/ui/dropdown-menu";
 import type { ColumnDef } from "@tanstack/react-table";
-import type { Invoice } from "../../types";
+import type { Invoice } from "../../types/invoice";
+
 
 interface Props {
   onView: (invoice: Invoice) => void;

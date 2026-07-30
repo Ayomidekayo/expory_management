@@ -28,7 +28,8 @@ import {
 } from "../ui/dropdown-menu";
 
 import { Button } from "../ui/button";
-import type { Consignee } from "../../types";
+import type { Consignee } from "../../types/consignee";
+
 
 interface Props {
   consignee: Consignee;

@@ -1,33 +1,24 @@
-import { useMutation } from "@tanstack/react-query";
-
-import { useQueryClient } from "@tanstack/react-query";
-
-import {
-  deleteDocument,
-} from "../../api/document.api";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { deleteDocument } from "../../api/document.api";
 
 export function useDeleteDocument() {
-
-  const queryClient =
-    useQueryClient();
+  const queryClient = useQueryClient();
 
   return useMutation({
-
-    mutationFn:
-      deleteDocument,
+    mutationFn: deleteDocument,
 
     onSuccess: () => {
-
       queryClient.invalidateQueries({
-
-        queryKey: [
-          "documents",
-        ],
-
+        queryKey: ["documents"],
       });
 
+      queryClient.invalidateQueries({
+        queryKey: ["shipment"],
+      });
+
+      queryClient.invalidateQueries({
+        queryKey: ["shipments"],
+      });
     },
-
   });
-
 }

@@ -11,8 +11,9 @@ import { Button } from "../../components/ui/button";
 import InvoiceFilters from "../../components/invoice/InvoiceFilters";
 import InvoiceStatisticsCards from "../../components/invoice/InvoiceStatisticsCards";
 import InvoiceTable from "../../components/invoice/table/InvoiceTable";
-import type { InvoiceQuery } from "../../types";
+
 import { useInvoices } from "../../hooks/invoices/useInvoices";
+import type { InvoiceQuery } from "../../types/invoice";
 
 
 export default function InvoiceListPage() {

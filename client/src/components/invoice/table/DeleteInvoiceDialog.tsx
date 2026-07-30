@@ -1,5 +1,5 @@
 import { useDeleteInvoice } from "../../../hooks/invoices/useDeleteInvoice";
-import type { Invoice } from "../../../types";
+import type { Invoice } from "../../../types/invoice";
 import {
   AlertDialog,
   AlertDialogAction,

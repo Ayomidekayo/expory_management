@@ -6,8 +6,8 @@ import {
 } from "lucide-react";
 
 import SummaryCard from "../common/SummaryCard";
+import type { PackingList } from "../../types/packing-list";
 
-import type { PackingList } from "../../types";
 
 interface Props {
   data: PackingList[];

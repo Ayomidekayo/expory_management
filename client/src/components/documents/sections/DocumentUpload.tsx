@@ -2,10 +2,10 @@ import { Upload, X, FileText } from "lucide-react";
 
 import { Button } from "../../ui/button";
 
-import FormSection from "../../form/FormSection";
-
 import { useState } from "react";
-import type { AllocationSectionProps } from "./types";
+import type { AllocationSectionProps } from "../../../types/allocation.types";
+import FormSection from "../FormSection";
+
 
 
 export default function DocumentUpload({

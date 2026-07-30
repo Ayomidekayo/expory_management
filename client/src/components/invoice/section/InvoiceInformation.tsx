@@ -17,8 +17,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../../ui/select";
+import type { CreateInvoiceInput } from "../../../validations/invoice.validation";
 
-import type { CreateInvoiceInput } from "../../../validations/invoice.schema";
+
 
 interface Props {
   form: UseFormReturn<CreateInvoiceInput>;

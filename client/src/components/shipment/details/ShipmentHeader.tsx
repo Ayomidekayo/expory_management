@@ -8,7 +8,6 @@ import {
 } from "lucide-react";
 
 import { Button } from "../../ui/button";
-import { Badge } from "../../ui/badge";
 
 import type { Shipment } from "../../../types/shipment.types";
 

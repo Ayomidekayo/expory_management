@@ -7,8 +7,9 @@ import {
   Hash,
   FileText,
 } from "lucide-react";
+import type { PackingList } from "../../../types/packing-list";
 
-import type { PackingList } from "../../../types";
+
 
 interface Props {
   packingList: PackingList;

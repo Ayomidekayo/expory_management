@@ -7,7 +7,7 @@ import type { Invoice } from "./invoice";
 import type { PackingList } from "./packing-list";
 import type { Transit } from "./transit.type";
 import type { User } from "./user";
-
+import type { Document } from "./document";
 /*
 =====================================
 Enums

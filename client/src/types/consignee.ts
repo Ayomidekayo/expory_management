@@ -1,6 +1,8 @@
 import type { TransportMode } from "../enums";
 
 
+import type { Allocation } from "./allocation.types";
+import type { Shipment } from "./shipment.types";
 
 export interface Consignee {
   id: string;
@@ -28,7 +30,17 @@ export interface Consignee {
   createdAt: string;
 
   updatedAt: string;
+
+  allocations?: Allocation[];
+
+  shipments?: Shipment[];
+
+  _count?: {
+    allocations: number;
+    shipments: number;
+  };
 }
+
 export interface ConsigneeQuery {
   page?: number;
   limit?: number;
@@ -36,6 +48,7 @@ export interface ConsigneeQuery {
   sortBy?: string;
   sortOrder?: "asc" | "desc";
 }
+
 export interface CreateConsigneeDto {
   name: string;
 
@@ -55,10 +68,7 @@ export interface CreateConsigneeDto {
 
   portOfDischarge: string;
 
-  transportMode:
-    | "ROAD"
-    | "SEA"
-    | "AIR";
+  transportMode: "ROAD" | "SEA" | "AIR";
 }
 
 export type UpdateConsigneeDto =

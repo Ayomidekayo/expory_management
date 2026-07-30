@@ -1,6 +1,8 @@
-import type { ConsigneeQuery, ExporterQuery } from "../types";
+
 import type { AllocationQuery } from "../types/allocation.types";
 import type { ClientQuery } from "../types/client.types";
+import type { ConsigneeQuery } from "../types/consignee";
+import type { ExporterQuery } from "../types/exporter.types";
 
 import type { ShipmentQuery } from "../types/shipment.types";
 

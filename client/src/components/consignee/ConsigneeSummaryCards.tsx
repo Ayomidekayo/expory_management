@@ -4,9 +4,8 @@ import {
   Truck,
   Calendar,
 } from "lucide-react";
-
-import type { Consignee } from "../../types";
 import SummaryCard from "../common/SummaryCard";
+import type { Consignee } from "../../types/consignee";
 
 interface Props {
   consignees: Consignee[];

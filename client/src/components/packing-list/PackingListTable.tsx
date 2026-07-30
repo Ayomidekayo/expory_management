@@ -1,8 +1,6 @@
 import {
   Eye,
   Pencil,
-  Trash2,
-  Printer,
   Package,
 } from "lucide-react";
 
@@ -24,7 +22,8 @@ import {
 import {
   Badge,
 } from "../ui/badge";
-import type { PackingList } from "../../types";
+import type { PackingList } from "../../types/packing-list";
+
 
 
 interface Props {
@@ -143,7 +142,7 @@ export default function PackingListTable({
 
               <TableCell>
 
-                {packing.shipment.client?.name}
+                {packing.shipment.client?.companyName}
 
               </TableCell>
 

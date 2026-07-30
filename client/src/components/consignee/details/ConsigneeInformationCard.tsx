@@ -1,5 +1,4 @@
-import type { Consignee } from "../../../types";
-
+import type { Consignee } from "../../../types/consignee";
 interface Props {
   consignee: Consignee;
 }

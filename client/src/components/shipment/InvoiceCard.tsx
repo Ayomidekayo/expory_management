@@ -7,7 +7,8 @@ import { format } from "date-fns";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 
 import { Button } from "../ui/button";
-import type { Shipment } from "../../types/shipment";
+import type { Shipment } from "../../types/shipment.types";
+
 
 interface Props {
   shipment: Shipment;
@@ -64,7 +65,6 @@ export default function InvoiceCard({ shipment }: Props) {
 
             <Row label="Currency" value={invoice.currency} />
 
-            <Row label="Trucks" value={invoice.numberOfTrucks.toString()} />
 
             <Row
               label="Freight"

@@ -13,8 +13,8 @@ import {
 import {
   Badge,
 } from "../../ui/badge";
+import type { PackingList } from "../../../types/packing-list";
 
-import type { PackingList } from "../../../types";
 
 interface Props {
   packingList: PackingList;

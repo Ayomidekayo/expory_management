@@ -27,7 +27,6 @@ export const createConsigneeSchema = z.object({
     "ROAD",
     "SEA",
     "AIR",
-    "RAIL",
   ]),
 });
 

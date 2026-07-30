@@ -20,8 +20,6 @@ import {
 import { Input } from "../../ui/input";
 
 import type { CreatePackingListInput } from "../../../validations/packing-list.validation";
-
-import { useAvailableShipments } from "../../../hooks/shipments/useAvailableShipments";
 import { useShipment } from "../../../hooks/shipments/useShipment";
 import { useShipments } from "../../../hooks/shipments/useShipments";
 

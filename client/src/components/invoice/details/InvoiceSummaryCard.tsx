@@ -7,7 +7,8 @@ import {
   Package,
   Clock,
 } from "lucide-react";
-import type { Invoice } from "../../../types";
+import type { Invoice } from "../../../types/invoice";
+
 interface Props {
   invoice: Invoice;
 }

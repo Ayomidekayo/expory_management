@@ -4,10 +4,8 @@ import {
 } from "lucide-react";
 
 import { Button } from "../../ui/button";
+import type { Document } from "../../../types/document";
 
-import type {
-  Document,
-} from "../../../types";
 
 interface Props {
   documents: Document[];
@@ -62,7 +60,7 @@ export default function DocumentsCard({
 
                   <p className="font-medium">
 
-                    {document.documentType}
+                    {document.type}
 
                   </p>
 

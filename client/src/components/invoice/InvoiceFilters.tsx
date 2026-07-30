@@ -10,7 +10,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../ui/select";
-import type { InvoiceQuery } from "../../types";
+import type { InvoiceQuery } from "../../types/invoice";
 
 
 

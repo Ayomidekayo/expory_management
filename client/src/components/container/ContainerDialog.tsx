@@ -1,12 +1,11 @@
 import { toast } from "sonner";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog";
 
-import {
-  useCreateContainer,
-  useUpdateContainer,
-} from "../../hooks/container/useContainers";
 
 import type { Container, CreateContainerDto } from "../../types/container.type";
+import { useCreateContainer } from "../../hooks/container/useCreateContainer";
+import { useUpdateContainer } from "../../hooks/container/useUpdateContainer";
+import ContainerForm from "./ContainerForm";
 
 interface Props {
   open: boolean;

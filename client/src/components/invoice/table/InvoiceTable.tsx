@@ -14,7 +14,8 @@ import {
 } from "../../ui/table";
 
 import { invoiceColumns } from "./InvoiceColumns";
-import type { Invoice } from "../../../types";
+import type { Invoice } from "../../../types/invoice";
+
 
 interface Props {
   invoices: Invoice[];

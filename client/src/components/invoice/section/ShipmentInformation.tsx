@@ -137,7 +137,7 @@ export default function ShipmentInformation({
             readOnly
             value={
               currentShipment.exporter
-                ?.companyName ?? ""
+                ?.name ?? ""
             }
           />
 
@@ -145,7 +145,7 @@ export default function ShipmentInformation({
             readOnly
             value={
               currentShipment.consignee
-                ?.companyName ?? ""
+                ?.name ?? ""
             }
           />
 

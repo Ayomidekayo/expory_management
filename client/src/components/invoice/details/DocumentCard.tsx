@@ -6,7 +6,8 @@ import {
 } from "lucide-react";
 
 import { Button } from "../../ui/button";
-import type { Invoice } from "../../../types";
+import type { Invoice } from "../../../types/invoice";
+
 
 interface Props {
   invoice: Invoice;

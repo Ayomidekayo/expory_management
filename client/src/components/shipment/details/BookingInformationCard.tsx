@@ -1,7 +1,5 @@
 import {
-  ShipWheel,
-  Anchor,
-  MapPinned,
+  ShipWheel
 } from "lucide-react";
 
 import type { Shipment } from "../../../types/shipment.types";

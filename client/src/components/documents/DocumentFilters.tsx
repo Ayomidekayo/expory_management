@@ -1,4 +1,3 @@
-import { Search, X } from "lucide-react";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 
@@ -15,6 +14,7 @@ import { DocumentType } from "../../types/enums";
 import { useShipments } from "../../hooks/shipments/useShipments";
 
 import type { DocumentQuery } from "../../types/document";
+import { X } from "lucide-react";
 
 interface Props {
   filters: DocumentQuery;

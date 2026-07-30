@@ -9,8 +9,9 @@ import {
   CalendarDays,
   Clock,
 } from "lucide-react";
+import type { Shipment } from "../../../types/shipment.types";
 
-import type { Shipment } from "../../../types";
+
 
 interface Props {
   shipment: Shipment;
