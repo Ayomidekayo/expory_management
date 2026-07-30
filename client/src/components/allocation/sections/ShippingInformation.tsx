@@ -197,13 +197,17 @@ export default function ShippingInformation({
               <FormLabel>Destination City</FormLabel>
               <FormControl>
                 <Input
-                  placeholder="London"
-                  value={field.value ?? ""}
-                  onChange={field.onChange}
-                  onBlur={field.onBlur}
-                  name={field.name}
-                  ref={field.ref}
-                />
+  placeholder="London"
+  value={
+    typeof field.value === "string"
+      ? field.value
+      : ""
+  }
+  onChange={field.onChange}
+  onBlur={field.onBlur}
+  name={field.name}
+  ref={field.ref}
+/>
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -243,13 +247,17 @@ export default function ShippingInformation({
               <FormLabel>Port of Discharge</FormLabel>
               <FormControl>
                 <Input
-                  placeholder="Felixstowe Port"
-                  value={field.value ?? ""}
-                  onChange={field.onChange}
-                  onBlur={field.onBlur}
-                  name={field.name}
-                  ref={field.ref}
-                />
+  placeholder="Felixstowe Port"
+  value={
+    typeof field.value === "string"
+      ? field.value
+      : ""
+  }
+  onChange={field.onChange}
+  onBlur={field.onBlur}
+  name={field.name}
+  ref={field.ref}
+/>
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -316,12 +324,20 @@ export default function ShippingInformation({
       <FormLabel>Transport Mode</FormLabel>
 
       <Select
-        value={field.value ?? ""}
-        defaultValue={field.value ?? undefined}
-        onValueChange={(value) =>
-          field.onChange(value || undefined)
-        }
-      >
+  value={
+    typeof field.value === "string"
+      ? field.value
+      : ""
+  }
+  defaultValue={
+    typeof field.value === "string"
+      ? field.value
+      : undefined
+  }
+  onValueChange={(value) =>
+    field.onChange(value || undefined)
+  }
+>
         <FormControl>
           <SelectTrigger>
             <SelectValue placeholder="Select Mode" />

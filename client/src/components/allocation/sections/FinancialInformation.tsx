@@ -82,14 +82,18 @@ export default function FinancialInformation({
               </FormLabel>
 
               <FormControl>
-                <Input
-                  placeholder="USD"
-                  value={field.value ?? ""}
-                  onChange={field.onChange}
-                  onBlur={field.onBlur}
-                  name={field.name}
-                  ref={field.ref}
-                />
+               <Input
+  placeholder="naira"
+  value={
+    typeof field.value === "string"
+      ? field.value
+      : ""
+  }
+  onChange={field.onChange}
+  onBlur={field.onBlur}
+  name={field.name}
+  ref={field.ref}
+/>
               </FormControl>
 
               <FormMessage />
@@ -108,14 +112,18 @@ export default function FinancialInformation({
               </FormLabel>
 
               <FormControl>
-                <Input
-                  placeholder="Net 30"
-                  value={field.value ?? ""}
-                  onChange={field.onChange}
-                  onBlur={field.onBlur}
-                  name={field.name}
-                  ref={field.ref}
-                />
+               <Input
+  placeholder="Net 30"
+  value={
+    typeof field.value === "string"
+      ? field.value
+      : ""
+  }
+  onChange={field.onChange}
+  onBlur={field.onBlur}
+  name={field.name}
+  ref={field.ref}
+/>
               </FormControl>
 
               <FormMessage />
@@ -134,14 +142,18 @@ export default function FinancialInformation({
               </FormLabel>
 
               <FormControl>
-                <Input
-                  placeholder="Prepaid / Collect"
-                  value={field.value ?? ""}
-                  onChange={field.onChange}
-                  onBlur={field.onBlur}
-                  name={field.name}
-                  ref={field.ref}
-                />
+               <Input
+  placeholder="Prepaid / Collect"
+  value={
+    typeof field.value === "string"
+      ? field.value
+      : ""
+  }
+  onChange={field.onChange}
+  onBlur={field.onBlur}
+  name={field.name}
+  ref={field.ref}
+/>
               </FormControl>
 
               <FormMessage />

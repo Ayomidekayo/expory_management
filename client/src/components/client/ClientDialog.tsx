@@ -9,21 +9,17 @@ import {
 
 import ClientForm from "./ClientForm";
 
-
 import type {
   Client,
   CreateClientDto,
 } from "../../types/client.types";
+
 import { useCreateClient } from "../../hooks/client/useCreateClient";
 import { useUpdateClient } from "../../hooks/client/useUpdateClient";
 
 interface Props {
   open: boolean;
-
-  onOpenChange: (
-    open: boolean
-  ) => void;
-
+  onOpenChange: (open: boolean) => void;
   client?: Client;
 }
 
@@ -32,11 +28,8 @@ export default function ClientDialog({
   onOpenChange,
   client,
 }: Props) {
-  const createMutation =
-    useCreateClient();
-
-  const updateMutation =
-    useUpdateClient();
+  const createMutation = useCreateClient();
+  const updateMutation = useUpdateClient();
 
   const editing = !!client;
 
@@ -46,17 +39,12 @@ export default function ClientDialog({
       onOpenChange={onOpenChange}
     >
       <DialogContent className="sm:max-w-3xl">
-
         <DialogHeader>
-
           <DialogTitle>
-
             {editing
               ? "Edit Client"
               : "New Client"}
-
           </DialogTitle>
-
         </DialogHeader>
 
         <ClientForm
@@ -66,51 +54,38 @@ export default function ClientDialog({
             createMutation.isPending ||
             updateMutation.isPending
           }
-          onSubmit={(
-            values: CreateClientDto
-          ) => {
-
-            if (editing) {
-
+          onSubmit={(values: CreateClientDto) => {
+            if (client) {
               updateMutation.mutate(
                 {
                   id: client.id,
-                  data: values,
+                  payload: values,
                 },
                 {
                   onSuccess() {
-
                     toast.success(
                       "Client updated successfully."
                     );
 
                     onOpenChange(false);
-
                   },
                 }
               );
 
               return;
-
             }
 
-            createMutation.mutate(
-              values,
-              {
-                onSuccess() {
+            createMutation.mutate(values, {
+              onSuccess() {
+                toast.success(
+                  "Client created successfully."
+                );
 
-                  toast.success(
-                    "Client created successfully."
-                  );
-
-                  onOpenChange(false);
-
-                },
-              }
-            );
+                onOpenChange(false);
+              },
+            });
           }}
         />
-
       </DialogContent>
     </Dialog>
   );

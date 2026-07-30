@@ -73,8 +73,16 @@ export default function WorkflowInformation({
               </FormLabel>
 
               <Select
-                value={field.value ?? ""}
-                defaultValue={field.value ?? undefined}
+                value={
+                  typeof field.value === "string"
+                    ? field.value
+                    : ""
+                }
+                defaultValue={
+                  typeof field.value === "string"
+                    ? field.value
+                    : undefined
+                }
                 onValueChange={(value) =>
                   field.onChange(value || undefined)
                 }
