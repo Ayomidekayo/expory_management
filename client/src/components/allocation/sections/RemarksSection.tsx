@@ -16,11 +16,11 @@ import type {
 } from "../../../validations/allocation.schema";
 
 interface Props {
-  form: UseFormReturn<
-    CreateAllocationInput,
-    any,
-    CreateAllocationOutput
-  >;
+form: UseFormReturn<
+  CreateAllocationInput,
+  undefined,
+  CreateAllocationOutput
+>;
 }
 
 export default function RemarksSection({
@@ -50,15 +50,15 @@ export default function RemarksSection({
               </FormLabel>
 
               <FormControl>
-                <Textarea
-                  rows={5}
-                  placeholder="Enter any special client requests or shipment instructions..."
-                  value={field.value ?? ""}
-                  onChange={field.onChange}
-                  onBlur={field.onBlur}
-                  name={field.name}
-                  ref={field.ref}
-                />
+               <Textarea
+  rows={5}
+  placeholder="Enter any special client requests or shipment instructions..."
+  value={typeof field.value === "string" ? field.value : ""}
+  onChange={field.onChange}
+  onBlur={field.onBlur}
+  name={field.name}
+  ref={field.ref}
+/>
               </FormControl>
 
               <FormMessage />
@@ -77,15 +77,15 @@ export default function RemarksSection({
               </FormLabel>
 
               <FormControl>
-                <Textarea
-                  rows={5}
-                  placeholder="Visible only to staff..."
-                  value={field.value ?? ""}
-                  onChange={field.onChange}
-                  onBlur={field.onBlur}
-                  name={field.name}
-                  ref={field.ref}
-                />
+               <Textarea
+  rows={5}
+  placeholder="Visible only to staff..."
+  value={typeof field.value === "string" ? field.value : ""}
+  onChange={field.onChange}
+  onBlur={field.onBlur}
+  name={field.name}
+  ref={field.ref}
+/>
               </FormControl>
 
               <FormMessage />

@@ -24,11 +24,11 @@ import type {
 } from "../../../validations/allocation.schema";
 
 interface Props {
-  form: UseFormReturn<
-    CreateAllocationInput,
-    any,
-    CreateAllocationOutput
-  >;
+ form: UseFormReturn<
+  CreateAllocationInput,
+  undefined,
+  CreateAllocationOutput
+>;
 }
 
 const transportModes = [
@@ -62,13 +62,17 @@ export default function ShippingInformation({
               <FormLabel>Origin Country</FormLabel>
               <FormControl>
                 <Input
-                  placeholder="Nigeria"
-                  value={field.value ?? ""}
-                  onChange={field.onChange}
-                  onBlur={field.onBlur}
-                  name={field.name}
-                  ref={field.ref}
-                />
+  placeholder="Nigeria"
+  value={
+    typeof field.value === "string"
+      ? field.value
+      : ""
+  }
+  onChange={field.onChange}
+  onBlur={field.onBlur}
+  name={field.name}
+  ref={field.ref}
+/>
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -82,14 +86,18 @@ export default function ShippingInformation({
             <FormItem>
               <FormLabel>Origin City</FormLabel>
               <FormControl>
-                <Input
-                  placeholder="Lagos"
-                  value={field.value ?? ""}
-                  onChange={field.onChange}
-                  onBlur={field.onBlur}
-                  name={field.name}
-                  ref={field.ref}
-                />
+              <Input
+  placeholder="Lagos"
+  value={
+    typeof field.value === "string"
+      ? field.value
+      : ""
+  }
+  onChange={field.onChange}
+  onBlur={field.onBlur}
+  name={field.name}
+  ref={field.ref}
+/>
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -103,14 +111,18 @@ export default function ShippingInformation({
             <FormItem>
               <FormLabel>Pickup Address</FormLabel>
               <FormControl>
-                <Input
-                  placeholder="Warehouse Address"
-                  value={field.value ?? ""}
-                  onChange={field.onChange}
-                  onBlur={field.onBlur}
-                  name={field.name}
-                  ref={field.ref}
-                />
+               <Input
+  placeholder="Warehouse Address"
+  value={
+    typeof field.value === "string"
+      ? field.value
+      : ""
+  }
+  onChange={field.onChange}
+  onBlur={field.onBlur}
+  name={field.name}
+  ref={field.ref}
+/>
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -159,14 +171,18 @@ export default function ShippingInformation({
             <FormItem>
               <FormLabel>Destination Country</FormLabel>
               <FormControl>
-                <Input
-                  placeholder="United Kingdom"
-                  value={field.value ?? ""}
-                  onChange={field.onChange}
-                  onBlur={field.onBlur}
-                  name={field.name}
-                  ref={field.ref}
-                />
+              <Input
+  placeholder="United Kingdom"
+  value={
+    typeof field.value === "string"
+      ? field.value
+      : ""
+  }
+  onChange={field.onChange}
+  onBlur={field.onBlur}
+  name={field.name}
+  ref={field.ref}
+/>
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -201,14 +217,18 @@ export default function ShippingInformation({
             <FormItem>
               <FormLabel>Port of Loading</FormLabel>
               <FormControl>
-                <Input
-                  placeholder="Apapa Port"
-                  value={field.value ?? ""}
-                  onChange={field.onChange}
-                  onBlur={field.onBlur}
-                  name={field.name}
-                  ref={field.ref}
-                />
+               <Input
+  placeholder="Apapa Port"
+  value={
+    typeof field.value === "string"
+      ? field.value
+      : ""
+  }
+  onChange={field.onChange}
+  onBlur={field.onBlur}
+  name={field.name}
+  ref={field.ref}
+/>
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -243,14 +263,18 @@ export default function ShippingInformation({
             <FormItem>
               <FormLabel>Destination Port</FormLabel>
               <FormControl>
-                <Input
-                  placeholder="Final Port"
-                  value={field.value ?? ""}
-                  onChange={field.onChange}
-                  onBlur={field.onBlur}
-                  name={field.name}
-                  ref={field.ref}
-                />
+               <Input
+  placeholder="Final Port"
+  value={
+    typeof field.value === "string"
+      ? field.value
+      : ""
+  }
+  onChange={field.onChange}
+  onBlur={field.onBlur}
+  name={field.name}
+  ref={field.ref}
+/>
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -264,14 +288,18 @@ export default function ShippingInformation({
             <FormItem>
               <FormLabel>Shipping Line</FormLabel>
               <FormControl>
-                <Input
-                  placeholder="Maersk"
-                  value={field.value ?? ""}
-                  onChange={field.onChange}
-                  onBlur={field.onBlur}
-                  name={field.name}
-                  ref={field.ref}
-                />
+               <Input
+  placeholder="Maersk"
+  value={
+    typeof field.value === "string"
+      ? field.value
+      : ""
+  }
+  onChange={field.onChange}
+  onBlur={field.onBlur}
+  name={field.name}
+  ref={field.ref}
+/>
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -280,42 +308,42 @@ export default function ShippingInformation({
       </div>
 
       <div className="mt-8 grid gap-6 md:grid-cols-3">
-        <FormField
-          control={form.control}
-          name="transportMode"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Transport Mode</FormLabel>
+<FormField
+  control={form.control}
+  name="transportMode"
+  render={({ field }) => (
+    <FormItem>
+      <FormLabel>Transport Mode</FormLabel>
 
-             <Select
-  value={field.value ?? ""}
-  defaultValue={field.value ?? undefined}
-  onValueChange={(value) =>
-    field.onChange(value || undefined)
-  }
->
-                <FormControl>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select Mode" />
-                  </SelectTrigger>
-                </FormControl>
+      <Select
+        value={field.value ?? ""}
+        defaultValue={field.value ?? undefined}
+        onValueChange={(value) =>
+          field.onChange(value || undefined)
+        }
+      >
+        <FormControl>
+          <SelectTrigger>
+            <SelectValue placeholder="Select Mode" />
+          </SelectTrigger>
+        </FormControl>
 
-                <SelectContent>
-                  {transportModes.map((mode) => (
-                    <SelectItem
-                      key={mode.value}
-                      value={mode.value}
-                    >
-                      {mode.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+        <SelectContent>
+          {transportModes.map((mode) => (
+            <SelectItem
+              key={mode.value}
+              value={mode.value}
+            >
+              {mode.label}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
 
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+      <FormMessage />
+    </FormItem>
+  )}
+/>
 
         <FormField
           control={form.control}
@@ -325,14 +353,18 @@ export default function ShippingInformation({
               <FormLabel>Incoterm</FormLabel>
 
               <FormControl>
-                <Input
-                  placeholder="FOB"
-                  value={field.value ?? ""}
-                  onChange={field.onChange}
-                  onBlur={field.onBlur}
-                  name={field.name}
-                  ref={field.ref}
-                />
+               <Input
+  placeholder="FOB"
+  value={
+    typeof field.value === "string"
+      ? field.value
+      : ""
+  }
+  onChange={field.onChange}
+  onBlur={field.onBlur}
+  name={field.name}
+  ref={field.ref}
+/>
               </FormControl>
 
               <FormMessage />
@@ -385,14 +417,18 @@ export default function ShippingInformation({
               <FormLabel>Delivery Address</FormLabel>
 
               <FormControl>
-                <Input
-                  placeholder="Final Delivery Address"
-                  value={field.value ?? ""}
-                  onChange={field.onChange}
-                  onBlur={field.onBlur}
-                  name={field.name}
-                  ref={field.ref}
-                />
+               <Input
+  placeholder="Final Delivery Address"
+  value={
+    typeof field.value === "string"
+      ? field.value
+      : ""
+  }
+  onChange={field.onChange}
+  onBlur={field.onBlur}
+  name={field.name}
+  ref={field.ref}
+/>
               </FormControl>
 
               <FormMessage />
