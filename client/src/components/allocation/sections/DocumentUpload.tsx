@@ -2,8 +2,8 @@ import { useState } from "react";
 import { Upload, X, FileText } from "lucide-react";
 
 import { Button } from "../../ui/button";
-import FormSection from "../../form/FormSection";
 import type { AllocationSectionProps } from "../../../types/allocation.types";
+import FormSection from "../../documents/FormSection";
 
 
 

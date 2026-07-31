@@ -101,11 +101,11 @@ export default function ConsigneeTable() {
               </TableCell>
 
               <TableCell>
-                {consignee._count.allocations}
+          {consignee._count?.allocations ?? 0}
               </TableCell>
 
               <TableCell>
-                {consignee._count.shipments}
+                {consignee._count?.shipments ?? 0}
               </TableCell>
 
               <TableCell className="text-right">

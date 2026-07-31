@@ -49,13 +49,13 @@ export async function getTransits(
 
 export async function getTransit(
   id: string
-) {
+): Promise<Transit> {
   const { data } =
     await axiosInstance.get<TransitResponse>(
       `/transits/${id}`
     );
 
-  return data;
+  return data.data;
 }
 
 /* ===========================================
@@ -64,14 +64,14 @@ export async function getTransit(
 
 export async function createTransit(
   payload: CreateTransitDto
-) {
+): Promise<Transit> {
   const { data } =
     await axiosInstance.post<TransitResponse>(
       "/transits",
       payload
     );
 
-  return data;
+  return data.data;
 }
 
 /* ===========================================
@@ -83,16 +83,15 @@ export async function updateTransit({
   payload,
 }: {
   id: string;
-
   payload: UpdateTransitDto;
-}) {
+}): Promise<Transit> {
   const { data } =
     await axiosInstance.patch<TransitResponse>(
       `/transits/${id}`,
       payload
     );
 
-  return data;
+  return data.data;
 }
 
 /* ===========================================

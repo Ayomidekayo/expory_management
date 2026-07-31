@@ -23,10 +23,14 @@ import {
 import { Button } from "../../ui/button";
 import { Input } from "../../ui/input";
 
-import type { CreatePackingListInput } from "../../../validations/packing-list.validation";
+import type { CreatePackingListInput, CreatePackingListOutput } from "../../../validations/packing-list.validation";
 
 interface Props {
-  form: UseFormReturn<CreatePackingListInput>;
+  form: UseFormReturn<
+    CreatePackingListInput,
+    undefined,
+    CreatePackingListOutput
+  >;
 }
 
 export default function PackingItems({
@@ -61,14 +65,14 @@ export default function PackingItems({
         <Button
           type="button"
           onClick={() =>
-            append({
-              description: "",
-              packageType: "",
-              packages: 0,
-              grossWeight: 0,
-              netWeight: 0,
-              remarks: "",
-            })
+           append({
+  description: "",
+  packageType: "",
+  packages: 0,
+  grossWeight: 0,
+  netWeight: 0,
+  remarks: "",
+} as CreatePackingListInput["items"][number])
           }
         >
           <Plus className="mr-2 h-4 w-4" />
@@ -121,10 +125,15 @@ export default function PackingItems({
 
                         <FormControl>
 
-                          <Input
-                            {...field}
-                            placeholder="Description"
-                          />
+                         <Input
+  {...field}
+  value={
+    typeof field.value === "string"
+      ? field.value
+      : ""
+  }
+  placeholder="Description"
+/>
 
                         </FormControl>
 
@@ -144,11 +153,15 @@ export default function PackingItems({
                     control={form.control}
                     name={`items.${index}.packageType`}
                     render={({ field }) => (
-                      <Input
-                        {...field}
-                        value={field.value ?? ""}
-                        placeholder="Bag"
-                      />
+                     <Input
+  {...field}
+  value={
+    typeof field.value === "string"
+      ? field.value
+      : ""
+  }
+  placeholder="Bag"
+/>
                     )}
                   />
 
@@ -163,10 +176,21 @@ export default function PackingItems({
                     name={`items.${index}.packages`}
                     render={({ field }) => (
                       <Input
-                        type="number"
-                        {...field}
-                        value={field.value ?? ""}
-                      />
+  type="number"
+  {...field}
+  value={
+    typeof field.value === "number"
+      ? field.value
+      : ""
+  }
+  onChange={(e) =>
+    field.onChange(
+      e.target.value === ""
+        ? undefined
+        : Number(e.target.value)
+    )
+  }
+/>
                     )}
                   />
 
@@ -180,12 +204,23 @@ export default function PackingItems({
                     control={form.control}
                     name={`items.${index}.grossWeight`}
                     render={({ field }) => (
-                      <Input
-                        type="number"
-                        step="0.01"
-                        {...field}
-                        value={field.value ?? ""}
-                      />
+                    <Input
+  type="number"
+  step="0.01"
+  {...field}
+  value={
+    typeof field.value === "number"
+      ? field.value
+      : ""
+  }
+  onChange={(e) =>
+    field.onChange(
+      e.target.value === ""
+        ? undefined
+        : Number(e.target.value)
+    )
+  }
+/>
                     )}
                   />
 
@@ -199,12 +234,23 @@ export default function PackingItems({
                     control={form.control}
                     name={`items.${index}.netWeight`}
                     render={({ field }) => (
-                      <Input
-                        type="number"
-                        step="0.01"
-                        {...field}
-                        value={field.value ?? ""}
-                      />
+                     <Input
+  type="number"
+  step="0.01"
+  {...field}
+  value={
+    typeof field.value === "number"
+      ? field.value
+      : ""
+  }
+  onChange={(e) =>
+    field.onChange(
+      e.target.value === ""
+        ? undefined
+        : Number(e.target.value)
+    )
+  }
+/>
                     )}
                   />
 
@@ -218,11 +264,15 @@ export default function PackingItems({
                     control={form.control}
                     name={`items.${index}.remarks`}
                     render={({ field }) => (
-                      <Input
-                        {...field}
-                        value={field.value ?? ""}
-                        placeholder="Optional"
-                      />
+                     <Input
+  {...field}
+  value={
+    typeof field.value === "string"
+      ? field.value
+      : ""
+  }
+  placeholder="Optional"
+/>
                     )}
                   />
 

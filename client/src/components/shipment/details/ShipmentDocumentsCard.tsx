@@ -11,7 +11,6 @@ import { Link } from "react-router-dom";
 import { Button } from "../../ui/button";
 
 import type { Shipment } from "../../../types/shipment.types";
-import { useQueryClient } from "@tanstack/react-query";
 import { useDeleteDocument } from "../../../hooks/document/useDeleteDocument";
 import { downloadDocument, viewDocument } from "../../../api/document.api";
 import DeleteDocumentDialog from "../../documents/DeleteDocumentDialog";

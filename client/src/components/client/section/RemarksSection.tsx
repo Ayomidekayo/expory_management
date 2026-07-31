@@ -8,11 +8,11 @@ import {
   FormMessage,
 } from "../../ui/form";
 
-import FormSection from "../../form/FormSection";
 
 import type {
   CreateClientDto,
 } from "../../../types/client.types";
+import FormSection from "../../documents/FormSection";
 
 interface Props {
   form: UseFormReturn<CreateClientDto>;

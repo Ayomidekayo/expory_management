@@ -10,12 +10,12 @@ import {
 
 import { Input } from "../../ui/input";
 
-import FormGrid from "../../form/FormGrid";
-import FormSection from "../../form/FormSection";
 
 import type {
   CreateClientDto,
 } from "../../../types/client.types";
+import FormSection from "../../documents/FormSection";
+import FormGrid from "../../shared/FormGrid";
 
 interface Props {
   form: UseFormReturn<CreateClientDto>;

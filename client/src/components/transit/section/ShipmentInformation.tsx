@@ -21,6 +21,7 @@ import { Input } from "../../ui/input";
 
 import type {
   CreateTransitInput,
+  CreateTransitOutput,
 } from "../../../validations/transit.validation";
 
 import {
@@ -36,7 +37,11 @@ import {
 } from "../../../hooks/container/useContainers";
 
 interface Props {
-  form: UseFormReturn<CreateTransitInput>;
+  form: UseFormReturn<
+    CreateTransitInput,
+    undefined,
+    CreateTransitOutput
+  >;
 }
 
 export default function ShipmentInformation({
@@ -118,13 +123,16 @@ export default function ShipmentInformation({
 
     if (!currentShipment) return;
 
-    form.setValue(
-
-      "transportMode",
-
-      currentShipment.transportMode
-
-    );
+   if (
+  currentShipment.transportMode === "ROAD" ||
+  currentShipment.transportMode === "SEA" ||
+  currentShipment.transportMode === "AIR"
+) {
+  form.setValue(
+    "transportMode",
+    currentShipment.transportMode
+  );
+}
 
   }, [
     currentShipment,
@@ -169,21 +177,20 @@ export default function ShipmentInformation({
               </FormLabel>
 
               <Select
+  value={
+    typeof field.value === "string"
+      ? field.value
+      : ""
+  }
+  onValueChange={(value) => {
+    field.onChange(value);
 
-                value={field.value}
-
-                onValueChange={(value) => {
-
-                  field.onChange(value);
-
-                  form.setValue(
-                    "containerId",
-                    ""
-                  );
-
-                }}
-
-              >
+    form.setValue(
+      "containerId",
+      ""
+    );
+  }}
+>
 
                 <FormControl>
 
@@ -225,78 +232,78 @@ export default function ShipmentInformation({
 
         {/* Container */}
 
-        <FormField
-          control={form.control}
-          name="containerId"
-          render={({ field }) => (
+      <FormField
+  control={form.control}
+  name="containerId"
+  render={({ field }) => (
 
-            <FormItem>
+    <FormItem>
 
-              <FormLabel>
+      <FormLabel>
 
-                Container
+        Container
 
-              </FormLabel>
+      </FormLabel>
 
-              <Select
+      <Select
 
-                disabled={!shipmentId}
+        disabled={!shipmentId}
 
-                value={
-                  field.value ?? ""
-                }
+        value={
+          field.value ?? ""
+        }
 
-                onValueChange={
-                  field.onChange
-                }
+        onValueChange={
+          field.onChange
+        }
 
+      >
+
+        <FormControl>
+
+          <SelectTrigger>
+
+            <SelectValue
+              placeholder={
+                shipmentId
+                  ? "Select Container"
+                  : "Select Shipment First"
+              }
+            />
+
+          </SelectTrigger>
+
+        </FormControl>
+
+        <SelectContent>
+
+          {containers?.data.map(
+            (container) => (
+
+              <SelectItem
+                key={container.id}
+                value={container.id}
               >
 
-                <FormControl>
+                {container.containerNumber} •{" "}
+                {container.containerType} •{" "}
+                {container.containerSize}
 
-                  <SelectTrigger>
+              </SelectItem>
 
-                    <SelectValue
-                      placeholder={
-                        shipmentId
-                          ? "Select Container"
-                          : "Select Shipment First"
-                      }
-                    />
-
-                  </SelectTrigger>
-
-                </FormControl>
-
-                <SelectContent>
-
-                  {containers?.data.map(
-                    (container) => (
-
-                      <SelectItem
-                        key={container.id}
-                        value={container.id}
-                      >
-
-                        {container.containerNumber} •{" "}
-                        {container.containerType} •{" "}
-                        {container.containerSize}
-
-                      </SelectItem>
-
-                    )
-                  )}
-
-                </SelectContent>
-
-              </Select>
-
-              <FormMessage />
-
-            </FormItem>
-
+            )
           )}
-        />
+
+        </SelectContent>
+
+      </Select>
+
+      <FormMessage />
+
+    </FormItem>
+
+  )}
+/>
 
       </div>
 

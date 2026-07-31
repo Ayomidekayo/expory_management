@@ -17,7 +17,6 @@ export const transportModes = [
   "ROAD",
   "SEA",
   "AIR",
-  "RAIL",
 ] as const;
 
 export type TransportMode =

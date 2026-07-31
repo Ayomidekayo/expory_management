@@ -12,6 +12,7 @@ import { Form } from "../ui/form";
 import {
   createTransitSchema,
   type CreateTransitInput,
+  type CreateTransitOutput,
 } from "../../validations/transit.validation";
 
 import ShipmentInformation from "./section/ShipmentInformation";
@@ -28,7 +29,7 @@ interface Props {
   loading?: boolean;
 
   onSubmit: (
-    values: CreateTransitInput
+    values: CreateTransitOutput
   ) => void;
 }
 
@@ -39,9 +40,12 @@ export default function TransitForm({
   onSubmit,
 }: Props) {
 
-  const form =
-    useForm<CreateTransitInput>({
-
+ const form =
+  useForm<
+    CreateTransitInput,
+    undefined,
+    CreateTransitOutput
+  >({
       resolver: zodResolver(
         createTransitSchema
       ),

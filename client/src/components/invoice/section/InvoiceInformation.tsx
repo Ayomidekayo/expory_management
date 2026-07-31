@@ -17,12 +17,18 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../../ui/select";
-import type { CreateInvoiceInput } from "../../../validations/invoice.validation";
 
-
+import type {
+  CreateInvoiceInput,
+  CreateInvoiceOutput,
+} from "../../../validations/invoice.validation";
 
 interface Props {
-  form: UseFormReturn<CreateInvoiceInput>;
+  form: UseFormReturn<
+    CreateInvoiceInput,
+    undefined,
+    CreateInvoiceOutput
+  >;
 }
 
 const currencies = [
@@ -99,9 +105,7 @@ export default function InvoiceInformation({
 }: Props) {
   return (
     <div className="rounded-xl border bg-white p-6">
-
       <div className="mb-6">
-
         <h2 className="text-xl font-semibold">
           Invoice Information
         </h2>
@@ -109,11 +113,9 @@ export default function InvoiceInformation({
         <p className="text-sm text-muted-foreground">
           Commercial invoice details.
         </p>
-
       </div>
 
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-
         {/* Invoice Date */}
 
         <FormField
@@ -121,22 +123,23 @@ export default function InvoiceInformation({
           name="invoiceDate"
           render={({ field }) => (
             <FormItem>
-
               <FormLabel>
                 Invoice Date
               </FormLabel>
 
               <FormControl>
-
                 <Input
                   type="date"
                   {...field}
+                  value={
+                    typeof field.value === "string"
+                      ? field.value
+                      : ""
+                  }
                 />
-
               </FormControl>
 
               <FormMessage />
-
             </FormItem>
           )}
         />
@@ -148,45 +151,37 @@ export default function InvoiceInformation({
           name="currency"
           render={({ field }) => (
             <FormItem>
-
               <FormLabel>
                 Currency
               </FormLabel>
 
               <Select
-                value={field.value}
+                value={
+                  typeof field.value === "string"
+                    ? field.value
+                    : ""
+                }
                 onValueChange={field.onChange}
               >
-
                 <FormControl>
-
                   <SelectTrigger>
-
                     <SelectValue placeholder="Currency" />
-
                   </SelectTrigger>
-
                 </FormControl>
 
                 <SelectContent>
-
                   {currencies.map((currency) => (
-
                     <SelectItem
                       key={currency.value}
                       value={currency.value}
                     >
                       {currency.label}
                     </SelectItem>
-
                   ))}
-
                 </SelectContent>
-
               </Select>
 
               <FormMessage />
-
             </FormItem>
           )}
         />
@@ -198,25 +193,33 @@ export default function InvoiceInformation({
           name="exchangeRate"
           render={({ field }) => (
             <FormItem>
-
               <FormLabel>
                 Exchange Rate
               </FormLabel>
 
               <FormControl>
-
                 <Input
                   type="number"
                   step="0.0001"
                   placeholder="1.00"
-                  {...field}
-                  value={field.value ?? ""}
+                  value={
+                    typeof field.value === "number"
+                      ? field.value
+                      : ""
+                  }
+                  onChange={(e) =>
+                    field.onChange(
+                      e.target.value === ""
+                        ? undefined
+                        : Number(
+                            e.target.value
+                          )
+                    )
+                  }
                 />
-
               </FormControl>
 
               <FormMessage />
-
             </FormItem>
           )}
         />
@@ -228,45 +231,37 @@ export default function InvoiceInformation({
           name="paymentTerms"
           render={({ field }) => (
             <FormItem>
-
               <FormLabel>
                 Payment Terms
               </FormLabel>
 
               <Select
-                value={field.value}
+                value={
+                  typeof field.value === "string"
+                    ? field.value
+                    : ""
+                }
                 onValueChange={field.onChange}
               >
-
                 <FormControl>
-
                   <SelectTrigger>
-
                     <SelectValue placeholder="Select Payment Terms" />
-
                   </SelectTrigger>
-
                 </FormControl>
 
                 <SelectContent>
-
                   {paymentTerms.map((term) => (
-
                     <SelectItem
                       key={term.value}
                       value={term.value}
                     >
                       {term.label}
                     </SelectItem>
-
                   ))}
-
                 </SelectContent>
-
               </Select>
 
               <FormMessage />
-
             </FormItem>
           )}
         />
@@ -278,45 +273,37 @@ export default function InvoiceInformation({
           name="status"
           render={({ field }) => (
             <FormItem>
-
               <FormLabel>
                 Status
               </FormLabel>
 
               <Select
-                value={field.value}
+                value={
+                  typeof field.value === "string"
+                    ? field.value
+                    : ""
+                }
                 onValueChange={field.onChange}
               >
-
                 <FormControl>
-
                   <SelectTrigger>
-
                     <SelectValue placeholder="Status" />
-
                   </SelectTrigger>
-
                 </FormControl>
 
                 <SelectContent>
-
                   {statuses.map((status) => (
-
                     <SelectItem
                       key={status.value}
                       value={status.value}
                     >
                       {status.label}
                     </SelectItem>
-
                   ))}
-
                 </SelectContent>
-
               </Select>
 
               <FormMessage />
-
             </FormItem>
           )}
         />
@@ -328,24 +315,32 @@ export default function InvoiceInformation({
           name="transportUnits"
           render={({ field }) => (
             <FormItem>
-
               <FormLabel>
                 Transport Units
               </FormLabel>
 
               <FormControl>
-
                 <Input
                   type="number"
                   placeholder="0"
-                  {...field}
-                  value={field.value ?? ""}
+                  value={
+                    typeof field.value === "number"
+                      ? field.value
+                      : ""
+                  }
+                  onChange={(e) =>
+                    field.onChange(
+                      e.target.value === ""
+                        ? undefined
+                        : Number(
+                            e.target.value
+                          )
+                    )
+                  }
                 />
-
               </FormControl>
 
               <FormMessage />
-
             </FormItem>
           )}
         />
@@ -357,24 +352,33 @@ export default function InvoiceInformation({
           name="freight"
           render={({ field }) => (
             <FormItem>
-
               <FormLabel>
                 Freight
               </FormLabel>
 
               <FormControl>
-
                 <Input
                   type="number"
                   step="0.01"
                   placeholder="0.00"
-                  {...field}
+                  value={
+                    typeof field.value === "number"
+                      ? field.value
+                      : ""
+                  }
+                  onChange={(e) =>
+                    field.onChange(
+                      e.target.value === ""
+                        ? 0
+                        : Number(
+                            e.target.value
+                          )
+                    )
+                  }
                 />
-
               </FormControl>
 
               <FormMessage />
-
             </FormItem>
           )}
         />
@@ -386,22 +390,23 @@ export default function InvoiceInformation({
           name="incoterm"
           render={({ field }) => (
             <FormItem>
-
               <FormLabel>
                 Incoterm
               </FormLabel>
 
               <FormControl>
-
                 <Input
                   placeholder="FOB"
                   {...field}
+                  value={
+                    typeof field.value === "string"
+                      ? field.value
+                      : ""
+                  }
                 />
-
               </FormControl>
 
               <FormMessage />
-
             </FormItem>
           )}
         />
@@ -413,28 +418,27 @@ export default function InvoiceInformation({
           name="commercialReference"
           render={({ field }) => (
             <FormItem className="lg:col-span-2">
-
               <FormLabel>
                 Commercial Reference
               </FormLabel>
 
               <FormControl>
-
                 <Input
                   placeholder="Reference Number"
                   {...field}
+                  value={
+                    typeof field.value === "string"
+                      ? field.value
+                      : ""
+                  }
                 />
-
               </FormControl>
 
               <FormMessage />
-
             </FormItem>
           )}
         />
-
       </div>
-
     </div>
   );
 }

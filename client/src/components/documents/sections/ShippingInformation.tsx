@@ -12,10 +12,14 @@ import { Input } from "../../ui/input";
 
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../ui/select";
 
-import type { CreateAllocationInput } from "../../../validations/allocation.schema";
+import type { CreateAllocationInput, CreateAllocationOutput } from "../../../validations/allocation.schema";
 
 interface Props {
-  form: UseFormReturn<CreateAllocationInput>;
+  form: UseFormReturn<
+    CreateAllocationInput,
+    undefined,
+    CreateAllocationOutput
+  >;
 }
 
 const transportModes = [
@@ -72,9 +76,14 @@ export default function ShippingInformation({
               <FormControl>
 
                 <Input
-                  placeholder="Nigeria"
-                  {...field}
-                />
+  placeholder="Nigeria"
+  {...field}
+  value={
+    typeof field.value === "string"
+      ? field.value
+      : ""
+  }
+/>
 
               </FormControl>
 
@@ -98,11 +107,16 @@ export default function ShippingInformation({
 
               <FormControl>
 
-                <Input
-                  placeholder="Lagos"
-                  {...field}
-                />
-
+              
+<Input
+  placeholder="Lagos"
+  {...field}
+  value={
+    typeof field.value === "string"
+      ? field.value
+      : ""
+  }
+/>
               </FormControl>
 
               <FormMessage />
@@ -125,11 +139,16 @@ export default function ShippingInformation({
 
               <FormControl>
 
-                <Input
-                  placeholder="Warehouse Address"
-                  {...field}
-                />
-
+             
+<Input
+  placeholder="Warehouse Address"
+  {...field}
+  value={
+    typeof field.value === "string"
+      ? field.value
+      : ""
+  }
+/>
               </FormControl>
 
               <FormMessage />
@@ -140,40 +159,32 @@ export default function ShippingInformation({
 
         {/* Pickup Date */}
 
-       <FormField
+    <FormField
   control={form.control}
   name="pickupDate"
   render={({ field }) => (
     <FormItem>
-
-      <FormLabel>
-        Pickup Date
-      </FormLabel>
+      <FormLabel>Pickup Date</FormLabel>
 
       <FormControl>
-
         <Input
           type="date"
           value={
-            field.value
+            typeof field.value === "string"
               ? field.value.substring(0, 10)
               : ""
           }
           onChange={(e) =>
             field.onChange(
               e.target.value
-                ? new Date(
-                    e.target.value
-                  ).toISOString()
+                ? new Date(e.target.value).toISOString()
                 : undefined
             )
           }
         />
-
       </FormControl>
 
       <FormMessage />
-
     </FormItem>
   )}
 />
@@ -196,10 +207,17 @@ export default function ShippingInformation({
 
               <FormControl>
 
+            
+
                 <Input
-                  placeholder="United Kingdom"
-                  {...field}
-                />
+  placeholder="United Kingdom"
+  {...field}
+  value={
+    typeof field.value === "string"
+      ? field.value
+      : ""
+  }
+/>
 
               </FormControl>
 
@@ -223,11 +241,15 @@ export default function ShippingInformation({
 
               <FormControl>
 
-                <Input
-                  placeholder="London"
-                  {...field}
-                />
-
+               <Input
+  placeholder="Landon"
+  {...field}
+  value={
+    typeof field.value === "string"
+      ? field.value
+      : ""
+  }
+/>
               </FormControl>
 
               <FormMessage />
@@ -251,9 +273,14 @@ export default function ShippingInformation({
               <FormControl>
 
                 <Input
-                  placeholder="Apapa Port"
-                  {...field}
-                />
+  placeholder="Apapa  Port"
+  {...field}
+  value={
+    typeof field.value === "string"
+      ? field.value
+      : ""
+  }
+/>
 
               </FormControl>
 
@@ -278,9 +305,14 @@ export default function ShippingInformation({
               <FormControl>
 
                 <Input
-                  placeholder="Felixstowe Port"
-                  {...field}
-                />
+  placeholder="Felixtowel Port"
+  {...field}
+  value={
+    typeof field.value === "string"
+      ? field.value
+      : ""
+  }
+/>
 
               </FormControl>
 
@@ -305,9 +337,14 @@ export default function ShippingInformation({
               <FormControl>
 
                 <Input
-                  placeholder="Final Port"
-                  {...field}
-                />
+  placeholder="Final port"
+  {...field}
+  value={
+    typeof field.value === "string"
+      ? field.value
+      : ""
+  }
+/>
 
               </FormControl>
 
@@ -331,10 +368,15 @@ export default function ShippingInformation({
 
               <FormControl>
 
-                <Input
-                  placeholder="Maersk"
-                  {...field}
-                />
+               <Input
+  placeholder="Masket"
+  {...field}
+  value={
+    typeof field.value === "string"
+      ? field.value
+      : ""
+  }
+/>
 
               </FormControl>
 
@@ -412,10 +454,15 @@ export default function ShippingInformation({
 
               <FormControl>
 
-                <Input
-                  placeholder="FOB"
-                  {...field}
-                />
+               <Input
+  placeholder="fob"
+  {...field}
+  value={
+    typeof field.value === "string"
+      ? field.value
+      : ""
+  }
+/>
 
               </FormControl>
 
@@ -428,40 +475,34 @@ export default function ShippingInformation({
         {/* Expected Shipment */}
 
 
-        <FormField
+<FormField
   control={form.control}
   name="expectedShipmentDate"
   render={({ field }) => (
     <FormItem>
-
       <FormLabel>
         Expected Shipment Date
       </FormLabel>
 
       <FormControl>
-
         <Input
           type="date"
           value={
-            field.value
+            typeof field.value === "string"
               ? field.value.substring(0, 10)
               : ""
           }
           onChange={(e) =>
             field.onChange(
               e.target.value
-                ? new Date(
-                    e.target.value
-                  ).toISOString()
+                ? new Date(e.target.value).toISOString()
                 : undefined
             )
           }
         />
-
       </FormControl>
 
       <FormMessage />
-
     </FormItem>
   )}
 />
@@ -485,9 +526,14 @@ export default function ShippingInformation({
               <FormControl>
 
                 <Input
-                  placeholder="Final Delivery Address"
-                  {...field}
-                />
+  placeholder="Final Delivery Port"
+  {...field}
+  value={
+    typeof field.value === "string"
+      ? field.value
+      : ""
+  }
+/>
 
               </FormControl>
 

@@ -9,10 +9,14 @@ import {
 } from "../../ui/form";
 
 import { Input } from "../../ui/input";
-import type { CreatePackingListInput } from "../../../validations/packing-list.validation";
+import type { CreatePackingListInput, CreatePackingListOutput } from "../../../validations/packing-list.validation";
 
 interface Props {
-  form: UseFormReturn<CreatePackingListInput>;
+  form: UseFormReturn<
+    CreatePackingListInput,
+    undefined,
+    CreatePackingListOutput
+  >;
 }
 
 export default function PackingInformation({
@@ -54,11 +58,15 @@ export default function PackingInformation({
 
               <FormControl>
 
-                <Input
-                  type="date"
-                  {...field}
-                />
-
+               <Input
+  type="date"
+  {...field}
+  value={
+    typeof field.value === "string"
+      ? field.value
+      : ""
+  }
+/>
               </FormControl>
 
               <FormMessage />
@@ -84,7 +92,11 @@ export default function PackingInformation({
 
                 <Input
                   {...field}
-                  value={field.value ?? ""}
+                value={
+  typeof field.value === "string"
+    ? field.value
+    : ""
+}
                   placeholder="e.g. Bags, Cartons, Drums, Pallets"
                 />
 
@@ -113,7 +125,11 @@ export default function PackingInformation({
 
                 <Input
                   {...field}
-                  value={field.value ?? ""}
+                value={
+  typeof field.value === "string"
+    ? field.value
+    : ""
+}
                   placeholder="Shipping marks / Container marks"
                 />
 

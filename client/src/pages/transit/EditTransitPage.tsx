@@ -83,19 +83,38 @@ export default function EditTransitPage() {
 
       </div>
 
-      <TransitForm
-        isEditing
-        loading={mutation.isPending}
-        defaultValues={data?.data}
-        onSubmit={async (values) => {
-          await mutation.mutateAsync({
-            id: id!,
-            payload: values,
-          });
+     <TransitForm
+  isEditing
+  loading={mutation.isPending}
+  defaultValues={
+    data
+      ? {
+          shipmentId: data.shipmentId,
+          containerId: data.containerId,
+          origin: data.origin,
+          destination: data.destination,
+          transportMode: data.transportMode,
+          transporter: data.transporter,
+          transitInvoice: data.transitInvoice,
+          agentNumber: data.agentNumber,
+          exporterNumber: data.exporterNumber,
+          wibNumber: data.wibNumber,
+          quantity: data.quantity,
+          unitPrice: data.unitPrice,
+          totalPrice: data.totalPrice,
+          description: data.description,
+        }
+      : undefined
+  }
+  onSubmit={async (values) => {
+    await mutation.mutateAsync({
+      id: id!,
+      payload: values,
+    });
 
-          navigate("/transits");
-        }}
-      />
+    navigate("/transits");
+  }}
+/>
 
     </div>
   );

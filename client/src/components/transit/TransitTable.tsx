@@ -8,9 +8,10 @@ import {
   TableHeader,
   TableRow,
 } from "../ui/table";
-import type { Transit } from "../../lib/transit";
+
 import DeleteTransitDialog from "./DeleteTransitDialog";
 import { Link } from "react-router-dom";
+import type { Transit } from "../../types/transit.type";
 
 interface Props {
   data: Transit[];
@@ -22,8 +23,6 @@ interface Props {
 export default function TransitTable({
   data,
   loading = false,
-  onView,
-  onEdit,
 }: Props) {
   if (loading) {
     return (
@@ -86,7 +85,6 @@ export default function TransitTable({
                   </Button>
                 </Link>
 
-                <DeleteTransitDialog id={transit.id} />
                 <DeleteTransitDialog id={transit.id} />
               </div>
             </TableCell>

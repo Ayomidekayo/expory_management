@@ -9,7 +9,6 @@ import {
   ClipboardList,
   Route,
   FolderOpen,
-  BarChart3,
   Settings,
   Building2,
 } from "lucide-react";

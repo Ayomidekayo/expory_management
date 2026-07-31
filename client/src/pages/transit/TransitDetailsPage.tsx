@@ -43,7 +43,7 @@ export default function TransitDetailsPage() {
   }
 
   const transit =
-    data.data;
+    data;
 
   return (
 
@@ -96,8 +96,8 @@ export default function TransitDetailsPage() {
         />
 
         <DocumentsCard
-          documents={transit.documents}
-        />
+  documents={transit.documents ?? []}
+/>
 
       </div>
 

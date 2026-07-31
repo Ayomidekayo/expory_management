@@ -9,15 +9,6 @@ import { updateAllocation } from "../../api/allocation.api";
 
 import { queryKeys } from "../../lib/queryKeys";
 
-import type {
-  UpdateAllocationDto,
-} from "../../types/allocation.types";
-
-interface UpdateAllocationPayload {
-  id: string;
-
-  payload: UpdateAllocationDto;
-}
 
 export function useUpdateAllocation() {
   const queryClient =

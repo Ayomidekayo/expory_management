@@ -8,13 +8,7 @@ import { toast } from "sonner";
 import { updateConsignee } from "../../api/consignee.api";
 
 import { queryKeys } from "../../lib/queryKeys";
-import type { UpdateConsigneeDto } from "../../types";
 
-
-interface UpdateConsigneePayload {
-  id: string;
-  payload: UpdateConsigneeDto;
-}
 
 export function useUpdateConsignee() {
   const queryClient = useQueryClient();

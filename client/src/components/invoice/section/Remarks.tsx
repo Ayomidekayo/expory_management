@@ -9,10 +9,18 @@ import {
 } from "../../ui/form";
 
 import { Textarea } from "../../ui/textarea";
-import type { CreateInvoiceInput } from "../../../validations/invoice.validation";
+
+import type {
+  CreateInvoiceInput,
+  CreateInvoiceOutput,
+} from "../../../validations/invoice.validation";
 
 interface Props {
-  form: UseFormReturn<CreateInvoiceInput>;
+  form: UseFormReturn<
+    CreateInvoiceInput,
+    undefined,
+    CreateInvoiceOutput
+  >;
 }
 
 export default function Remarks({
@@ -20,9 +28,7 @@ export default function Remarks({
 }: Props) {
   return (
     <div className="rounded-xl border bg-white p-6">
-
       <div className="mb-6">
-
         <h2 className="text-xl font-semibold">
           Remarks
         </h2>
@@ -30,7 +36,6 @@ export default function Remarks({
         <p className="text-sm text-muted-foreground">
           Additional notes for this invoice.
         </p>
-
       </div>
 
       <FormField
@@ -38,27 +43,27 @@ export default function Remarks({
         name="remarks"
         render={({ field }) => (
           <FormItem>
-
             <FormLabel>
               Remarks
             </FormLabel>
 
             <FormControl>
-
               <Textarea
                 rows={5}
                 placeholder="Enter remarks..."
                 {...field}
+                value={
+                  typeof field.value === "string"
+                    ? field.value
+                    : ""
+                }
               />
-
             </FormControl>
 
             <FormMessage />
-
           </FormItem>
         )}
       />
-
     </div>
   );
 }

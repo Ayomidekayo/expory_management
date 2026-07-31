@@ -50,8 +50,18 @@ export const createTransitSchema = z.object({
 export const updateTransitSchema =
   createTransitSchema.partial();
 
+/* ===========================================
+   FORM TYPES
+=========================================== */
+
 export type CreateTransitInput =
-  z.infer<typeof createTransitSchema>;
+  z.input<typeof createTransitSchema>;
+
+export type CreateTransitOutput =
+  z.output<typeof createTransitSchema>;
 
 export type UpdateTransitInput =
-  z.infer<typeof updateTransitSchema>;
+  z.input<typeof updateTransitSchema>;
+
+export type UpdateTransitOutput =
+  z.output<typeof updateTransitSchema>;

@@ -15,10 +15,15 @@ import { Textarea } from "../../ui/textarea";
 
 import type {
   CreateTransitInput,
+  CreateTransitOutput,
 } from "../../../validations/transit.validation";
 
 interface Props {
-  form: UseFormReturn<CreateTransitInput>;
+  form: UseFormReturn<
+    CreateTransitInput,
+    undefined,
+    CreateTransitOutput
+  >;
 }
 
 export default function PricingInformation({
@@ -43,31 +48,26 @@ export default function PricingInformation({
   =====================================
   */
 
-  useEffect(() => {
+useEffect(() => {
+  const qty = Number(quantity);
+  const price = Number(unitPrice);
 
-    const qty =
-      Number(quantity ?? 0);
+  if (
+    Number.isNaN(qty) ||
+    Number.isNaN(price)
+  ) {
+    return;
+  }
 
-    const price =
-      Number(unitPrice ?? 0);
+  const total = qty * price;
 
-    form.setValue(
-
-      "totalPrice",
-
-      qty * price
-
-    );
-
-  }, [
-
-    quantity,
-
-    unitPrice,
-
-    form,
-
-  ]);
+  if (form.getValues("totalPrice") !== total) {
+    form.setValue("totalPrice", total, {
+      shouldDirty: false,
+      shouldValidate: false,
+    });
+  }
+}, [quantity, unitPrice, form]);
 
   return (
 
@@ -108,14 +108,25 @@ export default function PricingInformation({
 
               <FormControl>
 
-                <Input
-                  type="number"
-                  step="0.01"
-                  placeholder="0"
-                  {...field}
-                  value={field.value ?? ""}
-                />
-
+               <Input
+  type="number"
+  step="0.01"
+  placeholder="0"
+  {...field}
+ value={
+  typeof field.value === "number" ||
+  typeof field.value === "string"
+    ? field.value
+    : ""
+}
+  onChange={(e) =>
+    field.onChange(
+      e.target.value === ""
+        ? undefined
+        : Number(e.target.value)
+    )
+  }
+/>
               </FormControl>
 
               <FormMessage />
@@ -143,12 +154,24 @@ export default function PricingInformation({
               <FormControl>
 
                 <Input
-                  type="number"
-                  step="0.01"
-                  placeholder="0.00"
-                  {...field}
-                  value={field.value ?? ""}
-                />
+  type="number"
+  step="0.01"
+  placeholder="0.00"
+  {...field}
+  value={
+  typeof field.value === "number" ||
+  typeof field.value === "string"
+    ? field.value
+    : ""
+}
+  onChange={(e) =>
+    field.onChange(
+      e.target.value === ""
+        ? undefined
+        : Number(e.target.value)
+    )
+  }
+/>
 
               </FormControl>
 
@@ -176,14 +199,19 @@ export default function PricingInformation({
 
               <FormControl>
 
-                <Input
-                  readOnly
-                  type="number"
-                  step="0.01"
-                  {...field}
-                  value={field.value ?? 0}
-                  className="bg-muted"
-                />
+               <Input
+  readOnly
+  type="number"
+  step="0.01"
+  {...field}
+  value={
+  typeof field.value === "number" ||
+  typeof field.value === "string"
+    ? field.value
+    : ""
+}
+  className="bg-muted"
+/>
 
               </FormControl>
 
@@ -215,12 +243,16 @@ export default function PricingInformation({
 
               <FormControl>
 
-                <Textarea
-                  rows={5}
-                  placeholder="Describe the goods being transported..."
-                  {...field}
-                  value={field.value ?? ""}
-                />
+              <Textarea
+  rows={5}
+  placeholder="Describe the goods being transported..."
+  {...field}
+  value={
+    typeof field.value === "string"
+      ? field.value
+      : ""
+  }
+/>
 
               </FormControl>
 

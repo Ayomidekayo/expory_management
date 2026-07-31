@@ -1,9 +1,5 @@
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "../../ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "../../../ui/card";
+
 
 interface DetailCardProps {
   title: string;

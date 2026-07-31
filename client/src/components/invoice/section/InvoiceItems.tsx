@@ -22,11 +22,18 @@ import {
 
 import { Button } from "../../ui/button";
 import { Input } from "../../ui/input";
-import type { CreateInvoiceInput } from "../../../validations/invoice.validation";
 
+import type {
+  CreateInvoiceInput,
+  CreateInvoiceOutput,
+} from "../../../validations/invoice.validation";
 
 interface Props {
-  form: UseFormReturn<CreateInvoiceInput>;
+  form: UseFormReturn<
+    CreateInvoiceInput,
+    undefined,
+    CreateInvoiceOutput
+  >;
 }
 
 export default function InvoiceItems({
@@ -43,11 +50,8 @@ export default function InvoiceItems({
 
   return (
     <div className="rounded-xl border bg-white p-6">
-
       <div className="mb-6 flex items-center justify-between">
-
         <div>
-
           <h2 className="text-xl font-semibold">
             Invoice Items
           </h2>
@@ -55,7 +59,6 @@ export default function InvoiceItems({
           <p className="text-sm text-muted-foreground">
             Add one or more products.
           </p>
-
         </div>
 
         <Button
@@ -72,48 +75,31 @@ export default function InvoiceItems({
               unit: "",
               unitPrice: 0,
               remarks: "",
-            })
+            } as CreateInvoiceInput["items"][number])
           }
         >
           <Plus className="mr-2 h-4 w-4" />
-
           Add Item
         </Button>
-
       </div>
 
       <div className="overflow-x-auto">
-
         <Table>
-
           <TableHeader>
-
             <TableRow>
-
               <TableHead>Description</TableHead>
-
               <TableHead>HS Code</TableHead>
-
               <TableHead>Package</TableHead>
-
               <TableHead>Qty</TableHead>
-
               <TableHead>Unit</TableHead>
-
               <TableHead>Unit Price</TableHead>
-
               <TableHead>Total</TableHead>
-
               <TableHead />
-
             </TableRow>
-
           </TableHeader>
 
           <TableBody>
-
-            {fields.map((field, index) => {
-
+            {fields.map((item, index) => {
               const quantity =
                 Number(
                   form.watch(
@@ -132,40 +118,37 @@ export default function InvoiceItems({
                 quantity * unitPrice;
 
               return (
-
-                <TableRow key={field.id}>
-
+                <TableRow key={item.id}>
                   {/* Description */}
 
                   <TableCell>
-
                     <FormField
                       control={form.control}
                       name={`items.${index}.description`}
                       render={({ field }) => (
                         <FormItem>
-
                           <FormControl>
-
                             <Input
                               {...field}
                               placeholder="Product"
+                              value={
+                                typeof field.value ===
+                                "string"
+                                  ? field.value
+                                  : ""
+                              }
                             />
-
                           </FormControl>
 
                           <FormMessage />
-
                         </FormItem>
                       )}
                     />
-
                   </TableCell>
 
-                  {/* HS CODE */}
+                  {/* HS Code */}
 
                   <TableCell>
-
                     <FormField
                       control={form.control}
                       name={`items.${index}.hsCode`}
@@ -173,16 +156,20 @@ export default function InvoiceItems({
                         <Input
                           {...field}
                           placeholder="HS"
+                          value={
+                            typeof field.value ===
+                            "string"
+                              ? field.value
+                              : ""
+                          }
                         />
                       )}
                     />
-
                   </TableCell>
 
                   {/* Package */}
 
                   <TableCell>
-
                     <FormField
                       control={form.control}
                       name={`items.${index}.packageType`}
@@ -190,33 +177,49 @@ export default function InvoiceItems({
                         <Input
                           {...field}
                           placeholder="Bag"
+                          value={
+                            typeof field.value ===
+                            "string"
+                              ? field.value
+                              : ""
+                          }
                         />
                       )}
                     />
-
                   </TableCell>
 
                   {/* Quantity */}
 
                   <TableCell>
-
                     <FormField
                       control={form.control}
                       name={`items.${index}.quantity`}
                       render={({ field }) => (
                         <Input
                           type="number"
-                          {...field}
+                          value={
+                            typeof field.value ===
+                            "number"
+                              ? field.value
+                              : ""
+                          }
+                          onChange={(e) =>
+                            field.onChange(
+                              e.target.value === ""
+                                ? undefined
+                                : Number(
+                                    e.target.value
+                                  )
+                            )
+                          }
                         />
                       )}
                     />
-
                   </TableCell>
 
                   {/* Unit */}
 
                   <TableCell>
-
                     <FormField
                       control={form.control}
                       name={`items.${index}.unit`}
@@ -224,47 +227,62 @@ export default function InvoiceItems({
                         <Input
                           {...field}
                           placeholder="MT"
+                          value={
+                            typeof field.value ===
+                            "string"
+                              ? field.value
+                              : ""
+                          }
                         />
                       )}
                     />
-
                   </TableCell>
 
                   {/* Unit Price */}
 
                   <TableCell>
-
                     <FormField
                       control={form.control}
                       name={`items.${index}.unitPrice`}
                       render={({ field }) => (
                         <Input
                           type="number"
-                          {...field}
+                          value={
+                            typeof field.value ===
+                            "number"
+                              ? field.value
+                              : ""
+                          }
+                          onChange={(e) =>
+                            field.onChange(
+                              e.target.value === ""
+                                ? undefined
+                                : Number(
+                                    e.target.value
+                                  )
+                            )
+                          }
                         />
                       )}
                     />
-
                   </TableCell>
 
                   {/* Total */}
 
                   <TableCell>
-
                     <div className="font-semibold whitespace-nowrap">
-
-                      {form.watch("currency")}{" "}
-
+                      {typeof form.watch(
+                        "currency"
+                      ) === "string"
+                        ? form.watch("currency")
+                        : ""}{" "}
                       {total.toLocaleString()}
-
                     </div>
-
                   </TableCell>
 
                   {/* Delete */}
 
                   <TableCell>
-
                     <Button
                       size="icon"
                       variant="ghost"
@@ -276,25 +294,15 @@ export default function InvoiceItems({
                         remove(index)
                       }
                     >
-
                       <Trash2 className="h-4 w-4 text-red-500" />
-
                     </Button>
-
                   </TableCell>
-
                 </TableRow>
-
               );
-
             })}
-
           </TableBody>
-
         </Table>
-
       </div>
-
     </div>
   );
 }

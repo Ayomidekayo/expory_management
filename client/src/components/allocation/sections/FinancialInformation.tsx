@@ -51,19 +51,21 @@ export default function FinancialInformation({
               </FormLabel>
 
               <FormControl>
-                <Input
-                  type="number"
-                  placeholder="0.00"
-                  value={
-                    typeof field.value === "number"
-                      ? field.value
-                      : ""
-                  }
-                  onChange={field.onChange}
-                  onBlur={field.onBlur}
-                  name={field.name}
-                  ref={field.ref}
-                />
+                  <Input
+                type="number"
+                placeholder="0"
+                value={field.value == null ? "" : String(field.value)}
+                onChange={(e) =>
+                  field.onChange(
+                    e.target.value === ""
+                      ? undefined
+                      : Number(e.target.value)
+                  )
+                }
+                onBlur={field.onBlur}
+                name={field.name}
+                ref={field.ref}
+              />
               </FormControl>
 
               <FormMessage />

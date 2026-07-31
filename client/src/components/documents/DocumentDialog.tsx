@@ -7,14 +7,13 @@ import type {
   UpdateDocumentInput,
 } from "../../validations/document.validation";
 
-import DocumentForm from "../form/DocumentForm";
-
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
 } from "../ui/dialog";
+import DocumentForm from "./DocumentForm";
 
 interface Props {
   open: boolean;

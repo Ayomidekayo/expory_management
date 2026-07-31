@@ -176,12 +176,19 @@ export default function AllocationForm({
 
   return (
     <Form {...form}>
-      <form
-        onSubmit={form.handleSubmit((values) => {
-          onSubmit(values);
-        })}
-        className="space-y-6"
-      >
+     <form
+  onSubmit={form.handleSubmit(
+    (values) => {
+      console.log("✅ Submitted");
+      console.log(values);
+      onSubmit(values);
+    },
+    (errors) => {
+      console.log("❌ Validation Errors");
+      console.log(errors);
+    }
+  )}
+>
         <ClientInformation form={form} />
 
         <ServiceInformation form={form} />

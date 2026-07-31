@@ -1,26 +1,21 @@
 import { useEffect } from "react";
-import {
-  useForm,
-} from "react-hook-form";
-
-import {
-  zodResolver,
-} from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 import { Form } from "../ui/form";
 
 import {
   createContainerSchema,
   type CreateContainerInput,
+  type CreateContainerOutput,
 } from "../../validations/container.validation";
+
 import ContainerInformation from "./section/ContainerInformation";
 import ShipmentInformation from "./section/ShipmentInformation";
 import PhysicalInformation from "./section/PhysicalInformation";
 import LogisticsInformation from "./section/LogisticsInformation";
 import Summary from "./section/Summary";
 import FormActions from "./section/FormActions";
-
-
 
 interface Props {
   defaultValues?: Partial<CreateContainerInput>;
@@ -30,7 +25,7 @@ interface Props {
   loading?: boolean;
 
   onSubmit: (
-    values: CreateContainerInput
+    values: CreateContainerOutput
   ) => void;
 }
 
@@ -40,101 +35,86 @@ export default function ContainerForm({
   loading = false,
   onSubmit,
 }: Props) {
+  const form = useForm<
+    CreateContainerInput,
+    undefined,
+    CreateContainerOutput
+  >({
+    resolver: zodResolver(createContainerSchema),
 
- const form = useForm<CreateContainerInput>({
-  resolver: zodResolver(createContainerSchema),
-      defaultValues: {
+    defaultValues: {
+      shipmentId: "",
 
-        shipmentId: "",
+      packingListId: "",
 
-        packingListId: "",
+      containerNumber: "",
 
-        containerNumber: "",
+      sealNumber: "",
 
-        sealNumber: "",
+      containerType: "DRY",
 
-        containerType: "DRY",
+      containerSize: "FT20",
 
-        containerSize: "FT20",
+      grossWeight: 0,
 
-        grossWeight: 0,
+      netWeight: 0,
 
-        netWeight: 0,
+      tareWeight: 0,
 
-        tareWeight: 0,
+      volume: 0,
 
-        volume: 0,
+      loadingLocation: "",
 
-        loadingLocation: "",
+      destination: "",
 
-        destination: "",
+      shippingLine: "",
 
-        shippingLine: "",
+      bookingReference: "",
 
-        bookingReference: "",
+      containerCondition: "",
 
-        containerCondition: "",
+      status: "EMPTY",
 
-        status: "EMPTY",
-
-        ...defaultValues,
-
-      },
-
-    });
+      ...defaultValues,
+    },
+  });
 
   useEffect(() => {
-
     if (!defaultValues) return;
 
     form.reset(defaultValues);
-
   }, [defaultValues, form]);
+
   console.log(form.formState.errors);
 
   return (
-
     <Form {...form}>
-<form
-  onSubmit={form.handleSubmit(
-    (values) => {
-      console.log("✅ VALID", values);
-      onSubmit(values);
-    },
-    (errors) => {
-      console.log("❌ VALIDATION ERRORS", errors);
-    }
-  )}
->
-        <ContainerInformation
-          form={form}
-        />
+      <form
+        onSubmit={form.handleSubmit(
+          (values) => {
+            console.log("✅ VALID", values);
+            onSubmit(values);
+          },
+          (errors) => {
+            console.log("❌ VALIDATION ERRORS", errors);
+          }
+        )}
+      >
+        <ContainerInformation form={form} />
 
-        <ShipmentInformation
-          form={form}
-        />
+        <ShipmentInformation form={form} />
 
-        <PhysicalInformation
-          form={form}
-        />
+        <PhysicalInformation form={form} />
 
-        <LogisticsInformation
-          form={form}
-        />
+        <LogisticsInformation form={form} />
 
-        <Summary
-          form={form}
-        />
+        <Summary form={form} />
 
         <FormActions
           loading={loading}
           isEditing={isEditing}
         />
-
       </form>
-
     </Form>
-
   );
-
 }

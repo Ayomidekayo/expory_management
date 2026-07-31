@@ -1,4 +1,5 @@
-import { Badge } from "../../ui/badge";
+import { Badge } from "../../../ui/badge";
+
 
 interface Props {
   status: string;

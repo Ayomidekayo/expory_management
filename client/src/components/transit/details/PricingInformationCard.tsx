@@ -1,10 +1,8 @@
 import {
   DollarSign,
 } from "lucide-react";
+import type { Transit } from "../../../types/transit.type";
 
-import type {
-  Transit,
-} from "../../../types";
 
 interface Props {
   transit: Transit;

@@ -9,16 +9,6 @@ import { updateExporter } from "../../api/exporter.api";
 
 import { queryKeys } from "../../lib/queryKeys";
 
-import type {
-  UpdateExporterDto,
-} from "../../types/exporter.types";
-
-interface Payload {
-  id: string;
-
-  payload: UpdateExporterDto;
-}
-
 export function useUpdateExporter() {
   const queryClient =
     useQueryClient();
