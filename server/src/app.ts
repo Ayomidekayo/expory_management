@@ -9,7 +9,7 @@ const app = express()
 
 const allowedOrigins = [
   "http://localhost:5173",
-  "https://expory-management-8oua.vercel.app",
+  "https://expory-management-bm4s.vercel.app",
 ];
 
 app.use(
