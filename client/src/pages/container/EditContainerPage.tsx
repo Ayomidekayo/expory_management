@@ -83,17 +83,30 @@ export default function EditContainerPage() {
 
       </div>
 
-      <ContainerForm
-        isEditing
-        loading={updateContainer.isPending}
-        defaultValues={data.data}
-        onSubmit={(values) =>
-          updateContainer.mutate({
-            id: id!,
-            payload: values,
-          })
-        }
-      />
+    <ContainerForm
+  isEditing
+  loading={updateContainer.isPending}
+  defaultValues={{
+    ...data.data,
+    packingListId: data.data.packingListId ?? undefined,
+    sealNumber: data.data.sealNumber ?? undefined,
+    grossWeight: data.data.grossWeight ?? undefined,
+    netWeight: data.data.netWeight ?? undefined,
+    tareWeight: data.data.tareWeight ?? undefined,
+    volume: data.data.volume ?? undefined,
+    loadingLocation: data.data.loadingLocation ?? undefined,
+    destination: data.data.destination ?? undefined,
+    shippingLine: data.data.shippingLine ?? undefined,
+    bookingReference: data.data.bookingReference ?? undefined,
+    containerCondition: data.data.containerCondition ?? undefined,
+  }}
+  onSubmit={(values) =>
+    updateContainer.mutate({
+      id: id!,
+      payload: values,
+    })
+  }
+/>
 
     </div>
 

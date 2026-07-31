@@ -40,7 +40,7 @@ export default function DocumentDetailsPage() {
     );
   }
 
-  const document = data.data;
+  const document = data;
 
   const attachedRecord =
     document.shipment

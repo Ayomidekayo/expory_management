@@ -11,7 +11,8 @@ import {
   DropdownMenuTrigger,
 } from "../../components/ui/dropdown-menu";
 import type { ColumnDef } from "@tanstack/react-table";
-import type { PackingList } from "../../types";
+import type { PackingList } from "../../types/packing-list";
+
 
 
 

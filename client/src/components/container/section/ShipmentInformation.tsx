@@ -65,7 +65,7 @@ const {
 
 
 const currentPackingList =
-  packingList?.data;
+  packingList;
 
   /*
   -------------------------------------

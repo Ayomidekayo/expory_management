@@ -51,11 +51,12 @@ export default function Remarks({
               <Textarea
                 rows={5}
                 placeholder="Enter remarks..."
-                {...field}
-                value={
-                  typeof field.value === "string"
-                    ? field.value
-                    : ""
+                name={field.name}
+                ref={field.ref}
+                onBlur={field.onBlur}
+                value={field.value ?? ""}
+                onChange={(e) =>
+                  field.onChange(e.target.value)
                 }
               />
             </FormControl>

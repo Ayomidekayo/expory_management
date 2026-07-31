@@ -1,6 +1,4 @@
 import { useQuery } from "@tanstack/react-query";
-
-
 import type { ShipmentQuery } from "../../types/shipment.types";
 import { getAvailableShipments } from "../../api/shipment.api";
 

@@ -18,13 +18,21 @@ import {
 } from "../../ui/select";
 
 import { Input } from "../../ui/input";
-import type { CreateInvoiceInput } from "../../../validations/invoice.validation";
+
+import type {
+  CreateInvoiceInput,
+  CreateInvoiceOutput,
+} from "../../../validations/invoice.validation";
+
 import { useAvailableShipments } from "../../../hooks/shipments/useAvailableShipments";
 import { useShipment } from "../../../hooks/shipments/useShipment";
 
-
 interface Props {
-  form: UseFormReturn<CreateInvoiceInput>;
+  form: UseFormReturn<
+    CreateInvoiceInput,
+    undefined,
+    CreateInvoiceOutput
+  >;
 }
 
 export default function ShipmentInformation({
@@ -51,13 +59,11 @@ export default function ShipmentInformation({
           ""
       );
     }
-  }, [currentShipment]);
+  }, [currentShipment, form]);
 
   return (
     <div className="rounded-xl border bg-white p-6">
-
       <div className="mb-6">
-
         <h2 className="text-xl font-semibold">
           Shipment Information
         </h2>
@@ -65,39 +71,29 @@ export default function ShipmentInformation({
         <p className="text-sm text-muted-foreground">
           Select an existing shipment.
         </p>
-
       </div>
 
       <div className="grid gap-6 md:grid-cols-2">
-
-        {/* Shipment */}
-
         <FormField
           control={form.control}
           name="shipmentId"
           render={({ field }) => (
             <FormItem>
-
               <FormLabel>
                 Shipment
               </FormLabel>
 
               <Select
-                value={field.value}
+                value={field.value ?? ""}
                 onValueChange={field.onChange}
               >
                 <FormControl>
-
                   <SelectTrigger>
-
                     <SelectValue placeholder="Select Shipment" />
-
                   </SelectTrigger>
-
                 </FormControl>
 
                 <SelectContent>
-
                   {shipments?.data.map(
                     (shipment) => (
                       <SelectItem
@@ -108,23 +104,17 @@ export default function ShipmentInformation({
                       </SelectItem>
                     )
                   )}
-
                 </SelectContent>
-
               </Select>
 
               <FormMessage />
-
             </FormItem>
           )}
         />
-
       </div>
 
       {currentShipment && (
-
         <div className="mt-8 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
-
           <Input
             readOnly
             value={
@@ -202,11 +192,8 @@ export default function ShipmentInformation({
                 ?.allocationNumber ?? ""
             }
           />
-
         </div>
-
       )}
-
     </div>
   );
 }

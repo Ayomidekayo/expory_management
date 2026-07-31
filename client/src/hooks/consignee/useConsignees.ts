@@ -3,7 +3,8 @@ import { useQuery } from "@tanstack/react-query";
 import { getConsignees } from "../../api/consignee.api";
 
 import { queryKeys } from "../../lib/queryKeys";
-import type { ConsigneeQuery } from "../../types";
+import type { ConsigneeQuery } from "../../types/consignee";
+
 
 
 
