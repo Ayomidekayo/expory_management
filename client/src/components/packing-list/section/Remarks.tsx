@@ -51,14 +51,22 @@ export default function Remarks({
 
             <FormControl>
 
-              <Textarea
-                {...field}
-                value={field.value ?? ""}
-                rows={6}
-                placeholder="Enter any additional remarks, handling instructions, or special notes..."
-                className="resize-none"
-              />
-
+            <Textarea
+  name={field.name}
+  ref={field.ref}
+  onBlur={field.onBlur}
+  value={
+    typeof field.value === "string"
+      ? field.value
+      : ""
+  }
+  onChange={(e) =>
+    field.onChange(e.target.value)
+  }
+  rows={6}
+  placeholder="Enter any additional remarks, handling instructions, or special notes..."
+  className="resize-none"
+/>
             </FormControl>
 
             <FormMessage />

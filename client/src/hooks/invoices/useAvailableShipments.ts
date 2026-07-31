@@ -8,6 +8,6 @@ export function useAvailableShipments() {
   return useQuery({
     queryKey: ["available-shipments"],
 
-    queryFn: getAvailableShipments,
+queryFn: () => getAvailableShipments(),
   });
 }
