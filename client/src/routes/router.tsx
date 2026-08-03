@@ -47,6 +47,8 @@ import ClientDetailsPage from "../pages/client/ClientDetailsPage";
 import CreateClientPage from "../pages/client/CreateClientPage";
 import EditClientPage from "../pages/client/EditClientPage";
 import { DashboardPage } from "../pages/dashboard/Dashboard";
+import ProfilePage from "../pages/settings/ProfilePage";
+
 
 
 
@@ -257,7 +259,7 @@ export const router = createBrowserRouter([
 
           {
             path: "/settings",
-            element: <div>Settings</div>,
+            element: <ProfilePage />,
           },
         ],
       },

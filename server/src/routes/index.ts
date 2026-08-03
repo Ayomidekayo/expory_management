@@ -13,6 +13,7 @@ import clientRoutes from "./client.routes";
 import allocationRoutes from "./allocation.routes";
 import transitRoutes from  "./transit.routes"
 import documentRoutes from "./document.routes";
+import userRoutes from "./user.routes";
 
 
 
@@ -32,7 +33,7 @@ router.use("/shipments", shipmentRoutes);
  router.use("/invoices", invoiceRoutes);
   router.use("/transits", transitRoutes);
 
-
+  router.use("/users", userRoutes);
 
 router.use(
   "/documents",

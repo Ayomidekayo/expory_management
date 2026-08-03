@@ -1,140 +1,307 @@
-import { useLocation, useNavigate } from "react-router-dom";
+import {
+  useEffect,
+  useRef,
+  useState,
+} from "react";
+
+import {
+  useLocation,
+  useNavigate,
+} from "react-router-dom";
+
 import {
   Bell,
-  Search,
   ChevronDown,
   LogOut,
+  Menu,
+  Search,
   Settings,
   User,
-  Menu,
 } from "lucide-react";
-import { useState } from "react";
+
 import { useAuthStore } from "../../store/auth.store";
 
 interface Props {
   onMenuClick?: () => void;
 }
 
-export default function Topbar({ onMenuClick }: Props) {
-  const location = useLocation();
+export default function Topbar({
+  onMenuClick,
+}: Props) {
   const navigate = useNavigate();
 
-  const { user, logout } = useAuthStore();
+  const location = useLocation();
 
-  const [open, setOpen] = useState(false);
+  const { user, logout } =
+    useAuthStore();
 
-  const pageTitle = location.pathname
-    .replace("/", "")
-    .replace("-", " ")
-    .replace(/\b\w/g, (c) => c.toUpperCase());
+  const [open, setOpen] =
+    useState(false);
 
-  const handleLogout = () => {
-    logout();
-    navigate("/login");
+  const dropdownRef =
+    useRef<HTMLDivElement>(null);
+
+  /*
+  ======================================
+  Page Title
+  ======================================
+  */
+
+  const titles: Record<
+    string,
+    string
+  > = {
+    dashboard: "Dashboard",
+    clients: "Clients",
+    exporters: "Exporters",
+    consignees: "Consignees",
+    allocations: "Allocations",
+    shipments: "Shipments",
+    invoices: "Invoices",
+    "packing-lists":
+      "Packing Lists",
+    containers: "Containers",
+    transits: "Transit Records",
+    documents: "Documents",
+    profile:
+      "Profile Settings",
+    settings: "Settings",
   };
 
+  const current =
+    location.pathname.split("/")[1];
+
+  const pageTitle =
+    titles[current] ??
+    "Dashboard";
+
+  /*
+  ======================================
+  Close Dropdown
+  ======================================
+  */
+
+  useEffect(() => {
+    function handleClickOutside(
+      event: MouseEvent
+    ) {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(
+          event.target as Node
+        )
+      ) {
+        setOpen(false);
+      }
+    }
+
+    document.addEventListener(
+      "mousedown",
+      handleClickOutside
+    );
+
+    return () =>
+      document.removeEventListener(
+        "mousedown",
+        handleClickOutside
+      );
+  }, []);
+
+  /*
+  ======================================
+  ESC Key
+  ======================================
+  */
+
+  useEffect(() => {
+    function handleEsc(
+      event: KeyboardEvent
+    ) {
+      if (event.key === "Escape") {
+        setOpen(false);
+      }
+    }
+
+    window.addEventListener(
+      "keydown",
+      handleEsc
+    );
+
+    return () =>
+      window.removeEventListener(
+        "keydown",
+        handleEsc
+      );
+  }, []);
+
+  /*
+  ======================================
+  Logout
+  ======================================
+  */
+
+  function handleLogout() {
+    logout();
+
+    navigate("/login");
+  }
+
+  const initials =
+    user?.name
+      ?.split(" ")
+      .map((n) => n[0])
+      .join("")
+      .toUpperCase() ?? "U";
+
   return (
-    <header className="sticky top-0 z-40 flex h-20 items-center justify-between border-b border-slate-200 bg-white px-8 shadow-sm">
+    <header className="sticky top-0 z-40 flex h-20 items-center justify-between border-b border-slate-200 bg-white/95 px-6 shadow-sm backdrop-blur">
 
       {/* Left */}
-      <div className="flex items-center gap-5">
 
-        {/* Mobile Button */}
+      <div className="flex flex-1 items-center gap-5">
+
         <button
           onClick={onMenuClick}
-          className="rounded-lg p-2 hover:bg-slate-100 lg:hidden"
+          className="rounded-xl p-2 transition hover:bg-slate-100 lg:hidden"
         >
           <Menu size={22} />
         </button>
 
         <div>
+
           <h1 className="text-2xl font-bold text-slate-800">
-            {pageTitle || "Dashboard"}
+            {pageTitle}
           </h1>
 
           <p className="text-sm text-slate-500">
-            Welcome back, {user?.name}
+            Welcome back,
+            {" "}
+            <span className="font-medium text-emerald-600">
+              {user?.name}
+            </span>
           </p>
+
         </div>
+
       </div>
 
       {/* Right */}
-      <div className="flex items-center gap-5">
+
+      <div className="flex shrink-0 items-center gap-4">
 
         {/* Search */}
-        <div className="relative hidden md:block">
 
-          <Search
-            size={18}
-            className="absolute left-4 top-3 text-slate-400"
-          />
+        <div className="relative hidden lg:block">
+
+          <Search className="absolute left-4 top-3.5 h-5 w-5 text-slate-400" />
 
           <input
             placeholder="Search..."
-            className="w-80 rounded-xl border border-slate-200 bg-slate-50 py-2 pl-11 pr-4 outline-none focus:border-emerald-500"
+            className="w-72 rounded-xl border border-slate-200 bg-slate-50 py-2.5 pl-11 pr-4 text-sm outline-none transition focus:border-emerald-500 focus:bg-white xl:w-96"
           />
+
         </div>
 
-        {/* Notifications */}
+        {/* Notification */}
+
         <button className="relative rounded-xl p-3 transition hover:bg-slate-100">
 
-          <Bell size={22} />
+          <Bell className="h-6 w-6 text-slate-700" />
 
-          <span className="absolute right-2 top-2 h-2 w-2 rounded-full bg-red-500" />
+          <span className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-red-600 text-[10px] font-bold text-white">
+
+            3
+
+          </span>
+
         </button>
 
-        {/* User Dropdown */}
-        <div className="relative">
+        {/* User */}
+
+        <div
+          ref={dropdownRef}
+          className="relative"
+        >
 
           <button
-            onClick={() => setOpen(!open)}
-            className="flex items-center gap-3 rounded-xl px-3 py-2 hover:bg-slate-100"
+            onClick={() =>
+              setOpen(!open)
+            }
+            className="flex items-center gap-3 rounded-xl px-3 py-2 transition hover:bg-slate-100"
           >
-            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-emerald-600 text-lg font-bold text-white">
-              {user?.name?.charAt(0)}
+
+            <div className="flex h-11 w-11 items-center justify-center rounded-full bg-gradient-to-r from-green-700 to-emerald-500 text-lg font-bold text-white shadow-md">
+
+              {initials}
+
             </div>
 
             <div className="hidden text-left md:block">
+
               <p className="font-semibold text-slate-800">
+
                 {user?.name}
+
               </p>
 
-              <p className="text-sm text-slate-500">
+              <span className="inline-flex rounded-full bg-emerald-100 px-2 py-0.5 text-xs font-medium text-emerald-700">
+
                 {user?.role}
-              </p>
+
+              </span>
+
             </div>
 
-            <ChevronDown size={18} />
+            <ChevronDown
+              className={`h-5 w-5 text-slate-500 transition-transform ${
+                open
+                  ? "rotate-180"
+                  : ""
+              }`}
+            />
+
           </button>
 
           {open && (
-            <div className="absolute right-0 mt-3 w-60 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-xl">
+
+            <div className="absolute right-0 mt-3 w-64 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-2xl">
+
+            
 
               <button
-                className="flex w-full items-center gap-3 px-5 py-4 hover:bg-slate-50"
-              >
-                <User size={18} />
-                Profile
-              </button>
+                onClick={() => {
+                  navigate(
+                    "/settings"
+                  );
 
-              <button
-                className="flex w-full items-center gap-3 px-5 py-4 hover:bg-slate-50"
+                  setOpen(false);
+                }}
+                className="flex w-full items-center gap-3 px-5 py-4 transition hover:bg-slate-50"
               >
-                <Settings size={18} />
+
+                <Settings className="h-5 w-5 text-emerald-600" />
+
                 Settings
+
               </button>
 
-              <hr />
+              <div className="border-t" />
 
               <button
-                onClick={handleLogout}
-                className="flex w-full items-center gap-3 px-5 py-4 text-red-600 hover:bg-red-50"
+                onClick={
+                  handleLogout
+                }
+                className="flex w-full items-center gap-3 px-5 py-4 text-red-600 transition hover:bg-red-50"
               >
-                <LogOut size={18} />
+
+                <LogOut className="h-5 w-5" />
+
                 Logout
+
               </button>
 
             </div>
+
           )}
 
         </div>

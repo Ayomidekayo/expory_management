@@ -2276,19 +2276,19 @@ export namespace Prisma {
    */
 
   export type UserCountOutputType = {
-    approvedAllocations: number
-    assignedAllocations: number
-    createdAllocations: number
-    uploadedDocuments: number
     shipments: number
+    createdAllocations: number
+    assignedAllocations: number
+    approvedAllocations: number
+    uploadedDocuments: number
   }
 
   export type UserCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    approvedAllocations?: boolean | UserCountOutputTypeCountApprovedAllocationsArgs
-    assignedAllocations?: boolean | UserCountOutputTypeCountAssignedAllocationsArgs
-    createdAllocations?: boolean | UserCountOutputTypeCountCreatedAllocationsArgs
-    uploadedDocuments?: boolean | UserCountOutputTypeCountUploadedDocumentsArgs
     shipments?: boolean | UserCountOutputTypeCountShipmentsArgs
+    createdAllocations?: boolean | UserCountOutputTypeCountCreatedAllocationsArgs
+    assignedAllocations?: boolean | UserCountOutputTypeCountAssignedAllocationsArgs
+    approvedAllocations?: boolean | UserCountOutputTypeCountApprovedAllocationsArgs
+    uploadedDocuments?: boolean | UserCountOutputTypeCountUploadedDocumentsArgs
   }
 
   // Custom InputTypes
@@ -2305,7 +2305,14 @@ export namespace Prisma {
   /**
    * UserCountOutputType without action
    */
-  export type UserCountOutputTypeCountApprovedAllocationsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type UserCountOutputTypeCountShipmentsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ShipmentWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountCreatedAllocationsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: AllocationWhereInput
   }
 
@@ -2319,7 +2326,7 @@ export namespace Prisma {
   /**
    * UserCountOutputType without action
    */
-  export type UserCountOutputTypeCountCreatedAllocationsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type UserCountOutputTypeCountApprovedAllocationsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: AllocationWhereInput
   }
 
@@ -2328,13 +2335,6 @@ export namespace Prisma {
    */
   export type UserCountOutputTypeCountUploadedDocumentsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: AllocationDocumentWhereInput
-  }
-
-  /**
-   * UserCountOutputType without action
-   */
-  export type UserCountOutputTypeCountShipmentsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: ShipmentWhereInput
   }
 
 
@@ -2728,6 +2728,10 @@ export namespace Prisma {
     password: string | null
     role: $Enums.Role | null
     isActive: boolean | null
+    phone: string | null
+    department: string | null
+    jobTitle: string | null
+    avatar: string | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -2739,6 +2743,10 @@ export namespace Prisma {
     password: string | null
     role: $Enums.Role | null
     isActive: boolean | null
+    phone: string | null
+    department: string | null
+    jobTitle: string | null
+    avatar: string | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -2750,6 +2758,10 @@ export namespace Prisma {
     password: number
     role: number
     isActive: number
+    phone: number
+    department: number
+    jobTitle: number
+    avatar: number
     createdAt: number
     updatedAt: number
     _all: number
@@ -2763,6 +2775,10 @@ export namespace Prisma {
     password?: true
     role?: true
     isActive?: true
+    phone?: true
+    department?: true
+    jobTitle?: true
+    avatar?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -2774,6 +2790,10 @@ export namespace Prisma {
     password?: true
     role?: true
     isActive?: true
+    phone?: true
+    department?: true
+    jobTitle?: true
+    avatar?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -2785,6 +2805,10 @@ export namespace Prisma {
     password?: true
     role?: true
     isActive?: true
+    phone?: true
+    department?: true
+    jobTitle?: true
+    avatar?: true
     createdAt?: true
     updatedAt?: true
     _all?: true
@@ -2869,6 +2893,10 @@ export namespace Prisma {
     password: string
     role: $Enums.Role
     isActive: boolean
+    phone: string | null
+    department: string | null
+    jobTitle: string | null
+    avatar: string | null
     createdAt: Date
     updatedAt: Date
     _count: UserCountAggregateOutputType | null
@@ -2897,13 +2925,17 @@ export namespace Prisma {
     password?: boolean
     role?: boolean
     isActive?: boolean
+    phone?: boolean
+    department?: boolean
+    jobTitle?: boolean
+    avatar?: boolean
     createdAt?: boolean
     updatedAt?: boolean
-    approvedAllocations?: boolean | User$approvedAllocationsArgs<ExtArgs>
-    assignedAllocations?: boolean | User$assignedAllocationsArgs<ExtArgs>
-    createdAllocations?: boolean | User$createdAllocationsArgs<ExtArgs>
-    uploadedDocuments?: boolean | User$uploadedDocumentsArgs<ExtArgs>
     shipments?: boolean | User$shipmentsArgs<ExtArgs>
+    createdAllocations?: boolean | User$createdAllocationsArgs<ExtArgs>
+    assignedAllocations?: boolean | User$assignedAllocationsArgs<ExtArgs>
+    approvedAllocations?: boolean | User$approvedAllocationsArgs<ExtArgs>
+    uploadedDocuments?: boolean | User$uploadedDocumentsArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["user"]>
 
@@ -2914,6 +2946,10 @@ export namespace Prisma {
     password?: boolean
     role?: boolean
     isActive?: boolean
+    phone?: boolean
+    department?: boolean
+    jobTitle?: boolean
+    avatar?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }, ExtArgs["result"]["user"]>
@@ -2925,6 +2961,10 @@ export namespace Prisma {
     password?: boolean
     role?: boolean
     isActive?: boolean
+    phone?: boolean
+    department?: boolean
+    jobTitle?: boolean
+    avatar?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }, ExtArgs["result"]["user"]>
@@ -2936,17 +2976,21 @@ export namespace Prisma {
     password?: boolean
     role?: boolean
     isActive?: boolean
+    phone?: boolean
+    department?: boolean
+    jobTitle?: boolean
+    avatar?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }
 
-  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "email" | "password" | "role" | "isActive" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
+  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "email" | "password" | "role" | "isActive" | "phone" | "department" | "jobTitle" | "avatar" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
   export type UserInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    approvedAllocations?: boolean | User$approvedAllocationsArgs<ExtArgs>
-    assignedAllocations?: boolean | User$assignedAllocationsArgs<ExtArgs>
-    createdAllocations?: boolean | User$createdAllocationsArgs<ExtArgs>
-    uploadedDocuments?: boolean | User$uploadedDocumentsArgs<ExtArgs>
     shipments?: boolean | User$shipmentsArgs<ExtArgs>
+    createdAllocations?: boolean | User$createdAllocationsArgs<ExtArgs>
+    assignedAllocations?: boolean | User$assignedAllocationsArgs<ExtArgs>
+    approvedAllocations?: boolean | User$approvedAllocationsArgs<ExtArgs>
+    uploadedDocuments?: boolean | User$uploadedDocumentsArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type UserIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
@@ -2955,11 +2999,11 @@ export namespace Prisma {
   export type $UserPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "User"
     objects: {
-      approvedAllocations: Prisma.$AllocationPayload<ExtArgs>[]
-      assignedAllocations: Prisma.$AllocationPayload<ExtArgs>[]
-      createdAllocations: Prisma.$AllocationPayload<ExtArgs>[]
-      uploadedDocuments: Prisma.$AllocationDocumentPayload<ExtArgs>[]
       shipments: Prisma.$ShipmentPayload<ExtArgs>[]
+      createdAllocations: Prisma.$AllocationPayload<ExtArgs>[]
+      assignedAllocations: Prisma.$AllocationPayload<ExtArgs>[]
+      approvedAllocations: Prisma.$AllocationPayload<ExtArgs>[]
+      uploadedDocuments: Prisma.$AllocationDocumentPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -2968,6 +3012,10 @@ export namespace Prisma {
       password: string
       role: $Enums.Role
       isActive: boolean
+      phone: string | null
+      department: string | null
+      jobTitle: string | null
+      avatar: string | null
       createdAt: Date
       updatedAt: Date
     }, ExtArgs["result"]["user"]>
@@ -3364,11 +3412,11 @@ export namespace Prisma {
    */
   export interface Prisma__UserClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
-    approvedAllocations<T extends User$approvedAllocationsArgs<ExtArgs> = {}>(args?: Subset<T, User$approvedAllocationsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AllocationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-    assignedAllocations<T extends User$assignedAllocationsArgs<ExtArgs> = {}>(args?: Subset<T, User$assignedAllocationsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AllocationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-    createdAllocations<T extends User$createdAllocationsArgs<ExtArgs> = {}>(args?: Subset<T, User$createdAllocationsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AllocationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-    uploadedDocuments<T extends User$uploadedDocumentsArgs<ExtArgs> = {}>(args?: Subset<T, User$uploadedDocumentsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AllocationDocumentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     shipments<T extends User$shipmentsArgs<ExtArgs> = {}>(args?: Subset<T, User$shipmentsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ShipmentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    createdAllocations<T extends User$createdAllocationsArgs<ExtArgs> = {}>(args?: Subset<T, User$createdAllocationsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AllocationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    assignedAllocations<T extends User$assignedAllocationsArgs<ExtArgs> = {}>(args?: Subset<T, User$assignedAllocationsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AllocationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    approvedAllocations<T extends User$approvedAllocationsArgs<ExtArgs> = {}>(args?: Subset<T, User$approvedAllocationsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AllocationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    uploadedDocuments<T extends User$uploadedDocumentsArgs<ExtArgs> = {}>(args?: Subset<T, User$uploadedDocumentsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AllocationDocumentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -3404,6 +3452,10 @@ export namespace Prisma {
     readonly password: FieldRef<"User", 'String'>
     readonly role: FieldRef<"User", 'Role'>
     readonly isActive: FieldRef<"User", 'Boolean'>
+    readonly phone: FieldRef<"User", 'String'>
+    readonly department: FieldRef<"User", 'String'>
+    readonly jobTitle: FieldRef<"User", 'String'>
+    readonly avatar: FieldRef<"User", 'String'>
     readonly createdAt: FieldRef<"User", 'DateTime'>
     readonly updatedAt: FieldRef<"User", 'DateTime'>
   }
@@ -3799,9 +3851,33 @@ export namespace Prisma {
   }
 
   /**
-   * User.approvedAllocations
+   * User.shipments
    */
-  export type User$approvedAllocationsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type User$shipmentsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Shipment
+     */
+    select?: ShipmentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Shipment
+     */
+    omit?: ShipmentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ShipmentInclude<ExtArgs> | null
+    where?: ShipmentWhereInput
+    orderBy?: ShipmentOrderByWithRelationInput | ShipmentOrderByWithRelationInput[]
+    cursor?: ShipmentWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: ShipmentScalarFieldEnum | ShipmentScalarFieldEnum[]
+  }
+
+  /**
+   * User.createdAllocations
+   */
+  export type User$createdAllocationsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
      * Select specific fields to fetch from the Allocation
      */
@@ -3847,9 +3923,9 @@ export namespace Prisma {
   }
 
   /**
-   * User.createdAllocations
+   * User.approvedAllocations
    */
-  export type User$createdAllocationsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type User$approvedAllocationsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
      * Select specific fields to fetch from the Allocation
      */
@@ -3892,30 +3968,6 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: AllocationDocumentScalarFieldEnum | AllocationDocumentScalarFieldEnum[]
-  }
-
-  /**
-   * User.shipments
-   */
-  export type User$shipmentsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Shipment
-     */
-    select?: ShipmentSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the Shipment
-     */
-    omit?: ShipmentOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: ShipmentInclude<ExtArgs> | null
-    where?: ShipmentWhereInput
-    orderBy?: ShipmentOrderByWithRelationInput | ShipmentOrderByWithRelationInput[]
-    cursor?: ShipmentWhereUniqueInput
-    take?: number
-    skip?: number
-    distinct?: ShipmentScalarFieldEnum | ShipmentScalarFieldEnum[]
   }
 
   /**
@@ -21346,6 +21398,10 @@ export namespace Prisma {
     password: 'password',
     role: 'role',
     isActive: 'isActive',
+    phone: 'phone',
+    department: 'department',
+    jobTitle: 'jobTitle',
+    avatar: 'avatar',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt'
   };
@@ -21982,13 +22038,17 @@ export namespace Prisma {
     password?: StringFilter<"User"> | string
     role?: EnumRoleFilter<"User"> | $Enums.Role
     isActive?: BoolFilter<"User"> | boolean
+    phone?: StringNullableFilter<"User"> | string | null
+    department?: StringNullableFilter<"User"> | string | null
+    jobTitle?: StringNullableFilter<"User"> | string | null
+    avatar?: StringNullableFilter<"User"> | string | null
     createdAt?: DateTimeFilter<"User"> | Date | string
     updatedAt?: DateTimeFilter<"User"> | Date | string
-    approvedAllocations?: AllocationListRelationFilter
-    assignedAllocations?: AllocationListRelationFilter
-    createdAllocations?: AllocationListRelationFilter
-    uploadedDocuments?: AllocationDocumentListRelationFilter
     shipments?: ShipmentListRelationFilter
+    createdAllocations?: AllocationListRelationFilter
+    assignedAllocations?: AllocationListRelationFilter
+    approvedAllocations?: AllocationListRelationFilter
+    uploadedDocuments?: AllocationDocumentListRelationFilter
   }
 
   export type UserOrderByWithRelationInput = {
@@ -21998,13 +22058,17 @@ export namespace Prisma {
     password?: SortOrder
     role?: SortOrder
     isActive?: SortOrder
+    phone?: SortOrderInput | SortOrder
+    department?: SortOrderInput | SortOrder
+    jobTitle?: SortOrderInput | SortOrder
+    avatar?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
-    approvedAllocations?: AllocationOrderByRelationAggregateInput
-    assignedAllocations?: AllocationOrderByRelationAggregateInput
-    createdAllocations?: AllocationOrderByRelationAggregateInput
-    uploadedDocuments?: AllocationDocumentOrderByRelationAggregateInput
     shipments?: ShipmentOrderByRelationAggregateInput
+    createdAllocations?: AllocationOrderByRelationAggregateInput
+    assignedAllocations?: AllocationOrderByRelationAggregateInput
+    approvedAllocations?: AllocationOrderByRelationAggregateInput
+    uploadedDocuments?: AllocationDocumentOrderByRelationAggregateInput
   }
 
   export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -22017,13 +22081,17 @@ export namespace Prisma {
     password?: StringFilter<"User"> | string
     role?: EnumRoleFilter<"User"> | $Enums.Role
     isActive?: BoolFilter<"User"> | boolean
+    phone?: StringNullableFilter<"User"> | string | null
+    department?: StringNullableFilter<"User"> | string | null
+    jobTitle?: StringNullableFilter<"User"> | string | null
+    avatar?: StringNullableFilter<"User"> | string | null
     createdAt?: DateTimeFilter<"User"> | Date | string
     updatedAt?: DateTimeFilter<"User"> | Date | string
-    approvedAllocations?: AllocationListRelationFilter
-    assignedAllocations?: AllocationListRelationFilter
-    createdAllocations?: AllocationListRelationFilter
-    uploadedDocuments?: AllocationDocumentListRelationFilter
     shipments?: ShipmentListRelationFilter
+    createdAllocations?: AllocationListRelationFilter
+    assignedAllocations?: AllocationListRelationFilter
+    approvedAllocations?: AllocationListRelationFilter
+    uploadedDocuments?: AllocationDocumentListRelationFilter
   }, "id" | "email">
 
   export type UserOrderByWithAggregationInput = {
@@ -22033,6 +22101,10 @@ export namespace Prisma {
     password?: SortOrder
     role?: SortOrder
     isActive?: SortOrder
+    phone?: SortOrderInput | SortOrder
+    department?: SortOrderInput | SortOrder
+    jobTitle?: SortOrderInput | SortOrder
+    avatar?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     _count?: UserCountOrderByAggregateInput
@@ -22050,6 +22122,10 @@ export namespace Prisma {
     password?: StringWithAggregatesFilter<"User"> | string
     role?: EnumRoleWithAggregatesFilter<"User"> | $Enums.Role
     isActive?: BoolWithAggregatesFilter<"User"> | boolean
+    phone?: StringNullableWithAggregatesFilter<"User"> | string | null
+    department?: StringNullableWithAggregatesFilter<"User"> | string | null
+    jobTitle?: StringNullableWithAggregatesFilter<"User"> | string | null
+    avatar?: StringNullableWithAggregatesFilter<"User"> | string | null
     createdAt?: DateTimeWithAggregatesFilter<"User"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"User"> | Date | string
   }
@@ -23757,13 +23833,17 @@ export namespace Prisma {
     password: string
     role?: $Enums.Role
     isActive?: boolean
+    phone?: string | null
+    department?: string | null
+    jobTitle?: string | null
+    avatar?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
-    approvedAllocations?: AllocationCreateNestedManyWithoutApprovedByInput
-    assignedAllocations?: AllocationCreateNestedManyWithoutAssignedToInput
-    createdAllocations?: AllocationCreateNestedManyWithoutCreatedByInput
-    uploadedDocuments?: AllocationDocumentCreateNestedManyWithoutUploadedByInput
     shipments?: ShipmentCreateNestedManyWithoutCreatedByInput
+    createdAllocations?: AllocationCreateNestedManyWithoutCreatedByInput
+    assignedAllocations?: AllocationCreateNestedManyWithoutAssignedToInput
+    approvedAllocations?: AllocationCreateNestedManyWithoutApprovedByInput
+    uploadedDocuments?: AllocationDocumentCreateNestedManyWithoutUploadedByInput
   }
 
   export type UserUncheckedCreateInput = {
@@ -23773,13 +23853,17 @@ export namespace Prisma {
     password: string
     role?: $Enums.Role
     isActive?: boolean
+    phone?: string | null
+    department?: string | null
+    jobTitle?: string | null
+    avatar?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
-    approvedAllocations?: AllocationUncheckedCreateNestedManyWithoutApprovedByInput
-    assignedAllocations?: AllocationUncheckedCreateNestedManyWithoutAssignedToInput
-    createdAllocations?: AllocationUncheckedCreateNestedManyWithoutCreatedByInput
-    uploadedDocuments?: AllocationDocumentUncheckedCreateNestedManyWithoutUploadedByInput
     shipments?: ShipmentUncheckedCreateNestedManyWithoutCreatedByInput
+    createdAllocations?: AllocationUncheckedCreateNestedManyWithoutCreatedByInput
+    assignedAllocations?: AllocationUncheckedCreateNestedManyWithoutAssignedToInput
+    approvedAllocations?: AllocationUncheckedCreateNestedManyWithoutApprovedByInput
+    uploadedDocuments?: AllocationDocumentUncheckedCreateNestedManyWithoutUploadedByInput
   }
 
   export type UserUpdateInput = {
@@ -23789,13 +23873,17 @@ export namespace Prisma {
     password?: StringFieldUpdateOperationsInput | string
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     isActive?: BoolFieldUpdateOperationsInput | boolean
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    department?: NullableStringFieldUpdateOperationsInput | string | null
+    jobTitle?: NullableStringFieldUpdateOperationsInput | string | null
+    avatar?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    approvedAllocations?: AllocationUpdateManyWithoutApprovedByNestedInput
-    assignedAllocations?: AllocationUpdateManyWithoutAssignedToNestedInput
-    createdAllocations?: AllocationUpdateManyWithoutCreatedByNestedInput
-    uploadedDocuments?: AllocationDocumentUpdateManyWithoutUploadedByNestedInput
     shipments?: ShipmentUpdateManyWithoutCreatedByNestedInput
+    createdAllocations?: AllocationUpdateManyWithoutCreatedByNestedInput
+    assignedAllocations?: AllocationUpdateManyWithoutAssignedToNestedInput
+    approvedAllocations?: AllocationUpdateManyWithoutApprovedByNestedInput
+    uploadedDocuments?: AllocationDocumentUpdateManyWithoutUploadedByNestedInput
   }
 
   export type UserUncheckedUpdateInput = {
@@ -23805,13 +23893,17 @@ export namespace Prisma {
     password?: StringFieldUpdateOperationsInput | string
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     isActive?: BoolFieldUpdateOperationsInput | boolean
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    department?: NullableStringFieldUpdateOperationsInput | string | null
+    jobTitle?: NullableStringFieldUpdateOperationsInput | string | null
+    avatar?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    approvedAllocations?: AllocationUncheckedUpdateManyWithoutApprovedByNestedInput
-    assignedAllocations?: AllocationUncheckedUpdateManyWithoutAssignedToNestedInput
-    createdAllocations?: AllocationUncheckedUpdateManyWithoutCreatedByNestedInput
-    uploadedDocuments?: AllocationDocumentUncheckedUpdateManyWithoutUploadedByNestedInput
     shipments?: ShipmentUncheckedUpdateManyWithoutCreatedByNestedInput
+    createdAllocations?: AllocationUncheckedUpdateManyWithoutCreatedByNestedInput
+    assignedAllocations?: AllocationUncheckedUpdateManyWithoutAssignedToNestedInput
+    approvedAllocations?: AllocationUncheckedUpdateManyWithoutApprovedByNestedInput
+    uploadedDocuments?: AllocationDocumentUncheckedUpdateManyWithoutUploadedByNestedInput
   }
 
   export type UserCreateManyInput = {
@@ -23821,6 +23913,10 @@ export namespace Prisma {
     password: string
     role?: $Enums.Role
     isActive?: boolean
+    phone?: string | null
+    department?: string | null
+    jobTitle?: string | null
+    avatar?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -23832,6 +23928,10 @@ export namespace Prisma {
     password?: StringFieldUpdateOperationsInput | string
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     isActive?: BoolFieldUpdateOperationsInput | boolean
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    department?: NullableStringFieldUpdateOperationsInput | string | null
+    jobTitle?: NullableStringFieldUpdateOperationsInput | string | null
+    avatar?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -23843,6 +23943,10 @@ export namespace Prisma {
     password?: StringFieldUpdateOperationsInput | string
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     isActive?: BoolFieldUpdateOperationsInput | boolean
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    department?: NullableStringFieldUpdateOperationsInput | string | null
+    jobTitle?: NullableStringFieldUpdateOperationsInput | string | null
+    avatar?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -25860,6 +25964,21 @@ export namespace Prisma {
     not?: NestedBoolFilter<$PrismaModel> | boolean
   }
 
+  export type StringNullableFilter<$PrismaModel = never> = {
+    equals?: string | StringFieldRefInput<$PrismaModel> | null
+    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    lt?: string | StringFieldRefInput<$PrismaModel>
+    lte?: string | StringFieldRefInput<$PrismaModel>
+    gt?: string | StringFieldRefInput<$PrismaModel>
+    gte?: string | StringFieldRefInput<$PrismaModel>
+    contains?: string | StringFieldRefInput<$PrismaModel>
+    startsWith?: string | StringFieldRefInput<$PrismaModel>
+    endsWith?: string | StringFieldRefInput<$PrismaModel>
+    mode?: QueryMode
+    not?: NestedStringNullableFilter<$PrismaModel> | string | null
+  }
+
   export type DateTimeFilter<$PrismaModel = never> = {
     equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
@@ -25869,6 +25988,12 @@ export namespace Prisma {
     gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     not?: NestedDateTimeFilter<$PrismaModel> | Date | string
+  }
+
+  export type ShipmentListRelationFilter = {
+    every?: ShipmentWhereInput
+    some?: ShipmentWhereInput
+    none?: ShipmentWhereInput
   }
 
   export type AllocationListRelationFilter = {
@@ -25883,10 +26008,13 @@ export namespace Prisma {
     none?: AllocationDocumentWhereInput
   }
 
-  export type ShipmentListRelationFilter = {
-    every?: ShipmentWhereInput
-    some?: ShipmentWhereInput
-    none?: ShipmentWhereInput
+  export type SortOrderInput = {
+    sort: SortOrder
+    nulls?: NullsOrder
+  }
+
+  export type ShipmentOrderByRelationAggregateInput = {
+    _count?: SortOrder
   }
 
   export type AllocationOrderByRelationAggregateInput = {
@@ -25897,10 +26025,6 @@ export namespace Prisma {
     _count?: SortOrder
   }
 
-  export type ShipmentOrderByRelationAggregateInput = {
-    _count?: SortOrder
-  }
-
   export type UserCountOrderByAggregateInput = {
     id?: SortOrder
     name?: SortOrder
@@ -25908,6 +26032,10 @@ export namespace Prisma {
     password?: SortOrder
     role?: SortOrder
     isActive?: SortOrder
+    phone?: SortOrder
+    department?: SortOrder
+    jobTitle?: SortOrder
+    avatar?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -25919,6 +26047,10 @@ export namespace Prisma {
     password?: SortOrder
     role?: SortOrder
     isActive?: SortOrder
+    phone?: SortOrder
+    department?: SortOrder
+    jobTitle?: SortOrder
+    avatar?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -25930,6 +26062,10 @@ export namespace Prisma {
     password?: SortOrder
     role?: SortOrder
     isActive?: SortOrder
+    phone?: SortOrder
+    department?: SortOrder
+    jobTitle?: SortOrder
+    avatar?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -25970,6 +26106,24 @@ export namespace Prisma {
     _max?: NestedBoolFilter<$PrismaModel>
   }
 
+  export type StringNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: string | StringFieldRefInput<$PrismaModel> | null
+    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    lt?: string | StringFieldRefInput<$PrismaModel>
+    lte?: string | StringFieldRefInput<$PrismaModel>
+    gt?: string | StringFieldRefInput<$PrismaModel>
+    gte?: string | StringFieldRefInput<$PrismaModel>
+    contains?: string | StringFieldRefInput<$PrismaModel>
+    startsWith?: string | StringFieldRefInput<$PrismaModel>
+    endsWith?: string | StringFieldRefInput<$PrismaModel>
+    mode?: QueryMode
+    not?: NestedStringNullableWithAggregatesFilter<$PrismaModel> | string | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedStringNullableFilter<$PrismaModel>
+    _max?: NestedStringNullableFilter<$PrismaModel>
+  }
+
   export type DateTimeWithAggregatesFilter<$PrismaModel = never> = {
     equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
@@ -25991,21 +26145,6 @@ export namespace Prisma {
     not?: NestedEnumDocumentTypeFilter<$PrismaModel> | $Enums.DocumentType
   }
 
-  export type StringNullableFilter<$PrismaModel = never> = {
-    equals?: string | StringFieldRefInput<$PrismaModel> | null
-    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    lt?: string | StringFieldRefInput<$PrismaModel>
-    lte?: string | StringFieldRefInput<$PrismaModel>
-    gt?: string | StringFieldRefInput<$PrismaModel>
-    gte?: string | StringFieldRefInput<$PrismaModel>
-    contains?: string | StringFieldRefInput<$PrismaModel>
-    startsWith?: string | StringFieldRefInput<$PrismaModel>
-    endsWith?: string | StringFieldRefInput<$PrismaModel>
-    mode?: QueryMode
-    not?: NestedStringNullableFilter<$PrismaModel> | string | null
-  }
-
   export type IntNullableFilter<$PrismaModel = never> = {
     equals?: number | IntFieldRefInput<$PrismaModel> | null
     in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
@@ -26025,11 +26164,6 @@ export namespace Prisma {
   export type UserNullableScalarRelationFilter = {
     is?: UserWhereInput | null
     isNot?: UserWhereInput | null
-  }
-
-  export type SortOrderInput = {
-    sort: SortOrder
-    nulls?: NullsOrder
   }
 
   export type AllocationDocumentCountOrderByAggregateInput = {
@@ -26099,24 +26233,6 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedEnumDocumentTypeFilter<$PrismaModel>
     _max?: NestedEnumDocumentTypeFilter<$PrismaModel>
-  }
-
-  export type StringNullableWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: string | StringFieldRefInput<$PrismaModel> | null
-    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    lt?: string | StringFieldRefInput<$PrismaModel>
-    lte?: string | StringFieldRefInput<$PrismaModel>
-    gt?: string | StringFieldRefInput<$PrismaModel>
-    gte?: string | StringFieldRefInput<$PrismaModel>
-    contains?: string | StringFieldRefInput<$PrismaModel>
-    startsWith?: string | StringFieldRefInput<$PrismaModel>
-    endsWith?: string | StringFieldRefInput<$PrismaModel>
-    mode?: QueryMode
-    not?: NestedStringNullableWithAggregatesFilter<$PrismaModel> | string | null
-    _count?: NestedIntNullableFilter<$PrismaModel>
-    _min?: NestedStringNullableFilter<$PrismaModel>
-    _max?: NestedStringNullableFilter<$PrismaModel>
   }
 
   export type IntNullableWithAggregatesFilter<$PrismaModel = never> = {
@@ -27449,10 +27565,17 @@ export namespace Prisma {
     fileSize?: SortOrder
   }
 
-  export type AllocationCreateNestedManyWithoutApprovedByInput = {
-    create?: XOR<AllocationCreateWithoutApprovedByInput, AllocationUncheckedCreateWithoutApprovedByInput> | AllocationCreateWithoutApprovedByInput[] | AllocationUncheckedCreateWithoutApprovedByInput[]
-    connectOrCreate?: AllocationCreateOrConnectWithoutApprovedByInput | AllocationCreateOrConnectWithoutApprovedByInput[]
-    createMany?: AllocationCreateManyApprovedByInputEnvelope
+  export type ShipmentCreateNestedManyWithoutCreatedByInput = {
+    create?: XOR<ShipmentCreateWithoutCreatedByInput, ShipmentUncheckedCreateWithoutCreatedByInput> | ShipmentCreateWithoutCreatedByInput[] | ShipmentUncheckedCreateWithoutCreatedByInput[]
+    connectOrCreate?: ShipmentCreateOrConnectWithoutCreatedByInput | ShipmentCreateOrConnectWithoutCreatedByInput[]
+    createMany?: ShipmentCreateManyCreatedByInputEnvelope
+    connect?: ShipmentWhereUniqueInput | ShipmentWhereUniqueInput[]
+  }
+
+  export type AllocationCreateNestedManyWithoutCreatedByInput = {
+    create?: XOR<AllocationCreateWithoutCreatedByInput, AllocationUncheckedCreateWithoutCreatedByInput> | AllocationCreateWithoutCreatedByInput[] | AllocationUncheckedCreateWithoutCreatedByInput[]
+    connectOrCreate?: AllocationCreateOrConnectWithoutCreatedByInput | AllocationCreateOrConnectWithoutCreatedByInput[]
+    createMany?: AllocationCreateManyCreatedByInputEnvelope
     connect?: AllocationWhereUniqueInput | AllocationWhereUniqueInput[]
   }
 
@@ -27463,49 +27586,14 @@ export namespace Prisma {
     connect?: AllocationWhereUniqueInput | AllocationWhereUniqueInput[]
   }
 
-  export type AllocationCreateNestedManyWithoutCreatedByInput = {
-    create?: XOR<AllocationCreateWithoutCreatedByInput, AllocationUncheckedCreateWithoutCreatedByInput> | AllocationCreateWithoutCreatedByInput[] | AllocationUncheckedCreateWithoutCreatedByInput[]
-    connectOrCreate?: AllocationCreateOrConnectWithoutCreatedByInput | AllocationCreateOrConnectWithoutCreatedByInput[]
-    createMany?: AllocationCreateManyCreatedByInputEnvelope
-    connect?: AllocationWhereUniqueInput | AllocationWhereUniqueInput[]
-  }
-
-  export type AllocationDocumentCreateNestedManyWithoutUploadedByInput = {
-    create?: XOR<AllocationDocumentCreateWithoutUploadedByInput, AllocationDocumentUncheckedCreateWithoutUploadedByInput> | AllocationDocumentCreateWithoutUploadedByInput[] | AllocationDocumentUncheckedCreateWithoutUploadedByInput[]
-    connectOrCreate?: AllocationDocumentCreateOrConnectWithoutUploadedByInput | AllocationDocumentCreateOrConnectWithoutUploadedByInput[]
-    createMany?: AllocationDocumentCreateManyUploadedByInputEnvelope
-    connect?: AllocationDocumentWhereUniqueInput | AllocationDocumentWhereUniqueInput[]
-  }
-
-  export type ShipmentCreateNestedManyWithoutCreatedByInput = {
-    create?: XOR<ShipmentCreateWithoutCreatedByInput, ShipmentUncheckedCreateWithoutCreatedByInput> | ShipmentCreateWithoutCreatedByInput[] | ShipmentUncheckedCreateWithoutCreatedByInput[]
-    connectOrCreate?: ShipmentCreateOrConnectWithoutCreatedByInput | ShipmentCreateOrConnectWithoutCreatedByInput[]
-    createMany?: ShipmentCreateManyCreatedByInputEnvelope
-    connect?: ShipmentWhereUniqueInput | ShipmentWhereUniqueInput[]
-  }
-
-  export type AllocationUncheckedCreateNestedManyWithoutApprovedByInput = {
+  export type AllocationCreateNestedManyWithoutApprovedByInput = {
     create?: XOR<AllocationCreateWithoutApprovedByInput, AllocationUncheckedCreateWithoutApprovedByInput> | AllocationCreateWithoutApprovedByInput[] | AllocationUncheckedCreateWithoutApprovedByInput[]
     connectOrCreate?: AllocationCreateOrConnectWithoutApprovedByInput | AllocationCreateOrConnectWithoutApprovedByInput[]
     createMany?: AllocationCreateManyApprovedByInputEnvelope
     connect?: AllocationWhereUniqueInput | AllocationWhereUniqueInput[]
   }
 
-  export type AllocationUncheckedCreateNestedManyWithoutAssignedToInput = {
-    create?: XOR<AllocationCreateWithoutAssignedToInput, AllocationUncheckedCreateWithoutAssignedToInput> | AllocationCreateWithoutAssignedToInput[] | AllocationUncheckedCreateWithoutAssignedToInput[]
-    connectOrCreate?: AllocationCreateOrConnectWithoutAssignedToInput | AllocationCreateOrConnectWithoutAssignedToInput[]
-    createMany?: AllocationCreateManyAssignedToInputEnvelope
-    connect?: AllocationWhereUniqueInput | AllocationWhereUniqueInput[]
-  }
-
-  export type AllocationUncheckedCreateNestedManyWithoutCreatedByInput = {
-    create?: XOR<AllocationCreateWithoutCreatedByInput, AllocationUncheckedCreateWithoutCreatedByInput> | AllocationCreateWithoutCreatedByInput[] | AllocationUncheckedCreateWithoutCreatedByInput[]
-    connectOrCreate?: AllocationCreateOrConnectWithoutCreatedByInput | AllocationCreateOrConnectWithoutCreatedByInput[]
-    createMany?: AllocationCreateManyCreatedByInputEnvelope
-    connect?: AllocationWhereUniqueInput | AllocationWhereUniqueInput[]
-  }
-
-  export type AllocationDocumentUncheckedCreateNestedManyWithoutUploadedByInput = {
+  export type AllocationDocumentCreateNestedManyWithoutUploadedByInput = {
     create?: XOR<AllocationDocumentCreateWithoutUploadedByInput, AllocationDocumentUncheckedCreateWithoutUploadedByInput> | AllocationDocumentCreateWithoutUploadedByInput[] | AllocationDocumentUncheckedCreateWithoutUploadedByInput[]
     connectOrCreate?: AllocationDocumentCreateOrConnectWithoutUploadedByInput | AllocationDocumentCreateOrConnectWithoutUploadedByInput[]
     createMany?: AllocationDocumentCreateManyUploadedByInputEnvelope
@@ -27517,6 +27605,34 @@ export namespace Prisma {
     connectOrCreate?: ShipmentCreateOrConnectWithoutCreatedByInput | ShipmentCreateOrConnectWithoutCreatedByInput[]
     createMany?: ShipmentCreateManyCreatedByInputEnvelope
     connect?: ShipmentWhereUniqueInput | ShipmentWhereUniqueInput[]
+  }
+
+  export type AllocationUncheckedCreateNestedManyWithoutCreatedByInput = {
+    create?: XOR<AllocationCreateWithoutCreatedByInput, AllocationUncheckedCreateWithoutCreatedByInput> | AllocationCreateWithoutCreatedByInput[] | AllocationUncheckedCreateWithoutCreatedByInput[]
+    connectOrCreate?: AllocationCreateOrConnectWithoutCreatedByInput | AllocationCreateOrConnectWithoutCreatedByInput[]
+    createMany?: AllocationCreateManyCreatedByInputEnvelope
+    connect?: AllocationWhereUniqueInput | AllocationWhereUniqueInput[]
+  }
+
+  export type AllocationUncheckedCreateNestedManyWithoutAssignedToInput = {
+    create?: XOR<AllocationCreateWithoutAssignedToInput, AllocationUncheckedCreateWithoutAssignedToInput> | AllocationCreateWithoutAssignedToInput[] | AllocationUncheckedCreateWithoutAssignedToInput[]
+    connectOrCreate?: AllocationCreateOrConnectWithoutAssignedToInput | AllocationCreateOrConnectWithoutAssignedToInput[]
+    createMany?: AllocationCreateManyAssignedToInputEnvelope
+    connect?: AllocationWhereUniqueInput | AllocationWhereUniqueInput[]
+  }
+
+  export type AllocationUncheckedCreateNestedManyWithoutApprovedByInput = {
+    create?: XOR<AllocationCreateWithoutApprovedByInput, AllocationUncheckedCreateWithoutApprovedByInput> | AllocationCreateWithoutApprovedByInput[] | AllocationUncheckedCreateWithoutApprovedByInput[]
+    connectOrCreate?: AllocationCreateOrConnectWithoutApprovedByInput | AllocationCreateOrConnectWithoutApprovedByInput[]
+    createMany?: AllocationCreateManyApprovedByInputEnvelope
+    connect?: AllocationWhereUniqueInput | AllocationWhereUniqueInput[]
+  }
+
+  export type AllocationDocumentUncheckedCreateNestedManyWithoutUploadedByInput = {
+    create?: XOR<AllocationDocumentCreateWithoutUploadedByInput, AllocationDocumentUncheckedCreateWithoutUploadedByInput> | AllocationDocumentCreateWithoutUploadedByInput[] | AllocationDocumentUncheckedCreateWithoutUploadedByInput[]
+    connectOrCreate?: AllocationDocumentCreateOrConnectWithoutUploadedByInput | AllocationDocumentCreateOrConnectWithoutUploadedByInput[]
+    createMany?: AllocationDocumentCreateManyUploadedByInputEnvelope
+    connect?: AllocationDocumentWhereUniqueInput | AllocationDocumentWhereUniqueInput[]
   }
 
   export type StringFieldUpdateOperationsInput = {
@@ -27531,21 +27647,39 @@ export namespace Prisma {
     set?: boolean
   }
 
+  export type NullableStringFieldUpdateOperationsInput = {
+    set?: string | null
+  }
+
   export type DateTimeFieldUpdateOperationsInput = {
     set?: Date | string
   }
 
-  export type AllocationUpdateManyWithoutApprovedByNestedInput = {
-    create?: XOR<AllocationCreateWithoutApprovedByInput, AllocationUncheckedCreateWithoutApprovedByInput> | AllocationCreateWithoutApprovedByInput[] | AllocationUncheckedCreateWithoutApprovedByInput[]
-    connectOrCreate?: AllocationCreateOrConnectWithoutApprovedByInput | AllocationCreateOrConnectWithoutApprovedByInput[]
-    upsert?: AllocationUpsertWithWhereUniqueWithoutApprovedByInput | AllocationUpsertWithWhereUniqueWithoutApprovedByInput[]
-    createMany?: AllocationCreateManyApprovedByInputEnvelope
+  export type ShipmentUpdateManyWithoutCreatedByNestedInput = {
+    create?: XOR<ShipmentCreateWithoutCreatedByInput, ShipmentUncheckedCreateWithoutCreatedByInput> | ShipmentCreateWithoutCreatedByInput[] | ShipmentUncheckedCreateWithoutCreatedByInput[]
+    connectOrCreate?: ShipmentCreateOrConnectWithoutCreatedByInput | ShipmentCreateOrConnectWithoutCreatedByInput[]
+    upsert?: ShipmentUpsertWithWhereUniqueWithoutCreatedByInput | ShipmentUpsertWithWhereUniqueWithoutCreatedByInput[]
+    createMany?: ShipmentCreateManyCreatedByInputEnvelope
+    set?: ShipmentWhereUniqueInput | ShipmentWhereUniqueInput[]
+    disconnect?: ShipmentWhereUniqueInput | ShipmentWhereUniqueInput[]
+    delete?: ShipmentWhereUniqueInput | ShipmentWhereUniqueInput[]
+    connect?: ShipmentWhereUniqueInput | ShipmentWhereUniqueInput[]
+    update?: ShipmentUpdateWithWhereUniqueWithoutCreatedByInput | ShipmentUpdateWithWhereUniqueWithoutCreatedByInput[]
+    updateMany?: ShipmentUpdateManyWithWhereWithoutCreatedByInput | ShipmentUpdateManyWithWhereWithoutCreatedByInput[]
+    deleteMany?: ShipmentScalarWhereInput | ShipmentScalarWhereInput[]
+  }
+
+  export type AllocationUpdateManyWithoutCreatedByNestedInput = {
+    create?: XOR<AllocationCreateWithoutCreatedByInput, AllocationUncheckedCreateWithoutCreatedByInput> | AllocationCreateWithoutCreatedByInput[] | AllocationUncheckedCreateWithoutCreatedByInput[]
+    connectOrCreate?: AllocationCreateOrConnectWithoutCreatedByInput | AllocationCreateOrConnectWithoutCreatedByInput[]
+    upsert?: AllocationUpsertWithWhereUniqueWithoutCreatedByInput | AllocationUpsertWithWhereUniqueWithoutCreatedByInput[]
+    createMany?: AllocationCreateManyCreatedByInputEnvelope
     set?: AllocationWhereUniqueInput | AllocationWhereUniqueInput[]
     disconnect?: AllocationWhereUniqueInput | AllocationWhereUniqueInput[]
     delete?: AllocationWhereUniqueInput | AllocationWhereUniqueInput[]
     connect?: AllocationWhereUniqueInput | AllocationWhereUniqueInput[]
-    update?: AllocationUpdateWithWhereUniqueWithoutApprovedByInput | AllocationUpdateWithWhereUniqueWithoutApprovedByInput[]
-    updateMany?: AllocationUpdateManyWithWhereWithoutApprovedByInput | AllocationUpdateManyWithWhereWithoutApprovedByInput[]
+    update?: AllocationUpdateWithWhereUniqueWithoutCreatedByInput | AllocationUpdateWithWhereUniqueWithoutCreatedByInput[]
+    updateMany?: AllocationUpdateManyWithWhereWithoutCreatedByInput | AllocationUpdateManyWithWhereWithoutCreatedByInput[]
     deleteMany?: AllocationScalarWhereInput | AllocationScalarWhereInput[]
   }
 
@@ -27563,49 +27697,7 @@ export namespace Prisma {
     deleteMany?: AllocationScalarWhereInput | AllocationScalarWhereInput[]
   }
 
-  export type AllocationUpdateManyWithoutCreatedByNestedInput = {
-    create?: XOR<AllocationCreateWithoutCreatedByInput, AllocationUncheckedCreateWithoutCreatedByInput> | AllocationCreateWithoutCreatedByInput[] | AllocationUncheckedCreateWithoutCreatedByInput[]
-    connectOrCreate?: AllocationCreateOrConnectWithoutCreatedByInput | AllocationCreateOrConnectWithoutCreatedByInput[]
-    upsert?: AllocationUpsertWithWhereUniqueWithoutCreatedByInput | AllocationUpsertWithWhereUniqueWithoutCreatedByInput[]
-    createMany?: AllocationCreateManyCreatedByInputEnvelope
-    set?: AllocationWhereUniqueInput | AllocationWhereUniqueInput[]
-    disconnect?: AllocationWhereUniqueInput | AllocationWhereUniqueInput[]
-    delete?: AllocationWhereUniqueInput | AllocationWhereUniqueInput[]
-    connect?: AllocationWhereUniqueInput | AllocationWhereUniqueInput[]
-    update?: AllocationUpdateWithWhereUniqueWithoutCreatedByInput | AllocationUpdateWithWhereUniqueWithoutCreatedByInput[]
-    updateMany?: AllocationUpdateManyWithWhereWithoutCreatedByInput | AllocationUpdateManyWithWhereWithoutCreatedByInput[]
-    deleteMany?: AllocationScalarWhereInput | AllocationScalarWhereInput[]
-  }
-
-  export type AllocationDocumentUpdateManyWithoutUploadedByNestedInput = {
-    create?: XOR<AllocationDocumentCreateWithoutUploadedByInput, AllocationDocumentUncheckedCreateWithoutUploadedByInput> | AllocationDocumentCreateWithoutUploadedByInput[] | AllocationDocumentUncheckedCreateWithoutUploadedByInput[]
-    connectOrCreate?: AllocationDocumentCreateOrConnectWithoutUploadedByInput | AllocationDocumentCreateOrConnectWithoutUploadedByInput[]
-    upsert?: AllocationDocumentUpsertWithWhereUniqueWithoutUploadedByInput | AllocationDocumentUpsertWithWhereUniqueWithoutUploadedByInput[]
-    createMany?: AllocationDocumentCreateManyUploadedByInputEnvelope
-    set?: AllocationDocumentWhereUniqueInput | AllocationDocumentWhereUniqueInput[]
-    disconnect?: AllocationDocumentWhereUniqueInput | AllocationDocumentWhereUniqueInput[]
-    delete?: AllocationDocumentWhereUniqueInput | AllocationDocumentWhereUniqueInput[]
-    connect?: AllocationDocumentWhereUniqueInput | AllocationDocumentWhereUniqueInput[]
-    update?: AllocationDocumentUpdateWithWhereUniqueWithoutUploadedByInput | AllocationDocumentUpdateWithWhereUniqueWithoutUploadedByInput[]
-    updateMany?: AllocationDocumentUpdateManyWithWhereWithoutUploadedByInput | AllocationDocumentUpdateManyWithWhereWithoutUploadedByInput[]
-    deleteMany?: AllocationDocumentScalarWhereInput | AllocationDocumentScalarWhereInput[]
-  }
-
-  export type ShipmentUpdateManyWithoutCreatedByNestedInput = {
-    create?: XOR<ShipmentCreateWithoutCreatedByInput, ShipmentUncheckedCreateWithoutCreatedByInput> | ShipmentCreateWithoutCreatedByInput[] | ShipmentUncheckedCreateWithoutCreatedByInput[]
-    connectOrCreate?: ShipmentCreateOrConnectWithoutCreatedByInput | ShipmentCreateOrConnectWithoutCreatedByInput[]
-    upsert?: ShipmentUpsertWithWhereUniqueWithoutCreatedByInput | ShipmentUpsertWithWhereUniqueWithoutCreatedByInput[]
-    createMany?: ShipmentCreateManyCreatedByInputEnvelope
-    set?: ShipmentWhereUniqueInput | ShipmentWhereUniqueInput[]
-    disconnect?: ShipmentWhereUniqueInput | ShipmentWhereUniqueInput[]
-    delete?: ShipmentWhereUniqueInput | ShipmentWhereUniqueInput[]
-    connect?: ShipmentWhereUniqueInput | ShipmentWhereUniqueInput[]
-    update?: ShipmentUpdateWithWhereUniqueWithoutCreatedByInput | ShipmentUpdateWithWhereUniqueWithoutCreatedByInput[]
-    updateMany?: ShipmentUpdateManyWithWhereWithoutCreatedByInput | ShipmentUpdateManyWithWhereWithoutCreatedByInput[]
-    deleteMany?: ShipmentScalarWhereInput | ShipmentScalarWhereInput[]
-  }
-
-  export type AllocationUncheckedUpdateManyWithoutApprovedByNestedInput = {
+  export type AllocationUpdateManyWithoutApprovedByNestedInput = {
     create?: XOR<AllocationCreateWithoutApprovedByInput, AllocationUncheckedCreateWithoutApprovedByInput> | AllocationCreateWithoutApprovedByInput[] | AllocationUncheckedCreateWithoutApprovedByInput[]
     connectOrCreate?: AllocationCreateOrConnectWithoutApprovedByInput | AllocationCreateOrConnectWithoutApprovedByInput[]
     upsert?: AllocationUpsertWithWhereUniqueWithoutApprovedByInput | AllocationUpsertWithWhereUniqueWithoutApprovedByInput[]
@@ -27619,35 +27711,7 @@ export namespace Prisma {
     deleteMany?: AllocationScalarWhereInput | AllocationScalarWhereInput[]
   }
 
-  export type AllocationUncheckedUpdateManyWithoutAssignedToNestedInput = {
-    create?: XOR<AllocationCreateWithoutAssignedToInput, AllocationUncheckedCreateWithoutAssignedToInput> | AllocationCreateWithoutAssignedToInput[] | AllocationUncheckedCreateWithoutAssignedToInput[]
-    connectOrCreate?: AllocationCreateOrConnectWithoutAssignedToInput | AllocationCreateOrConnectWithoutAssignedToInput[]
-    upsert?: AllocationUpsertWithWhereUniqueWithoutAssignedToInput | AllocationUpsertWithWhereUniqueWithoutAssignedToInput[]
-    createMany?: AllocationCreateManyAssignedToInputEnvelope
-    set?: AllocationWhereUniqueInput | AllocationWhereUniqueInput[]
-    disconnect?: AllocationWhereUniqueInput | AllocationWhereUniqueInput[]
-    delete?: AllocationWhereUniqueInput | AllocationWhereUniqueInput[]
-    connect?: AllocationWhereUniqueInput | AllocationWhereUniqueInput[]
-    update?: AllocationUpdateWithWhereUniqueWithoutAssignedToInput | AllocationUpdateWithWhereUniqueWithoutAssignedToInput[]
-    updateMany?: AllocationUpdateManyWithWhereWithoutAssignedToInput | AllocationUpdateManyWithWhereWithoutAssignedToInput[]
-    deleteMany?: AllocationScalarWhereInput | AllocationScalarWhereInput[]
-  }
-
-  export type AllocationUncheckedUpdateManyWithoutCreatedByNestedInput = {
-    create?: XOR<AllocationCreateWithoutCreatedByInput, AllocationUncheckedCreateWithoutCreatedByInput> | AllocationCreateWithoutCreatedByInput[] | AllocationUncheckedCreateWithoutCreatedByInput[]
-    connectOrCreate?: AllocationCreateOrConnectWithoutCreatedByInput | AllocationCreateOrConnectWithoutCreatedByInput[]
-    upsert?: AllocationUpsertWithWhereUniqueWithoutCreatedByInput | AllocationUpsertWithWhereUniqueWithoutCreatedByInput[]
-    createMany?: AllocationCreateManyCreatedByInputEnvelope
-    set?: AllocationWhereUniqueInput | AllocationWhereUniqueInput[]
-    disconnect?: AllocationWhereUniqueInput | AllocationWhereUniqueInput[]
-    delete?: AllocationWhereUniqueInput | AllocationWhereUniqueInput[]
-    connect?: AllocationWhereUniqueInput | AllocationWhereUniqueInput[]
-    update?: AllocationUpdateWithWhereUniqueWithoutCreatedByInput | AllocationUpdateWithWhereUniqueWithoutCreatedByInput[]
-    updateMany?: AllocationUpdateManyWithWhereWithoutCreatedByInput | AllocationUpdateManyWithWhereWithoutCreatedByInput[]
-    deleteMany?: AllocationScalarWhereInput | AllocationScalarWhereInput[]
-  }
-
-  export type AllocationDocumentUncheckedUpdateManyWithoutUploadedByNestedInput = {
+  export type AllocationDocumentUpdateManyWithoutUploadedByNestedInput = {
     create?: XOR<AllocationDocumentCreateWithoutUploadedByInput, AllocationDocumentUncheckedCreateWithoutUploadedByInput> | AllocationDocumentCreateWithoutUploadedByInput[] | AllocationDocumentUncheckedCreateWithoutUploadedByInput[]
     connectOrCreate?: AllocationDocumentCreateOrConnectWithoutUploadedByInput | AllocationDocumentCreateOrConnectWithoutUploadedByInput[]
     upsert?: AllocationDocumentUpsertWithWhereUniqueWithoutUploadedByInput | AllocationDocumentUpsertWithWhereUniqueWithoutUploadedByInput[]
@@ -27675,6 +27739,62 @@ export namespace Prisma {
     deleteMany?: ShipmentScalarWhereInput | ShipmentScalarWhereInput[]
   }
 
+  export type AllocationUncheckedUpdateManyWithoutCreatedByNestedInput = {
+    create?: XOR<AllocationCreateWithoutCreatedByInput, AllocationUncheckedCreateWithoutCreatedByInput> | AllocationCreateWithoutCreatedByInput[] | AllocationUncheckedCreateWithoutCreatedByInput[]
+    connectOrCreate?: AllocationCreateOrConnectWithoutCreatedByInput | AllocationCreateOrConnectWithoutCreatedByInput[]
+    upsert?: AllocationUpsertWithWhereUniqueWithoutCreatedByInput | AllocationUpsertWithWhereUniqueWithoutCreatedByInput[]
+    createMany?: AllocationCreateManyCreatedByInputEnvelope
+    set?: AllocationWhereUniqueInput | AllocationWhereUniqueInput[]
+    disconnect?: AllocationWhereUniqueInput | AllocationWhereUniqueInput[]
+    delete?: AllocationWhereUniqueInput | AllocationWhereUniqueInput[]
+    connect?: AllocationWhereUniqueInput | AllocationWhereUniqueInput[]
+    update?: AllocationUpdateWithWhereUniqueWithoutCreatedByInput | AllocationUpdateWithWhereUniqueWithoutCreatedByInput[]
+    updateMany?: AllocationUpdateManyWithWhereWithoutCreatedByInput | AllocationUpdateManyWithWhereWithoutCreatedByInput[]
+    deleteMany?: AllocationScalarWhereInput | AllocationScalarWhereInput[]
+  }
+
+  export type AllocationUncheckedUpdateManyWithoutAssignedToNestedInput = {
+    create?: XOR<AllocationCreateWithoutAssignedToInput, AllocationUncheckedCreateWithoutAssignedToInput> | AllocationCreateWithoutAssignedToInput[] | AllocationUncheckedCreateWithoutAssignedToInput[]
+    connectOrCreate?: AllocationCreateOrConnectWithoutAssignedToInput | AllocationCreateOrConnectWithoutAssignedToInput[]
+    upsert?: AllocationUpsertWithWhereUniqueWithoutAssignedToInput | AllocationUpsertWithWhereUniqueWithoutAssignedToInput[]
+    createMany?: AllocationCreateManyAssignedToInputEnvelope
+    set?: AllocationWhereUniqueInput | AllocationWhereUniqueInput[]
+    disconnect?: AllocationWhereUniqueInput | AllocationWhereUniqueInput[]
+    delete?: AllocationWhereUniqueInput | AllocationWhereUniqueInput[]
+    connect?: AllocationWhereUniqueInput | AllocationWhereUniqueInput[]
+    update?: AllocationUpdateWithWhereUniqueWithoutAssignedToInput | AllocationUpdateWithWhereUniqueWithoutAssignedToInput[]
+    updateMany?: AllocationUpdateManyWithWhereWithoutAssignedToInput | AllocationUpdateManyWithWhereWithoutAssignedToInput[]
+    deleteMany?: AllocationScalarWhereInput | AllocationScalarWhereInput[]
+  }
+
+  export type AllocationUncheckedUpdateManyWithoutApprovedByNestedInput = {
+    create?: XOR<AllocationCreateWithoutApprovedByInput, AllocationUncheckedCreateWithoutApprovedByInput> | AllocationCreateWithoutApprovedByInput[] | AllocationUncheckedCreateWithoutApprovedByInput[]
+    connectOrCreate?: AllocationCreateOrConnectWithoutApprovedByInput | AllocationCreateOrConnectWithoutApprovedByInput[]
+    upsert?: AllocationUpsertWithWhereUniqueWithoutApprovedByInput | AllocationUpsertWithWhereUniqueWithoutApprovedByInput[]
+    createMany?: AllocationCreateManyApprovedByInputEnvelope
+    set?: AllocationWhereUniqueInput | AllocationWhereUniqueInput[]
+    disconnect?: AllocationWhereUniqueInput | AllocationWhereUniqueInput[]
+    delete?: AllocationWhereUniqueInput | AllocationWhereUniqueInput[]
+    connect?: AllocationWhereUniqueInput | AllocationWhereUniqueInput[]
+    update?: AllocationUpdateWithWhereUniqueWithoutApprovedByInput | AllocationUpdateWithWhereUniqueWithoutApprovedByInput[]
+    updateMany?: AllocationUpdateManyWithWhereWithoutApprovedByInput | AllocationUpdateManyWithWhereWithoutApprovedByInput[]
+    deleteMany?: AllocationScalarWhereInput | AllocationScalarWhereInput[]
+  }
+
+  export type AllocationDocumentUncheckedUpdateManyWithoutUploadedByNestedInput = {
+    create?: XOR<AllocationDocumentCreateWithoutUploadedByInput, AllocationDocumentUncheckedCreateWithoutUploadedByInput> | AllocationDocumentCreateWithoutUploadedByInput[] | AllocationDocumentUncheckedCreateWithoutUploadedByInput[]
+    connectOrCreate?: AllocationDocumentCreateOrConnectWithoutUploadedByInput | AllocationDocumentCreateOrConnectWithoutUploadedByInput[]
+    upsert?: AllocationDocumentUpsertWithWhereUniqueWithoutUploadedByInput | AllocationDocumentUpsertWithWhereUniqueWithoutUploadedByInput[]
+    createMany?: AllocationDocumentCreateManyUploadedByInputEnvelope
+    set?: AllocationDocumentWhereUniqueInput | AllocationDocumentWhereUniqueInput[]
+    disconnect?: AllocationDocumentWhereUniqueInput | AllocationDocumentWhereUniqueInput[]
+    delete?: AllocationDocumentWhereUniqueInput | AllocationDocumentWhereUniqueInput[]
+    connect?: AllocationDocumentWhereUniqueInput | AllocationDocumentWhereUniqueInput[]
+    update?: AllocationDocumentUpdateWithWhereUniqueWithoutUploadedByInput | AllocationDocumentUpdateWithWhereUniqueWithoutUploadedByInput[]
+    updateMany?: AllocationDocumentUpdateManyWithWhereWithoutUploadedByInput | AllocationDocumentUpdateManyWithWhereWithoutUploadedByInput[]
+    deleteMany?: AllocationDocumentScalarWhereInput | AllocationDocumentScalarWhereInput[]
+  }
+
   export type AllocationCreateNestedOneWithoutDocumentsInput = {
     create?: XOR<AllocationCreateWithoutDocumentsInput, AllocationUncheckedCreateWithoutDocumentsInput>
     connectOrCreate?: AllocationCreateOrConnectWithoutDocumentsInput
@@ -27689,10 +27809,6 @@ export namespace Prisma {
 
   export type EnumDocumentTypeFieldUpdateOperationsInput = {
     set?: $Enums.DocumentType
-  }
-
-  export type NullableStringFieldUpdateOperationsInput = {
-    set?: string | null
   }
 
   export type NullableIntFieldUpdateOperationsInput = {
@@ -29087,6 +29203,20 @@ export namespace Prisma {
     not?: NestedBoolFilter<$PrismaModel> | boolean
   }
 
+  export type NestedStringNullableFilter<$PrismaModel = never> = {
+    equals?: string | StringFieldRefInput<$PrismaModel> | null
+    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    lt?: string | StringFieldRefInput<$PrismaModel>
+    lte?: string | StringFieldRefInput<$PrismaModel>
+    gt?: string | StringFieldRefInput<$PrismaModel>
+    gte?: string | StringFieldRefInput<$PrismaModel>
+    contains?: string | StringFieldRefInput<$PrismaModel>
+    startsWith?: string | StringFieldRefInput<$PrismaModel>
+    endsWith?: string | StringFieldRefInput<$PrismaModel>
+    not?: NestedStringNullableFilter<$PrismaModel> | string | null
+  }
+
   export type NestedDateTimeFilter<$PrismaModel = never> = {
     equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
@@ -29144,6 +29274,34 @@ export namespace Prisma {
     _max?: NestedBoolFilter<$PrismaModel>
   }
 
+  export type NestedStringNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: string | StringFieldRefInput<$PrismaModel> | null
+    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    lt?: string | StringFieldRefInput<$PrismaModel>
+    lte?: string | StringFieldRefInput<$PrismaModel>
+    gt?: string | StringFieldRefInput<$PrismaModel>
+    gte?: string | StringFieldRefInput<$PrismaModel>
+    contains?: string | StringFieldRefInput<$PrismaModel>
+    startsWith?: string | StringFieldRefInput<$PrismaModel>
+    endsWith?: string | StringFieldRefInput<$PrismaModel>
+    not?: NestedStringNullableWithAggregatesFilter<$PrismaModel> | string | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedStringNullableFilter<$PrismaModel>
+    _max?: NestedStringNullableFilter<$PrismaModel>
+  }
+
+  export type NestedIntNullableFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntNullableFilter<$PrismaModel> | number | null
+  }
+
   export type NestedDateTimeWithAggregatesFilter<$PrismaModel = never> = {
     equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
@@ -29165,31 +29323,6 @@ export namespace Prisma {
     not?: NestedEnumDocumentTypeFilter<$PrismaModel> | $Enums.DocumentType
   }
 
-  export type NestedStringNullableFilter<$PrismaModel = never> = {
-    equals?: string | StringFieldRefInput<$PrismaModel> | null
-    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    lt?: string | StringFieldRefInput<$PrismaModel>
-    lte?: string | StringFieldRefInput<$PrismaModel>
-    gt?: string | StringFieldRefInput<$PrismaModel>
-    gte?: string | StringFieldRefInput<$PrismaModel>
-    contains?: string | StringFieldRefInput<$PrismaModel>
-    startsWith?: string | StringFieldRefInput<$PrismaModel>
-    endsWith?: string | StringFieldRefInput<$PrismaModel>
-    not?: NestedStringNullableFilter<$PrismaModel> | string | null
-  }
-
-  export type NestedIntNullableFilter<$PrismaModel = never> = {
-    equals?: number | IntFieldRefInput<$PrismaModel> | null
-    in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
-    notIn?: number[] | ListIntFieldRefInput<$PrismaModel> | null
-    lt?: number | IntFieldRefInput<$PrismaModel>
-    lte?: number | IntFieldRefInput<$PrismaModel>
-    gt?: number | IntFieldRefInput<$PrismaModel>
-    gte?: number | IntFieldRefInput<$PrismaModel>
-    not?: NestedIntNullableFilter<$PrismaModel> | number | null
-  }
-
   export type NestedEnumDocumentTypeWithAggregatesFilter<$PrismaModel = never> = {
     equals?: $Enums.DocumentType | EnumDocumentTypeFieldRefInput<$PrismaModel>
     in?: $Enums.DocumentType[] | ListEnumDocumentTypeFieldRefInput<$PrismaModel>
@@ -29198,23 +29331,6 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedEnumDocumentTypeFilter<$PrismaModel>
     _max?: NestedEnumDocumentTypeFilter<$PrismaModel>
-  }
-
-  export type NestedStringNullableWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: string | StringFieldRefInput<$PrismaModel> | null
-    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
-    lt?: string | StringFieldRefInput<$PrismaModel>
-    lte?: string | StringFieldRefInput<$PrismaModel>
-    gt?: string | StringFieldRefInput<$PrismaModel>
-    gte?: string | StringFieldRefInput<$PrismaModel>
-    contains?: string | StringFieldRefInput<$PrismaModel>
-    startsWith?: string | StringFieldRefInput<$PrismaModel>
-    endsWith?: string | StringFieldRefInput<$PrismaModel>
-    not?: NestedStringNullableWithAggregatesFilter<$PrismaModel> | string | null
-    _count?: NestedIntNullableFilter<$PrismaModel>
-    _min?: NestedStringNullableFilter<$PrismaModel>
-    _max?: NestedStringNullableFilter<$PrismaModel>
   }
 
   export type NestedIntNullableWithAggregatesFilter<$PrismaModel = never> = {
@@ -29544,235 +29660,81 @@ export namespace Prisma {
     _max?: NestedEnumClientTypeFilter<$PrismaModel>
   }
 
-  export type AllocationCreateWithoutApprovedByInput = {
+  export type ShipmentCreateWithoutCreatedByInput = {
     id?: string
-    allocationNumber: string
-    serviceType: $Enums.ServiceType
-    priority?: $Enums.AllocationPriority
-    status?: $Enums.AllocationStatus
-    cargoDescription: string
-    cargoType?: string | null
-    commodityCode?: string | null
-    commodityName?: string | null
-    quantity?: Decimal | DecimalJsLike | number | string | null
-    packageType?: string | null
-    numberOfPackages?: number | null
-    grossWeight?: Decimal | DecimalJsLike | number | string | null
-    netWeight?: Decimal | DecimalJsLike | number | string | null
-    volume?: Decimal | DecimalJsLike | number | string | null
-    originCountry?: string | null
-    originCity?: string | null
-    pickupAddress?: string | null
-    pickupDate?: Date | string | null
-    destinationCountry: string
-    destinationCity?: string | null
+    shipmentNumber: string
+    shipmentDate: Date | string
+    xfNumber?: string | null
+    nxpNumber?: string | null
+    cciNumber?: string | null
+    eNumber?: string | null
+    bookingNumber?: string | null
+    transportMode: $Enums.TransportMode
+    shippingLine?: string | null
+    vesselName?: string | null
+    voyageNumber?: string | null
     portOfLoading?: string | null
     portOfDischarge?: string | null
-    transportMode?: $Enums.TransportMode | null
-    shippingLine?: string | null
-    incoterm?: string | null
-    deliveryAddress?: string | null
-    expectedShipmentDate?: Date | string | null
-    estimatedValue?: Decimal | DecimalJsLike | number | string | null
-    currency?: string | null
-    paymentTerms?: string | null
-    freightType?: string | null
-    insuranceRequired?: boolean
-    specialInstruction?: string | null
-    internalRemark?: string | null
-    destinationPort?: string | null
-    assignedAt?: Date | string | null
-    approvedAt?: Date | string | null
-    completedAt?: Date | string | null
-    isActive?: boolean
+    expectedDeparture?: Date | string | null
+    expectedArrival?: Date | string | null
+    actualDeparture?: Date | string | null
+    actualArrival?: Date | string | null
+    remarks?: string | null
+    status?: $Enums.ShipmentStatus
     createdAt?: Date | string
     updatedAt?: Date | string
-    assignedTo?: UserCreateNestedOneWithoutAssignedAllocationsInput
-    client: ClientCreateNestedOneWithoutAllocationsInput
-    consignee?: ConsigneeCreateNestedOneWithoutAllocationsInput
-    createdBy: UserCreateNestedOneWithoutCreatedAllocationsInput
-    exporter?: ExporterCreateNestedOneWithoutAllocationsInput
-    documents?: AllocationDocumentCreateNestedManyWithoutAllocationInput
-    attachedDocuments?: DocumentCreateNestedManyWithoutAllocationInput
-    shipment?: ShipmentCreateNestedOneWithoutAllocationInput
+    containers?: ContainerCreateNestedManyWithoutShipmentInput
+    documents?: DocumentCreateNestedManyWithoutShipmentInput
+    invoice?: InvoiceCreateNestedOneWithoutShipmentInput
+    packingList?: PackingListCreateNestedOneWithoutShipmentInput
+    allocation?: AllocationCreateNestedOneWithoutShipmentInput
+    client: ClientCreateNestedOneWithoutShipmentsInput
+    consignee: ConsigneeCreateNestedOneWithoutShipmentsInput
+    exporter: ExporterCreateNestedOneWithoutShipmentsInput
+    transits?: TransitCreateNestedManyWithoutShipmentInput
   }
 
-  export type AllocationUncheckedCreateWithoutApprovedByInput = {
+  export type ShipmentUncheckedCreateWithoutCreatedByInput = {
     id?: string
-    allocationNumber: string
+    shipmentNumber: string
+    shipmentDate: Date | string
+    xfNumber?: string | null
+    nxpNumber?: string | null
+    cciNumber?: string | null
+    eNumber?: string | null
+    bookingNumber?: string | null
+    transportMode: $Enums.TransportMode
+    shippingLine?: string | null
+    vesselName?: string | null
+    voyageNumber?: string | null
+    portOfLoading?: string | null
+    portOfDischarge?: string | null
+    expectedDeparture?: Date | string | null
+    expectedArrival?: Date | string | null
+    actualDeparture?: Date | string | null
+    actualArrival?: Date | string | null
+    remarks?: string | null
+    status?: $Enums.ShipmentStatus
     clientId: string
-    exporterId?: string | null
-    consigneeId?: string | null
-    serviceType: $Enums.ServiceType
-    priority?: $Enums.AllocationPriority
-    status?: $Enums.AllocationStatus
-    cargoDescription: string
-    cargoType?: string | null
-    commodityCode?: string | null
-    commodityName?: string | null
-    quantity?: Decimal | DecimalJsLike | number | string | null
-    packageType?: string | null
-    numberOfPackages?: number | null
-    grossWeight?: Decimal | DecimalJsLike | number | string | null
-    netWeight?: Decimal | DecimalJsLike | number | string | null
-    volume?: Decimal | DecimalJsLike | number | string | null
-    originCountry?: string | null
-    originCity?: string | null
-    pickupAddress?: string | null
-    pickupDate?: Date | string | null
-    destinationCountry: string
-    destinationCity?: string | null
-    portOfLoading?: string | null
-    portOfDischarge?: string | null
-    transportMode?: $Enums.TransportMode | null
-    shippingLine?: string | null
-    incoterm?: string | null
-    deliveryAddress?: string | null
-    expectedShipmentDate?: Date | string | null
-    estimatedValue?: Decimal | DecimalJsLike | number | string | null
-    currency?: string | null
-    paymentTerms?: string | null
-    freightType?: string | null
-    insuranceRequired?: boolean
-    specialInstruction?: string | null
-    internalRemark?: string | null
-    destinationPort?: string | null
-    createdById: string
-    assignedToId?: string | null
-    assignedAt?: Date | string | null
-    approvedAt?: Date | string | null
-    completedAt?: Date | string | null
-    isActive?: boolean
+    exporterId: string
+    consigneeId: string
+    allocationId?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
-    documents?: AllocationDocumentUncheckedCreateNestedManyWithoutAllocationInput
-    attachedDocuments?: DocumentUncheckedCreateNestedManyWithoutAllocationInput
-    shipment?: ShipmentUncheckedCreateNestedOneWithoutAllocationInput
+    containers?: ContainerUncheckedCreateNestedManyWithoutShipmentInput
+    documents?: DocumentUncheckedCreateNestedManyWithoutShipmentInput
+    invoice?: InvoiceUncheckedCreateNestedOneWithoutShipmentInput
+    packingList?: PackingListUncheckedCreateNestedOneWithoutShipmentInput
+    transits?: TransitUncheckedCreateNestedManyWithoutShipmentInput
   }
 
-  export type AllocationCreateOrConnectWithoutApprovedByInput = {
-    where: AllocationWhereUniqueInput
-    create: XOR<AllocationCreateWithoutApprovedByInput, AllocationUncheckedCreateWithoutApprovedByInput>
+  export type ShipmentCreateOrConnectWithoutCreatedByInput = {
+    where: ShipmentWhereUniqueInput
+    create: XOR<ShipmentCreateWithoutCreatedByInput, ShipmentUncheckedCreateWithoutCreatedByInput>
   }
 
-  export type AllocationCreateManyApprovedByInputEnvelope = {
-    data: AllocationCreateManyApprovedByInput | AllocationCreateManyApprovedByInput[]
-    skipDuplicates?: boolean
-  }
-
-  export type AllocationCreateWithoutAssignedToInput = {
-    id?: string
-    allocationNumber: string
-    serviceType: $Enums.ServiceType
-    priority?: $Enums.AllocationPriority
-    status?: $Enums.AllocationStatus
-    cargoDescription: string
-    cargoType?: string | null
-    commodityCode?: string | null
-    commodityName?: string | null
-    quantity?: Decimal | DecimalJsLike | number | string | null
-    packageType?: string | null
-    numberOfPackages?: number | null
-    grossWeight?: Decimal | DecimalJsLike | number | string | null
-    netWeight?: Decimal | DecimalJsLike | number | string | null
-    volume?: Decimal | DecimalJsLike | number | string | null
-    originCountry?: string | null
-    originCity?: string | null
-    pickupAddress?: string | null
-    pickupDate?: Date | string | null
-    destinationCountry: string
-    destinationCity?: string | null
-    portOfLoading?: string | null
-    portOfDischarge?: string | null
-    transportMode?: $Enums.TransportMode | null
-    shippingLine?: string | null
-    incoterm?: string | null
-    deliveryAddress?: string | null
-    expectedShipmentDate?: Date | string | null
-    estimatedValue?: Decimal | DecimalJsLike | number | string | null
-    currency?: string | null
-    paymentTerms?: string | null
-    freightType?: string | null
-    insuranceRequired?: boolean
-    specialInstruction?: string | null
-    internalRemark?: string | null
-    destinationPort?: string | null
-    assignedAt?: Date | string | null
-    approvedAt?: Date | string | null
-    completedAt?: Date | string | null
-    isActive?: boolean
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    approvedBy?: UserCreateNestedOneWithoutApprovedAllocationsInput
-    client: ClientCreateNestedOneWithoutAllocationsInput
-    consignee?: ConsigneeCreateNestedOneWithoutAllocationsInput
-    createdBy: UserCreateNestedOneWithoutCreatedAllocationsInput
-    exporter?: ExporterCreateNestedOneWithoutAllocationsInput
-    documents?: AllocationDocumentCreateNestedManyWithoutAllocationInput
-    attachedDocuments?: DocumentCreateNestedManyWithoutAllocationInput
-    shipment?: ShipmentCreateNestedOneWithoutAllocationInput
-  }
-
-  export type AllocationUncheckedCreateWithoutAssignedToInput = {
-    id?: string
-    allocationNumber: string
-    clientId: string
-    exporterId?: string | null
-    consigneeId?: string | null
-    serviceType: $Enums.ServiceType
-    priority?: $Enums.AllocationPriority
-    status?: $Enums.AllocationStatus
-    cargoDescription: string
-    cargoType?: string | null
-    commodityCode?: string | null
-    commodityName?: string | null
-    quantity?: Decimal | DecimalJsLike | number | string | null
-    packageType?: string | null
-    numberOfPackages?: number | null
-    grossWeight?: Decimal | DecimalJsLike | number | string | null
-    netWeight?: Decimal | DecimalJsLike | number | string | null
-    volume?: Decimal | DecimalJsLike | number | string | null
-    originCountry?: string | null
-    originCity?: string | null
-    pickupAddress?: string | null
-    pickupDate?: Date | string | null
-    destinationCountry: string
-    destinationCity?: string | null
-    portOfLoading?: string | null
-    portOfDischarge?: string | null
-    transportMode?: $Enums.TransportMode | null
-    shippingLine?: string | null
-    incoterm?: string | null
-    deliveryAddress?: string | null
-    expectedShipmentDate?: Date | string | null
-    estimatedValue?: Decimal | DecimalJsLike | number | string | null
-    currency?: string | null
-    paymentTerms?: string | null
-    freightType?: string | null
-    insuranceRequired?: boolean
-    specialInstruction?: string | null
-    internalRemark?: string | null
-    destinationPort?: string | null
-    createdById: string
-    approvedById?: string | null
-    assignedAt?: Date | string | null
-    approvedAt?: Date | string | null
-    completedAt?: Date | string | null
-    isActive?: boolean
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    documents?: AllocationDocumentUncheckedCreateNestedManyWithoutAllocationInput
-    attachedDocuments?: DocumentUncheckedCreateNestedManyWithoutAllocationInput
-    shipment?: ShipmentUncheckedCreateNestedOneWithoutAllocationInput
-  }
-
-  export type AllocationCreateOrConnectWithoutAssignedToInput = {
-    where: AllocationWhereUniqueInput
-    create: XOR<AllocationCreateWithoutAssignedToInput, AllocationUncheckedCreateWithoutAssignedToInput>
-  }
-
-  export type AllocationCreateManyAssignedToInputEnvelope = {
-    data: AllocationCreateManyAssignedToInput | AllocationCreateManyAssignedToInput[]
+  export type ShipmentCreateManyCreatedByInputEnvelope = {
+    data: ShipmentCreateManyCreatedByInput | ShipmentCreateManyCreatedByInput[]
     skipDuplicates?: boolean
   }
 
@@ -29892,6 +29854,238 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type AllocationCreateWithoutAssignedToInput = {
+    id?: string
+    allocationNumber: string
+    serviceType: $Enums.ServiceType
+    priority?: $Enums.AllocationPriority
+    status?: $Enums.AllocationStatus
+    cargoDescription: string
+    cargoType?: string | null
+    commodityCode?: string | null
+    commodityName?: string | null
+    quantity?: Decimal | DecimalJsLike | number | string | null
+    packageType?: string | null
+    numberOfPackages?: number | null
+    grossWeight?: Decimal | DecimalJsLike | number | string | null
+    netWeight?: Decimal | DecimalJsLike | number | string | null
+    volume?: Decimal | DecimalJsLike | number | string | null
+    originCountry?: string | null
+    originCity?: string | null
+    pickupAddress?: string | null
+    pickupDate?: Date | string | null
+    destinationCountry: string
+    destinationCity?: string | null
+    portOfLoading?: string | null
+    portOfDischarge?: string | null
+    transportMode?: $Enums.TransportMode | null
+    shippingLine?: string | null
+    incoterm?: string | null
+    deliveryAddress?: string | null
+    expectedShipmentDate?: Date | string | null
+    estimatedValue?: Decimal | DecimalJsLike | number | string | null
+    currency?: string | null
+    paymentTerms?: string | null
+    freightType?: string | null
+    insuranceRequired?: boolean
+    specialInstruction?: string | null
+    internalRemark?: string | null
+    destinationPort?: string | null
+    assignedAt?: Date | string | null
+    approvedAt?: Date | string | null
+    completedAt?: Date | string | null
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    approvedBy?: UserCreateNestedOneWithoutApprovedAllocationsInput
+    client: ClientCreateNestedOneWithoutAllocationsInput
+    consignee?: ConsigneeCreateNestedOneWithoutAllocationsInput
+    createdBy: UserCreateNestedOneWithoutCreatedAllocationsInput
+    exporter?: ExporterCreateNestedOneWithoutAllocationsInput
+    documents?: AllocationDocumentCreateNestedManyWithoutAllocationInput
+    attachedDocuments?: DocumentCreateNestedManyWithoutAllocationInput
+    shipment?: ShipmentCreateNestedOneWithoutAllocationInput
+  }
+
+  export type AllocationUncheckedCreateWithoutAssignedToInput = {
+    id?: string
+    allocationNumber: string
+    clientId: string
+    exporterId?: string | null
+    consigneeId?: string | null
+    serviceType: $Enums.ServiceType
+    priority?: $Enums.AllocationPriority
+    status?: $Enums.AllocationStatus
+    cargoDescription: string
+    cargoType?: string | null
+    commodityCode?: string | null
+    commodityName?: string | null
+    quantity?: Decimal | DecimalJsLike | number | string | null
+    packageType?: string | null
+    numberOfPackages?: number | null
+    grossWeight?: Decimal | DecimalJsLike | number | string | null
+    netWeight?: Decimal | DecimalJsLike | number | string | null
+    volume?: Decimal | DecimalJsLike | number | string | null
+    originCountry?: string | null
+    originCity?: string | null
+    pickupAddress?: string | null
+    pickupDate?: Date | string | null
+    destinationCountry: string
+    destinationCity?: string | null
+    portOfLoading?: string | null
+    portOfDischarge?: string | null
+    transportMode?: $Enums.TransportMode | null
+    shippingLine?: string | null
+    incoterm?: string | null
+    deliveryAddress?: string | null
+    expectedShipmentDate?: Date | string | null
+    estimatedValue?: Decimal | DecimalJsLike | number | string | null
+    currency?: string | null
+    paymentTerms?: string | null
+    freightType?: string | null
+    insuranceRequired?: boolean
+    specialInstruction?: string | null
+    internalRemark?: string | null
+    destinationPort?: string | null
+    createdById: string
+    approvedById?: string | null
+    assignedAt?: Date | string | null
+    approvedAt?: Date | string | null
+    completedAt?: Date | string | null
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    documents?: AllocationDocumentUncheckedCreateNestedManyWithoutAllocationInput
+    attachedDocuments?: DocumentUncheckedCreateNestedManyWithoutAllocationInput
+    shipment?: ShipmentUncheckedCreateNestedOneWithoutAllocationInput
+  }
+
+  export type AllocationCreateOrConnectWithoutAssignedToInput = {
+    where: AllocationWhereUniqueInput
+    create: XOR<AllocationCreateWithoutAssignedToInput, AllocationUncheckedCreateWithoutAssignedToInput>
+  }
+
+  export type AllocationCreateManyAssignedToInputEnvelope = {
+    data: AllocationCreateManyAssignedToInput | AllocationCreateManyAssignedToInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type AllocationCreateWithoutApprovedByInput = {
+    id?: string
+    allocationNumber: string
+    serviceType: $Enums.ServiceType
+    priority?: $Enums.AllocationPriority
+    status?: $Enums.AllocationStatus
+    cargoDescription: string
+    cargoType?: string | null
+    commodityCode?: string | null
+    commodityName?: string | null
+    quantity?: Decimal | DecimalJsLike | number | string | null
+    packageType?: string | null
+    numberOfPackages?: number | null
+    grossWeight?: Decimal | DecimalJsLike | number | string | null
+    netWeight?: Decimal | DecimalJsLike | number | string | null
+    volume?: Decimal | DecimalJsLike | number | string | null
+    originCountry?: string | null
+    originCity?: string | null
+    pickupAddress?: string | null
+    pickupDate?: Date | string | null
+    destinationCountry: string
+    destinationCity?: string | null
+    portOfLoading?: string | null
+    portOfDischarge?: string | null
+    transportMode?: $Enums.TransportMode | null
+    shippingLine?: string | null
+    incoterm?: string | null
+    deliveryAddress?: string | null
+    expectedShipmentDate?: Date | string | null
+    estimatedValue?: Decimal | DecimalJsLike | number | string | null
+    currency?: string | null
+    paymentTerms?: string | null
+    freightType?: string | null
+    insuranceRequired?: boolean
+    specialInstruction?: string | null
+    internalRemark?: string | null
+    destinationPort?: string | null
+    assignedAt?: Date | string | null
+    approvedAt?: Date | string | null
+    completedAt?: Date | string | null
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    assignedTo?: UserCreateNestedOneWithoutAssignedAllocationsInput
+    client: ClientCreateNestedOneWithoutAllocationsInput
+    consignee?: ConsigneeCreateNestedOneWithoutAllocationsInput
+    createdBy: UserCreateNestedOneWithoutCreatedAllocationsInput
+    exporter?: ExporterCreateNestedOneWithoutAllocationsInput
+    documents?: AllocationDocumentCreateNestedManyWithoutAllocationInput
+    attachedDocuments?: DocumentCreateNestedManyWithoutAllocationInput
+    shipment?: ShipmentCreateNestedOneWithoutAllocationInput
+  }
+
+  export type AllocationUncheckedCreateWithoutApprovedByInput = {
+    id?: string
+    allocationNumber: string
+    clientId: string
+    exporterId?: string | null
+    consigneeId?: string | null
+    serviceType: $Enums.ServiceType
+    priority?: $Enums.AllocationPriority
+    status?: $Enums.AllocationStatus
+    cargoDescription: string
+    cargoType?: string | null
+    commodityCode?: string | null
+    commodityName?: string | null
+    quantity?: Decimal | DecimalJsLike | number | string | null
+    packageType?: string | null
+    numberOfPackages?: number | null
+    grossWeight?: Decimal | DecimalJsLike | number | string | null
+    netWeight?: Decimal | DecimalJsLike | number | string | null
+    volume?: Decimal | DecimalJsLike | number | string | null
+    originCountry?: string | null
+    originCity?: string | null
+    pickupAddress?: string | null
+    pickupDate?: Date | string | null
+    destinationCountry: string
+    destinationCity?: string | null
+    portOfLoading?: string | null
+    portOfDischarge?: string | null
+    transportMode?: $Enums.TransportMode | null
+    shippingLine?: string | null
+    incoterm?: string | null
+    deliveryAddress?: string | null
+    expectedShipmentDate?: Date | string | null
+    estimatedValue?: Decimal | DecimalJsLike | number | string | null
+    currency?: string | null
+    paymentTerms?: string | null
+    freightType?: string | null
+    insuranceRequired?: boolean
+    specialInstruction?: string | null
+    internalRemark?: string | null
+    destinationPort?: string | null
+    createdById: string
+    assignedToId?: string | null
+    assignedAt?: Date | string | null
+    approvedAt?: Date | string | null
+    completedAt?: Date | string | null
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    documents?: AllocationDocumentUncheckedCreateNestedManyWithoutAllocationInput
+    attachedDocuments?: DocumentUncheckedCreateNestedManyWithoutAllocationInput
+    shipment?: ShipmentUncheckedCreateNestedOneWithoutAllocationInput
+  }
+
+  export type AllocationCreateOrConnectWithoutApprovedByInput = {
+    where: AllocationWhereUniqueInput
+    create: XOR<AllocationCreateWithoutApprovedByInput, AllocationUncheckedCreateWithoutApprovedByInput>
+  }
+
+  export type AllocationCreateManyApprovedByInputEnvelope = {
+    data: AllocationCreateManyApprovedByInput | AllocationCreateManyApprovedByInput[]
+    skipDuplicates?: boolean
+  }
+
   export type AllocationDocumentCreateWithoutUploadedByInput = {
     id?: string
     type?: $Enums.DocumentType
@@ -29934,98 +30128,69 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
-  export type ShipmentCreateWithoutCreatedByInput = {
-    id?: string
-    shipmentNumber: string
-    shipmentDate: Date | string
-    xfNumber?: string | null
-    nxpNumber?: string | null
-    cciNumber?: string | null
-    eNumber?: string | null
-    bookingNumber?: string | null
-    transportMode: $Enums.TransportMode
-    shippingLine?: string | null
-    vesselName?: string | null
-    voyageNumber?: string | null
-    portOfLoading?: string | null
-    portOfDischarge?: string | null
-    expectedDeparture?: Date | string | null
-    expectedArrival?: Date | string | null
-    actualDeparture?: Date | string | null
-    actualArrival?: Date | string | null
-    remarks?: string | null
-    status?: $Enums.ShipmentStatus
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    containers?: ContainerCreateNestedManyWithoutShipmentInput
-    documents?: DocumentCreateNestedManyWithoutShipmentInput
-    invoice?: InvoiceCreateNestedOneWithoutShipmentInput
-    packingList?: PackingListCreateNestedOneWithoutShipmentInput
-    allocation?: AllocationCreateNestedOneWithoutShipmentInput
-    client: ClientCreateNestedOneWithoutShipmentsInput
-    consignee: ConsigneeCreateNestedOneWithoutShipmentsInput
-    exporter: ExporterCreateNestedOneWithoutShipmentsInput
-    transits?: TransitCreateNestedManyWithoutShipmentInput
-  }
-
-  export type ShipmentUncheckedCreateWithoutCreatedByInput = {
-    id?: string
-    shipmentNumber: string
-    shipmentDate: Date | string
-    xfNumber?: string | null
-    nxpNumber?: string | null
-    cciNumber?: string | null
-    eNumber?: string | null
-    bookingNumber?: string | null
-    transportMode: $Enums.TransportMode
-    shippingLine?: string | null
-    vesselName?: string | null
-    voyageNumber?: string | null
-    portOfLoading?: string | null
-    portOfDischarge?: string | null
-    expectedDeparture?: Date | string | null
-    expectedArrival?: Date | string | null
-    actualDeparture?: Date | string | null
-    actualArrival?: Date | string | null
-    remarks?: string | null
-    status?: $Enums.ShipmentStatus
-    clientId: string
-    exporterId: string
-    consigneeId: string
-    allocationId?: string | null
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    containers?: ContainerUncheckedCreateNestedManyWithoutShipmentInput
-    documents?: DocumentUncheckedCreateNestedManyWithoutShipmentInput
-    invoice?: InvoiceUncheckedCreateNestedOneWithoutShipmentInput
-    packingList?: PackingListUncheckedCreateNestedOneWithoutShipmentInput
-    transits?: TransitUncheckedCreateNestedManyWithoutShipmentInput
-  }
-
-  export type ShipmentCreateOrConnectWithoutCreatedByInput = {
+  export type ShipmentUpsertWithWhereUniqueWithoutCreatedByInput = {
     where: ShipmentWhereUniqueInput
+    update: XOR<ShipmentUpdateWithoutCreatedByInput, ShipmentUncheckedUpdateWithoutCreatedByInput>
     create: XOR<ShipmentCreateWithoutCreatedByInput, ShipmentUncheckedCreateWithoutCreatedByInput>
   }
 
-  export type ShipmentCreateManyCreatedByInputEnvelope = {
-    data: ShipmentCreateManyCreatedByInput | ShipmentCreateManyCreatedByInput[]
-    skipDuplicates?: boolean
+  export type ShipmentUpdateWithWhereUniqueWithoutCreatedByInput = {
+    where: ShipmentWhereUniqueInput
+    data: XOR<ShipmentUpdateWithoutCreatedByInput, ShipmentUncheckedUpdateWithoutCreatedByInput>
   }
 
-  export type AllocationUpsertWithWhereUniqueWithoutApprovedByInput = {
+  export type ShipmentUpdateManyWithWhereWithoutCreatedByInput = {
+    where: ShipmentScalarWhereInput
+    data: XOR<ShipmentUpdateManyMutationInput, ShipmentUncheckedUpdateManyWithoutCreatedByInput>
+  }
+
+  export type ShipmentScalarWhereInput = {
+    AND?: ShipmentScalarWhereInput | ShipmentScalarWhereInput[]
+    OR?: ShipmentScalarWhereInput[]
+    NOT?: ShipmentScalarWhereInput | ShipmentScalarWhereInput[]
+    id?: StringFilter<"Shipment"> | string
+    shipmentNumber?: StringFilter<"Shipment"> | string
+    shipmentDate?: DateTimeFilter<"Shipment"> | Date | string
+    xfNumber?: StringNullableFilter<"Shipment"> | string | null
+    nxpNumber?: StringNullableFilter<"Shipment"> | string | null
+    cciNumber?: StringNullableFilter<"Shipment"> | string | null
+    eNumber?: StringNullableFilter<"Shipment"> | string | null
+    bookingNumber?: StringNullableFilter<"Shipment"> | string | null
+    transportMode?: EnumTransportModeFilter<"Shipment"> | $Enums.TransportMode
+    shippingLine?: StringNullableFilter<"Shipment"> | string | null
+    vesselName?: StringNullableFilter<"Shipment"> | string | null
+    voyageNumber?: StringNullableFilter<"Shipment"> | string | null
+    portOfLoading?: StringNullableFilter<"Shipment"> | string | null
+    portOfDischarge?: StringNullableFilter<"Shipment"> | string | null
+    expectedDeparture?: DateTimeNullableFilter<"Shipment"> | Date | string | null
+    expectedArrival?: DateTimeNullableFilter<"Shipment"> | Date | string | null
+    actualDeparture?: DateTimeNullableFilter<"Shipment"> | Date | string | null
+    actualArrival?: DateTimeNullableFilter<"Shipment"> | Date | string | null
+    remarks?: StringNullableFilter<"Shipment"> | string | null
+    status?: EnumShipmentStatusFilter<"Shipment"> | $Enums.ShipmentStatus
+    clientId?: StringFilter<"Shipment"> | string
+    exporterId?: StringFilter<"Shipment"> | string
+    consigneeId?: StringFilter<"Shipment"> | string
+    createdById?: StringFilter<"Shipment"> | string
+    allocationId?: StringNullableFilter<"Shipment"> | string | null
+    createdAt?: DateTimeFilter<"Shipment"> | Date | string
+    updatedAt?: DateTimeFilter<"Shipment"> | Date | string
+  }
+
+  export type AllocationUpsertWithWhereUniqueWithoutCreatedByInput = {
     where: AllocationWhereUniqueInput
-    update: XOR<AllocationUpdateWithoutApprovedByInput, AllocationUncheckedUpdateWithoutApprovedByInput>
-    create: XOR<AllocationCreateWithoutApprovedByInput, AllocationUncheckedCreateWithoutApprovedByInput>
+    update: XOR<AllocationUpdateWithoutCreatedByInput, AllocationUncheckedUpdateWithoutCreatedByInput>
+    create: XOR<AllocationCreateWithoutCreatedByInput, AllocationUncheckedCreateWithoutCreatedByInput>
   }
 
-  export type AllocationUpdateWithWhereUniqueWithoutApprovedByInput = {
+  export type AllocationUpdateWithWhereUniqueWithoutCreatedByInput = {
     where: AllocationWhereUniqueInput
-    data: XOR<AllocationUpdateWithoutApprovedByInput, AllocationUncheckedUpdateWithoutApprovedByInput>
+    data: XOR<AllocationUpdateWithoutCreatedByInput, AllocationUncheckedUpdateWithoutCreatedByInput>
   }
 
-  export type AllocationUpdateManyWithWhereWithoutApprovedByInput = {
+  export type AllocationUpdateManyWithWhereWithoutCreatedByInput = {
     where: AllocationScalarWhereInput
-    data: XOR<AllocationUpdateManyMutationInput, AllocationUncheckedUpdateManyWithoutApprovedByInput>
+    data: XOR<AllocationUpdateManyMutationInput, AllocationUncheckedUpdateManyWithoutCreatedByInput>
   }
 
   export type AllocationScalarWhereInput = {
@@ -30098,20 +30263,20 @@ export namespace Prisma {
     data: XOR<AllocationUpdateManyMutationInput, AllocationUncheckedUpdateManyWithoutAssignedToInput>
   }
 
-  export type AllocationUpsertWithWhereUniqueWithoutCreatedByInput = {
+  export type AllocationUpsertWithWhereUniqueWithoutApprovedByInput = {
     where: AllocationWhereUniqueInput
-    update: XOR<AllocationUpdateWithoutCreatedByInput, AllocationUncheckedUpdateWithoutCreatedByInput>
-    create: XOR<AllocationCreateWithoutCreatedByInput, AllocationUncheckedCreateWithoutCreatedByInput>
+    update: XOR<AllocationUpdateWithoutApprovedByInput, AllocationUncheckedUpdateWithoutApprovedByInput>
+    create: XOR<AllocationCreateWithoutApprovedByInput, AllocationUncheckedCreateWithoutApprovedByInput>
   }
 
-  export type AllocationUpdateWithWhereUniqueWithoutCreatedByInput = {
+  export type AllocationUpdateWithWhereUniqueWithoutApprovedByInput = {
     where: AllocationWhereUniqueInput
-    data: XOR<AllocationUpdateWithoutCreatedByInput, AllocationUncheckedUpdateWithoutCreatedByInput>
+    data: XOR<AllocationUpdateWithoutApprovedByInput, AllocationUncheckedUpdateWithoutApprovedByInput>
   }
 
-  export type AllocationUpdateManyWithWhereWithoutCreatedByInput = {
+  export type AllocationUpdateManyWithWhereWithoutApprovedByInput = {
     where: AllocationScalarWhereInput
-    data: XOR<AllocationUpdateManyMutationInput, AllocationUncheckedUpdateManyWithoutCreatedByInput>
+    data: XOR<AllocationUpdateManyMutationInput, AllocationUncheckedUpdateManyWithoutApprovedByInput>
   }
 
   export type AllocationDocumentUpsertWithWhereUniqueWithoutUploadedByInput = {
@@ -30148,55 +30313,6 @@ export namespace Prisma {
     uploadedById?: StringNullableFilter<"AllocationDocument"> | string | null
     uploadedAt?: DateTimeFilter<"AllocationDocument"> | Date | string
     updatedAt?: DateTimeFilter<"AllocationDocument"> | Date | string
-  }
-
-  export type ShipmentUpsertWithWhereUniqueWithoutCreatedByInput = {
-    where: ShipmentWhereUniqueInput
-    update: XOR<ShipmentUpdateWithoutCreatedByInput, ShipmentUncheckedUpdateWithoutCreatedByInput>
-    create: XOR<ShipmentCreateWithoutCreatedByInput, ShipmentUncheckedCreateWithoutCreatedByInput>
-  }
-
-  export type ShipmentUpdateWithWhereUniqueWithoutCreatedByInput = {
-    where: ShipmentWhereUniqueInput
-    data: XOR<ShipmentUpdateWithoutCreatedByInput, ShipmentUncheckedUpdateWithoutCreatedByInput>
-  }
-
-  export type ShipmentUpdateManyWithWhereWithoutCreatedByInput = {
-    where: ShipmentScalarWhereInput
-    data: XOR<ShipmentUpdateManyMutationInput, ShipmentUncheckedUpdateManyWithoutCreatedByInput>
-  }
-
-  export type ShipmentScalarWhereInput = {
-    AND?: ShipmentScalarWhereInput | ShipmentScalarWhereInput[]
-    OR?: ShipmentScalarWhereInput[]
-    NOT?: ShipmentScalarWhereInput | ShipmentScalarWhereInput[]
-    id?: StringFilter<"Shipment"> | string
-    shipmentNumber?: StringFilter<"Shipment"> | string
-    shipmentDate?: DateTimeFilter<"Shipment"> | Date | string
-    xfNumber?: StringNullableFilter<"Shipment"> | string | null
-    nxpNumber?: StringNullableFilter<"Shipment"> | string | null
-    cciNumber?: StringNullableFilter<"Shipment"> | string | null
-    eNumber?: StringNullableFilter<"Shipment"> | string | null
-    bookingNumber?: StringNullableFilter<"Shipment"> | string | null
-    transportMode?: EnumTransportModeFilter<"Shipment"> | $Enums.TransportMode
-    shippingLine?: StringNullableFilter<"Shipment"> | string | null
-    vesselName?: StringNullableFilter<"Shipment"> | string | null
-    voyageNumber?: StringNullableFilter<"Shipment"> | string | null
-    portOfLoading?: StringNullableFilter<"Shipment"> | string | null
-    portOfDischarge?: StringNullableFilter<"Shipment"> | string | null
-    expectedDeparture?: DateTimeNullableFilter<"Shipment"> | Date | string | null
-    expectedArrival?: DateTimeNullableFilter<"Shipment"> | Date | string | null
-    actualDeparture?: DateTimeNullableFilter<"Shipment"> | Date | string | null
-    actualArrival?: DateTimeNullableFilter<"Shipment"> | Date | string | null
-    remarks?: StringNullableFilter<"Shipment"> | string | null
-    status?: EnumShipmentStatusFilter<"Shipment"> | $Enums.ShipmentStatus
-    clientId?: StringFilter<"Shipment"> | string
-    exporterId?: StringFilter<"Shipment"> | string
-    consigneeId?: StringFilter<"Shipment"> | string
-    createdById?: StringFilter<"Shipment"> | string
-    allocationId?: StringNullableFilter<"Shipment"> | string | null
-    createdAt?: DateTimeFilter<"Shipment"> | Date | string
-    updatedAt?: DateTimeFilter<"Shipment"> | Date | string
   }
 
   export type AllocationCreateWithoutDocumentsInput = {
@@ -30317,12 +30433,16 @@ export namespace Prisma {
     password: string
     role?: $Enums.Role
     isActive?: boolean
+    phone?: string | null
+    department?: string | null
+    jobTitle?: string | null
+    avatar?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
-    approvedAllocations?: AllocationCreateNestedManyWithoutApprovedByInput
-    assignedAllocations?: AllocationCreateNestedManyWithoutAssignedToInput
-    createdAllocations?: AllocationCreateNestedManyWithoutCreatedByInput
     shipments?: ShipmentCreateNestedManyWithoutCreatedByInput
+    createdAllocations?: AllocationCreateNestedManyWithoutCreatedByInput
+    assignedAllocations?: AllocationCreateNestedManyWithoutAssignedToInput
+    approvedAllocations?: AllocationCreateNestedManyWithoutApprovedByInput
   }
 
   export type UserUncheckedCreateWithoutUploadedDocumentsInput = {
@@ -30332,12 +30452,16 @@ export namespace Prisma {
     password: string
     role?: $Enums.Role
     isActive?: boolean
+    phone?: string | null
+    department?: string | null
+    jobTitle?: string | null
+    avatar?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
-    approvedAllocations?: AllocationUncheckedCreateNestedManyWithoutApprovedByInput
-    assignedAllocations?: AllocationUncheckedCreateNestedManyWithoutAssignedToInput
-    createdAllocations?: AllocationUncheckedCreateNestedManyWithoutCreatedByInput
     shipments?: ShipmentUncheckedCreateNestedManyWithoutCreatedByInput
+    createdAllocations?: AllocationUncheckedCreateNestedManyWithoutCreatedByInput
+    assignedAllocations?: AllocationUncheckedCreateNestedManyWithoutAssignedToInput
+    approvedAllocations?: AllocationUncheckedCreateNestedManyWithoutApprovedByInput
   }
 
   export type UserCreateOrConnectWithoutUploadedDocumentsInput = {
@@ -30480,12 +30604,16 @@ export namespace Prisma {
     password?: StringFieldUpdateOperationsInput | string
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     isActive?: BoolFieldUpdateOperationsInput | boolean
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    department?: NullableStringFieldUpdateOperationsInput | string | null
+    jobTitle?: NullableStringFieldUpdateOperationsInput | string | null
+    avatar?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    approvedAllocations?: AllocationUpdateManyWithoutApprovedByNestedInput
-    assignedAllocations?: AllocationUpdateManyWithoutAssignedToNestedInput
-    createdAllocations?: AllocationUpdateManyWithoutCreatedByNestedInput
     shipments?: ShipmentUpdateManyWithoutCreatedByNestedInput
+    createdAllocations?: AllocationUpdateManyWithoutCreatedByNestedInput
+    assignedAllocations?: AllocationUpdateManyWithoutAssignedToNestedInput
+    approvedAllocations?: AllocationUpdateManyWithoutApprovedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutUploadedDocumentsInput = {
@@ -30495,12 +30623,16 @@ export namespace Prisma {
     password?: StringFieldUpdateOperationsInput | string
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     isActive?: BoolFieldUpdateOperationsInput | boolean
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    department?: NullableStringFieldUpdateOperationsInput | string | null
+    jobTitle?: NullableStringFieldUpdateOperationsInput | string | null
+    avatar?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    approvedAllocations?: AllocationUncheckedUpdateManyWithoutApprovedByNestedInput
-    assignedAllocations?: AllocationUncheckedUpdateManyWithoutAssignedToNestedInput
-    createdAllocations?: AllocationUncheckedUpdateManyWithoutCreatedByNestedInput
     shipments?: ShipmentUncheckedUpdateManyWithoutCreatedByNestedInput
+    createdAllocations?: AllocationUncheckedUpdateManyWithoutCreatedByNestedInput
+    assignedAllocations?: AllocationUncheckedUpdateManyWithoutAssignedToNestedInput
+    approvedAllocations?: AllocationUncheckedUpdateManyWithoutApprovedByNestedInput
   }
 
   export type AllocationCreateWithoutExporterInput = {
@@ -31351,11 +31483,15 @@ export namespace Prisma {
     password: string
     role?: $Enums.Role
     isActive?: boolean
+    phone?: string | null
+    department?: string | null
+    jobTitle?: string | null
+    avatar?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
-    approvedAllocations?: AllocationCreateNestedManyWithoutApprovedByInput
-    assignedAllocations?: AllocationCreateNestedManyWithoutAssignedToInput
     createdAllocations?: AllocationCreateNestedManyWithoutCreatedByInput
+    assignedAllocations?: AllocationCreateNestedManyWithoutAssignedToInput
+    approvedAllocations?: AllocationCreateNestedManyWithoutApprovedByInput
     uploadedDocuments?: AllocationDocumentCreateNestedManyWithoutUploadedByInput
   }
 
@@ -31366,11 +31502,15 @@ export namespace Prisma {
     password: string
     role?: $Enums.Role
     isActive?: boolean
+    phone?: string | null
+    department?: string | null
+    jobTitle?: string | null
+    avatar?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
-    approvedAllocations?: AllocationUncheckedCreateNestedManyWithoutApprovedByInput
-    assignedAllocations?: AllocationUncheckedCreateNestedManyWithoutAssignedToInput
     createdAllocations?: AllocationUncheckedCreateNestedManyWithoutCreatedByInput
+    assignedAllocations?: AllocationUncheckedCreateNestedManyWithoutAssignedToInput
+    approvedAllocations?: AllocationUncheckedCreateNestedManyWithoutApprovedByInput
     uploadedDocuments?: AllocationDocumentUncheckedCreateNestedManyWithoutUploadedByInput
   }
 
@@ -31873,11 +32013,15 @@ export namespace Prisma {
     password?: StringFieldUpdateOperationsInput | string
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     isActive?: BoolFieldUpdateOperationsInput | boolean
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    department?: NullableStringFieldUpdateOperationsInput | string | null
+    jobTitle?: NullableStringFieldUpdateOperationsInput | string | null
+    avatar?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    approvedAllocations?: AllocationUpdateManyWithoutApprovedByNestedInput
-    assignedAllocations?: AllocationUpdateManyWithoutAssignedToNestedInput
     createdAllocations?: AllocationUpdateManyWithoutCreatedByNestedInput
+    assignedAllocations?: AllocationUpdateManyWithoutAssignedToNestedInput
+    approvedAllocations?: AllocationUpdateManyWithoutApprovedByNestedInput
     uploadedDocuments?: AllocationDocumentUpdateManyWithoutUploadedByNestedInput
   }
 
@@ -31888,11 +32032,15 @@ export namespace Prisma {
     password?: StringFieldUpdateOperationsInput | string
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     isActive?: BoolFieldUpdateOperationsInput | boolean
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    department?: NullableStringFieldUpdateOperationsInput | string | null
+    jobTitle?: NullableStringFieldUpdateOperationsInput | string | null
+    avatar?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    approvedAllocations?: AllocationUncheckedUpdateManyWithoutApprovedByNestedInput
-    assignedAllocations?: AllocationUncheckedUpdateManyWithoutAssignedToNestedInput
     createdAllocations?: AllocationUncheckedUpdateManyWithoutCreatedByNestedInput
+    assignedAllocations?: AllocationUncheckedUpdateManyWithoutAssignedToNestedInput
+    approvedAllocations?: AllocationUncheckedUpdateManyWithoutApprovedByNestedInput
     uploadedDocuments?: AllocationDocumentUncheckedUpdateManyWithoutUploadedByNestedInput
   }
 
@@ -33505,12 +33653,16 @@ export namespace Prisma {
     password: string
     role?: $Enums.Role
     isActive?: boolean
+    phone?: string | null
+    department?: string | null
+    jobTitle?: string | null
+    avatar?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
-    assignedAllocations?: AllocationCreateNestedManyWithoutAssignedToInput
-    createdAllocations?: AllocationCreateNestedManyWithoutCreatedByInput
-    uploadedDocuments?: AllocationDocumentCreateNestedManyWithoutUploadedByInput
     shipments?: ShipmentCreateNestedManyWithoutCreatedByInput
+    createdAllocations?: AllocationCreateNestedManyWithoutCreatedByInput
+    assignedAllocations?: AllocationCreateNestedManyWithoutAssignedToInput
+    uploadedDocuments?: AllocationDocumentCreateNestedManyWithoutUploadedByInput
   }
 
   export type UserUncheckedCreateWithoutApprovedAllocationsInput = {
@@ -33520,12 +33672,16 @@ export namespace Prisma {
     password: string
     role?: $Enums.Role
     isActive?: boolean
+    phone?: string | null
+    department?: string | null
+    jobTitle?: string | null
+    avatar?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
-    assignedAllocations?: AllocationUncheckedCreateNestedManyWithoutAssignedToInput
-    createdAllocations?: AllocationUncheckedCreateNestedManyWithoutCreatedByInput
-    uploadedDocuments?: AllocationDocumentUncheckedCreateNestedManyWithoutUploadedByInput
     shipments?: ShipmentUncheckedCreateNestedManyWithoutCreatedByInput
+    createdAllocations?: AllocationUncheckedCreateNestedManyWithoutCreatedByInput
+    assignedAllocations?: AllocationUncheckedCreateNestedManyWithoutAssignedToInput
+    uploadedDocuments?: AllocationDocumentUncheckedCreateNestedManyWithoutUploadedByInput
   }
 
   export type UserCreateOrConnectWithoutApprovedAllocationsInput = {
@@ -33540,12 +33696,16 @@ export namespace Prisma {
     password: string
     role?: $Enums.Role
     isActive?: boolean
+    phone?: string | null
+    department?: string | null
+    jobTitle?: string | null
+    avatar?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
-    approvedAllocations?: AllocationCreateNestedManyWithoutApprovedByInput
-    createdAllocations?: AllocationCreateNestedManyWithoutCreatedByInput
-    uploadedDocuments?: AllocationDocumentCreateNestedManyWithoutUploadedByInput
     shipments?: ShipmentCreateNestedManyWithoutCreatedByInput
+    createdAllocations?: AllocationCreateNestedManyWithoutCreatedByInput
+    approvedAllocations?: AllocationCreateNestedManyWithoutApprovedByInput
+    uploadedDocuments?: AllocationDocumentCreateNestedManyWithoutUploadedByInput
   }
 
   export type UserUncheckedCreateWithoutAssignedAllocationsInput = {
@@ -33555,12 +33715,16 @@ export namespace Prisma {
     password: string
     role?: $Enums.Role
     isActive?: boolean
+    phone?: string | null
+    department?: string | null
+    jobTitle?: string | null
+    avatar?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
-    approvedAllocations?: AllocationUncheckedCreateNestedManyWithoutApprovedByInput
-    createdAllocations?: AllocationUncheckedCreateNestedManyWithoutCreatedByInput
-    uploadedDocuments?: AllocationDocumentUncheckedCreateNestedManyWithoutUploadedByInput
     shipments?: ShipmentUncheckedCreateNestedManyWithoutCreatedByInput
+    createdAllocations?: AllocationUncheckedCreateNestedManyWithoutCreatedByInput
+    approvedAllocations?: AllocationUncheckedCreateNestedManyWithoutApprovedByInput
+    uploadedDocuments?: AllocationDocumentUncheckedCreateNestedManyWithoutUploadedByInput
   }
 
   export type UserCreateOrConnectWithoutAssignedAllocationsInput = {
@@ -33663,12 +33827,16 @@ export namespace Prisma {
     password: string
     role?: $Enums.Role
     isActive?: boolean
+    phone?: string | null
+    department?: string | null
+    jobTitle?: string | null
+    avatar?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
-    approvedAllocations?: AllocationCreateNestedManyWithoutApprovedByInput
-    assignedAllocations?: AllocationCreateNestedManyWithoutAssignedToInput
-    uploadedDocuments?: AllocationDocumentCreateNestedManyWithoutUploadedByInput
     shipments?: ShipmentCreateNestedManyWithoutCreatedByInput
+    assignedAllocations?: AllocationCreateNestedManyWithoutAssignedToInput
+    approvedAllocations?: AllocationCreateNestedManyWithoutApprovedByInput
+    uploadedDocuments?: AllocationDocumentCreateNestedManyWithoutUploadedByInput
   }
 
   export type UserUncheckedCreateWithoutCreatedAllocationsInput = {
@@ -33678,12 +33846,16 @@ export namespace Prisma {
     password: string
     role?: $Enums.Role
     isActive?: boolean
+    phone?: string | null
+    department?: string | null
+    jobTitle?: string | null
+    avatar?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
-    approvedAllocations?: AllocationUncheckedCreateNestedManyWithoutApprovedByInput
-    assignedAllocations?: AllocationUncheckedCreateNestedManyWithoutAssignedToInput
-    uploadedDocuments?: AllocationDocumentUncheckedCreateNestedManyWithoutUploadedByInput
     shipments?: ShipmentUncheckedCreateNestedManyWithoutCreatedByInput
+    assignedAllocations?: AllocationUncheckedCreateNestedManyWithoutAssignedToInput
+    approvedAllocations?: AllocationUncheckedCreateNestedManyWithoutApprovedByInput
+    uploadedDocuments?: AllocationDocumentUncheckedCreateNestedManyWithoutUploadedByInput
   }
 
   export type UserCreateOrConnectWithoutCreatedAllocationsInput = {
@@ -33901,12 +34073,16 @@ export namespace Prisma {
     password?: StringFieldUpdateOperationsInput | string
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     isActive?: BoolFieldUpdateOperationsInput | boolean
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    department?: NullableStringFieldUpdateOperationsInput | string | null
+    jobTitle?: NullableStringFieldUpdateOperationsInput | string | null
+    avatar?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    assignedAllocations?: AllocationUpdateManyWithoutAssignedToNestedInput
-    createdAllocations?: AllocationUpdateManyWithoutCreatedByNestedInput
-    uploadedDocuments?: AllocationDocumentUpdateManyWithoutUploadedByNestedInput
     shipments?: ShipmentUpdateManyWithoutCreatedByNestedInput
+    createdAllocations?: AllocationUpdateManyWithoutCreatedByNestedInput
+    assignedAllocations?: AllocationUpdateManyWithoutAssignedToNestedInput
+    uploadedDocuments?: AllocationDocumentUpdateManyWithoutUploadedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutApprovedAllocationsInput = {
@@ -33916,12 +34092,16 @@ export namespace Prisma {
     password?: StringFieldUpdateOperationsInput | string
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     isActive?: BoolFieldUpdateOperationsInput | boolean
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    department?: NullableStringFieldUpdateOperationsInput | string | null
+    jobTitle?: NullableStringFieldUpdateOperationsInput | string | null
+    avatar?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    assignedAllocations?: AllocationUncheckedUpdateManyWithoutAssignedToNestedInput
-    createdAllocations?: AllocationUncheckedUpdateManyWithoutCreatedByNestedInput
-    uploadedDocuments?: AllocationDocumentUncheckedUpdateManyWithoutUploadedByNestedInput
     shipments?: ShipmentUncheckedUpdateManyWithoutCreatedByNestedInput
+    createdAllocations?: AllocationUncheckedUpdateManyWithoutCreatedByNestedInput
+    assignedAllocations?: AllocationUncheckedUpdateManyWithoutAssignedToNestedInput
+    uploadedDocuments?: AllocationDocumentUncheckedUpdateManyWithoutUploadedByNestedInput
   }
 
   export type UserUpsertWithoutAssignedAllocationsInput = {
@@ -33942,12 +34122,16 @@ export namespace Prisma {
     password?: StringFieldUpdateOperationsInput | string
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     isActive?: BoolFieldUpdateOperationsInput | boolean
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    department?: NullableStringFieldUpdateOperationsInput | string | null
+    jobTitle?: NullableStringFieldUpdateOperationsInput | string | null
+    avatar?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    approvedAllocations?: AllocationUpdateManyWithoutApprovedByNestedInput
-    createdAllocations?: AllocationUpdateManyWithoutCreatedByNestedInput
-    uploadedDocuments?: AllocationDocumentUpdateManyWithoutUploadedByNestedInput
     shipments?: ShipmentUpdateManyWithoutCreatedByNestedInput
+    createdAllocations?: AllocationUpdateManyWithoutCreatedByNestedInput
+    approvedAllocations?: AllocationUpdateManyWithoutApprovedByNestedInput
+    uploadedDocuments?: AllocationDocumentUpdateManyWithoutUploadedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutAssignedAllocationsInput = {
@@ -33957,12 +34141,16 @@ export namespace Prisma {
     password?: StringFieldUpdateOperationsInput | string
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     isActive?: BoolFieldUpdateOperationsInput | boolean
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    department?: NullableStringFieldUpdateOperationsInput | string | null
+    jobTitle?: NullableStringFieldUpdateOperationsInput | string | null
+    avatar?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    approvedAllocations?: AllocationUncheckedUpdateManyWithoutApprovedByNestedInput
-    createdAllocations?: AllocationUncheckedUpdateManyWithoutCreatedByNestedInput
-    uploadedDocuments?: AllocationDocumentUncheckedUpdateManyWithoutUploadedByNestedInput
     shipments?: ShipmentUncheckedUpdateManyWithoutCreatedByNestedInput
+    createdAllocations?: AllocationUncheckedUpdateManyWithoutCreatedByNestedInput
+    approvedAllocations?: AllocationUncheckedUpdateManyWithoutApprovedByNestedInput
+    uploadedDocuments?: AllocationDocumentUncheckedUpdateManyWithoutUploadedByNestedInput
   }
 
   export type ClientUpsertWithoutAllocationsInput = {
@@ -34083,12 +34271,16 @@ export namespace Prisma {
     password?: StringFieldUpdateOperationsInput | string
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     isActive?: BoolFieldUpdateOperationsInput | boolean
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    department?: NullableStringFieldUpdateOperationsInput | string | null
+    jobTitle?: NullableStringFieldUpdateOperationsInput | string | null
+    avatar?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    approvedAllocations?: AllocationUpdateManyWithoutApprovedByNestedInput
-    assignedAllocations?: AllocationUpdateManyWithoutAssignedToNestedInput
-    uploadedDocuments?: AllocationDocumentUpdateManyWithoutUploadedByNestedInput
     shipments?: ShipmentUpdateManyWithoutCreatedByNestedInput
+    assignedAllocations?: AllocationUpdateManyWithoutAssignedToNestedInput
+    approvedAllocations?: AllocationUpdateManyWithoutApprovedByNestedInput
+    uploadedDocuments?: AllocationDocumentUpdateManyWithoutUploadedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutCreatedAllocationsInput = {
@@ -34098,12 +34290,16 @@ export namespace Prisma {
     password?: StringFieldUpdateOperationsInput | string
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
     isActive?: BoolFieldUpdateOperationsInput | boolean
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    department?: NullableStringFieldUpdateOperationsInput | string | null
+    jobTitle?: NullableStringFieldUpdateOperationsInput | string | null
+    avatar?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    approvedAllocations?: AllocationUncheckedUpdateManyWithoutApprovedByNestedInput
-    assignedAllocations?: AllocationUncheckedUpdateManyWithoutAssignedToNestedInput
-    uploadedDocuments?: AllocationDocumentUncheckedUpdateManyWithoutUploadedByNestedInput
     shipments?: ShipmentUncheckedUpdateManyWithoutCreatedByNestedInput
+    assignedAllocations?: AllocationUncheckedUpdateManyWithoutAssignedToNestedInput
+    approvedAllocations?: AllocationUncheckedUpdateManyWithoutApprovedByNestedInput
+    uploadedDocuments?: AllocationDocumentUncheckedUpdateManyWithoutUploadedByNestedInput
   }
 
   export type ExporterUpsertWithoutAllocationsInput = {
@@ -35250,7 +35446,36 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
-  export type AllocationCreateManyApprovedByInput = {
+  export type ShipmentCreateManyCreatedByInput = {
+    id?: string
+    shipmentNumber: string
+    shipmentDate: Date | string
+    xfNumber?: string | null
+    nxpNumber?: string | null
+    cciNumber?: string | null
+    eNumber?: string | null
+    bookingNumber?: string | null
+    transportMode: $Enums.TransportMode
+    shippingLine?: string | null
+    vesselName?: string | null
+    voyageNumber?: string | null
+    portOfLoading?: string | null
+    portOfDischarge?: string | null
+    expectedDeparture?: Date | string | null
+    expectedArrival?: Date | string | null
+    actualDeparture?: Date | string | null
+    actualArrival?: Date | string | null
+    remarks?: string | null
+    status?: $Enums.ShipmentStatus
+    clientId: string
+    exporterId: string
+    consigneeId: string
+    allocationId?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type AllocationCreateManyCreatedByInput = {
     id?: string
     allocationNumber: string
     clientId: string
@@ -35290,8 +35515,8 @@ export namespace Prisma {
     specialInstruction?: string | null
     internalRemark?: string | null
     destinationPort?: string | null
-    createdById: string
     assignedToId?: string | null
+    approvedById?: string | null
     assignedAt?: Date | string | null
     approvedAt?: Date | string | null
     completedAt?: Date | string | null
@@ -35350,7 +35575,7 @@ export namespace Prisma {
     updatedAt?: Date | string
   }
 
-  export type AllocationCreateManyCreatedByInput = {
+  export type AllocationCreateManyApprovedByInput = {
     id?: string
     allocationNumber: string
     clientId: string
@@ -35390,8 +35615,8 @@ export namespace Prisma {
     specialInstruction?: string | null
     internalRemark?: string | null
     destinationPort?: string | null
+    createdById: string
     assignedToId?: string | null
-    approvedById?: string | null
     assignedAt?: Date | string | null
     approvedAt?: Date | string | null
     completedAt?: Date | string | null
@@ -35416,36 +35641,104 @@ export namespace Prisma {
     updatedAt?: Date | string
   }
 
-  export type ShipmentCreateManyCreatedByInput = {
-    id?: string
-    shipmentNumber: string
-    shipmentDate: Date | string
-    xfNumber?: string | null
-    nxpNumber?: string | null
-    cciNumber?: string | null
-    eNumber?: string | null
-    bookingNumber?: string | null
-    transportMode: $Enums.TransportMode
-    shippingLine?: string | null
-    vesselName?: string | null
-    voyageNumber?: string | null
-    portOfLoading?: string | null
-    portOfDischarge?: string | null
-    expectedDeparture?: Date | string | null
-    expectedArrival?: Date | string | null
-    actualDeparture?: Date | string | null
-    actualArrival?: Date | string | null
-    remarks?: string | null
-    status?: $Enums.ShipmentStatus
-    clientId: string
-    exporterId: string
-    consigneeId: string
-    allocationId?: string | null
-    createdAt?: Date | string
-    updatedAt?: Date | string
+  export type ShipmentUpdateWithoutCreatedByInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    shipmentNumber?: StringFieldUpdateOperationsInput | string
+    shipmentDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    xfNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    nxpNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    cciNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    eNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    bookingNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    transportMode?: EnumTransportModeFieldUpdateOperationsInput | $Enums.TransportMode
+    shippingLine?: NullableStringFieldUpdateOperationsInput | string | null
+    vesselName?: NullableStringFieldUpdateOperationsInput | string | null
+    voyageNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    portOfLoading?: NullableStringFieldUpdateOperationsInput | string | null
+    portOfDischarge?: NullableStringFieldUpdateOperationsInput | string | null
+    expectedDeparture?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    expectedArrival?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    actualDeparture?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    actualArrival?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    remarks?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumShipmentStatusFieldUpdateOperationsInput | $Enums.ShipmentStatus
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    containers?: ContainerUpdateManyWithoutShipmentNestedInput
+    documents?: DocumentUpdateManyWithoutShipmentNestedInput
+    invoice?: InvoiceUpdateOneWithoutShipmentNestedInput
+    packingList?: PackingListUpdateOneWithoutShipmentNestedInput
+    allocation?: AllocationUpdateOneWithoutShipmentNestedInput
+    client?: ClientUpdateOneRequiredWithoutShipmentsNestedInput
+    consignee?: ConsigneeUpdateOneRequiredWithoutShipmentsNestedInput
+    exporter?: ExporterUpdateOneRequiredWithoutShipmentsNestedInput
+    transits?: TransitUpdateManyWithoutShipmentNestedInput
   }
 
-  export type AllocationUpdateWithoutApprovedByInput = {
+  export type ShipmentUncheckedUpdateWithoutCreatedByInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    shipmentNumber?: StringFieldUpdateOperationsInput | string
+    shipmentDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    xfNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    nxpNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    cciNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    eNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    bookingNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    transportMode?: EnumTransportModeFieldUpdateOperationsInput | $Enums.TransportMode
+    shippingLine?: NullableStringFieldUpdateOperationsInput | string | null
+    vesselName?: NullableStringFieldUpdateOperationsInput | string | null
+    voyageNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    portOfLoading?: NullableStringFieldUpdateOperationsInput | string | null
+    portOfDischarge?: NullableStringFieldUpdateOperationsInput | string | null
+    expectedDeparture?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    expectedArrival?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    actualDeparture?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    actualArrival?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    remarks?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumShipmentStatusFieldUpdateOperationsInput | $Enums.ShipmentStatus
+    clientId?: StringFieldUpdateOperationsInput | string
+    exporterId?: StringFieldUpdateOperationsInput | string
+    consigneeId?: StringFieldUpdateOperationsInput | string
+    allocationId?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    containers?: ContainerUncheckedUpdateManyWithoutShipmentNestedInput
+    documents?: DocumentUncheckedUpdateManyWithoutShipmentNestedInput
+    invoice?: InvoiceUncheckedUpdateOneWithoutShipmentNestedInput
+    packingList?: PackingListUncheckedUpdateOneWithoutShipmentNestedInput
+    transits?: TransitUncheckedUpdateManyWithoutShipmentNestedInput
+  }
+
+  export type ShipmentUncheckedUpdateManyWithoutCreatedByInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    shipmentNumber?: StringFieldUpdateOperationsInput | string
+    shipmentDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    xfNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    nxpNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    cciNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    eNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    bookingNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    transportMode?: EnumTransportModeFieldUpdateOperationsInput | $Enums.TransportMode
+    shippingLine?: NullableStringFieldUpdateOperationsInput | string | null
+    vesselName?: NullableStringFieldUpdateOperationsInput | string | null
+    voyageNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    portOfLoading?: NullableStringFieldUpdateOperationsInput | string | null
+    portOfDischarge?: NullableStringFieldUpdateOperationsInput | string | null
+    expectedDeparture?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    expectedArrival?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    actualDeparture?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    actualArrival?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    remarks?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumShipmentStatusFieldUpdateOperationsInput | $Enums.ShipmentStatus
+    clientId?: StringFieldUpdateOperationsInput | string
+    exporterId?: StringFieldUpdateOperationsInput | string
+    consigneeId?: StringFieldUpdateOperationsInput | string
+    allocationId?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type AllocationUpdateWithoutCreatedByInput = {
     id?: StringFieldUpdateOperationsInput | string
     allocationNumber?: StringFieldUpdateOperationsInput | string
     serviceType?: EnumServiceTypeFieldUpdateOperationsInput | $Enums.ServiceType
@@ -35488,17 +35781,17 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    approvedBy?: UserUpdateOneWithoutApprovedAllocationsNestedInput
     assignedTo?: UserUpdateOneWithoutAssignedAllocationsNestedInput
     client?: ClientUpdateOneRequiredWithoutAllocationsNestedInput
     consignee?: ConsigneeUpdateOneWithoutAllocationsNestedInput
-    createdBy?: UserUpdateOneRequiredWithoutCreatedAllocationsNestedInput
     exporter?: ExporterUpdateOneWithoutAllocationsNestedInput
     documents?: AllocationDocumentUpdateManyWithoutAllocationNestedInput
     attachedDocuments?: DocumentUpdateManyWithoutAllocationNestedInput
     shipment?: ShipmentUpdateOneWithoutAllocationNestedInput
   }
 
-  export type AllocationUncheckedUpdateWithoutApprovedByInput = {
+  export type AllocationUncheckedUpdateWithoutCreatedByInput = {
     id?: StringFieldUpdateOperationsInput | string
     allocationNumber?: StringFieldUpdateOperationsInput | string
     clientId?: StringFieldUpdateOperationsInput | string
@@ -35538,8 +35831,8 @@ export namespace Prisma {
     specialInstruction?: NullableStringFieldUpdateOperationsInput | string | null
     internalRemark?: NullableStringFieldUpdateOperationsInput | string | null
     destinationPort?: NullableStringFieldUpdateOperationsInput | string | null
-    createdById?: StringFieldUpdateOperationsInput | string
     assignedToId?: NullableStringFieldUpdateOperationsInput | string | null
+    approvedById?: NullableStringFieldUpdateOperationsInput | string | null
     assignedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     approvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -35551,7 +35844,7 @@ export namespace Prisma {
     shipment?: ShipmentUncheckedUpdateOneWithoutAllocationNestedInput
   }
 
-  export type AllocationUncheckedUpdateManyWithoutApprovedByInput = {
+  export type AllocationUncheckedUpdateManyWithoutCreatedByInput = {
     id?: StringFieldUpdateOperationsInput | string
     allocationNumber?: StringFieldUpdateOperationsInput | string
     clientId?: StringFieldUpdateOperationsInput | string
@@ -35591,8 +35884,8 @@ export namespace Prisma {
     specialInstruction?: NullableStringFieldUpdateOperationsInput | string | null
     internalRemark?: NullableStringFieldUpdateOperationsInput | string | null
     destinationPort?: NullableStringFieldUpdateOperationsInput | string | null
-    createdById?: StringFieldUpdateOperationsInput | string
     assignedToId?: NullableStringFieldUpdateOperationsInput | string | null
+    approvedById?: NullableStringFieldUpdateOperationsInput | string | null
     assignedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     approvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -35757,7 +36050,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
-  export type AllocationUpdateWithoutCreatedByInput = {
+  export type AllocationUpdateWithoutApprovedByInput = {
     id?: StringFieldUpdateOperationsInput | string
     allocationNumber?: StringFieldUpdateOperationsInput | string
     serviceType?: EnumServiceTypeFieldUpdateOperationsInput | $Enums.ServiceType
@@ -35800,17 +36093,17 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    approvedBy?: UserUpdateOneWithoutApprovedAllocationsNestedInput
     assignedTo?: UserUpdateOneWithoutAssignedAllocationsNestedInput
     client?: ClientUpdateOneRequiredWithoutAllocationsNestedInput
     consignee?: ConsigneeUpdateOneWithoutAllocationsNestedInput
+    createdBy?: UserUpdateOneRequiredWithoutCreatedAllocationsNestedInput
     exporter?: ExporterUpdateOneWithoutAllocationsNestedInput
     documents?: AllocationDocumentUpdateManyWithoutAllocationNestedInput
     attachedDocuments?: DocumentUpdateManyWithoutAllocationNestedInput
     shipment?: ShipmentUpdateOneWithoutAllocationNestedInput
   }
 
-  export type AllocationUncheckedUpdateWithoutCreatedByInput = {
+  export type AllocationUncheckedUpdateWithoutApprovedByInput = {
     id?: StringFieldUpdateOperationsInput | string
     allocationNumber?: StringFieldUpdateOperationsInput | string
     clientId?: StringFieldUpdateOperationsInput | string
@@ -35850,8 +36143,8 @@ export namespace Prisma {
     specialInstruction?: NullableStringFieldUpdateOperationsInput | string | null
     internalRemark?: NullableStringFieldUpdateOperationsInput | string | null
     destinationPort?: NullableStringFieldUpdateOperationsInput | string | null
+    createdById?: StringFieldUpdateOperationsInput | string
     assignedToId?: NullableStringFieldUpdateOperationsInput | string | null
-    approvedById?: NullableStringFieldUpdateOperationsInput | string | null
     assignedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     approvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -35863,7 +36156,7 @@ export namespace Prisma {
     shipment?: ShipmentUncheckedUpdateOneWithoutAllocationNestedInput
   }
 
-  export type AllocationUncheckedUpdateManyWithoutCreatedByInput = {
+  export type AllocationUncheckedUpdateManyWithoutApprovedByInput = {
     id?: StringFieldUpdateOperationsInput | string
     allocationNumber?: StringFieldUpdateOperationsInput | string
     clientId?: StringFieldUpdateOperationsInput | string
@@ -35903,8 +36196,8 @@ export namespace Prisma {
     specialInstruction?: NullableStringFieldUpdateOperationsInput | string | null
     internalRemark?: NullableStringFieldUpdateOperationsInput | string | null
     destinationPort?: NullableStringFieldUpdateOperationsInput | string | null
+    createdById?: StringFieldUpdateOperationsInput | string
     assignedToId?: NullableStringFieldUpdateOperationsInput | string | null
-    approvedById?: NullableStringFieldUpdateOperationsInput | string | null
     assignedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     approvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -35958,103 +36251,6 @@ export namespace Prisma {
     fileSize?: NullableIntFieldUpdateOperationsInput | number | null
     remarks?: NullableStringFieldUpdateOperationsInput | string | null
     uploadedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type ShipmentUpdateWithoutCreatedByInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    shipmentNumber?: StringFieldUpdateOperationsInput | string
-    shipmentDate?: DateTimeFieldUpdateOperationsInput | Date | string
-    xfNumber?: NullableStringFieldUpdateOperationsInput | string | null
-    nxpNumber?: NullableStringFieldUpdateOperationsInput | string | null
-    cciNumber?: NullableStringFieldUpdateOperationsInput | string | null
-    eNumber?: NullableStringFieldUpdateOperationsInput | string | null
-    bookingNumber?: NullableStringFieldUpdateOperationsInput | string | null
-    transportMode?: EnumTransportModeFieldUpdateOperationsInput | $Enums.TransportMode
-    shippingLine?: NullableStringFieldUpdateOperationsInput | string | null
-    vesselName?: NullableStringFieldUpdateOperationsInput | string | null
-    voyageNumber?: NullableStringFieldUpdateOperationsInput | string | null
-    portOfLoading?: NullableStringFieldUpdateOperationsInput | string | null
-    portOfDischarge?: NullableStringFieldUpdateOperationsInput | string | null
-    expectedDeparture?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    expectedArrival?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    actualDeparture?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    actualArrival?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    remarks?: NullableStringFieldUpdateOperationsInput | string | null
-    status?: EnumShipmentStatusFieldUpdateOperationsInput | $Enums.ShipmentStatus
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    containers?: ContainerUpdateManyWithoutShipmentNestedInput
-    documents?: DocumentUpdateManyWithoutShipmentNestedInput
-    invoice?: InvoiceUpdateOneWithoutShipmentNestedInput
-    packingList?: PackingListUpdateOneWithoutShipmentNestedInput
-    allocation?: AllocationUpdateOneWithoutShipmentNestedInput
-    client?: ClientUpdateOneRequiredWithoutShipmentsNestedInput
-    consignee?: ConsigneeUpdateOneRequiredWithoutShipmentsNestedInput
-    exporter?: ExporterUpdateOneRequiredWithoutShipmentsNestedInput
-    transits?: TransitUpdateManyWithoutShipmentNestedInput
-  }
-
-  export type ShipmentUncheckedUpdateWithoutCreatedByInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    shipmentNumber?: StringFieldUpdateOperationsInput | string
-    shipmentDate?: DateTimeFieldUpdateOperationsInput | Date | string
-    xfNumber?: NullableStringFieldUpdateOperationsInput | string | null
-    nxpNumber?: NullableStringFieldUpdateOperationsInput | string | null
-    cciNumber?: NullableStringFieldUpdateOperationsInput | string | null
-    eNumber?: NullableStringFieldUpdateOperationsInput | string | null
-    bookingNumber?: NullableStringFieldUpdateOperationsInput | string | null
-    transportMode?: EnumTransportModeFieldUpdateOperationsInput | $Enums.TransportMode
-    shippingLine?: NullableStringFieldUpdateOperationsInput | string | null
-    vesselName?: NullableStringFieldUpdateOperationsInput | string | null
-    voyageNumber?: NullableStringFieldUpdateOperationsInput | string | null
-    portOfLoading?: NullableStringFieldUpdateOperationsInput | string | null
-    portOfDischarge?: NullableStringFieldUpdateOperationsInput | string | null
-    expectedDeparture?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    expectedArrival?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    actualDeparture?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    actualArrival?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    remarks?: NullableStringFieldUpdateOperationsInput | string | null
-    status?: EnumShipmentStatusFieldUpdateOperationsInput | $Enums.ShipmentStatus
-    clientId?: StringFieldUpdateOperationsInput | string
-    exporterId?: StringFieldUpdateOperationsInput | string
-    consigneeId?: StringFieldUpdateOperationsInput | string
-    allocationId?: NullableStringFieldUpdateOperationsInput | string | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    containers?: ContainerUncheckedUpdateManyWithoutShipmentNestedInput
-    documents?: DocumentUncheckedUpdateManyWithoutShipmentNestedInput
-    invoice?: InvoiceUncheckedUpdateOneWithoutShipmentNestedInput
-    packingList?: PackingListUncheckedUpdateOneWithoutShipmentNestedInput
-    transits?: TransitUncheckedUpdateManyWithoutShipmentNestedInput
-  }
-
-  export type ShipmentUncheckedUpdateManyWithoutCreatedByInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    shipmentNumber?: StringFieldUpdateOperationsInput | string
-    shipmentDate?: DateTimeFieldUpdateOperationsInput | Date | string
-    xfNumber?: NullableStringFieldUpdateOperationsInput | string | null
-    nxpNumber?: NullableStringFieldUpdateOperationsInput | string | null
-    cciNumber?: NullableStringFieldUpdateOperationsInput | string | null
-    eNumber?: NullableStringFieldUpdateOperationsInput | string | null
-    bookingNumber?: NullableStringFieldUpdateOperationsInput | string | null
-    transportMode?: EnumTransportModeFieldUpdateOperationsInput | $Enums.TransportMode
-    shippingLine?: NullableStringFieldUpdateOperationsInput | string | null
-    vesselName?: NullableStringFieldUpdateOperationsInput | string | null
-    voyageNumber?: NullableStringFieldUpdateOperationsInput | string | null
-    portOfLoading?: NullableStringFieldUpdateOperationsInput | string | null
-    portOfDischarge?: NullableStringFieldUpdateOperationsInput | string | null
-    expectedDeparture?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    expectedArrival?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    actualDeparture?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    actualArrival?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    remarks?: NullableStringFieldUpdateOperationsInput | string | null
-    status?: EnumShipmentStatusFieldUpdateOperationsInput | $Enums.ShipmentStatus
-    clientId?: StringFieldUpdateOperationsInput | string
-    exporterId?: StringFieldUpdateOperationsInput | string
-    consigneeId?: StringFieldUpdateOperationsInput | string
-    allocationId?: NullableStringFieldUpdateOperationsInput | string | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
