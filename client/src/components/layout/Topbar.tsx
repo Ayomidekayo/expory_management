@@ -142,14 +142,15 @@ export default function Topbar({
 
   function handleLogout() {
     logout();
-
     navigate("/login");
   }
 
   const initials =
     user?.name
       ?.split(" ")
-      .map((n) => n[0])
+      .map((name) =>
+        name.charAt(0)
+      )
       .join("")
       .toUpperCase() ?? "U";
 
@@ -164,7 +165,7 @@ export default function Topbar({
           onClick={onMenuClick}
           className="rounded-xl p-2 transition hover:bg-slate-100 lg:hidden"
         >
-          <Menu size={22} />
+          <Menu className="h-6 w-6" />
         </button>
 
         <div>
@@ -174,11 +175,15 @@ export default function Topbar({
           </h1>
 
           <p className="text-sm text-slate-500">
-            Welcome back,
-            {" "}
-            <span className="font-medium text-emerald-600">
+
+            Welcome back,{" "}
+
+            <span className="font-semibold text-emerald-600">
+
               {user?.name}
+
             </span>
+
           </p>
 
         </div>
@@ -187,7 +192,7 @@ export default function Topbar({
 
       {/* Right */}
 
-      <div className="flex shrink-0 items-center gap-4">
+      <div className="flex items-center gap-4">
 
         {/* Search */}
 
@@ -196,13 +201,14 @@ export default function Topbar({
           <Search className="absolute left-4 top-3.5 h-5 w-5 text-slate-400" />
 
           <input
+            type="text"
             placeholder="Search..."
-            className="w-72 rounded-xl border border-slate-200 bg-slate-50 py-2.5 pl-11 pr-4 text-sm outline-none transition focus:border-emerald-500 focus:bg-white xl:w-96"
+            className="w-80 rounded-xl border border-slate-200 bg-slate-50 py-2.5 pl-11 pr-4 text-sm outline-none transition focus:border-emerald-500 focus:bg-white xl:w-96"
           />
 
         </div>
 
-        {/* Notification */}
+        {/* Notifications */}
 
         <button className="relative rounded-xl p-3 transition hover:bg-slate-100">
 
@@ -216,7 +222,7 @@ export default function Topbar({
 
         </button>
 
-        {/* User */}
+        {/* User Dropdown */}
 
         <div
           ref={dropdownRef}
@@ -225,12 +231,12 @@ export default function Topbar({
 
           <button
             onClick={() =>
-              setOpen(!open)
+              setOpen((prev) => !prev)
             }
             className="flex items-center gap-3 rounded-xl px-3 py-2 transition hover:bg-slate-100"
           >
 
-            <div className="flex h-11 w-11 items-center justify-center rounded-full bg-gradient-to-r from-green-700 to-emerald-500 text-lg font-bold text-white shadow-md">
+            <div className="flex h-11 w-11 items-center justify-center rounded-full bg-gradient-to-r from-green-700 to-emerald-500 text-lg font-bold text-white shadow">
 
               {initials}
 
@@ -266,14 +272,27 @@ export default function Topbar({
 
             <div className="absolute right-0 mt-3 w-64 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-2xl">
 
-            
+              {/* Profile */}
 
               <button
                 onClick={() => {
-                  navigate(
-                    "/settings"
-                  );
+                  navigate("/profile");
+                  setOpen(false);
+                }}
+                className="flex w-full items-center gap-3 px-5 py-4 transition hover:bg-slate-50"
+              >
 
+                <User className="h-5 w-5 text-emerald-600" />
+
+                Profile
+
+              </button>
+
+              {/* Settings */}
+
+              <button
+                onClick={() => {
+                  navigate("/settings");
                   setOpen(false);
                 }}
                 className="flex w-full items-center gap-3 px-5 py-4 transition hover:bg-slate-50"
@@ -287,10 +306,10 @@ export default function Topbar({
 
               <div className="border-t" />
 
+              {/* Logout */}
+
               <button
-                onClick={
-                  handleLogout
-                }
+                onClick={handleLogout}
                 className="flex w-full items-center gap-3 px-5 py-4 text-red-600 transition hover:bg-red-50"
               >
 
