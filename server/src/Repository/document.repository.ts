@@ -77,23 +77,14 @@ class DocumentRepository {
       page,
       limit,
       search,
-
       allocationId,
-
       shipmentId,
-
       containerId,
-
       packingListId,
-
       invoiceId,
-
       transitId,
-
       type,
-
       sortBy,
-
       sortOrder,
     } = query;
 
@@ -245,11 +236,11 @@ class DocumentRepository {
 
   /*
   =====================================
-  LIST INCLUDE
+  Include Objects
   =====================================
   */
 
-  private listInclude = {
+  private readonly listInclude = {
     allocation: {
       select: {
         id: true,
@@ -293,13 +284,7 @@ class DocumentRepository {
     },
   };
 
-  /*
-  =====================================
-  DETAILS INCLUDE
-  =====================================
-  */
-
-  private detailsInclude = {
+  private readonly detailsInclude = {
     allocation: {
       select: {
         id: true,

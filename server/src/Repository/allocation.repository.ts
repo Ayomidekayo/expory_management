@@ -258,17 +258,51 @@ class AllocationRepository {
   Shared Include
   =====================================
   */
+private readonly include =
+  Prisma.validator<Prisma.AllocationInclude>()({
 
-  private include = {
     client: true,
 
     exporter: true,
 
     consignee: true,
 
-    shipment: true,
+    shipment: {
+      include: {
+        client: true,
+        exporter: true,
+        consignee: true,
 
-    documents: true,
+        createdBy: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+          },
+        },
+
+        documents: true,
+
+        containers: {
+          orderBy: {
+            createdAt: Prisma.SortOrder.desc,
+          },
+        },
+
+        invoice: true,
+
+        packingList: true,
+
+        transits: {
+          orderBy: {
+            createdAt: Prisma.SortOrder.desc,
+          },
+        },
+      },
+    },
+
+    // THIS is what your frontend should use
+    attachedDocuments: true,
 
     createdBy: {
       select: {
@@ -296,10 +330,10 @@ class AllocationRepository {
 
     _count: {
       select: {
-        documents: true,
+        attachedDocuments: true,
       },
     },
-  };
+  });
 }
 
 export default new AllocationRepository();

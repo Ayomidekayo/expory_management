@@ -1,5 +1,3 @@
-import { v2 as cloudinary } from "cloudinary";
-
 import documentRepository from "../Repository/document.repository";
 import shipmentRepository from "../Repository/shipment.repository";
 import containerRepository from "../Repository/container.repository";
@@ -16,7 +14,11 @@ import {
 import {
   DocumentQuery,
 } from "../validations/document-query.validation";
-import { uploadToCloudinary } from "./cloudinary.service";
+
+import {
+  uploadToSupabase,
+  deleteFromSupabase,
+} from "./supabase-storage.service";
 
 class DocumentService {
   /*
@@ -25,49 +27,44 @@ class DocumentService {
   =====================================
   */
 
-async create(
-  file: Express.Multer.File,
-  data: CreateDocumentDto
-) {
-  if (!file) {
-    throw new Error(
-      "Please upload a document."
-    );
+  async create(
+    file: Express.Multer.File,
+    data: CreateDocumentDto
+  ) {
+    if (!file) {
+      throw new Error(
+        "Please upload a document."
+      );
+    }
+
+    await this.validateParentRecord(data);
+
+    // Upload to Supabase
+    const uploaded =
+      await uploadToSupabase(file);
+
+    return documentRepository.create({
+      ...data,
+
+      fileName:
+        file.originalname,
+
+      originalName:
+        file.originalname,
+
+      fileUrl:
+        uploaded.fileUrl,
+
+      publicId:
+        uploaded.publicId,
+
+      mimeType:
+        file.mimetype,
+
+      fileSize:
+        file.size,
+    });
   }
-
-  await this.validateParentRecord(data);
-
-  // Upload to Cloudinary
-  const uploaded =
-    await uploadToCloudinary(
-      file,
-      "documents"
-    );
-
-  console.log(uploaded);
-
-  return documentRepository.create({
-    ...data,
-
-    fileName:
-      file.originalname,
-
-    originalName:
-      file.originalname,
-
-    fileUrl:
-      uploaded.url,
-
-    publicId:
-      uploaded.publicId,
-
-    mimeType:
-      file.mimetype,
-
-    fileSize:
-      file.size,
-  });
-}
 
   /*
   =====================================
@@ -137,14 +134,9 @@ async create(
       await this.findById(id);
 
     if (document.publicId) {
-     await cloudinary.uploader.destroy(
-  document.publicId,
-  {
-    invalidate: true,
-    resource_type: "image",
-  }
-);
-      
+      await deleteFromSupabase(
+        document.publicId
+      );
     }
 
     return documentRepository.delete(
@@ -153,92 +145,92 @@ async create(
   }
 
   /*
-=====================================
-Validate Parent Record
-=====================================
-*/
+  =====================================
+  Validate Parent Record
+  =====================================
+  */
 
-private async validateParentRecord(
-  data: CreateDocumentDto
-) {
-  if (data.allocationId) {
-    const allocation =
-      await allocationRepository.findById(
-        data.allocationId
-      );
+  private async validateParentRecord(
+    data: CreateDocumentDto
+  ) {
+    if (data.allocationId) {
+      const allocation =
+        await allocationRepository.findById(
+          data.allocationId
+        );
 
-    if (!allocation) {
-      throw new Error(
-        "Allocation not found."
-      );
+      if (!allocation) {
+        throw new Error(
+          "Allocation not found."
+        );
+      }
+    }
+
+    if (data.shipmentId) {
+      const shipment =
+        await shipmentRepository.findById(
+          data.shipmentId
+        );
+
+      if (!shipment) {
+        throw new Error(
+          "Shipment not found."
+        );
+      }
+    }
+
+    if (data.containerId) {
+      const container =
+        await containerRepository.findById(
+          data.containerId
+        );
+
+      if (!container) {
+        throw new Error(
+          "Container not found."
+        );
+      }
+    }
+
+    if (data.packingListId) {
+      const packingList =
+        await packingListRepository.findById(
+          data.packingListId
+        );
+
+      if (!packingList) {
+        throw new Error(
+          "Packing List not found."
+        );
+      }
+    }
+
+    if (data.invoiceId) {
+      const invoice =
+        await invoiceRepository.findById(
+          data.invoiceId
+        );
+
+      if (!invoice) {
+        throw new Error(
+          "Invoice not found."
+        );
+      }
+    }
+
+    if (data.transitId) {
+      const transit =
+        await transitRepository.findById(
+          data.transitId
+        );
+
+      if (!transit) {
+        throw new Error(
+          "Transit not found."
+        );
+      }
     }
   }
-
-  if (data.shipmentId) {
-    const shipment =
-      await shipmentRepository.findById(
-        data.shipmentId
-      );
-
-    if (!shipment) {
-      throw new Error(
-        "Shipment not found."
-      );
-    }
-  }
-
-  if (data.containerId) {
-    const container =
-      await containerRepository.findById(
-        data.containerId
-      );
-
-    if (!container) {
-      throw new Error(
-        "Container not found."
-      );
-    }
-  }
-
-  if (data.packingListId) {
-    const packingList =
-      await packingListRepository.findById(
-        data.packingListId
-      );
-
-    if (!packingList) {
-      throw new Error(
-        "Packing List not found."
-      );
-    }
-  }
-
-  if (data.invoiceId) {
-    const invoice =
-      await invoiceRepository.findById(
-        data.invoiceId
-      );
-
-    if (!invoice) {
-      throw new Error(
-        "Invoice not found."
-      );
-    }
-  }
-
-  if (data.transitId) {
-    const transit =
-      await transitRepository.findById(
-        data.transitId
-      );
-
-    if (!transit) {
-      throw new Error(
-        "Transit not found."
-      );
-    }
-  }
-}
 }
 
 export default new DocumentService();

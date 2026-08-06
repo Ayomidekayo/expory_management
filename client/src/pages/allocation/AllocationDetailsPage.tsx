@@ -151,9 +151,11 @@ export default function AllocationDetailsPage() {
         allocation={allocation}
       />
 
-      <CreateShipmentCard
-        allocation={allocation}
-      />
+      {!allocation.shipment && (
+        <CreateShipmentCard
+          allocation={allocation}
+        />
+      )}
 
     </div>
   );

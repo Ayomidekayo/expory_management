@@ -1,10 +1,8 @@
 import {
-  Upload,
   FileText,
   Download,
-  Trash2,
+  Eye,
 } from "lucide-react";
-import { Link } from "react-router-dom";
 
 import type { Allocation } from "../../types/allocation.types";
 
@@ -17,38 +15,30 @@ interface Props {
 export default function AllocationDocumentsCard({
   allocation,
 }: Props) {
-  const documents = allocation.documents ?? [];
+  const documents = [
+    ...(allocation.documents ?? []).map((doc) => ({
+      ...doc,
+      source: "Allocation" as const,
+    })),
+
+    ...(allocation.shipment?.documents ?? []).map((doc) => ({
+      ...doc,
+      source: "Shipment" as const,
+    })),
+  ];
 
   return (
     <div className="rounded-xl border bg-white p-6">
 
-      <div className="mb-6 flex items-center justify-between">
+      <div className="mb-6">
 
-        <div>
+        <h2 className="text-xl font-semibold">
+          Related Documents
+        </h2>
 
-          <h2 className="text-xl font-semibold">
-            Documents
-          </h2>
-
-          <p className="text-sm text-muted-foreground">
-            Upload and manage documents related to this allocation.
-          </p>
-
-        </div>
-
-        <Button asChild>
-
-          <Link
-            to={`/documents/create?allocationId=${allocation.id}`}
-          >
-
-            <Upload className="mr-2 h-4 w-4" />
-
-            Upload Document
-
-          </Link>
-
-        </Button>
+        <p className="text-sm text-muted-foreground">
+          Documents uploaded directly to this allocation and its shipment.
+        </p>
 
       </div>
 
@@ -59,31 +49,12 @@ export default function AllocationDocumentsCard({
           <FileText className="mx-auto mb-4 h-12 w-12 text-slate-400" />
 
           <h3 className="font-semibold">
-            No Documents Uploaded
+            No Documents Available
           </h3>
 
           <p className="mt-2 text-sm text-muted-foreground">
-            Upload supporting documents such as quotations,
-            purchase orders, approvals, invoices or other
-            allocation-related files.
+            No documents have been uploaded for this allocation.
           </p>
-
-          <Button
-            asChild
-            className="mt-6"
-          >
-
-            <Link
-              to={`/documents/create?allocationId=${allocation.id}`}
-            >
-
-              <Upload className="mr-2 h-4 w-4" />
-
-              Upload First Document
-
-            </Link>
-
-          </Button>
 
         </div>
 
@@ -95,32 +66,56 @@ export default function AllocationDocumentsCard({
 
             <div
               key={doc.id}
-              className="flex items-center justify-between rounded-lg border p-4 transition hover:bg-muted/30"
+              className="flex items-center justify-between rounded-xl border p-4 transition hover:bg-slate-50"
             >
 
-              <div>
+              <div className="flex items-start gap-4">
 
-                <h4 className="font-medium">
+                <div className="rounded-lg bg-blue-100 p-3">
 
-                  {doc.originalName || doc.fileName}
+                  <FileText className="h-6 w-6 text-blue-600" />
 
-                </h4>
+                </div>
 
-                <div className="mt-1 flex items-center gap-3 text-sm text-muted-foreground">
+                <div>
 
-                  <span>{doc.type}</span>
+                  <h4 className="font-semibold text-slate-900">
+                    { doc.fileName}
+                  </h4>
 
-                  {doc.createdAt && (
-                    <>
-                      <span>•</span>
+                  <div className="mt-2 flex flex-wrap items-center gap-2 text-sm">
 
-                      <span>
-                        {new Date(
-                          doc.createdAt
-                        ).toLocaleDateString()}
-                      </span>
-                    </>
-                  )}
+                    <span className="rounded-full bg-emerald-100 px-2 py-1 text-xs font-medium text-emerald-700">
+                      {doc.source}
+                    </span>
+
+                    <span className="rounded-full bg-slate-100 px-2 py-1 text-xs font-medium text-slate-700">
+                      {doc.type}
+                    </span>
+
+                    <span className="text-muted-foreground">
+                      •
+                    </span>
+
+                    <span className="text-muted-foreground">
+                      {new Date(
+                        doc.uploadedAt
+                      ).toLocaleDateString()}
+                    </span>
+
+                    {doc.fileSize && (
+                      <>
+                        <span className="text-muted-foreground">
+                          •
+                        </span>
+
+                        <span className="text-muted-foreground">
+                          {(doc.fileSize / 1024).toFixed(1)} KB
+                        </span>
+                      </>
+                    )}
+
+                  </div>
 
                 </div>
 
@@ -129,25 +124,31 @@ export default function AllocationDocumentsCard({
               <div className="flex items-center gap-2">
 
                 <Button
-                  size="icon"
-                  variant="ghost"
-                  disabled
-                  title="Download coming soon"
+                  asChild
+                  variant="outline"
+                  size="sm"
                 >
-
-                  <Download className="h-4 w-4" />
-
+                  <a
+                    href={doc.fileUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <Eye className="mr-2 h-4 w-4" />
+                    View
+                  </a>
                 </Button>
 
                 <Button
-                  size="icon"
-                  variant="ghost"
-                  disabled
-                  title="Delete coming soon"
+                  asChild
+                  size="sm"
                 >
-
-                  <Trash2 className="h-4 w-4 text-red-600" />
-
+                  <a
+                    href={doc.fileUrl}
+                    download={doc.fileName}
+                  >
+                    <Download className="mr-2 h-4 w-4" />
+                    Download
+                  </a>
                 </Button>
 
               </div>

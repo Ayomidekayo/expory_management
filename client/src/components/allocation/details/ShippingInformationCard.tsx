@@ -1,3 +1,12 @@
+import {
+  ArrowRight,
+  Truck,
+} from "lucide-react";
+
+import { Link } from "react-router-dom";
+
+import { Button } from "../../ui/button";
+
 import type { Allocation } from "../../../types/allocation.types";
 
 interface Props {
@@ -7,6 +16,8 @@ interface Props {
 export default function ShippingInformationCard({
   allocation,
 }: Props) {
+  const shipment = allocation.shipment;
+
   return (
     <div className="rounded-xl border bg-white p-6">
 
@@ -133,6 +144,103 @@ export default function ShippingInformationCard({
               : "-"}
           </p>
         </div>
+
+      </div>
+
+      {/* Shipment */}
+
+      <div className="mt-10 border-t pt-8">
+
+        <div className="mb-5 flex items-center justify-between">
+
+          <div>
+
+            <h3 className="text-lg font-semibold">
+              Shipment
+            </h3>
+
+            <p className="text-sm text-muted-foreground">
+              Shipment created for this allocation.
+            </p>
+
+          </div>
+
+        </div>
+
+        {!shipment ? (
+
+          <div className="rounded-xl border border-dashed py-10 text-center">
+
+            <Truck className="mx-auto mb-4 h-12 w-12 text-slate-400" />
+
+            <h4 className="text-lg font-semibold">
+              No Shipment Created
+            </h4>
+
+            <p className="mt-2 text-sm text-muted-foreground">
+              Once a shipment is created, it will appear here.
+            </p>
+
+          </div>
+
+        ) : (
+
+          <div className="flex flex-col gap-5 rounded-xl border p-6 lg:flex-row lg:items-center lg:justify-between">
+
+            <div>
+
+              <h4 className="text-lg font-semibold">
+                {shipment.shipmentNumber}
+              </h4>
+
+              <div className="mt-2 flex flex-wrap gap-3 text-sm text-muted-foreground">
+
+                <span>
+                  Status:
+                  {" "}
+                  <strong>{shipment.status}</strong>
+                </span>
+
+                <span>•</span>
+
+                <span>
+                  Transport:
+                  {" "}
+                  {shipment.transportMode}
+                </span>
+
+                {shipment.shipmentDate && (
+                  <>
+                    <span>•</span>
+
+                    <span>
+                      {new Date(
+                        shipment.shipmentDate
+                      ).toLocaleDateString()}
+                    </span>
+                  </>
+                )}
+
+              </div>
+
+            </div>
+
+            <Button asChild>
+
+              <Link
+                to={`/shipments/${shipment.id}`}
+              >
+                Open Shipment
+
+                <ArrowRight className="ml-2 h-4 w-4" />
+
+              </Link>
+
+            </Button>
+
+          </div>
+
+        )}
 
       </div>
 

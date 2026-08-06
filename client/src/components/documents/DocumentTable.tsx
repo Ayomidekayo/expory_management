@@ -81,12 +81,7 @@ export default function DocumentTable({ data, loading = false }: Props) {
               </TableCell>
               <TableCell>
                 <div className="flex justify-end gap-2">
-                  <Link to={`/documents/${document.id}/edit`}>
-                    <Button size="icon" variant="outline">
-                      <Pencil className="h-4 w-4" />
-                    </Button>
-                  </Link>
-
+                 
                   <Button
   size="icon"
   variant="outline"

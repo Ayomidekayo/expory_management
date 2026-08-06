@@ -9,6 +9,8 @@ import type {
   Exporter,
 } from "./exporter.types";
 import type { User } from "./user";
+import type { Shipment } from "./shipment.types";
+import type { Document } from "./document";
 
 
 /* ===========================================
@@ -147,9 +149,9 @@ export interface Allocation {
 
   approvedBy?: User;
 
-  shipment?: any;
+  shipment?: Shipment ;
 
-  documents?: any[];
+documents: Document[];
 
   _count: {
     documents: number;
