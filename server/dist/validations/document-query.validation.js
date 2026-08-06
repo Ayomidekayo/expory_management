@@ -3,21 +3,40 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.DocumentQueryDto = void 0;
 const zod_1 = require("zod");
 const generated_1 = require("../generated");
+/*
+=====================================
+Helpers
+=====================================
+*/
+const optionalString = zod_1.z.preprocess((value) => (value === "" ? undefined : value), zod_1.z.string().optional());
+/*
+=====================================
+Document Query
+=====================================
+*/
 exports.DocumentQueryDto = zod_1.z.object({
-    page: zod_1.z.coerce.number().min(1).default(1),
-    limit: zod_1.z.coerce.number().min(1).max(100).default(10),
-    search: zod_1.z.string().optional(),
-    shipmentId: zod_1.z.string().optional(),
-    containerId: zod_1.z.string().optional(),
-    packingListId: zod_1.z.string().optional(),
-    invoiceId: zod_1.z.string().optional(),
-    transitId: zod_1.z.string().optional(),
+    page: zod_1.z.coerce
+        .number()
+        .min(1)
+        .default(1),
+    limit: zod_1.z.coerce
+        .number()
+        .min(1)
+        .max(100)
+        .default(10),
+    search: optionalString,
+    allocationId: optionalString,
+    shipmentId: optionalString,
+    containerId: optionalString,
+    packingListId: optionalString,
+    invoiceId: optionalString,
+    transitId: optionalString,
     type: zod_1.z
-        .nativeEnum(generated_1.DocumentType)
-        .optional(),
+        .preprocess((value) => (value === "" ? undefined : value), zod_1.z.nativeEnum(generated_1.DocumentType).optional()),
     sortBy: zod_1.z
         .enum([
         "uploadedAt",
+        "updatedAt",
         "fileName",
         "type",
     ])

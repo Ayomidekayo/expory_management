@@ -15,17 +15,25 @@ class DocumentController {
     async create(req, res, next) {
         try {
             if (!req.file) {
-                throw new Error("Please upload a document.");
+                return res.status(400).json({
+                    success: false,
+                    message: "Please upload a document.",
+                });
             }
-            const data = document_validation_1.createDocumentSchema.parse(req.body);
-            const document = await document_service_1.default.create(req.file, data);
-            res.status(201).json({
+            console.log("========== DOCUMENT UPLOAD ==========");
+            console.log("BODY:", req.body);
+            console.log("FILE:", req.file);
+            console.log("=====================================");
+            const body = document_validation_1.createDocumentSchema.parse(req.body);
+            const document = await document_service_1.default.create(req.file, body);
+            return res.status(201).json({
                 success: true,
                 message: "Document uploaded successfully.",
                 data: document,
             });
         }
         catch (error) {
+            console.error(error);
             next(error);
         }
     }
@@ -38,7 +46,7 @@ class DocumentController {
         try {
             const query = document_query_validation_1.DocumentQueryDto.parse(req.query);
             const result = await document_service_1.default.findAll(query);
-            res.status(200).json({
+            return res.status(200).json({
                 success: true,
                 ...result,
             });
@@ -54,9 +62,8 @@ class DocumentController {
     */
     async findById(req, res, next) {
         try {
-            const id = String(req.params.id);
-            const document = await document_service_1.default.findById(id);
-            res.status(200).json({
+            const document = await document_service_1.default.findById(req.params.id);
+            return res.status(200).json({
                 success: true,
                 data: document,
             });
@@ -72,10 +79,9 @@ class DocumentController {
     */
     async update(req, res, next) {
         try {
-            const id = String(req.params.id);
-            const data = document_validation_1.updateDocumentSchema.parse(req.body);
-            const document = await document_service_1.default.update(id, data);
-            res.status(200).json({
+            const body = document_validation_1.updateDocumentSchema.parse(req.body);
+            const document = await document_service_1.default.update(req.params.id, body);
+            return res.status(200).json({
                 success: true,
                 message: "Document updated successfully.",
                 data: document,
@@ -92,9 +98,8 @@ class DocumentController {
     */
     async delete(req, res, next) {
         try {
-            const id = String(req.params.id);
-            await document_service_1.default.delete(id);
-            res.status(200).json({
+            await document_service_1.default.delete(req.params.id);
+            return res.status(200).json({
                 success: true,
                 message: "Document deleted successfully.",
             });

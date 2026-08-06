@@ -12,16 +12,18 @@ class DocumentRepository {
             data: {
                 type: data.type,
                 fileName: data.fileName,
+                originalName: data.originalName,
                 fileUrl: data.fileUrl,
+                publicId: data.publicId,
                 mimeType: data.mimeType,
                 fileSize: data.fileSize,
                 remarks: data.remarks,
+                allocationId: data.allocationId,
                 shipmentId: data.shipmentId,
                 containerId: data.containerId,
                 packingListId: data.packingListId,
                 invoiceId: data.invoiceId,
                 transitId: data.transitId,
-                allocationId: data.allocationId,
             },
             include: this.detailsInclude,
         });
@@ -32,8 +34,11 @@ class DocumentRepository {
     =====================================
     */
     async findAll(query) {
-        const { page, limit, search, shipmentId, containerId, packingListId, invoiceId, transitId, type, sortBy, sortOrder, } = query;
+        const { page, limit, search, allocationId, shipmentId, containerId, packingListId, invoiceId, transitId, type, sortBy, sortOrder, } = query;
         const where = {
+            ...(allocationId && {
+                allocationId,
+            }),
             ...(shipmentId && {
                 shipmentId,
             }),
@@ -56,6 +61,12 @@ class DocumentRepository {
                 OR: [
                     {
                         fileName: {
+                            contains: search,
+                            mode: "insensitive",
+                        },
+                    },
+                    {
+                        originalName: {
                             contains: search,
                             mode: "insensitive",
                         },
@@ -99,7 +110,6 @@ class DocumentRepository {
     =====================================
     */
     async findById(id) {
-        console.log("REPOSITORY FIND:", id);
         return prisma_1.prisma.document.findUnique({
             where: {
                 id,
@@ -135,10 +145,16 @@ class DocumentRepository {
     }
     /*
     =====================================
-    LIST INCLUDE
+    Include Objects
     =====================================
     */
     listInclude = {
+        allocation: {
+            select: {
+                id: true,
+                allocationNumber: true,
+            },
+        },
         shipment: {
             select: {
                 id: true,
@@ -170,11 +186,6 @@ class DocumentRepository {
             },
         },
     };
-    /*
-    =====================================
-    DETAILS INCLUDE
-    =====================================
-    */
     detailsInclude = {
         allocation: {
             select: {

@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+const generated_1 = require("../generated");
 const prisma_1 = require("../config/prisma");
 class AllocationRepository {
     /*
@@ -182,12 +183,39 @@ class AllocationRepository {
     Shared Include
     =====================================
     */
-    include = {
+    include = generated_1.Prisma.validator()({
         client: true,
         exporter: true,
         consignee: true,
-        shipment: true,
-        documents: true,
+        shipment: {
+            include: {
+                client: true,
+                exporter: true,
+                consignee: true,
+                createdBy: {
+                    select: {
+                        id: true,
+                        name: true,
+                        email: true,
+                    },
+                },
+                documents: true,
+                containers: {
+                    orderBy: {
+                        createdAt: generated_1.Prisma.SortOrder.desc,
+                    },
+                },
+                invoice: true,
+                packingList: true,
+                transits: {
+                    orderBy: {
+                        createdAt: generated_1.Prisma.SortOrder.desc,
+                    },
+                },
+            },
+        },
+        // THIS is what your frontend should use
+        attachedDocuments: true,
         createdBy: {
             select: {
                 id: true,
@@ -211,9 +239,9 @@ class AllocationRepository {
         },
         _count: {
             select: {
-                documents: true,
+                attachedDocuments: true,
             },
         },
-    };
+    });
 }
 exports.default = new AllocationRepository();

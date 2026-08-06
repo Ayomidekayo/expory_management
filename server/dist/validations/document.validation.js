@@ -29,8 +29,8 @@ const documentSchema = zod_1.z.object({
 Create
 =====================================
 */
-exports.createDocumentSchema = documentSchema.refine((data) => {
-    const ids = [
+exports.createDocumentSchema = documentSchema.superRefine((data, ctx) => {
+    const parentIds = [
         data.allocationId,
         data.shipmentId,
         data.containerId,
@@ -38,10 +38,20 @@ exports.createDocumentSchema = documentSchema.refine((data) => {
         data.invoiceId,
         data.transitId,
     ].filter(Boolean);
-    return ids.length === 1;
-}, {
-    message: "A document must belong to exactly one record.",
-    path: ["shipmentId"],
+    if (parentIds.length === 0) {
+        ctx.addIssue({
+            code: zod_1.z.ZodIssueCode.custom,
+            message: "A document must belong to one record (Allocation, Shipment, Container, Packing List, Invoice or Transit).",
+            path: ["allocationId"],
+        });
+    }
+    if (parentIds.length > 1) {
+        ctx.addIssue({
+            code: zod_1.z.ZodIssueCode.custom,
+            message: "A document can belong to only one record.",
+            path: ["allocationId"],
+        });
+    }
 });
 /*
 =====================================
@@ -50,16 +60,20 @@ Update
 */
 exports.updateDocumentSchema = documentSchema
     .partial()
-    .refine((data) => {
-    const ids = [
+    .superRefine((data, ctx) => {
+    const parentIds = [
+        data.allocationId,
         data.shipmentId,
         data.containerId,
         data.packingListId,
         data.invoiceId,
         data.transitId,
     ].filter(Boolean);
-    return ids.length <= 1;
-}, {
-    message: "A document can belong to only one record.",
-    path: ["shipmentId"],
+    if (parentIds.length > 1) {
+        ctx.addIssue({
+            code: zod_1.z.ZodIssueCode.custom,
+            message: "A document can belong to only one record.",
+            path: ["allocationId"],
+        });
+    }
 });

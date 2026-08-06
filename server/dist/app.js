@@ -10,8 +10,18 @@ const ApiError_1 = require("./utils/ApiError");
 const error_middleware_1 = __importDefault(require("./middleware/error.middleware"));
 const path_1 = __importDefault(require("path"));
 const app = (0, express_1.default)();
+const allowedOrigins = [
+    "http://localhost:5173",
+    "https://expory-management-bm4s.vercel.app",
+];
 app.use((0, cors_1.default)({
-    origin: "http://localhost:5173", // React Vite
+    origin(origin, callback) {
+        // Allow requests with no Origin (e.g. Postman)
+        if (!origin || allowedOrigins.includes(origin)) {
+            return callback(null, true);
+        }
+        return callback(new Error("Not allowed by CORS"));
+    },
     credentials: true,
 }));
 app.use(express_1.default.json());
