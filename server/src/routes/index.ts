@@ -7,17 +7,11 @@ import invoiceRoutes from "./invoice.routes";
 import dashboardRoutes from "./dashboard.routes";
 import packingListRouts from "./packing-list.routes";
 import containerRoutes from "./container.routes";
-
 import clientRoutes from "./client.routes";
 import allocationRoutes from "./allocation.routes";
 import transitRoutes from  "./transit.routes"
 import documentRoutes from "./document.routes";
 import userRoutes from "./user.routes";
-
-
-
-
-
 
 const router = Router();
 
@@ -40,7 +34,7 @@ router.use(
  router.use("/dashboard", dashboardRoutes);
 
 
- 
+
 router.use(
   "/packing-lists",
   packingListRouts
