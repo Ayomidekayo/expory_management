@@ -16,7 +16,6 @@ import {
   Menu,
   Search,
   Settings,
-  User,
 } from "lucide-react";
 
 import { useAuthStore } from "../../store/auth.store";
@@ -271,23 +270,7 @@ export default function Topbar({
           {open && (
 
             <div className="absolute right-0 mt-3 w-64 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-2xl">
-
-              {/* Profile */}
-
-              <button
-                onClick={() => {
-                  navigate("/profile");
-                  setOpen(false);
-                }}
-                className="flex w-full items-center gap-3 px-5 py-4 transition hover:bg-slate-50"
-              >
-
-                <User className="h-5 w-5 text-emerald-600" />
-
-                Profile
-
-              </button>
-
+        
               {/* Settings */}
 
               <button
