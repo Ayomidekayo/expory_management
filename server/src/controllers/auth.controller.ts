@@ -1,16 +1,26 @@
-import { Request, Response } from "express";
+import {
+  Request,
+  Response,
+} from "express";
+
 import { AuthService } from "../services/auth.service";
 
-
-
-
 export class AuthController {
+  /*
+  =====================================
+  Register
+  =====================================
+  */
+
   static async register(
     req: Request,
     res: Response
   ) {
-    const { name, email, password } =
-      req.body;
+    const {
+      name,
+      email,
+      password,
+    } = req.body;
 
     const result =
       await AuthService.register(
@@ -19,15 +29,23 @@ export class AuthController {
         password
       );
 
-    res.status(201).json(result);
+    return res.status(201).json(result);
   }
+
+  /*
+  =====================================
+  Login
+  =====================================
+  */
 
   static async login(
     req: Request,
     res: Response
   ) {
-    const { email, password } =
-      req.body;
+    const {
+      email,
+      password,
+    } = req.body;
 
     const result =
       await AuthService.login(
@@ -35,7 +53,7 @@ export class AuthController {
         password
       );
 
-    res.status(200).json(result);
+    return res.status(200).json(result);
   }
 
   /*
@@ -53,9 +71,6 @@ export class AuthController {
         req.user.id
       );
 
-    res.status(200).json(result);
+    return res.status(200).json(result);
   }
 }
-  
-
-
