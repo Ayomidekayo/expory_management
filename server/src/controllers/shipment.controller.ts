@@ -14,11 +14,9 @@ import {
 import { ShipmentQueryDto } from "../validations/shipment-query.validation";
 
 class ShipmentController {
-  /*
-  =====================================
-  Available Shipments
-  =====================================
-  */
+  /* ===========================================
+     Available Shipments
+  =========================================== */
 
   async findAvailable(
     req: Request,
@@ -38,11 +36,9 @@ class ShipmentController {
     }
   }
 
-  /*
-  =====================================
-  Create Shipment
-  =====================================
-  */
+  /* ===========================================
+     Create Shipment
+  =========================================== */
 
   async create(
     req: Request,
@@ -51,7 +47,9 @@ class ShipmentController {
   ) {
     try {
       const data =
-        createShipmentSchema.parse(req.body);
+        createShipmentSchema.parse(
+          req.body
+        );
 
       const shipment =
         await shipmentService.create(
@@ -70,11 +68,9 @@ class ShipmentController {
     }
   }
 
-  /*
-  =====================================
-  Get Shipments
-  =====================================
-  */
+  /* ===========================================
+     Get Shipments
+  =========================================== */
 
   async findAll(
     req: Request,
@@ -99,11 +95,23 @@ class ShipmentController {
     }
   }
 
-  /*
-  =====================================
-  Get Shipment
-  =====================================
-  */
+  /* ===========================================
+     Get Shipment Details
+     
+     This returns:
+     - shipment information
+     - client
+     - exporter
+     - consignee
+     - allocation
+     - ALL invoices
+     - packing list
+     - containers
+     - transits
+     - documents
+     - created by
+     - counts
+  =========================================== */
 
   async findOne(
     req: Request,
@@ -111,10 +119,14 @@ class ShipmentController {
     next: NextFunction
   ) {
     try {
-      const id = String(req.params.id);
+      const id = String(
+        req.params.id
+      );
 
       const shipment =
-        await shipmentService.findById(id);
+        await shipmentService.findById(
+          id
+        );
 
       res.status(200).json({
         success: true,
@@ -125,11 +137,9 @@ class ShipmentController {
     }
   }
 
-  /*
-  =====================================
-  Update Shipment
-  =====================================
-  */
+  /* ===========================================
+     Update Shipment
+  =========================================== */
 
   async update(
     req: Request,
@@ -137,10 +147,14 @@ class ShipmentController {
     next: NextFunction
   ) {
     try {
-      const id = String(req.params.id);
+      const id = String(
+        req.params.id
+      );
 
       const data =
-        updateShipmentSchema.parse(req.body);
+        updateShipmentSchema.parse(
+          req.body
+        );
 
       const shipment =
         await shipmentService.update(
@@ -159,11 +173,9 @@ class ShipmentController {
     }
   }
 
-  /*
-  =====================================
-  Delete Shipment
-  =====================================
-  */
+  /* ===========================================
+     Delete Shipment
+  =========================================== */
 
   async delete(
     req: Request,
@@ -171,7 +183,9 @@ class ShipmentController {
     next: NextFunction
   ) {
     try {
-      const id = String(req.params.id);
+      const id = String(
+        req.params.id
+      );
 
       await shipmentService.delete(id);
 

@@ -124,7 +124,7 @@ model Shipment {
   updatedAt         DateTime       @updatedAt
   containers        Container[]
   documents         Document[]
-  invoice           Invoice?
+  invoices          Invoice[]
   packingList       PackingList?
   allocation        Allocation?    @relation(fields: [allocationId], references: [id])
   client            Client         @relation(fields: [clientId], references: [id])

@@ -14,7 +14,6 @@ export function useUpdateInvoiceItem() {
   return useMutation({
     mutationFn: ({
       id,
-      invoiceId,
       data,
     }: {
       id: string;

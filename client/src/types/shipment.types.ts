@@ -83,7 +83,7 @@ export interface Shipment {
   consignee: Consignee;
   allocation?: Allocation;
 
-  invoice?: Invoice;
+ invoices: Invoice[];
   packingList?: PackingList;
 
   containers: Container[];

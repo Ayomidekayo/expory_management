@@ -11,20 +11,17 @@ import {
   DialogHeader,
   DialogTitle,
 } from "../ui/dialog";
+
 import { Button } from "../ui/button";
 
-
+import type { Invoice } from "../../types/invoice";
 
 interface Props {
   open: boolean;
-
-  onOpenChange: (
-    open: boolean
-  ) => void;
-
+  onOpenChange: (open: boolean) => void;
   loading?: boolean;
-
   onConfirm: () => void;
+  invoice?: Invoice;
 }
 
 export default function DeleteInvoiceDialog({
@@ -32,6 +29,7 @@ export default function DeleteInvoiceDialog({
   onOpenChange,
   loading = false,
   onConfirm,
+  invoice,
 }: Props) {
   return (
     <Dialog
@@ -39,9 +37,7 @@ export default function DeleteInvoiceDialog({
       onOpenChange={onOpenChange}
     >
       <DialogContent className="sm:max-w-md">
-
         <DialogHeader>
-
           <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-red-100">
             <Trash2 className="h-6 w-6 text-red-600" />
           </div>
@@ -51,14 +47,21 @@ export default function DeleteInvoiceDialog({
           </DialogTitle>
 
           <DialogDescription className="pt-2 leading-6">
-            Are you sure you want to delete this
-            invoice? This action cannot be undone.
-          </DialogDescription>
+            Are you sure you want to delete this invoice?
 
+            {invoice && (
+              <span className="mt-2 block font-medium text-slate-900">
+                Invoice: {invoice.invoiceNumber}
+              </span>
+            )}
+
+            <span className="mt-1 block">
+              This action cannot be undone.
+            </span>
+          </DialogDescription>
         </DialogHeader>
 
         <DialogFooter className="mt-4 gap-2 sm:gap-2">
-
           <Button
             type="button"
             variant="outline"
@@ -88,9 +91,7 @@ export default function DeleteInvoiceDialog({
               </>
             )}
           </Button>
-
         </DialogFooter>
-
       </DialogContent>
     </Dialog>
   );

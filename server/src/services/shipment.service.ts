@@ -10,14 +10,13 @@ import {
 } from "../validations/shipment.validation";
 
 import { ShipmentQuery } from "../validations/shipment-query.validation";
+
 import { ApiError } from "../utils/ApiError";
 
 class ShipmentService {
-  /*
-  =====================================
-  Generate Shipment Number
-  =====================================
-  */
+  /* ===========================================
+     Generate Shipment Number
+  =========================================== */
 
   private async generateShipmentNumber() {
     const year = new Date().getFullYear();
@@ -33,20 +32,22 @@ class ShipmentService {
       latest.shipmentNumber.split("-")[2]
     );
 
-    return `SHP-${year}-${String(sequence + 1).padStart(5, "0")}`;
+    return `SHP-${year}-${String(
+      sequence + 1
+    ).padStart(5, "0")}`;
   }
 
-  /*
-  =====================================
-  Create
-  =====================================
-  */
+  /* ===========================================
+     Create Shipment
+  =========================================== */
 
   async create(
     data: CreateShipmentDto,
     createdById: string
   ) {
-    // Verify Client
+    /* =========================================
+       Verify Client
+    ========================================= */
 
     const client =
       await clientRepository.findById(
@@ -54,41 +55,47 @@ class ShipmentService {
       );
 
     if (!client) {
-  throw new ApiError(
-    404,
-    "Client not found."
-  );
-}
+      throw new ApiError(
+        404,
+        "Client not found."
+      );
+    }
 
-    // Verify Exporter
+    /* =========================================
+       Verify Exporter
+    ========================================= */
 
     const exporter =
       await exporterRepository.findById(
         data.exporterId
       );
 
-   if (!exporter) {
-  throw new ApiError(
-    404,
-    "Exporter not found."
-  );
-}
+    if (!exporter) {
+      throw new ApiError(
+        404,
+        "Exporter not found."
+      );
+    }
 
-    // Verify Consignee
+    /* =========================================
+       Verify Consignee
+    ========================================= */
 
     const consignee =
       await consigneeRepository.findById(
         data.consigneeId
       );
 
-  if (!consignee) {
-  throw new ApiError(
-    404,
-    "Consignee not found."
-  );
-}
+    if (!consignee) {
+      throw new ApiError(
+        404,
+        "Consignee not found."
+      );
+    }
 
-    // Verify Allocation
+    /* =========================================
+       Verify Allocation
+    ========================================= */
 
     if (data.allocationId) {
       const allocation =
@@ -96,41 +103,47 @@ class ShipmentService {
           data.allocationId
         );
 
-   if (!allocation) {
-  throw new ApiError(
-    404,
-    "Allocation not found."
-  );
-}
+      if (!allocation) {
+        throw new ApiError(
+          404,
+          "Allocation not found."
+        );
+      }
+
       const existingShipment =
         await shipmentRepository.findByAllocationId(
           data.allocationId
         );
 
       if (existingShipment) {
-        throw new Error(
+        throw new ApiError(
+          400,
           "This allocation already has a shipment."
         );
       }
     }
 
+    /* =========================================
+       Generate Shipment Number
+    ========================================= */
+
     const shipmentNumber =
       await this.generateShipmentNumber();
 
+    /* =========================================
+       Create Shipment
+    ========================================= */
+
     return shipmentRepository.create({
       ...data,
-
       shipmentNumber,
-
       createdById,
     });
   }
 
-  /*
-  =====================================
-  Find All
-  =====================================
-  */
+  /* ===========================================
+     Find All Shipments
+  =========================================== */
 
   async findAll(
     query: ShipmentQuery
@@ -140,11 +153,9 @@ class ShipmentService {
     );
   }
 
-  /*
-  =====================================
-  Find One
-  =====================================
-  */
+  /* ===========================================
+     Find Shipment By ID
+  =========================================== */
 
   async findById(id: string) {
     const shipment =
@@ -152,27 +163,33 @@ class ShipmentService {
         id
       );
 
-  if (!shipment) {
-  throw new ApiError(
-    404,
-    "Shipment not found."
-  );
-}
+    if (!shipment) {
+      throw new ApiError(
+        404,
+        "Shipment not found."
+      );
+    }
 
     return shipment;
   }
 
-  /*
-  =====================================
-  Update
-  =====================================
-  */
+  /* ===========================================
+     Update Shipment
+  =========================================== */
 
   async update(
     id: string,
     data: UpdateShipmentDto
   ) {
+    /* =========================================
+       Ensure Shipment Exists
+    ========================================= */
+
     await this.findById(id);
+
+    /* =========================================
+       Verify Allocation
+    ========================================= */
 
     if (data.allocationId) {
       const allocation =
@@ -180,28 +197,32 @@ class ShipmentService {
           data.allocationId
         );
 
-     if (!allocation) {
-  throw new ApiError(
-    404,
-    "Allocation not found."
-  );
-}
+      if (!allocation) {
+        throw new ApiError(
+          404,
+          "Allocation not found."
+        );
+      }
 
       const existingShipment =
         await shipmentRepository.findByAllocationId(
           data.allocationId
         );
 
-    if (
-  existingShipment &&
-  existingShipment.id !== id
-) {
-  throw new ApiError(
-    400,
-    "Allocation already belongs to another shipment."
-  );
-}
+      if (
+        existingShipment &&
+        existingShipment.id !== id
+      ) {
+        throw new ApiError(
+          400,
+          "Allocation already belongs to another shipment."
+        );
+      }
     }
+
+    /* =========================================
+       Update Shipment
+    ========================================= */
 
     return shipmentRepository.update(
       id,
@@ -209,49 +230,82 @@ class ShipmentService {
     );
   }
 
-  /*
-  =====================================
-  Delete
-  =====================================
-  */
+  /* ===========================================
+     Delete Shipment
+  =========================================== */
 
   async delete(id: string) {
     const shipment =
       await this.findById(id);
 
-   if (shipment.invoice) {
-  throw new ApiError(
-    400,
-    "Cannot delete a shipment that already has an invoice."
-  );
-}
+    /* =========================================
+       INVOICES
 
-   if (shipment.packingList) {
-  throw new ApiError(
-    400,
-    "Cannot delete a shipment that already has a packing list."
-  );
-}
+       One shipment can now have many invoices.
+    ========================================= */
 
-if (shipment._count.containers > 0) {
-  throw new ApiError(
-    400,
-    "Cannot delete a shipment with containers."
-  );
-}
+    if (
+      shipment._count.invoices > 0
+    ) {
+      throw new ApiError(
+        400,
+        "Cannot delete a shipment that already has invoices."
+      );
+    }
 
-if (shipment._count.transits > 0) {
-  throw new ApiError(
-    400,
-    "Cannot delete a shipment with transit records."
-  );
-}
+    /* =========================================
+       PACKING LIST
+    ========================================= */
 
-    return shipmentRepository.delete(id);
+    if (shipment.packingList) {
+      throw new ApiError(
+        400,
+        "Cannot delete a shipment that already has a packing list."
+      );
+    }
+
+    /* =========================================
+       CONTAINERS
+    ========================================= */
+
+    if (
+      shipment._count.containers > 0
+    ) {
+      throw new ApiError(
+        400,
+        "Cannot delete a shipment with containers."
+      );
+    }
+
+    /* =========================================
+       TRANSITS
+    ========================================= */
+
+    if (
+      shipment._count.transits > 0
+    ) {
+      throw new ApiError(
+        400,
+        "Cannot delete a shipment with transit records."
+      );
+    }
+
+    /* =========================================
+       DELETE
+    ========================================= */
+
+    return shipmentRepository.delete(
+      id
+    );
   }
+
+  /* ===========================================
+     Find Available Shipments
+  =========================================== */
+
   async findAvailable() {
-  return shipmentRepository.findAvailable();
-}
+    return shipmentRepository.findAvailable();
+  }
 }
 
 export default new ShipmentService();

@@ -1,3 +1,5 @@
+import { useState } from "react";
+
 import {
   Eye,
   Pencil,
@@ -14,73 +16,113 @@ import {
 } from "../../ui/dropdown-menu";
 
 import { Button } from "../../ui/button";
-import DeleteInvoiceDialog from "./DeleteInvoiceDialog";
+
 import type { Invoice } from "../../../types/invoice";
 
+import DeleteInvoiceDialog from "../DeleteInvoiceDialog";
 
 interface Props {
   invoice: Invoice;
+
+  onDelete?: (
+    id: string
+  ) => void;
+
+  loading?: boolean;
 }
 
 export default function InvoiceActions({
   invoice,
+  onDelete,
+  loading = false,
 }: Props) {
+  const [
+    deleteDialogOpen,
+    setDeleteDialogOpen,
+  ] = useState(false);
+
+  const handleDeleteClick = () => {
+    setDeleteDialogOpen(true);
+  };
+
+  const handleConfirmDelete = () => {
+    onDelete?.(invoice.id);
+  };
+
   return (
-    <DropdownMenu>
-
-      <DropdownMenuTrigger
-        asChild
-      >
-        <Button
-          size="sm"
-          variant="ghost"
-        >
-          •••
-        </Button>
-      </DropdownMenuTrigger>
-
-      <DropdownMenuContent>
-
-        <DropdownMenuItem
+    <>
+      <DropdownMenu>
+        <DropdownMenuTrigger
           asChild
         >
-          <Link
-            to={`/invoices/${invoice.id}`}
+          <Button
+            size="sm"
+            variant="ghost"
           >
-            <Eye className="mr-2 h-4 w-4" />
+            •••
+          </Button>
+        </DropdownMenuTrigger>
 
-            View
-          </Link>
-        </DropdownMenuItem>
-
-        <DropdownMenuItem
-          asChild
+        <DropdownMenuContent
+          align="end"
         >
-          <Link
-            to={`/invoices/${invoice.id}/edit`}
-          >
-            <Pencil className="mr-2 h-4 w-4" />
+          {/* VIEW */}
 
-            Edit
-          </Link>
-        </DropdownMenuItem>
-
-        <DeleteInvoiceDialog
-          invoice={invoice}
-        >
           <DropdownMenuItem
-            onSelect={(e) =>
-              e.preventDefault()
-            }
+            asChild
+          >
+            <Link
+              to={`/invoices/${invoice.id}`}
+            >
+              <Eye className="mr-2 h-4 w-4" />
+
+              View
+            </Link>
+          </DropdownMenuItem>
+
+          {/* EDIT */}
+
+          <DropdownMenuItem
+            asChild
+          >
+            <Link
+              to={`/invoices/${invoice.id}/edit`}
+            >
+              <Pencil className="mr-2 h-4 w-4" />
+
+              Edit
+            </Link>
+          </DropdownMenuItem>
+
+          {/* DELETE */}
+
+          <DropdownMenuItem
+            onSelect={(event) => {
+              event.preventDefault();
+              handleDeleteClick();
+            }}
+            className="cursor-pointer text-red-600 focus:bg-red-50 focus:text-red-700"
           >
             <Trash2 className="mr-2 h-4 w-4 text-red-500" />
 
             Delete
           </DropdownMenuItem>
-        </DeleteInvoiceDialog>
+        </DropdownMenuContent>
+      </DropdownMenu>
 
-      </DropdownMenuContent>
+      {/* DELETE CONFIRMATION */}
 
-    </DropdownMenu>
+      <DeleteInvoiceDialog
+        open={deleteDialogOpen}
+        onOpenChange={
+          setDeleteDialogOpen
+        }
+        invoice={invoice}
+        loading={loading}
+        onConfirm={
+          handleConfirmDelete
+        }
+      />
+    </>
   );
 }

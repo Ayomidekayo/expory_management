@@ -10,11 +10,9 @@ import {
 import { ShipmentQuery } from "../validations/shipment-query.validation";
 
 class ShipmentRepository {
-  /*
-  =====================================
-  Create
-  =====================================
-  */
+  /* ===========================================
+     Create
+  =========================================== */
 
   async create(
     data: CreateShipmentDto & {
@@ -26,34 +24,46 @@ class ShipmentRepository {
       data: {
         ...data,
 
-        shipmentDate: new Date(data.shipmentDate),
+        shipmentDate: new Date(
+          data.shipmentDate
+        ),
 
-        expectedDeparture: data.expectedDeparture
-          ? new Date(data.expectedDeparture)
-          : undefined,
+        expectedDeparture:
+          data.expectedDeparture
+            ? new Date(
+                data.expectedDeparture
+              )
+            : undefined,
 
-        expectedArrival: data.expectedArrival
-          ? new Date(data.expectedArrival)
-          : undefined,
+        expectedArrival:
+          data.expectedArrival
+            ? new Date(
+                data.expectedArrival
+              )
+            : undefined,
 
-        actualDeparture: data.actualDeparture
-          ? new Date(data.actualDeparture)
-          : undefined,
+        actualDeparture:
+          data.actualDeparture
+            ? new Date(
+                data.actualDeparture
+              )
+            : undefined,
 
-        actualArrival: data.actualArrival
-          ? new Date(data.actualArrival)
-          : undefined,
+        actualArrival:
+          data.actualArrival
+            ? new Date(
+                data.actualArrival
+              )
+            : undefined,
       },
 
-  include: this.detailsInclude,
+      include: this.detailsInclude,
     });
   }
 
-  /*
-  =====================================
-  Find Latest Shipment
-  =====================================
-  */
+  /* ===========================================
+     Find Latest Shipment
+  =========================================== */
 
   async findLatestShipment() {
     return prisma.shipment.findFirst({
@@ -67,11 +77,9 @@ class ShipmentRepository {
     });
   }
 
-  /*
-  =====================================
-  Find All
-  =====================================
-  */
+  /* ===========================================
+     Find All
+  =========================================== */
 
   async findAll(
     query: ShipmentQuery
@@ -157,26 +165,26 @@ class ShipmentRepository {
       }),
     };
 
-   const [data, total] =
-  await Promise.all([
-    prisma.shipment.findMany({
-      where,
+    const [data, total] =
+      await Promise.all([
+        prisma.shipment.findMany({
+          where,
 
-      include: this.listInclude,
+          include: this.listInclude,
 
-      orderBy: {
-        [sortBy]: sortOrder,
-      },
+          orderBy: {
+            [sortBy]: sortOrder,
+          },
 
-      skip: (page - 1) * limit,
+          skip: (page - 1) * limit,
 
-      take: limit,
-    }),
+          take: limit,
+        }),
 
-    prisma.shipment.count({
-      where,
-    }),
-  ]);
+        prisma.shipment.count({
+          where,
+        }),
+      ]);
 
     return {
       data,
@@ -193,11 +201,9 @@ class ShipmentRepository {
     };
   }
 
-  /*
-  =====================================
-  Find By Id
-  =====================================
-  */
+  /* ===========================================
+     Find By Id
+  =========================================== */
 
   async findById(id: string) {
     return prisma.shipment.findUnique({
@@ -205,15 +211,13 @@ class ShipmentRepository {
         id,
       },
 
-     include: this.detailsInclude,
+      include: this.detailsInclude,
     });
   }
 
-  /*
-  =====================================
-  Find By Allocation
-  =====================================
-  */
+  /* ===========================================
+     Find By Allocation
+  =========================================== */
 
   async findByAllocationId(
     allocationId: string
@@ -225,24 +229,32 @@ class ShipmentRepository {
     });
   }
 
- async findAvailable() {
-  return prisma.shipment.findMany({
-    where: {
-      invoice: null,
-    },
+  /* ===========================================
+     Find Available
+     
+     Available means:
+     Shipment has NO invoices.
+  =========================================== */
 
-    include: this.listInclude,
+  async findAvailable() {
+    return prisma.shipment.findMany({
+      where: {
+        invoices: {
+          none: {},
+        },
+      },
 
-    orderBy: {
-      shipmentDate: "desc",
-    },
-  });
-}
-  /*
-  =====================================
-  Update
-  =====================================
-  */
+      include: this.listInclude,
+
+      orderBy: {
+        shipmentDate: "desc",
+      },
+    });
+  }
+
+  /* ===========================================
+     Update
+  =========================================== */
 
   async update(
     id: string,
@@ -304,15 +316,13 @@ class ShipmentRepository {
             : undefined,
       },
 
-    include: this.detailsInclude,
+      include: this.detailsInclude,
     });
   }
 
-  /*
-  =====================================
-  Delete
-  =====================================
-  */
+  /* ===========================================
+     Delete
+  =========================================== */
 
   async delete(id: string) {
     return prisma.shipment.delete({
@@ -322,92 +332,105 @@ class ShipmentRepository {
     });
   }
 
-  /*
-  =====================================
-  Shared Include
-  =====================================
-  */
+  /* ===========================================
+     Shared List Include
+  =========================================== */
 
   private listInclude = {
-  client: {
-    select: {
-      id: true,
-      companyName: true,
+    client: {
+      select: {
+        id: true,
+        companyName: true,
+      },
     },
-  },
 
-  exporter: {
-    select: {
-      id: true,
-      name: true,
+    exporter: {
+      select: {
+        id: true,
+        name: true,
+      },
     },
-  },
 
-  consignee: {
-    select: {
-      id: true,
-      name: true,
+    consignee: {
+      select: {
+        id: true,
+        name: true,
+      },
     },
-  },
 
-  allocation: {
-    select: {
-      id: true,
-      allocationNumber: true,
+    allocation: {
+      select: {
+        id: true,
+        allocationNumber: true,
+      },
     },
-  },
 
-  _count: {
-    select: {
-      containers: true,
-      documents: true,
-      transits: true,
+    _count: {
+      select: {
+        containers: true,
+        documents: true,
+        transits: true,
+        invoices: true,
+      },
     },
-  },
-};
-private detailsInclude = {
-  client: true,
+  };
 
-  exporter: true,
+  /* ===========================================
+     Shared Details Include
+  =========================================== */
 
-  consignee: true,
+  private detailsInclude = {
+    client: true,
 
-  allocation: {
-    select: {
-      id: true,
-      allocationNumber: true,
-      serviceType: true,
-      priority: true,
-      status: true,
+    exporter: true,
+
+    consignee: true,
+
+    allocation: {
+      select: {
+        id: true,
+        allocationNumber: true,
+        serviceType: true,
+        priority: true,
+        status: true,
+      },
     },
-  },
 
-  invoice: true,
+    /* =========================================
+       ALL INVOICES FOR THIS SHIPMENT
+    ========================================= */
 
-  packingList: true,
-
-  containers: true,
-
-  transits: true,
-
-  documents: true,
-
-  createdBy: {
-    select: {
-      id: true,
-      name: true,
-      email: true,
+    invoices: {
+      orderBy: {
+        invoiceDate: "desc" as const,
+      },
     },
-  },
 
-  _count: {
-    select: {
-      containers: true,
-      documents: true,
-      transits: true,
+    packingList: true,
+
+    containers: true,
+
+    transits: true,
+
+    documents: true,
+
+    createdBy: {
+      select: {
+        id: true,
+        name: true,
+        email: true,
+      },
     },
-  },
-};
+
+    _count: {
+      select: {
+        containers: true,
+        documents: true,
+        transits: true,
+        invoices: true,
+      },
+    },
+  };
 }
 
 export default new ShipmentRepository();

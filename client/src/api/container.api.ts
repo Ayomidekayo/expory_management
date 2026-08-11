@@ -1,5 +1,5 @@
 import axiosInstance from "../lib/axios";
-import type { Container, ContainerQuery, CreateContainerDto, TerminalChargeStatus, UpdateContainerDto } from "../types/container.type";
+import type { Container, ContainerQuery, CreateContainerDto, UpdateContainerDto } from "../types/container.type";
 
 
 /* ===========================================

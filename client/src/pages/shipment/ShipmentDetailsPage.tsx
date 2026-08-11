@@ -13,6 +13,7 @@ import RelatedModulesCard from "../../components/shipment/details/RelatedModules
 import { useShipment } from "../../hooks/shipments/useShipment";
 import { useDeleteShipment } from "../../hooks/shipments/useDeleteShipment";
 import ShipmentDocumentsCard from "../../components/shipment/details/ShipmentDocumentsCard";
+import ShipmentInvoicesCard from "../../components/shipment/details/ShipmentInvoicesCard";
 
 
 
@@ -118,7 +119,9 @@ export default function ShipmentDetailsPage() {
         <RemarksCard
           shipment={shipment}
         />
-
+<ShipmentInvoicesCard
+  shipment={shipment}
+/>
       </div>
 
       <RelatedModulesCard
