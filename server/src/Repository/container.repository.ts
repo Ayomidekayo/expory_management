@@ -1,4 +1,9 @@
-import { ContainerType, Prisma } from "../generated";
+import {
+  ContainerStatus,
+  Prisma,
+  TerminalChargeStatus,
+} from "../generated";
+
 import { prisma } from "../config/prisma";
 
 import {
@@ -8,304 +13,445 @@ import {
 
 import { ContainerQuery } from "../validations/container-query.validation";
 
-class ContainerRepository {async create(
+class ContainerRepository {
+  /*
+  =====================================
+  Create
+  =====================================
+  */
+
+async create(
   data: CreateContainerDto
-
 ) {
-return prisma.container.create({
-  data: {
-    shipmentId: data.shipmentId,
+  return prisma.container.create({
+    data: {
+      shipmentId:
+        data.shipmentId,
 
-    packingListId: data.packingListId,
+      packingListId:
+        data.packingListId,
 
-    containerNumber: data.containerNumber,
+      containerNumber:
+        data.containerNumber,
 
-    sealNumber: data.sealNumber,
+      sealNumber:
+        data.sealNumber,
 
-    containerType: data.containerType,
+      containerType:
+        data.containerType,
 
-    containerSize: data.containerSize,
+      containerSize:
+        data.containerSize,
 
-    grossWeight: data.grossWeight,
+      grossWeight:
+        data.grossWeight,
 
-    netWeight: data.netWeight,
+      netWeight:
+        data.netWeight,
 
-    tareWeight: data.tareWeight,
+      tareWeight:
+        data.tareWeight,
 
-    volume: data.volume,
+      volume:
+        data.volume,
 
-    loadingLocation: data.loadingLocation,
+      loadingLocation:
+        data.loadingLocation,
 
-    destination: data.destination,
+      destination:
+        data.destination,
 
-    status: data.status,
+      status:
+        data.status,
 
-    shippingLine: data.shippingLine,
+      terminalChargeStatus:
+        data.terminalChargeStatus ??
+        "UNPAID",
 
-    bookingReference: data.bookingReference,
+      shippingLine:
+        data.shippingLine,
 
-    containerCondition: data.containerCondition,
-  },
+      bookingReference:
+        data.bookingReference,
 
-  include: this.detailsInclude,
-});;
-}
-
-async findLatestContainer() {
-  return prisma.container.findFirst({
-    orderBy: {
-      createdAt: "desc",
-    },
-
-    select: {
-      containerNumber: true,
-    },
-  });
-}
-
-async findAll(
-  query: ContainerQuery
-) {
-  const {
-    page,
-    limit,
-    search,
-    shipmentId,
-    packingListId,
-    status,
-    containerType,
-    containerSize,
-    sortBy,
-    sortOrder,
-  } = query;
-
-  const where: Prisma.ContainerWhereInput = {
-
-    ...(shipmentId && {
-      shipmentId,
-    }),
-
-    ...(packingListId && {
-      packingListId,
-    }),
-
-    ...(status && {
-      status,
-    }),
-
-    ...(containerType && {
-      containerType,
-    }),
-
-    ...(containerSize && {
-      containerSize,
-    }),
-
-    ...(search && {
-
-      OR: [
-
-        {
-          containerNumber: {
-            contains: search,
-            mode: "insensitive",
-          },
-        },
-
-        {
-          sealNumber: {
-            contains: search,
-            mode: "insensitive",
-          },
-        },
-
-        {
-          bookingReference: {
-            contains: search,
-            mode: "insensitive",
-          },
-        },
-
-        {
-          shipment: {
-            shipmentNumber: {
-              contains: search,
-              mode: "insensitive",
-            },
-          },
-        },
-
-      ],
-
-    }),
-
-  };
-
-  const [data, total] =
-    await Promise.all([
-
-      prisma.container.findMany({
-
-        where,
-
-        include:
-          this.listInclude,
-
-        orderBy: {
-          [sortBy]:
-            sortOrder,
-        },
-
-        skip:
-          (page - 1) * limit,
-
-        take:
-          limit,
-
-      }),
-
-      prisma.container.count({
-        where,
-      }),
-
-    ]);
-
-  return {
-
-    data,
-
-    pagination: {
-
-      page,
-
-      limit,
-
-      total,
-
-      totalPages:
-        Math.ceil(
-          total / limit
-        ),
-
-    },
-
-  };
-}
-
-async findById(
-  id: string
-) {
-  return prisma.container.findUnique({
-    where: {
-      id,
+      containerCondition:
+        data.containerCondition,
     },
 
     include:
       this.detailsInclude,
   });
 }
-async findByContainerNumber(
-  containerNumber: string
-) {
-  return prisma.container.findUnique({
-    where: {
-      containerNumber,
-    },
-  });
-}
 
-async update(
+  /*
+  =====================================
+  Latest Container
+  =====================================
+  */
+
+  async findLatestContainer() {
+    return prisma.container.findFirst({
+      orderBy: {
+        createdAt: "desc",
+      },
+
+      select: {
+        containerNumber: true,
+      },
+    });
+  }
+
+  /*
+  =====================================
+  Find All
+  =====================================
+  */
+
+  async findAll(
+    query: ContainerQuery
+  ) {
+    const {
+      page,
+      limit,
+      search,
+      shipmentId,
+      packingListId,
+      status,
+       terminalChargeStatus,
+      containerType,
+      containerSize,
+      sortBy,
+      sortOrder,
+    } = query;
+
+    const where:
+      Prisma.ContainerWhereInput = {
+      ...(shipmentId && {
+        shipmentId,
+      }),
+
+      ...(packingListId && {
+        packingListId,
+      }),
+
+      ...(status && {
+        status,
+      }),
+ ...(terminalChargeStatus && {
+      terminalChargeStatus,
+    }),
+      ...(containerType && {
+        containerType,
+      }),
+
+      ...(containerSize && {
+        containerSize,
+      }),
+
+      ...(search && {
+        OR: [
+          {
+            containerNumber: {
+              contains: search,
+              mode: "insensitive",
+            },
+          },
+
+          {
+            sealNumber: {
+              contains: search,
+              mode: "insensitive",
+            },
+          },
+
+          {
+            bookingReference: {
+              contains: search,
+              mode: "insensitive",
+            },
+          },
+
+          {
+            shipment: {
+              shipmentNumber: {
+                contains: search,
+                mode: "insensitive",
+              },
+            },
+          },
+        ],
+      }),
+    };
+
+    const [data, total] =
+      await Promise.all([
+        prisma.container.findMany({
+          where,
+
+          include:
+            this.listInclude,
+
+          orderBy: {
+            [sortBy]:
+              sortOrder,
+          },
+
+          skip:
+            (page - 1) * limit,
+
+          take:
+            limit,
+        }),
+
+        prisma.container.count({
+          where,
+        }),
+      ]);
+
+    return {
+      data,
+
+      pagination: {
+        page,
+        limit,
+        total,
+
+        totalPages:
+          Math.ceil(
+            total / limit
+          ),
+      },
+    };
+  }
+
+  /*
+  =====================================
+  Find One
+  =====================================
+  */
+
+  async findById(
+    id: string
+  ) {
+    return prisma.container.findUnique({
+      where: {
+        id,
+      },
+
+      include:
+        this.detailsInclude,
+    });
+  }
+
+  /*
+  =====================================
+  Find By Container Number
+  =====================================
+  */
+
+  async findByContainerNumber(
+    containerNumber: string
+  ) {
+    return prisma.container.findUnique({
+      where: {
+        containerNumber,
+      },
+    });
+  }
+
+  /*
+  =====================================
+  Update Status
+  =====================================
+  */
+
+/*
+=====================================
+Update Physical Status
+=====================================
+*/
+
+async updateStatus(
   id: string,
-  data: UpdateContainerDto
+  status: ContainerStatus
 ) {
   return prisma.container.update({
     where: {
       id,
     },
 
-    data,
+    data: {
+      status,
+    },
 
     include:
       this.detailsInclude,
   });
 }
-async delete(
-  id: string
+
+/*
+=====================================
+Update Terminal Charge Status
+=====================================
+*/
+
+async updateTerminalChargeStatus(
+  id: string,
+  terminalChargeStatus: TerminalChargeStatus
 ) {
-  return prisma.container.delete({
+  return prisma.container.update({
     where: {
       id,
     },
+
+    data: {
+      terminalChargeStatus,
+    },
+
+    include:
+      this.detailsInclude,
   });
 }
 
-private listInclude = {
+  /*
+  =====================================
+  Update
+  =====================================
+  */
 
-  shipment: {
-    select: {
-      id: true,
+  async update(
+    id: string,
+    data: UpdateContainerDto
+  ) {
+    return prisma.container.update({
+      where: {
+        id,
+      },
 
-      shipmentNumber: true,
+      data,
 
-      client: {
-        select: {
-          companyName: true,
+      include:
+        this.detailsInclude,
+    });
+  }
+
+
+
+  async updateTerminalCharge(
+  id: string,
+  status: TerminalChargeStatus,
+  amount?: number
+) {
+  return prisma.container.update({
+    where: {
+      id,
+    },
+
+    data: {
+      terminalChargeStatus:
+        status,
+
+      terminalChargeAmount:
+        amount !== undefined
+          ? amount
+          : null,
+    },
+
+    include:
+      this.detailsInclude,
+  });
+}
+  /*
+  =====================================
+  Delete
+  =====================================
+  */
+
+  async delete(
+    id: string
+  ) {
+    return prisma.container.delete({
+      where: {
+        id,
+      },
+    });
+  }
+
+
+
+
+
+  /*
+  =====================================
+  LIST INCLUDE
+  =====================================
+  */
+
+  private listInclude = {
+    shipment: {
+      select: {
+        id: true,
+
+        shipmentNumber: true,
+
+        client: {
+          select: {
+            companyName: true,
+          },
         },
       },
     },
-  },
 
-  packingList: {
-    select: {
-      id: true,
+    packingList: {
+      select: {
+        id: true,
 
-      packingListNumber: true,
+        packingListNumber: true,
+      },
     },
-  },
 
-  _count: {
-    select: {
-      documents: true,
+    _count: {
+      select: {
+        documents: true,
 
-      transits: true,
+        transits: true,
+      },
     },
-  },
+  };
 
-};
+  /*
+  =====================================
+  DETAILS INCLUDE
+  =====================================
+  */
 
-private detailsInclude = {
+  private detailsInclude = {
+    shipment: {
+      include: {
+        client: true,
 
-  shipment: {
-    include: {
+        exporter: true,
 
-      client: true,
+        consignee: true,
 
-      exporter: true,
-
-      consignee: true,
-
-      allocation: true,
-
+        allocation: true,
+      },
     },
-  },
 
-  packingList: true,
+    packingList: true,
 
-  documents: true,
+    documents: true,
 
-  transits: true,
+    transits: true,
 
-  _count: {
-    select: {
+    _count: {
+      select: {
+        documents: true,
 
-      documents: true,
-
-      transits: true,
-
+        transits: true,
+      },
     },
-  },
-
-};
+  };
 }
 
 export default new ContainerRepository();

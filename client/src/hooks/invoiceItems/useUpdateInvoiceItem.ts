@@ -2,8 +2,10 @@ import {
   useMutation,
   useQueryClient,
 } from "@tanstack/react-query";
-import { updateInvoiceItem } from "../../api/auth/invoice-item.api";
 
+import {
+  updateInvoiceItem,
+} from "../../api/auth/invoice-item.api";
 
 export function useUpdateInvoiceItem() {
   const queryClient =
@@ -12,17 +14,28 @@ export function useUpdateInvoiceItem() {
   return useMutation({
     mutationFn: ({
       id,
+      invoiceId,
       data,
     }: {
       id: string;
-
+      invoiceId: string;
       data: any;
     }) =>
       updateInvoiceItem(id, data),
 
-    onSuccess() {
+    onSuccess: (
+      _response,
+      variables
+    ) => {
       queryClient.invalidateQueries({
         queryKey: ["invoice-items"],
+      });
+
+      queryClient.invalidateQueries({
+        queryKey: [
+          "invoice",
+          variables.invoiceId,
+        ],
       });
 
       queryClient.invalidateQueries({

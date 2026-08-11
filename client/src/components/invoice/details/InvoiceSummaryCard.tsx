@@ -7,6 +7,7 @@ import {
   Package,
   Clock,
 } from "lucide-react";
+
 import type { Invoice } from "../../../types/invoice";
 
 interface Props {
@@ -32,7 +33,7 @@ function Row({
         </span>
       </div>
 
-      <span className="font-medium text-right">
+      <span className="text-right font-medium">
         {value}
       </span>
     </div>
@@ -44,23 +45,40 @@ export default function InvoiceSummaryCard({
 }: Props) {
   return (
     <div className="rounded-xl border bg-white">
-
       <div className="border-b p-5">
-
         <h2 className="text-lg font-semibold">
           Invoice Information
         </h2>
-
       </div>
 
       <div className="p-5">
 
+        {/* SYSTEM GENERATED NUMBER */}
         <Row
           icon={
             <FileText className="h-4 w-4 text-primary" />
           }
           label="Invoice Number"
           value={invoice.invoiceNumber}
+        />
+
+        {/* CLIENT / VENDOR NUMBER */}
+        <Row
+          icon={
+            <FileText className="h-4 w-4 text-emerald-600" />
+          }
+          label="External Invoice Number"
+          value={
+            invoice.externalInvoiceNumber ? (
+              <span className="font-semibold text-emerald-700">
+                {invoice.externalInvoiceNumber}
+              </span>
+            ) : (
+              <span className="text-muted-foreground">
+                Not provided
+              </span>
+            )
+          }
         />
 
         <Row
@@ -117,8 +135,7 @@ export default function InvoiceSummaryCard({
           }
           label="Commercial Ref."
           value={
-            invoice.commercialReference ??
-            "-"
+            invoice.commercialReference ?? "-"
           }
         />
 
@@ -151,7 +168,6 @@ export default function InvoiceSummaryCard({
         />
 
       </div>
-
     </div>
   );
 }

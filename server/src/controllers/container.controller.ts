@@ -9,6 +9,8 @@ import containerService from "../services/container.service";
 import {
   createContainerSchema,
   updateContainerSchema,
+  updateContainerTerminalChargeStatusSchema,
+  updateTerminalChargeSchema,
 } from "../validations/container.validation";
 
 import {
@@ -40,8 +42,10 @@ class ContainerController {
 
       res.status(201).json({
         success: true,
+
         message:
           "Container created successfully.",
+
         data: container,
       });
     } catch (error) {
@@ -92,7 +96,8 @@ class ContainerController {
     next: NextFunction
   ) {
     try {
-      const id = String(req.params.id);
+      const id =
+        String(req.params.id);
 
       const container =
         await containerService.findById(
@@ -101,6 +106,7 @@ class ContainerController {
 
       res.status(200).json({
         success: true,
+
         data: container,
       });
     } catch (error) {
@@ -108,6 +114,129 @@ class ContainerController {
     }
   }
 
+  /*
+  =====================================
+  Update Status
+  =====================================
+  */
+
+  async updateStatus(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) {
+    try {
+      const id =
+        String(req.params.id);
+
+      const { status } =
+          req.body;
+        
+
+      const container =
+        await containerService.updateStatus(
+          id,
+          status
+        );
+
+      res.status(200).json({
+        success: true,
+
+        message:
+          "Container status updated successfully.",
+
+        data: container,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+
+
+  /*
+=====================================
+Update Terminal Charge
+=====================================
+*/
+
+async updateTerminalCharge(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  try {
+    const id =
+      String(req.params.id);
+
+    const {
+      status,
+      amount,
+    } =
+      updateTerminalChargeSchema.parse(
+        req.body
+      );
+
+    const container =
+      await containerService.updateTerminalCharge(
+        id,
+        status,
+        amount
+      );
+
+    res.status(200).json({
+      success: true,
+
+      message:
+        "Terminal charge updated successfully.",
+
+      data: container,
+    });
+  } catch (error) {
+    next(error);
+  }
+}
+/*
+=====================================
+Update Terminal Charge Status
+=====================================
+*/
+
+async updateTerminalChargeStatus(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  try {
+    const id =
+      String(req.params.id);
+
+    const {
+      terminalChargeStatus,
+    } =
+      updateContainerTerminalChargeStatusSchema.parse(
+        req.body
+      );
+
+    const container =
+      await containerService
+        .updateTerminalChargeStatus(
+          id,
+          terminalChargeStatus
+        );
+
+    res.status(200).json({
+      success: true,
+
+      message:
+        "Terminal charge status updated successfully.",
+
+      data: container,
+    });
+  } catch (error) {
+    next(error);
+  }
+}
   /*
   =====================================
   Update
@@ -120,7 +249,8 @@ class ContainerController {
     next: NextFunction
   ) {
     try {
-      const id = String(req.params.id);
+      const id =
+        String(req.params.id);
 
       const data =
         updateContainerSchema.parse(
@@ -135,8 +265,10 @@ class ContainerController {
 
       res.status(200).json({
         success: true,
+
         message:
           "Container updated successfully.",
+
         data: container,
       });
     } catch (error) {
@@ -156,7 +288,8 @@ class ContainerController {
     next: NextFunction
   ) {
     try {
-      const id = String(req.params.id);
+      const id =
+        String(req.params.id);
 
       await containerService.delete(
         id
@@ -164,6 +297,7 @@ class ContainerController {
 
       res.status(200).json({
         success: true,
+
         message:
           "Container deleted successfully.",
       });

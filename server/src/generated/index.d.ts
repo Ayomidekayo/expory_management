@@ -88,7 +88,16 @@ export type Document = $Result.DefaultSelection<Prisma.$DocumentPayload>
  * Enums
  */
 export namespace $Enums {
-  export const Role: {
+  export const TerminalChargeStatus: {
+  UNPAID: 'UNPAID',
+  PAID: 'PAID',
+  WAIVED: 'WAIVED'
+};
+
+export type TerminalChargeStatus = (typeof TerminalChargeStatus)[keyof typeof TerminalChargeStatus]
+
+
+export const Role: {
   ADMIN: 'ADMIN',
   CLIENT: 'CLIENT',
   STAFF: 'STAFF',
@@ -214,6 +223,7 @@ export const DocumentType: {
   INSPECTION_CERTIFICATE: 'INSPECTION_CERTIFICATE',
   EXPORT_PERMIT: 'EXPORT_PERMIT',
   CONTAINER_DOCUMENT: 'CONTAINER_DOCUMENT',
+  TERMINAL_PAYMENT_RECEIPT: 'TERMINAL_PAYMENT_RECEIPT',
   TRANSIT_INVOICE: 'TRANSIT_INVOICE',
   OTHER: 'OTHER'
 };
@@ -244,6 +254,7 @@ export type PaymentTerms = (typeof PaymentTerms)[keyof typeof PaymentTerms]
 
 
 export const InvoiceStatus: {
+  UNPAID: 'UNPAID',
   DRAFT: 'DRAFT',
   SENT: 'SENT',
   APPROVED: 'APPROVED',
@@ -254,6 +265,10 @@ export const InvoiceStatus: {
 export type InvoiceStatus = (typeof InvoiceStatus)[keyof typeof InvoiceStatus]
 
 }
+
+export type TerminalChargeStatus = $Enums.TerminalChargeStatus
+
+export const TerminalChargeStatus: typeof $Enums.TerminalChargeStatus
 
 export type Role = $Enums.Role
 
@@ -9143,6 +9158,7 @@ export namespace Prisma {
     id: string | null
     shipmentId: string | null
     invoiceNumber: string | null
+    externalInvoiceNumber: string | null
     invoiceDate: Date | null
     currency: $Enums.Currency | null
     exchangeRate: Decimal | null
@@ -9163,6 +9179,7 @@ export namespace Prisma {
     id: string | null
     shipmentId: string | null
     invoiceNumber: string | null
+    externalInvoiceNumber: string | null
     invoiceDate: Date | null
     currency: $Enums.Currency | null
     exchangeRate: Decimal | null
@@ -9183,6 +9200,7 @@ export namespace Prisma {
     id: number
     shipmentId: number
     invoiceNumber: number
+    externalInvoiceNumber: number
     invoiceDate: number
     currency: number
     exchangeRate: number
@@ -9221,6 +9239,7 @@ export namespace Prisma {
     id?: true
     shipmentId?: true
     invoiceNumber?: true
+    externalInvoiceNumber?: true
     invoiceDate?: true
     currency?: true
     exchangeRate?: true
@@ -9241,6 +9260,7 @@ export namespace Prisma {
     id?: true
     shipmentId?: true
     invoiceNumber?: true
+    externalInvoiceNumber?: true
     invoiceDate?: true
     currency?: true
     exchangeRate?: true
@@ -9261,6 +9281,7 @@ export namespace Prisma {
     id?: true
     shipmentId?: true
     invoiceNumber?: true
+    externalInvoiceNumber?: true
     invoiceDate?: true
     currency?: true
     exchangeRate?: true
@@ -9368,6 +9389,7 @@ export namespace Prisma {
     id: string
     shipmentId: string
     invoiceNumber: string
+    externalInvoiceNumber: string | null
     invoiceDate: Date
     currency: $Enums.Currency
     exchangeRate: Decimal | null
@@ -9407,6 +9429,7 @@ export namespace Prisma {
     id?: boolean
     shipmentId?: boolean
     invoiceNumber?: boolean
+    externalInvoiceNumber?: boolean
     invoiceDate?: boolean
     currency?: boolean
     exchangeRate?: boolean
@@ -9431,6 +9454,7 @@ export namespace Prisma {
     id?: boolean
     shipmentId?: boolean
     invoiceNumber?: boolean
+    externalInvoiceNumber?: boolean
     invoiceDate?: boolean
     currency?: boolean
     exchangeRate?: boolean
@@ -9452,6 +9476,7 @@ export namespace Prisma {
     id?: boolean
     shipmentId?: boolean
     invoiceNumber?: boolean
+    externalInvoiceNumber?: boolean
     invoiceDate?: boolean
     currency?: boolean
     exchangeRate?: boolean
@@ -9473,6 +9498,7 @@ export namespace Prisma {
     id?: boolean
     shipmentId?: boolean
     invoiceNumber?: boolean
+    externalInvoiceNumber?: boolean
     invoiceDate?: boolean
     currency?: boolean
     exchangeRate?: boolean
@@ -9489,7 +9515,7 @@ export namespace Prisma {
     updatedAt?: boolean
   }
 
-  export type InvoiceOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "shipmentId" | "invoiceNumber" | "invoiceDate" | "currency" | "exchangeRate" | "status" | "paymentTerms" | "incoterm" | "commercialReference" | "transportUnits" | "freight" | "subtotal" | "totalAmount" | "remarks" | "createdAt" | "updatedAt", ExtArgs["result"]["invoice"]>
+  export type InvoiceOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "shipmentId" | "invoiceNumber" | "externalInvoiceNumber" | "invoiceDate" | "currency" | "exchangeRate" | "status" | "paymentTerms" | "incoterm" | "commercialReference" | "transportUnits" | "freight" | "subtotal" | "totalAmount" | "remarks" | "createdAt" | "updatedAt", ExtArgs["result"]["invoice"]>
   export type InvoiceInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     documents?: boolean | Invoice$documentsArgs<ExtArgs>
     shipment?: boolean | ShipmentDefaultArgs<ExtArgs>
@@ -9514,6 +9540,7 @@ export namespace Prisma {
       id: string
       shipmentId: string
       invoiceNumber: string
+      externalInvoiceNumber: string | null
       invoiceDate: Date
       currency: $Enums.Currency
       exchangeRate: Prisma.Decimal | null
@@ -9957,6 +9984,7 @@ export namespace Prisma {
     readonly id: FieldRef<"Invoice", 'String'>
     readonly shipmentId: FieldRef<"Invoice", 'String'>
     readonly invoiceNumber: FieldRef<"Invoice", 'String'>
+    readonly externalInvoiceNumber: FieldRef<"Invoice", 'String'>
     readonly invoiceDate: FieldRef<"Invoice", 'DateTime'>
     readonly currency: FieldRef<"Invoice", 'Currency'>
     readonly exchangeRate: FieldRef<"Invoice", 'Decimal'>
@@ -10455,6 +10483,7 @@ export namespace Prisma {
     netWeight: Decimal | null
     tareWeight: Decimal | null
     volume: Decimal | null
+    terminalChargeAmount: Decimal | null
   }
 
   export type ContainerSumAggregateOutputType = {
@@ -10462,6 +10491,7 @@ export namespace Prisma {
     netWeight: Decimal | null
     tareWeight: Decimal | null
     volume: Decimal | null
+    terminalChargeAmount: Decimal | null
   }
 
   export type ContainerMinAggregateOutputType = {
@@ -10482,6 +10512,10 @@ export namespace Prisma {
     shippingLine: string | null
     bookingReference: string | null
     containerCondition: string | null
+    terminalChargeStatus: $Enums.TerminalChargeStatus | null
+    terminalChargeAmount: Decimal | null
+    terminalChargeCurrency: $Enums.Currency | null
+    terminalChargePaidAt: Date | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -10504,6 +10538,10 @@ export namespace Prisma {
     shippingLine: string | null
     bookingReference: string | null
     containerCondition: string | null
+    terminalChargeStatus: $Enums.TerminalChargeStatus | null
+    terminalChargeAmount: Decimal | null
+    terminalChargeCurrency: $Enums.Currency | null
+    terminalChargePaidAt: Date | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -10526,6 +10564,10 @@ export namespace Prisma {
     shippingLine: number
     bookingReference: number
     containerCondition: number
+    terminalChargeStatus: number
+    terminalChargeAmount: number
+    terminalChargeCurrency: number
+    terminalChargePaidAt: number
     createdAt: number
     updatedAt: number
     _all: number
@@ -10537,6 +10579,7 @@ export namespace Prisma {
     netWeight?: true
     tareWeight?: true
     volume?: true
+    terminalChargeAmount?: true
   }
 
   export type ContainerSumAggregateInputType = {
@@ -10544,6 +10587,7 @@ export namespace Prisma {
     netWeight?: true
     tareWeight?: true
     volume?: true
+    terminalChargeAmount?: true
   }
 
   export type ContainerMinAggregateInputType = {
@@ -10564,6 +10608,10 @@ export namespace Prisma {
     shippingLine?: true
     bookingReference?: true
     containerCondition?: true
+    terminalChargeStatus?: true
+    terminalChargeAmount?: true
+    terminalChargeCurrency?: true
+    terminalChargePaidAt?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -10586,6 +10634,10 @@ export namespace Prisma {
     shippingLine?: true
     bookingReference?: true
     containerCondition?: true
+    terminalChargeStatus?: true
+    terminalChargeAmount?: true
+    terminalChargeCurrency?: true
+    terminalChargePaidAt?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -10608,6 +10660,10 @@ export namespace Prisma {
     shippingLine?: true
     bookingReference?: true
     containerCondition?: true
+    terminalChargeStatus?: true
+    terminalChargeAmount?: true
+    terminalChargeCurrency?: true
+    terminalChargePaidAt?: true
     createdAt?: true
     updatedAt?: true
     _all?: true
@@ -10717,6 +10773,10 @@ export namespace Prisma {
     shippingLine: string | null
     bookingReference: string | null
     containerCondition: string | null
+    terminalChargeStatus: $Enums.TerminalChargeStatus
+    terminalChargeAmount: Decimal | null
+    terminalChargeCurrency: $Enums.Currency | null
+    terminalChargePaidAt: Date | null
     createdAt: Date
     updatedAt: Date
     _count: ContainerCountAggregateOutputType | null
@@ -10758,6 +10818,10 @@ export namespace Prisma {
     shippingLine?: boolean
     bookingReference?: boolean
     containerCondition?: boolean
+    terminalChargeStatus?: boolean
+    terminalChargeAmount?: boolean
+    terminalChargeCurrency?: boolean
+    terminalChargePaidAt?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     packingList?: boolean | Container$packingListArgs<ExtArgs>
@@ -10785,6 +10849,10 @@ export namespace Prisma {
     shippingLine?: boolean
     bookingReference?: boolean
     containerCondition?: boolean
+    terminalChargeStatus?: boolean
+    terminalChargeAmount?: boolean
+    terminalChargeCurrency?: boolean
+    terminalChargePaidAt?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     packingList?: boolean | Container$packingListArgs<ExtArgs>
@@ -10809,6 +10877,10 @@ export namespace Prisma {
     shippingLine?: boolean
     bookingReference?: boolean
     containerCondition?: boolean
+    terminalChargeStatus?: boolean
+    terminalChargeAmount?: boolean
+    terminalChargeCurrency?: boolean
+    terminalChargePaidAt?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     packingList?: boolean | Container$packingListArgs<ExtArgs>
@@ -10833,11 +10905,15 @@ export namespace Prisma {
     shippingLine?: boolean
     bookingReference?: boolean
     containerCondition?: boolean
+    terminalChargeStatus?: boolean
+    terminalChargeAmount?: boolean
+    terminalChargeCurrency?: boolean
+    terminalChargePaidAt?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }
 
-  export type ContainerOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "shipmentId" | "packingListId" | "containerNumber" | "sealNumber" | "containerType" | "containerSize" | "grossWeight" | "netWeight" | "tareWeight" | "volume" | "loadingLocation" | "destination" | "status" | "shippingLine" | "bookingReference" | "containerCondition" | "createdAt" | "updatedAt", ExtArgs["result"]["container"]>
+  export type ContainerOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "shipmentId" | "packingListId" | "containerNumber" | "sealNumber" | "containerType" | "containerSize" | "grossWeight" | "netWeight" | "tareWeight" | "volume" | "loadingLocation" | "destination" | "status" | "shippingLine" | "bookingReference" | "containerCondition" | "terminalChargeStatus" | "terminalChargeAmount" | "terminalChargeCurrency" | "terminalChargePaidAt" | "createdAt" | "updatedAt", ExtArgs["result"]["container"]>
   export type ContainerInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     packingList?: boolean | Container$packingListArgs<ExtArgs>
     shipment?: boolean | ShipmentDefaultArgs<ExtArgs>
@@ -10880,6 +10956,10 @@ export namespace Prisma {
       shippingLine: string | null
       bookingReference: string | null
       containerCondition: string | null
+      terminalChargeStatus: $Enums.TerminalChargeStatus
+      terminalChargeAmount: Prisma.Decimal | null
+      terminalChargeCurrency: $Enums.Currency | null
+      terminalChargePaidAt: Date | null
       createdAt: Date
       updatedAt: Date
     }, ExtArgs["result"]["container"]>
@@ -11326,6 +11406,10 @@ export namespace Prisma {
     readonly shippingLine: FieldRef<"Container", 'String'>
     readonly bookingReference: FieldRef<"Container", 'String'>
     readonly containerCondition: FieldRef<"Container", 'String'>
+    readonly terminalChargeStatus: FieldRef<"Container", 'TerminalChargeStatus'>
+    readonly terminalChargeAmount: FieldRef<"Container", 'Decimal'>
+    readonly terminalChargeCurrency: FieldRef<"Container", 'Currency'>
+    readonly terminalChargePaidAt: FieldRef<"Container", 'DateTime'>
     readonly createdAt: FieldRef<"Container", 'DateTime'>
     readonly updatedAt: FieldRef<"Container", 'DateTime'>
   }
@@ -21499,6 +21583,7 @@ export namespace Prisma {
     id: 'id',
     shipmentId: 'shipmentId',
     invoiceNumber: 'invoiceNumber',
+    externalInvoiceNumber: 'externalInvoiceNumber',
     invoiceDate: 'invoiceDate',
     currency: 'currency',
     exchangeRate: 'exchangeRate',
@@ -21536,6 +21621,10 @@ export namespace Prisma {
     shippingLine: 'shippingLine',
     bookingReference: 'bookingReference',
     containerCondition: 'containerCondition',
+    terminalChargeStatus: 'terminalChargeStatus',
+    terminalChargeAmount: 'terminalChargeAmount',
+    terminalChargeCurrency: 'terminalChargeCurrency',
+    terminalChargePaidAt: 'terminalChargePaidAt',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt'
   };
@@ -21952,6 +22041,20 @@ export namespace Prisma {
    * Reference to a field of type 'ContainerStatus[]'
    */
   export type ListEnumContainerStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ContainerStatus[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'TerminalChargeStatus'
+   */
+  export type EnumTerminalChargeStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'TerminalChargeStatus'>
+    
+
+
+  /**
+   * Reference to a field of type 'TerminalChargeStatus[]'
+   */
+  export type ListEnumTerminalChargeStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'TerminalChargeStatus[]'>
     
 
 
@@ -22605,6 +22708,7 @@ export namespace Prisma {
     id?: StringFilter<"Invoice"> | string
     shipmentId?: StringFilter<"Invoice"> | string
     invoiceNumber?: StringFilter<"Invoice"> | string
+    externalInvoiceNumber?: StringNullableFilter<"Invoice"> | string | null
     invoiceDate?: DateTimeFilter<"Invoice"> | Date | string
     currency?: EnumCurrencyFilter<"Invoice"> | $Enums.Currency
     exchangeRate?: DecimalNullableFilter<"Invoice"> | Decimal | DecimalJsLike | number | string | null
@@ -22628,6 +22732,7 @@ export namespace Prisma {
     id?: SortOrder
     shipmentId?: SortOrder
     invoiceNumber?: SortOrder
+    externalInvoiceNumber?: SortOrderInput | SortOrder
     invoiceDate?: SortOrder
     currency?: SortOrder
     exchangeRate?: SortOrderInput | SortOrder
@@ -22654,6 +22759,7 @@ export namespace Prisma {
     AND?: InvoiceWhereInput | InvoiceWhereInput[]
     OR?: InvoiceWhereInput[]
     NOT?: InvoiceWhereInput | InvoiceWhereInput[]
+    externalInvoiceNumber?: StringNullableFilter<"Invoice"> | string | null
     invoiceDate?: DateTimeFilter<"Invoice"> | Date | string
     currency?: EnumCurrencyFilter<"Invoice"> | $Enums.Currency
     exchangeRate?: DecimalNullableFilter<"Invoice"> | Decimal | DecimalJsLike | number | string | null
@@ -22677,6 +22783,7 @@ export namespace Prisma {
     id?: SortOrder
     shipmentId?: SortOrder
     invoiceNumber?: SortOrder
+    externalInvoiceNumber?: SortOrderInput | SortOrder
     invoiceDate?: SortOrder
     currency?: SortOrder
     exchangeRate?: SortOrderInput | SortOrder
@@ -22705,6 +22812,7 @@ export namespace Prisma {
     id?: StringWithAggregatesFilter<"Invoice"> | string
     shipmentId?: StringWithAggregatesFilter<"Invoice"> | string
     invoiceNumber?: StringWithAggregatesFilter<"Invoice"> | string
+    externalInvoiceNumber?: StringNullableWithAggregatesFilter<"Invoice"> | string | null
     invoiceDate?: DateTimeWithAggregatesFilter<"Invoice"> | Date | string
     currency?: EnumCurrencyWithAggregatesFilter<"Invoice"> | $Enums.Currency
     exchangeRate?: DecimalNullableWithAggregatesFilter<"Invoice"> | Decimal | DecimalJsLike | number | string | null
@@ -22742,6 +22850,10 @@ export namespace Prisma {
     shippingLine?: StringNullableFilter<"Container"> | string | null
     bookingReference?: StringNullableFilter<"Container"> | string | null
     containerCondition?: StringNullableFilter<"Container"> | string | null
+    terminalChargeStatus?: EnumTerminalChargeStatusFilter<"Container"> | $Enums.TerminalChargeStatus
+    terminalChargeAmount?: DecimalNullableFilter<"Container"> | Decimal | DecimalJsLike | number | string | null
+    terminalChargeCurrency?: EnumCurrencyNullableFilter<"Container"> | $Enums.Currency | null
+    terminalChargePaidAt?: DateTimeNullableFilter<"Container"> | Date | string | null
     createdAt?: DateTimeFilter<"Container"> | Date | string
     updatedAt?: DateTimeFilter<"Container"> | Date | string
     packingList?: XOR<PackingListNullableScalarRelationFilter, PackingListWhereInput> | null
@@ -22768,6 +22880,10 @@ export namespace Prisma {
     shippingLine?: SortOrderInput | SortOrder
     bookingReference?: SortOrderInput | SortOrder
     containerCondition?: SortOrderInput | SortOrder
+    terminalChargeStatus?: SortOrder
+    terminalChargeAmount?: SortOrderInput | SortOrder
+    terminalChargeCurrency?: SortOrderInput | SortOrder
+    terminalChargePaidAt?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     packingList?: PackingListOrderByWithRelationInput
@@ -22797,6 +22913,10 @@ export namespace Prisma {
     shippingLine?: StringNullableFilter<"Container"> | string | null
     bookingReference?: StringNullableFilter<"Container"> | string | null
     containerCondition?: StringNullableFilter<"Container"> | string | null
+    terminalChargeStatus?: EnumTerminalChargeStatusFilter<"Container"> | $Enums.TerminalChargeStatus
+    terminalChargeAmount?: DecimalNullableFilter<"Container"> | Decimal | DecimalJsLike | number | string | null
+    terminalChargeCurrency?: EnumCurrencyNullableFilter<"Container"> | $Enums.Currency | null
+    terminalChargePaidAt?: DateTimeNullableFilter<"Container"> | Date | string | null
     createdAt?: DateTimeFilter<"Container"> | Date | string
     updatedAt?: DateTimeFilter<"Container"> | Date | string
     packingList?: XOR<PackingListNullableScalarRelationFilter, PackingListWhereInput> | null
@@ -22823,6 +22943,10 @@ export namespace Prisma {
     shippingLine?: SortOrderInput | SortOrder
     bookingReference?: SortOrderInput | SortOrder
     containerCondition?: SortOrderInput | SortOrder
+    terminalChargeStatus?: SortOrder
+    terminalChargeAmount?: SortOrderInput | SortOrder
+    terminalChargeCurrency?: SortOrderInput | SortOrder
+    terminalChargePaidAt?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     _count?: ContainerCountOrderByAggregateInput
@@ -22853,6 +22977,10 @@ export namespace Prisma {
     shippingLine?: StringNullableWithAggregatesFilter<"Container"> | string | null
     bookingReference?: StringNullableWithAggregatesFilter<"Container"> | string | null
     containerCondition?: StringNullableWithAggregatesFilter<"Container"> | string | null
+    terminalChargeStatus?: EnumTerminalChargeStatusWithAggregatesFilter<"Container"> | $Enums.TerminalChargeStatus
+    terminalChargeAmount?: DecimalNullableWithAggregatesFilter<"Container"> | Decimal | DecimalJsLike | number | string | null
+    terminalChargeCurrency?: EnumCurrencyNullableWithAggregatesFilter<"Container"> | $Enums.Currency | null
+    terminalChargePaidAt?: DateTimeNullableWithAggregatesFilter<"Container"> | Date | string | null
     createdAt?: DateTimeWithAggregatesFilter<"Container"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"Container"> | Date | string
   }
@@ -24501,6 +24629,7 @@ export namespace Prisma {
   export type InvoiceCreateInput = {
     id?: string
     invoiceNumber: string
+    externalInvoiceNumber?: string | null
     invoiceDate: Date | string
     currency: $Enums.Currency
     exchangeRate?: Decimal | DecimalJsLike | number | string | null
@@ -24524,6 +24653,7 @@ export namespace Prisma {
     id?: string
     shipmentId: string
     invoiceNumber: string
+    externalInvoiceNumber?: string | null
     invoiceDate: Date | string
     currency: $Enums.Currency
     exchangeRate?: Decimal | DecimalJsLike | number | string | null
@@ -24545,6 +24675,7 @@ export namespace Prisma {
   export type InvoiceUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     invoiceNumber?: StringFieldUpdateOperationsInput | string
+    externalInvoiceNumber?: NullableStringFieldUpdateOperationsInput | string | null
     invoiceDate?: DateTimeFieldUpdateOperationsInput | Date | string
     currency?: EnumCurrencyFieldUpdateOperationsInput | $Enums.Currency
     exchangeRate?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
@@ -24568,6 +24699,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     shipmentId?: StringFieldUpdateOperationsInput | string
     invoiceNumber?: StringFieldUpdateOperationsInput | string
+    externalInvoiceNumber?: NullableStringFieldUpdateOperationsInput | string | null
     invoiceDate?: DateTimeFieldUpdateOperationsInput | Date | string
     currency?: EnumCurrencyFieldUpdateOperationsInput | $Enums.Currency
     exchangeRate?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
@@ -24590,6 +24722,7 @@ export namespace Prisma {
     id?: string
     shipmentId: string
     invoiceNumber: string
+    externalInvoiceNumber?: string | null
     invoiceDate: Date | string
     currency: $Enums.Currency
     exchangeRate?: Decimal | DecimalJsLike | number | string | null
@@ -24609,6 +24742,7 @@ export namespace Prisma {
   export type InvoiceUpdateManyMutationInput = {
     id?: StringFieldUpdateOperationsInput | string
     invoiceNumber?: StringFieldUpdateOperationsInput | string
+    externalInvoiceNumber?: NullableStringFieldUpdateOperationsInput | string | null
     invoiceDate?: DateTimeFieldUpdateOperationsInput | Date | string
     currency?: EnumCurrencyFieldUpdateOperationsInput | $Enums.Currency
     exchangeRate?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
@@ -24629,6 +24763,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     shipmentId?: StringFieldUpdateOperationsInput | string
     invoiceNumber?: StringFieldUpdateOperationsInput | string
+    externalInvoiceNumber?: NullableStringFieldUpdateOperationsInput | string | null
     invoiceDate?: DateTimeFieldUpdateOperationsInput | Date | string
     currency?: EnumCurrencyFieldUpdateOperationsInput | $Enums.Currency
     exchangeRate?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
@@ -24661,6 +24796,10 @@ export namespace Prisma {
     shippingLine?: string | null
     bookingReference?: string | null
     containerCondition?: string | null
+    terminalChargeStatus?: $Enums.TerminalChargeStatus
+    terminalChargeAmount?: Decimal | DecimalJsLike | number | string | null
+    terminalChargeCurrency?: $Enums.Currency | null
+    terminalChargePaidAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     packingList?: PackingListCreateNestedOneWithoutContainersInput
@@ -24687,6 +24826,10 @@ export namespace Prisma {
     shippingLine?: string | null
     bookingReference?: string | null
     containerCondition?: string | null
+    terminalChargeStatus?: $Enums.TerminalChargeStatus
+    terminalChargeAmount?: Decimal | DecimalJsLike | number | string | null
+    terminalChargeCurrency?: $Enums.Currency | null
+    terminalChargePaidAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     documents?: DocumentUncheckedCreateNestedManyWithoutContainerInput
@@ -24709,6 +24852,10 @@ export namespace Prisma {
     shippingLine?: NullableStringFieldUpdateOperationsInput | string | null
     bookingReference?: NullableStringFieldUpdateOperationsInput | string | null
     containerCondition?: NullableStringFieldUpdateOperationsInput | string | null
+    terminalChargeStatus?: EnumTerminalChargeStatusFieldUpdateOperationsInput | $Enums.TerminalChargeStatus
+    terminalChargeAmount?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    terminalChargeCurrency?: NullableEnumCurrencyFieldUpdateOperationsInput | $Enums.Currency | null
+    terminalChargePaidAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     packingList?: PackingListUpdateOneWithoutContainersNestedInput
@@ -24735,6 +24882,10 @@ export namespace Prisma {
     shippingLine?: NullableStringFieldUpdateOperationsInput | string | null
     bookingReference?: NullableStringFieldUpdateOperationsInput | string | null
     containerCondition?: NullableStringFieldUpdateOperationsInput | string | null
+    terminalChargeStatus?: EnumTerminalChargeStatusFieldUpdateOperationsInput | $Enums.TerminalChargeStatus
+    terminalChargeAmount?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    terminalChargeCurrency?: NullableEnumCurrencyFieldUpdateOperationsInput | $Enums.Currency | null
+    terminalChargePaidAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     documents?: DocumentUncheckedUpdateManyWithoutContainerNestedInput
@@ -24759,6 +24910,10 @@ export namespace Prisma {
     shippingLine?: string | null
     bookingReference?: string | null
     containerCondition?: string | null
+    terminalChargeStatus?: $Enums.TerminalChargeStatus
+    terminalChargeAmount?: Decimal | DecimalJsLike | number | string | null
+    terminalChargeCurrency?: $Enums.Currency | null
+    terminalChargePaidAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -24779,6 +24934,10 @@ export namespace Prisma {
     shippingLine?: NullableStringFieldUpdateOperationsInput | string | null
     bookingReference?: NullableStringFieldUpdateOperationsInput | string | null
     containerCondition?: NullableStringFieldUpdateOperationsInput | string | null
+    terminalChargeStatus?: EnumTerminalChargeStatusFieldUpdateOperationsInput | $Enums.TerminalChargeStatus
+    terminalChargeAmount?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    terminalChargeCurrency?: NullableEnumCurrencyFieldUpdateOperationsInput | $Enums.Currency | null
+    terminalChargePaidAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -24801,6 +24960,10 @@ export namespace Prisma {
     shippingLine?: NullableStringFieldUpdateOperationsInput | string | null
     bookingReference?: NullableStringFieldUpdateOperationsInput | string | null
     containerCondition?: NullableStringFieldUpdateOperationsInput | string | null
+    terminalChargeStatus?: EnumTerminalChargeStatusFieldUpdateOperationsInput | $Enums.TerminalChargeStatus
+    terminalChargeAmount?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    terminalChargeCurrency?: NullableEnumCurrencyFieldUpdateOperationsInput | $Enums.Currency | null
+    terminalChargePaidAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -26608,6 +26771,7 @@ export namespace Prisma {
     id?: SortOrder
     shipmentId?: SortOrder
     invoiceNumber?: SortOrder
+    externalInvoiceNumber?: SortOrder
     invoiceDate?: SortOrder
     currency?: SortOrder
     exchangeRate?: SortOrder
@@ -26636,6 +26800,7 @@ export namespace Prisma {
     id?: SortOrder
     shipmentId?: SortOrder
     invoiceNumber?: SortOrder
+    externalInvoiceNumber?: SortOrder
     invoiceDate?: SortOrder
     currency?: SortOrder
     exchangeRate?: SortOrder
@@ -26656,6 +26821,7 @@ export namespace Prisma {
     id?: SortOrder
     shipmentId?: SortOrder
     invoiceNumber?: SortOrder
+    externalInvoiceNumber?: SortOrder
     invoiceDate?: SortOrder
     currency?: SortOrder
     exchangeRate?: SortOrder
@@ -26763,6 +26929,20 @@ export namespace Prisma {
     not?: NestedEnumContainerStatusFilter<$PrismaModel> | $Enums.ContainerStatus
   }
 
+  export type EnumTerminalChargeStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.TerminalChargeStatus | EnumTerminalChargeStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.TerminalChargeStatus[] | ListEnumTerminalChargeStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.TerminalChargeStatus[] | ListEnumTerminalChargeStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumTerminalChargeStatusFilter<$PrismaModel> | $Enums.TerminalChargeStatus
+  }
+
+  export type EnumCurrencyNullableFilter<$PrismaModel = never> = {
+    equals?: $Enums.Currency | EnumCurrencyFieldRefInput<$PrismaModel> | null
+    in?: $Enums.Currency[] | ListEnumCurrencyFieldRefInput<$PrismaModel> | null
+    notIn?: $Enums.Currency[] | ListEnumCurrencyFieldRefInput<$PrismaModel> | null
+    not?: NestedEnumCurrencyNullableFilter<$PrismaModel> | $Enums.Currency | null
+  }
+
   export type ContainerCountOrderByAggregateInput = {
     id?: SortOrder
     shipmentId?: SortOrder
@@ -26781,6 +26961,10 @@ export namespace Prisma {
     shippingLine?: SortOrder
     bookingReference?: SortOrder
     containerCondition?: SortOrder
+    terminalChargeStatus?: SortOrder
+    terminalChargeAmount?: SortOrder
+    terminalChargeCurrency?: SortOrder
+    terminalChargePaidAt?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -26790,6 +26974,7 @@ export namespace Prisma {
     netWeight?: SortOrder
     tareWeight?: SortOrder
     volume?: SortOrder
+    terminalChargeAmount?: SortOrder
   }
 
   export type ContainerMaxOrderByAggregateInput = {
@@ -26810,6 +26995,10 @@ export namespace Prisma {
     shippingLine?: SortOrder
     bookingReference?: SortOrder
     containerCondition?: SortOrder
+    terminalChargeStatus?: SortOrder
+    terminalChargeAmount?: SortOrder
+    terminalChargeCurrency?: SortOrder
+    terminalChargePaidAt?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -26832,6 +27021,10 @@ export namespace Prisma {
     shippingLine?: SortOrder
     bookingReference?: SortOrder
     containerCondition?: SortOrder
+    terminalChargeStatus?: SortOrder
+    terminalChargeAmount?: SortOrder
+    terminalChargeCurrency?: SortOrder
+    terminalChargePaidAt?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -26841,6 +27034,7 @@ export namespace Prisma {
     netWeight?: SortOrder
     tareWeight?: SortOrder
     volume?: SortOrder
+    terminalChargeAmount?: SortOrder
   }
 
   export type EnumContainerTypeWithAggregatesFilter<$PrismaModel = never> = {
@@ -26871,6 +27065,26 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedEnumContainerStatusFilter<$PrismaModel>
     _max?: NestedEnumContainerStatusFilter<$PrismaModel>
+  }
+
+  export type EnumTerminalChargeStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.TerminalChargeStatus | EnumTerminalChargeStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.TerminalChargeStatus[] | ListEnumTerminalChargeStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.TerminalChargeStatus[] | ListEnumTerminalChargeStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumTerminalChargeStatusWithAggregatesFilter<$PrismaModel> | $Enums.TerminalChargeStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumTerminalChargeStatusFilter<$PrismaModel>
+    _max?: NestedEnumTerminalChargeStatusFilter<$PrismaModel>
+  }
+
+  export type EnumCurrencyNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.Currency | EnumCurrencyFieldRefInput<$PrismaModel> | null
+    in?: $Enums.Currency[] | ListEnumCurrencyFieldRefInput<$PrismaModel> | null
+    notIn?: $Enums.Currency[] | ListEnumCurrencyFieldRefInput<$PrismaModel> | null
+    not?: NestedEnumCurrencyNullableWithAggregatesFilter<$PrismaModel> | $Enums.Currency | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedEnumCurrencyNullableFilter<$PrismaModel>
+    _max?: NestedEnumCurrencyNullableFilter<$PrismaModel>
   }
 
   export type InvoiceScalarRelationFilter = {
@@ -28457,6 +28671,14 @@ export namespace Prisma {
     set?: $Enums.ContainerStatus
   }
 
+  export type EnumTerminalChargeStatusFieldUpdateOperationsInput = {
+    set?: $Enums.TerminalChargeStatus
+  }
+
+  export type NullableEnumCurrencyFieldUpdateOperationsInput = {
+    set?: $Enums.Currency | null
+  }
+
   export type PackingListUpdateOneWithoutContainersNestedInput = {
     create?: XOR<PackingListCreateWithoutContainersInput, PackingListUncheckedCreateWithoutContainersInput>
     connectOrCreate?: PackingListCreateOrConnectWithoutContainersInput
@@ -29545,6 +29767,20 @@ export namespace Prisma {
     not?: NestedEnumContainerStatusFilter<$PrismaModel> | $Enums.ContainerStatus
   }
 
+  export type NestedEnumTerminalChargeStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.TerminalChargeStatus | EnumTerminalChargeStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.TerminalChargeStatus[] | ListEnumTerminalChargeStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.TerminalChargeStatus[] | ListEnumTerminalChargeStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumTerminalChargeStatusFilter<$PrismaModel> | $Enums.TerminalChargeStatus
+  }
+
+  export type NestedEnumCurrencyNullableFilter<$PrismaModel = never> = {
+    equals?: $Enums.Currency | EnumCurrencyFieldRefInput<$PrismaModel> | null
+    in?: $Enums.Currency[] | ListEnumCurrencyFieldRefInput<$PrismaModel> | null
+    notIn?: $Enums.Currency[] | ListEnumCurrencyFieldRefInput<$PrismaModel> | null
+    not?: NestedEnumCurrencyNullableFilter<$PrismaModel> | $Enums.Currency | null
+  }
+
   export type NestedEnumContainerTypeWithAggregatesFilter<$PrismaModel = never> = {
     equals?: $Enums.ContainerType | EnumContainerTypeFieldRefInput<$PrismaModel>
     in?: $Enums.ContainerType[] | ListEnumContainerTypeFieldRefInput<$PrismaModel>
@@ -29573,6 +29809,26 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedEnumContainerStatusFilter<$PrismaModel>
     _max?: NestedEnumContainerStatusFilter<$PrismaModel>
+  }
+
+  export type NestedEnumTerminalChargeStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.TerminalChargeStatus | EnumTerminalChargeStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.TerminalChargeStatus[] | ListEnumTerminalChargeStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.TerminalChargeStatus[] | ListEnumTerminalChargeStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumTerminalChargeStatusWithAggregatesFilter<$PrismaModel> | $Enums.TerminalChargeStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumTerminalChargeStatusFilter<$PrismaModel>
+    _max?: NestedEnumTerminalChargeStatusFilter<$PrismaModel>
+  }
+
+  export type NestedEnumCurrencyNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.Currency | EnumCurrencyFieldRefInput<$PrismaModel> | null
+    in?: $Enums.Currency[] | ListEnumCurrencyFieldRefInput<$PrismaModel> | null
+    notIn?: $Enums.Currency[] | ListEnumCurrencyFieldRefInput<$PrismaModel> | null
+    not?: NestedEnumCurrencyNullableWithAggregatesFilter<$PrismaModel> | $Enums.Currency | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedEnumCurrencyNullableFilter<$PrismaModel>
+    _max?: NestedEnumCurrencyNullableFilter<$PrismaModel>
   }
 
   export type NestedEnumServiceTypeFilter<$PrismaModel = never> = {
@@ -31103,6 +31359,10 @@ export namespace Prisma {
     shippingLine?: string | null
     bookingReference?: string | null
     containerCondition?: string | null
+    terminalChargeStatus?: $Enums.TerminalChargeStatus
+    terminalChargeAmount?: Decimal | DecimalJsLike | number | string | null
+    terminalChargeCurrency?: $Enums.Currency | null
+    terminalChargePaidAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     packingList?: PackingListCreateNestedOneWithoutContainersInput
@@ -31127,6 +31387,10 @@ export namespace Prisma {
     shippingLine?: string | null
     bookingReference?: string | null
     containerCondition?: string | null
+    terminalChargeStatus?: $Enums.TerminalChargeStatus
+    terminalChargeAmount?: Decimal | DecimalJsLike | number | string | null
+    terminalChargeCurrency?: $Enums.Currency | null
+    terminalChargePaidAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     documents?: DocumentUncheckedCreateNestedManyWithoutContainerInput
@@ -31194,6 +31458,7 @@ export namespace Prisma {
   export type InvoiceCreateWithoutShipmentInput = {
     id?: string
     invoiceNumber: string
+    externalInvoiceNumber?: string | null
     invoiceDate: Date | string
     currency: $Enums.Currency
     exchangeRate?: Decimal | DecimalJsLike | number | string | null
@@ -31215,6 +31480,7 @@ export namespace Prisma {
   export type InvoiceUncheckedCreateWithoutShipmentInput = {
     id?: string
     invoiceNumber: string
+    externalInvoiceNumber?: string | null
     invoiceDate: Date | string
     currency: $Enums.Currency
     exchangeRate?: Decimal | DecimalJsLike | number | string | null
@@ -31637,6 +31903,10 @@ export namespace Prisma {
     shippingLine?: StringNullableFilter<"Container"> | string | null
     bookingReference?: StringNullableFilter<"Container"> | string | null
     containerCondition?: StringNullableFilter<"Container"> | string | null
+    terminalChargeStatus?: EnumTerminalChargeStatusFilter<"Container"> | $Enums.TerminalChargeStatus
+    terminalChargeAmount?: DecimalNullableFilter<"Container"> | Decimal | DecimalJsLike | number | string | null
+    terminalChargeCurrency?: EnumCurrencyNullableFilter<"Container"> | $Enums.Currency | null
+    terminalChargePaidAt?: DateTimeNullableFilter<"Container"> | Date | string | null
     createdAt?: DateTimeFilter<"Container"> | Date | string
     updatedAt?: DateTimeFilter<"Container"> | Date | string
   }
@@ -31694,6 +31964,7 @@ export namespace Prisma {
   export type InvoiceUpdateWithoutShipmentInput = {
     id?: StringFieldUpdateOperationsInput | string
     invoiceNumber?: StringFieldUpdateOperationsInput | string
+    externalInvoiceNumber?: NullableStringFieldUpdateOperationsInput | string | null
     invoiceDate?: DateTimeFieldUpdateOperationsInput | Date | string
     currency?: EnumCurrencyFieldUpdateOperationsInput | $Enums.Currency
     exchangeRate?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
@@ -31715,6 +31986,7 @@ export namespace Prisma {
   export type InvoiceUncheckedUpdateWithoutShipmentInput = {
     id?: StringFieldUpdateOperationsInput | string
     invoiceNumber?: StringFieldUpdateOperationsInput | string
+    externalInvoiceNumber?: NullableStringFieldUpdateOperationsInput | string | null
     invoiceDate?: DateTimeFieldUpdateOperationsInput | Date | string
     currency?: EnumCurrencyFieldUpdateOperationsInput | $Enums.Currency
     exchangeRate?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
@@ -32787,6 +33059,7 @@ export namespace Prisma {
   export type InvoiceCreateWithoutItemsInput = {
     id?: string
     invoiceNumber: string
+    externalInvoiceNumber?: string | null
     invoiceDate: Date | string
     currency: $Enums.Currency
     exchangeRate?: Decimal | DecimalJsLike | number | string | null
@@ -32809,6 +33082,7 @@ export namespace Prisma {
     id?: string
     shipmentId: string
     invoiceNumber: string
+    externalInvoiceNumber?: string | null
     invoiceDate: Date | string
     currency: $Enums.Currency
     exchangeRate?: Decimal | DecimalJsLike | number | string | null
@@ -32845,6 +33119,7 @@ export namespace Prisma {
   export type InvoiceUpdateWithoutItemsInput = {
     id?: StringFieldUpdateOperationsInput | string
     invoiceNumber?: StringFieldUpdateOperationsInput | string
+    externalInvoiceNumber?: NullableStringFieldUpdateOperationsInput | string | null
     invoiceDate?: DateTimeFieldUpdateOperationsInput | Date | string
     currency?: EnumCurrencyFieldUpdateOperationsInput | $Enums.Currency
     exchangeRate?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
@@ -32867,6 +33142,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     shipmentId?: StringFieldUpdateOperationsInput | string
     invoiceNumber?: StringFieldUpdateOperationsInput | string
+    externalInvoiceNumber?: NullableStringFieldUpdateOperationsInput | string | null
     invoiceDate?: DateTimeFieldUpdateOperationsInput | Date | string
     currency?: EnumCurrencyFieldUpdateOperationsInput | $Enums.Currency
     exchangeRate?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
@@ -32900,6 +33176,10 @@ export namespace Prisma {
     shippingLine?: string | null
     bookingReference?: string | null
     containerCondition?: string | null
+    terminalChargeStatus?: $Enums.TerminalChargeStatus
+    terminalChargeAmount?: Decimal | DecimalJsLike | number | string | null
+    terminalChargeCurrency?: $Enums.Currency | null
+    terminalChargePaidAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     shipment: ShipmentCreateNestedOneWithoutContainersInput
@@ -32924,6 +33204,10 @@ export namespace Prisma {
     shippingLine?: string | null
     bookingReference?: string | null
     containerCondition?: string | null
+    terminalChargeStatus?: $Enums.TerminalChargeStatus
+    terminalChargeAmount?: Decimal | DecimalJsLike | number | string | null
+    terminalChargeCurrency?: $Enums.Currency | null
+    terminalChargePaidAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     documents?: DocumentUncheckedCreateNestedManyWithoutContainerInput
@@ -33386,6 +33670,10 @@ export namespace Prisma {
     shippingLine?: string | null
     bookingReference?: string | null
     containerCondition?: string | null
+    terminalChargeStatus?: $Enums.TerminalChargeStatus
+    terminalChargeAmount?: Decimal | DecimalJsLike | number | string | null
+    terminalChargeCurrency?: $Enums.Currency | null
+    terminalChargePaidAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     packingList?: PackingListCreateNestedOneWithoutContainersInput
@@ -33411,6 +33699,10 @@ export namespace Prisma {
     shippingLine?: string | null
     bookingReference?: string | null
     containerCondition?: string | null
+    terminalChargeStatus?: $Enums.TerminalChargeStatus
+    terminalChargeAmount?: Decimal | DecimalJsLike | number | string | null
+    terminalChargeCurrency?: $Enums.Currency | null
+    terminalChargePaidAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     documents?: DocumentUncheckedCreateNestedManyWithoutContainerInput
@@ -33537,6 +33829,10 @@ export namespace Prisma {
     shippingLine?: NullableStringFieldUpdateOperationsInput | string | null
     bookingReference?: NullableStringFieldUpdateOperationsInput | string | null
     containerCondition?: NullableStringFieldUpdateOperationsInput | string | null
+    terminalChargeStatus?: EnumTerminalChargeStatusFieldUpdateOperationsInput | $Enums.TerminalChargeStatus
+    terminalChargeAmount?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    terminalChargeCurrency?: NullableEnumCurrencyFieldUpdateOperationsInput | $Enums.Currency | null
+    terminalChargePaidAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     packingList?: PackingListUpdateOneWithoutContainersNestedInput
@@ -33562,6 +33858,10 @@ export namespace Prisma {
     shippingLine?: NullableStringFieldUpdateOperationsInput | string | null
     bookingReference?: NullableStringFieldUpdateOperationsInput | string | null
     containerCondition?: NullableStringFieldUpdateOperationsInput | string | null
+    terminalChargeStatus?: EnumTerminalChargeStatusFieldUpdateOperationsInput | $Enums.TerminalChargeStatus
+    terminalChargeAmount?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    terminalChargeCurrency?: NullableEnumCurrencyFieldUpdateOperationsInput | $Enums.Currency | null
+    terminalChargePaidAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     documents?: DocumentUncheckedUpdateManyWithoutContainerNestedInput
@@ -34801,6 +35101,10 @@ export namespace Prisma {
     shippingLine?: string | null
     bookingReference?: string | null
     containerCondition?: string | null
+    terminalChargeStatus?: $Enums.TerminalChargeStatus
+    terminalChargeAmount?: Decimal | DecimalJsLike | number | string | null
+    terminalChargeCurrency?: $Enums.Currency | null
+    terminalChargePaidAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     packingList?: PackingListCreateNestedOneWithoutContainersInput
@@ -34826,6 +35130,10 @@ export namespace Prisma {
     shippingLine?: string | null
     bookingReference?: string | null
     containerCondition?: string | null
+    terminalChargeStatus?: $Enums.TerminalChargeStatus
+    terminalChargeAmount?: Decimal | DecimalJsLike | number | string | null
+    terminalChargeCurrency?: $Enums.Currency | null
+    terminalChargePaidAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     transits?: TransitUncheckedCreateNestedManyWithoutContainerInput
@@ -34839,6 +35147,7 @@ export namespace Prisma {
   export type InvoiceCreateWithoutDocumentsInput = {
     id?: string
     invoiceNumber: string
+    externalInvoiceNumber?: string | null
     invoiceDate: Date | string
     currency: $Enums.Currency
     exchangeRate?: Decimal | DecimalJsLike | number | string | null
@@ -34861,6 +35170,7 @@ export namespace Prisma {
     id?: string
     shipmentId: string
     invoiceNumber: string
+    externalInvoiceNumber?: string | null
     invoiceDate: Date | string
     currency: $Enums.Currency
     exchangeRate?: Decimal | DecimalJsLike | number | string | null
@@ -35186,6 +35496,10 @@ export namespace Prisma {
     shippingLine?: NullableStringFieldUpdateOperationsInput | string | null
     bookingReference?: NullableStringFieldUpdateOperationsInput | string | null
     containerCondition?: NullableStringFieldUpdateOperationsInput | string | null
+    terminalChargeStatus?: EnumTerminalChargeStatusFieldUpdateOperationsInput | $Enums.TerminalChargeStatus
+    terminalChargeAmount?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    terminalChargeCurrency?: NullableEnumCurrencyFieldUpdateOperationsInput | $Enums.Currency | null
+    terminalChargePaidAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     packingList?: PackingListUpdateOneWithoutContainersNestedInput
@@ -35211,6 +35525,10 @@ export namespace Prisma {
     shippingLine?: NullableStringFieldUpdateOperationsInput | string | null
     bookingReference?: NullableStringFieldUpdateOperationsInput | string | null
     containerCondition?: NullableStringFieldUpdateOperationsInput | string | null
+    terminalChargeStatus?: EnumTerminalChargeStatusFieldUpdateOperationsInput | $Enums.TerminalChargeStatus
+    terminalChargeAmount?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    terminalChargeCurrency?: NullableEnumCurrencyFieldUpdateOperationsInput | $Enums.Currency | null
+    terminalChargePaidAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     transits?: TransitUncheckedUpdateManyWithoutContainerNestedInput
@@ -35230,6 +35548,7 @@ export namespace Prisma {
   export type InvoiceUpdateWithoutDocumentsInput = {
     id?: StringFieldUpdateOperationsInput | string
     invoiceNumber?: StringFieldUpdateOperationsInput | string
+    externalInvoiceNumber?: NullableStringFieldUpdateOperationsInput | string | null
     invoiceDate?: DateTimeFieldUpdateOperationsInput | Date | string
     currency?: EnumCurrencyFieldUpdateOperationsInput | $Enums.Currency
     exchangeRate?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
@@ -35252,6 +35571,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     shipmentId?: StringFieldUpdateOperationsInput | string
     invoiceNumber?: StringFieldUpdateOperationsInput | string
+    externalInvoiceNumber?: NullableStringFieldUpdateOperationsInput | string | null
     invoiceDate?: DateTimeFieldUpdateOperationsInput | Date | string
     currency?: EnumCurrencyFieldUpdateOperationsInput | $Enums.Currency
     exchangeRate?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
@@ -36935,6 +37255,10 @@ export namespace Prisma {
     shippingLine?: string | null
     bookingReference?: string | null
     containerCondition?: string | null
+    terminalChargeStatus?: $Enums.TerminalChargeStatus
+    terminalChargeAmount?: Decimal | DecimalJsLike | number | string | null
+    terminalChargeCurrency?: $Enums.Currency | null
+    terminalChargePaidAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -36994,6 +37318,10 @@ export namespace Prisma {
     shippingLine?: NullableStringFieldUpdateOperationsInput | string | null
     bookingReference?: NullableStringFieldUpdateOperationsInput | string | null
     containerCondition?: NullableStringFieldUpdateOperationsInput | string | null
+    terminalChargeStatus?: EnumTerminalChargeStatusFieldUpdateOperationsInput | $Enums.TerminalChargeStatus
+    terminalChargeAmount?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    terminalChargeCurrency?: NullableEnumCurrencyFieldUpdateOperationsInput | $Enums.Currency | null
+    terminalChargePaidAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     packingList?: PackingListUpdateOneWithoutContainersNestedInput
@@ -37018,6 +37346,10 @@ export namespace Prisma {
     shippingLine?: NullableStringFieldUpdateOperationsInput | string | null
     bookingReference?: NullableStringFieldUpdateOperationsInput | string | null
     containerCondition?: NullableStringFieldUpdateOperationsInput | string | null
+    terminalChargeStatus?: EnumTerminalChargeStatusFieldUpdateOperationsInput | $Enums.TerminalChargeStatus
+    terminalChargeAmount?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    terminalChargeCurrency?: NullableEnumCurrencyFieldUpdateOperationsInput | $Enums.Currency | null
+    terminalChargePaidAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     documents?: DocumentUncheckedUpdateManyWithoutContainerNestedInput
@@ -37041,6 +37373,10 @@ export namespace Prisma {
     shippingLine?: NullableStringFieldUpdateOperationsInput | string | null
     bookingReference?: NullableStringFieldUpdateOperationsInput | string | null
     containerCondition?: NullableStringFieldUpdateOperationsInput | string | null
+    terminalChargeStatus?: EnumTerminalChargeStatusFieldUpdateOperationsInput | $Enums.TerminalChargeStatus
+    terminalChargeAmount?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    terminalChargeCurrency?: NullableEnumCurrencyFieldUpdateOperationsInput | $Enums.Currency | null
+    terminalChargePaidAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -37483,6 +37819,10 @@ export namespace Prisma {
     shippingLine?: string | null
     bookingReference?: string | null
     containerCondition?: string | null
+    terminalChargeStatus?: $Enums.TerminalChargeStatus
+    terminalChargeAmount?: Decimal | DecimalJsLike | number | string | null
+    terminalChargeCurrency?: $Enums.Currency | null
+    terminalChargePaidAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -37534,6 +37874,10 @@ export namespace Prisma {
     shippingLine?: NullableStringFieldUpdateOperationsInput | string | null
     bookingReference?: NullableStringFieldUpdateOperationsInput | string | null
     containerCondition?: NullableStringFieldUpdateOperationsInput | string | null
+    terminalChargeStatus?: EnumTerminalChargeStatusFieldUpdateOperationsInput | $Enums.TerminalChargeStatus
+    terminalChargeAmount?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    terminalChargeCurrency?: NullableEnumCurrencyFieldUpdateOperationsInput | $Enums.Currency | null
+    terminalChargePaidAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     shipment?: ShipmentUpdateOneRequiredWithoutContainersNestedInput
@@ -37558,6 +37902,10 @@ export namespace Prisma {
     shippingLine?: NullableStringFieldUpdateOperationsInput | string | null
     bookingReference?: NullableStringFieldUpdateOperationsInput | string | null
     containerCondition?: NullableStringFieldUpdateOperationsInput | string | null
+    terminalChargeStatus?: EnumTerminalChargeStatusFieldUpdateOperationsInput | $Enums.TerminalChargeStatus
+    terminalChargeAmount?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    terminalChargeCurrency?: NullableEnumCurrencyFieldUpdateOperationsInput | $Enums.Currency | null
+    terminalChargePaidAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     documents?: DocumentUncheckedUpdateManyWithoutContainerNestedInput
@@ -37581,6 +37929,10 @@ export namespace Prisma {
     shippingLine?: NullableStringFieldUpdateOperationsInput | string | null
     bookingReference?: NullableStringFieldUpdateOperationsInput | string | null
     containerCondition?: NullableStringFieldUpdateOperationsInput | string | null
+    terminalChargeStatus?: EnumTerminalChargeStatusFieldUpdateOperationsInput | $Enums.TerminalChargeStatus
+    terminalChargeAmount?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    terminalChargeCurrency?: NullableEnumCurrencyFieldUpdateOperationsInput | $Enums.Currency | null
+    terminalChargePaidAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }

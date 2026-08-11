@@ -10,9 +10,10 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "../../ui/dialog";
+} from "../ui/dialog";
+import { Button } from "../ui/button";
 
-import { Button } from "../../ui/button";
+
 
 interface Props {
   open: boolean;
@@ -45,7 +46,7 @@ export default function DeleteInvoiceDialog({
             <Trash2 className="h-6 w-6 text-red-600" />
           </div>
 
-          <DialogTitle className="text-xl font-semibold">
+          <DialogTitle className="text-xl">
             Delete Invoice
           </DialogTitle>
 

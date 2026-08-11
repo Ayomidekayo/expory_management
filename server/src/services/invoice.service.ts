@@ -1,3 +1,7 @@
+
+
+import { InvoiceStatus } from "../generated";
+
 import invoiceRepository from "../Repository/invoice.repository";
 import shipmentRepository from "../Repository/shipment.repository";
 
@@ -18,7 +22,8 @@ class InvoiceService {
   */
 
   private async generateInvoiceNumber() {
-    const year = new Date().getFullYear();
+    const year =
+      new Date().getFullYear();
 
     const latest =
       await invoiceRepository.findLatestInvoice();
@@ -43,40 +48,40 @@ class InvoiceService {
   */
 
   async create(
-    data: CreateInvoiceDto
-  ) {
-    const shipment =
-      await shipmentRepository.findById(
-        data.shipmentId
-      );
+  data: CreateInvoiceDto
+) {
+  const shipment =
+    await shipmentRepository.findById(
+      data.shipmentId
+    );
 
-    if (!shipment) {
-      throw new ApiError(
-        404,
-        "Shipment not found."
-      );
-    }
-
-    const existing =
-      await invoiceRepository.findByShipmentId(
-        data.shipmentId
-      );
-
-    if (existing) {
-      throw new ApiError(
-        400,
-        "This shipment already has an invoice."
-      );
-    }
-
-    const invoiceNumber =
-      await this.generateInvoiceNumber();
-
-    return invoiceRepository.create({
-      ...data,
-      invoiceNumber,
-    });
+  if (!shipment) {
+    throw new ApiError(
+      404,
+      "Shipment not found."
+    );
   }
+
+  const existing =
+    await invoiceRepository.findByShipmentId(
+      data.shipmentId
+    );
+
+  if (existing) {
+    throw new ApiError(
+      400,
+      "This shipment already has an invoice."
+    );
+  }
+
+  const invoiceNumber =
+    await this.generateInvoiceNumber();
+
+  return invoiceRepository.create({
+    ...data,
+    invoiceNumber,
+  });
+}
 
   /*
   =====================================
@@ -87,7 +92,9 @@ class InvoiceService {
   async findAll(
     query: InvoiceQuery
   ) {
-    return invoiceRepository.findAll(query);
+    return invoiceRepository.findAll(
+      query
+    );
   }
 
   /*
@@ -98,7 +105,9 @@ class InvoiceService {
 
   async findById(id: string) {
     const invoice =
-      await invoiceRepository.findById(id);
+      await invoiceRepository.findById(
+        id
+      );
 
     if (!invoice) {
       throw new ApiError(
@@ -108,6 +117,25 @@ class InvoiceService {
     }
 
     return invoice;
+  }
+
+  /*
+  =====================================
+  Update Status
+  =====================================
+  */
+
+  async updateStatus(
+    id: string,
+    status: InvoiceStatus
+  ) {
+    // Make sure invoice exists
+    await this.findById(id);
+
+    return invoiceRepository.updateStatus(
+      id,
+      status
+    );
   }
 
   /*
@@ -139,6 +167,7 @@ class InvoiceService {
 
     return invoiceRepository.delete(id);
   }
+  
 }
 
 export default new InvoiceService();

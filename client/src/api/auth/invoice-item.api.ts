@@ -1,65 +1,83 @@
-import api from "../../lib/axios";
+import axiosInstance from "../../lib/axios";
 
-export interface InvoiceItem {
-  id: string;
+import type {
+  InvoiceItem,
+} from "../../types/invoice";
+import type { CreateInvoiceItemDto } from "../../types/invoice-item";
 
-  invoiceId: string;
-
-  description: string;
-
-  quantity: number;
-
-  unitPrice: number;
-
-  total: number;
-
-  createdAt: string;
+interface InvoiceItemResponse {
+  success: boolean;
+  data: InvoiceItem;
 }
 
-export const getInvoiceItems = async (
+interface InvoiceItemsResponse {
+  success: boolean;
+  data: InvoiceItem[];
+}
+
+/* ===========================================
+   GET ALL ITEMS FOR INVOICE
+=========================================== */
+
+export async function getInvoiceItems(
   invoiceId: string
-) => {
-  const { data } = await api.get(
-    `/invoice-items/invoice/${invoiceId}`
-  );
+) {
+  const { data } =
+    await axiosInstance.get<InvoiceItemsResponse>(
+      `/invoice-items/${invoiceId}`
+    );
 
-  return data.data;
-};
+  return data;
+}
 
-export const createInvoiceItem = async (
-  payload: {
-    invoiceId: string;
-    description: string;
-    quantity: number;
-    unitPrice: number;
-  }
-) => {
-  const { data } = await api.post(
-    "/invoice-items",
-    payload
-  );
+/* ===========================================
+   CREATE ITEM
+=========================================== */
 
-  return data.data;
-};
+export async function createInvoiceItem({
+  invoiceId,
+  data,
+}: {
+  invoiceId: string;
+  data: CreateInvoiceItemDto;
+}) {
+  const { data: response } =
+    await axiosInstance.post<InvoiceItemResponse>(
+      `/invoice-items/${invoiceId}`,
+      data
+    );
 
-export const updateInvoiceItem = async (
+  return response;
+}
+
+/* ===========================================
+   UPDATE ITEM
+=========================================== */
+
+export async function updateInvoiceItem(
   id: string,
-  payload: Partial<{
-    description: string;
-    quantity: number;
-    unitPrice: number;
-  }>
-) => {
-  const { data } = await api.patch(
-    `/invoice-items/${id}`,
-    payload
-  );
+  data: Partial<CreateInvoiceItemDto>
+) {
+  const { data: response } =
+    await axiosInstance.patch<InvoiceItemResponse>(
+      `/invoice-items/${id}`,
+      data
+    );
 
-  return data.data;
-};
+  return response;
+}
 
-export const deleteInvoiceItem = async (
+/* ===========================================
+   DELETE ITEM
+=========================================== */
+
+export async function deleteInvoiceItem(
   id: string
-) => {
-  await api.delete(`/invoice-items/${id}`);
-};
+) {
+  const { data } =
+    await axiosInstance.delete(
+      `/invoice-items/${id}`
+    );
+
+  return data;
+}

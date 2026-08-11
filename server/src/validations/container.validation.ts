@@ -18,10 +18,22 @@ export const containerSizes = [
   "FT45",
 ] as const;
 
+/*
+  Physical container status
+*/
 export const containerStatuses = [
   "EMPTY",
   "LOADED",
   "IN_TRANSIT",
+  "DELIVERED",
+] as const;
+
+/*
+  Terminal charge payment status
+*/
+export const terminalChargeStatuses = [
+  "UNPAID",
+  "PAID",
 ] as const;
 
 /* ===========================================
@@ -38,13 +50,67 @@ const optionalNumber = z.preprocess(
   z.coerce.number().optional()
 );
 
+
+
+
+export const updateTerminalChargeSchema =
+  z.discriminatedUnion("status", [
+    z.object({
+      status: z.literal("UNPAID"),
+
+      amount: z.preprocess(
+        (value) =>
+          value === ""
+            ? undefined
+            : value,
+        z.coerce
+          .number()
+          .nonnegative()
+          .optional()
+      ),
+    }),
+
+    z.object({
+      status: z.literal("PAID"),
+
+      amount: z.preprocess(
+        (value) =>
+          value === ""
+            ? undefined
+            : value,
+        z.coerce
+          .number()
+          .positive(
+            "Payment amount is required."
+          )
+      ),
+    }),
+  ]);
+
+export type UpdateTerminalChargeDto =
+  z.infer<
+    typeof updateTerminalChargeSchema
+  >;
+/* ===========================================
+   TERMINAL CHARGE STATUS
+=========================================== */
+
+export const updateContainerTerminalChargeStatusSchema =
+  z.object({
+    terminalChargeStatus: z.enum(
+      terminalChargeStatuses
+    ),
+  });
+
 /* ===========================================
    CREATE
 =========================================== */
 
 export const createContainerSchema =
   z.object({
-    shipmentId: z.string().min(1, "Shipment is required"),
+    shipmentId: z
+      .string()
+      .min(1, "Shipment is required"),
 
     packingListId: optionalString,
 
@@ -54,31 +120,50 @@ export const createContainerSchema =
 
     sealNumber: optionalString,
 
-    containerType: z.enum(containerTypes),
+    containerType:
+      z.enum(containerTypes),
 
-    containerSize: z.enum(containerSizes),
+    containerSize:
+      z.enum(containerSizes),
 
-    grossWeight: optionalNumber,
+    grossWeight:
+      optionalNumber,
 
-    netWeight: optionalNumber,
+    netWeight:
+      optionalNumber,
 
-    tareWeight: optionalNumber,
+    tareWeight:
+      optionalNumber,
 
-    volume: optionalNumber,
+    volume:
+      optionalNumber,
 
-    loadingLocation: optionalString,
+    loadingLocation:
+      optionalString,
 
-    destination: optionalString,
+    destination:
+      optionalString,
 
     status: z
       .enum(containerStatuses)
       .default("EMPTY"),
 
-    shippingLine: optionalString,
+    /*
+     * Terminal charge defaults
+     * to UNPAID.
+     */
+    terminalChargeStatus: z
+      .enum(terminalChargeStatuses)
+      .default("UNPAID"),
 
-    bookingReference: optionalString,
+    shippingLine:
+      optionalString,
 
-    containerCondition: optionalString,
+    bookingReference:
+      optionalString,
+
+    containerCondition:
+      optionalString,
   });
 
 /* ===========================================
@@ -93,7 +178,18 @@ export const updateContainerSchema =
 =========================================== */
 
 export type CreateContainerDto =
-  z.infer<typeof createContainerSchema>;
+  z.infer<
+    typeof createContainerSchema
+  >;
 
 export type UpdateContainerDto =
-  z.infer<typeof updateContainerSchema>;
+  z.infer<
+    typeof updateContainerSchema
+  >;
+
+export type TerminalChargeStatus =
+  z.infer<
+    typeof terminalChargeStatuses[number] extends never
+      ? never
+      : typeof updateContainerTerminalChargeStatusSchema
+  >;

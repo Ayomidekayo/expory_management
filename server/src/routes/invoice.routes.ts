@@ -15,38 +15,52 @@ Invoices
 =====================================
 */
 
+router.post(
+  "/",
+  authenticate,
+  authorize("ADMIN", "STAFF"),
+  invoiceController.create
+);
+
 router.get(
   "/",
+  authenticate,
+  authorize(
+    "ADMIN",
+    "STAFF",
+    "VIEWER"
+  ),
   invoiceController.findAll
 );
 
 router.get(
   "/:id",
-  invoiceController.findOne
-);
-
-router.post(
-  "/",
+  authenticate,
   authorize(
     "ADMIN",
     "STAFF",
-    "OFFICER"
+    "VIEWER"
   ),
-  invoiceController.create
+  invoiceController.findOne
 );
 
 router.patch(
   "/:id",
-  authorize(
-    "ADMIN",
-    "STAFF",
-    "OFFICER"
-  ),
+  authenticate,
+  authorize("ADMIN", "STAFF"),
   invoiceController.update
+);
+
+router.patch(
+  "/:id/status",
+  authenticate,
+  authorize("ADMIN", "STAFF"),
+  invoiceController.updateStatus
 );
 
 router.delete(
   "/:id",
+  authenticate,
   authorize("ADMIN"),
   invoiceController.delete
 );

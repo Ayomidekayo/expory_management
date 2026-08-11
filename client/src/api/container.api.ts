@@ -1,5 +1,5 @@
 import axiosInstance from "../lib/axios";
-import type { Container, ContainerQuery, CreateContainerDto, UpdateContainerDto } from "../types/container.type";
+import type { Container, ContainerQuery, CreateContainerDto, TerminalChargeStatus, UpdateContainerDto } from "../types/container.type";
 
 
 /* ===========================================
@@ -105,6 +105,51 @@ export async function deleteContainer(
   const { data } =
     await axiosInstance.delete(
       `/containers/${id}`
+    );
+
+  return data;
+}
+
+/* ===========================================
+   UPDATE TERMINAL CHARGE STATUS
+=========================================== */
+
+// export async function updateContainerTerminalChargeStatus({
+//   id,
+//   terminalChargeStatus,
+// }: {
+//   id: string;
+//   terminalChargeStatus: TerminalChargeStatus;
+// }) {
+//   const { data } =
+//     await axiosInstance.patch<ContainerResponse>(
+//       `/containers/${id}/terminal-charge-status`,
+//       {
+//         terminalChargeStatus,
+//       }
+//     );
+
+//   return data;
+// }
+
+export async function updateContainerTerminalCharge({
+  id,
+  status,
+  amount,
+}: {
+  id: string;
+
+  status: "UNPAID" | "PAID";
+
+  amount?: number;
+}) {
+  const { data } =
+    await axiosInstance.patch<ContainerResponse>(
+      `/containers/${id}/terminal-charge`,
+      {
+        status,
+        amount,
+      }
     );
 
   return data;

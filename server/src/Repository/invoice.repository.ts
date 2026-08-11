@@ -1,10 +1,11 @@
-import { Prisma } from "../generated";
+import { InvoiceStatus, Prisma } from "../generated";
 import { prisma } from "../config/prisma";
 
 import {
   CreateInvoiceDto,
   UpdateInvoiceDto,
 } from "../validations/invoice.validation";
+
 import { InvoiceQuery } from "../validations/invoice-query.validation";
 
 class InvoiceRepository {
@@ -14,92 +15,86 @@ class InvoiceRepository {
   =====================================
   */
 
-
-  async create(
-
-    
-    data: CreateInvoiceDto & {
-      invoiceNumber: string;
-    }
-  ) {
-
-
-
-
-    
-    // Calculate each item's total
-
-    const items = data.items.map((item) => ({
-      ...item,
-
-      total:
-        Number(item.quantity) *
-        Number(item.unitPrice),
-    }));
-
-    // Calculate subtotal
-
-    const subtotal = items.reduce(
-      (sum, item) =>
-        sum + Number(item.total),
-      0
-    );
-
-    // Calculate grand total
-
-    const totalAmount =
-      subtotal +
-      Number(data.freight);
-
-    return prisma.invoice.create({
-      data: {
-        shipmentId: data.shipmentId,
-
-        invoiceNumber:
-          data.invoiceNumber,
-
-        invoiceDate: new Date(
-          data.invoiceDate
-        ),
-
-        currency: data.currency,
-
-        exchangeRate:
-          data.exchangeRate,
-
-        paymentTerms:
-          data.paymentTerms,
-
-        status: data.status,
-
-        incoterm:
-          data.incoterm,
-
-        commercialReference:
-          data.commercialReference,
-
-        transportUnits:
-          data.transportUnits,
-
-        freight:
-          data.freight,
-
-        subtotal,
-
-        totalAmount,
-
-        remarks:
-          data.remarks,
-
-        items: {
-          create: items,
-        },
-      },
-
-      include:
-        this.detailsInclude,
-    });
+ async create(
+  data: CreateInvoiceDto & {
+    invoiceNumber: string;
   }
+) {
+  const items = data.items.map((item) => ({
+    ...item,
+
+    total:
+      Number(item.quantity) *
+      Number(item.unitPrice),
+  }));
+
+  const subtotal = items.reduce(
+    (sum, item) =>
+      sum + Number(item.total),
+    0
+  );
+
+  const totalAmount =
+    subtotal +
+    Number(data.freight);
+
+  return prisma.invoice.create({
+    data: {
+      shipmentId:
+        data.shipmentId,
+
+      // System-generated invoice number
+      invoiceNumber:
+        data.invoiceNumber,
+
+      // Client/vendor invoice number
+      externalInvoiceNumber:
+        data.externalInvoiceNumber || null,
+
+      invoiceDate: new Date(
+        data.invoiceDate
+      ),
+
+      currency:
+        data.currency,
+
+      exchangeRate:
+        data.exchangeRate,
+
+      status:
+        data.status ?? "UNPAID",
+
+      paymentTerms:
+        data.paymentTerms,
+
+      incoterm:
+        data.incoterm,
+
+      commercialReference:
+        data.commercialReference,
+
+      transportUnits:
+        data.transportUnits,
+
+      freight:
+        data.freight,
+
+      subtotal,
+
+      totalAmount,
+
+      remarks:
+        data.remarks,
+
+      items: {
+        create: items,
+      },
+    },
+
+    include:
+      this.detailsInclude,
+  });
+}
 
   /*
   =====================================
@@ -125,256 +120,264 @@ class InvoiceRepository {
   =====================================
   */
 
-async findAll(
-  query: InvoiceQuery
-) {
+  async findAll(
+    query: InvoiceQuery
+  ) {
+    const {
+      page,
+      limit,
+      search,
+      status,
+      currency,
+      shipmentId,
+      fromDate,
+      toDate,
+      datePreset,
+      sortBy,
+      sortOrder,
+    } = query;
 
-const {
-  page,
-  limit,
-  search,
-  status,
-  currency,
-  shipmentId,
-  fromDate,
-  toDate,
-  datePreset,
-  sortBy,
-  sortOrder,
-} = query;
-let startDate: Date | undefined;
-let endDate: Date | undefined;
+    let startDate:
+      | Date
+      | undefined;
 
-const today = new Date();
+    let endDate:
+      | Date
+      | undefined;
 
-switch (datePreset) {
-  case "TODAY":
-    startDate = new Date(today);
-    startDate.setHours(0, 0, 0, 0);
+    const today = new Date();
 
-    endDate = new Date(today);
-    endDate.setHours(23, 59, 59, 999);
-    break;
+    switch (datePreset) {
+      case "TODAY":
+        startDate = new Date(today);
+        startDate.setHours(0, 0, 0, 0);
 
-  case "THIS_WEEK":
-    startDate = new Date(today);
+        endDate = new Date(today);
+        endDate.setHours(
+          23,
+          59,
+          59,
+          999
+        );
 
-    startDate.setDate(
-      today.getDate() - today.getDay()
-    );
+        break;
 
-    startDate.setHours(0, 0, 0, 0);
+      case "THIS_WEEK":
+        startDate = new Date(today);
 
-    endDate = new Date(startDate);
+        startDate.setDate(
+          today.getDate() -
+            today.getDay()
+        );
 
-    endDate.setDate(
-      startDate.getDate() + 6
-    );
+        startDate.setHours(
+          0,
+          0,
+          0,
+          0
+        );
 
-    endDate.setHours(
-      23,
-      59,
-      59,
-      999
-    );
-    break;
+        endDate = new Date(startDate);
 
-  case "THIS_MONTH":
-    startDate = new Date(
-      today.getFullYear(),
-      today.getMonth(),
-      1
-    );
+        endDate.setDate(
+          startDate.getDate() + 6
+        );
 
-    endDate = new Date(
-      today.getFullYear(),
-      today.getMonth() + 1,
-      0,
-      23,
-      59,
-      59,
-      999
-    );
-    break;
+        endDate.setHours(
+          23,
+          59,
+          59,
+          999
+        );
 
-  case "THIS_QUARTER": {
-    const quarter =
-      Math.floor(
-        today.getMonth() / 3
-      ) * 3;
+        break;
 
-    startDate = new Date(
-      today.getFullYear(),
-      quarter,
-      1
-    );
+      case "THIS_MONTH":
+        startDate = new Date(
+          today.getFullYear(),
+          today.getMonth(),
+          1
+        );
 
-    endDate = new Date(
-      today.getFullYear(),
-      quarter + 3,
-      0,
-      23,
-      59,
-      59,
-      999
-    );
+        endDate = new Date(
+          today.getFullYear(),
+          today.getMonth() + 1,
+          0,
+          23,
+          59,
+          59,
+          999
+        );
 
-    break;
-  }
+        break;
 
-  case "THIS_YEAR":
-    startDate = new Date(
-      today.getFullYear(),
-      0,
-      1
-    );
+      case "THIS_QUARTER": {
+        const quarter =
+          Math.floor(
+            today.getMonth() / 3
+          ) * 3;
 
-    endDate = new Date(
-      today.getFullYear(),
-      11,
-      31,
-      23,
-      59,
-      59,
-      999
-    );
+        startDate = new Date(
+          today.getFullYear(),
+          quarter,
+          1
+        );
 
-    break;
-}
+        endDate = new Date(
+          today.getFullYear(),
+          quarter + 3,
+          0,
+          23,
+          59,
+          59,
+          999
+        );
 
- const where: Prisma.InvoiceWhereInput = {
-  ...(status && {
-    status,
-  }),
+        break;
+      }
 
-  ...(currency && {
-    currency,
-  }),
+      case "THIS_YEAR":
+        startDate = new Date(
+          today.getFullYear(),
+          0,
+          1
+        );
 
-  ...(shipmentId && {
-    shipmentId,
-  }),
+        endDate = new Date(
+          today.getFullYear(),
+          11,
+          31,
+          23,
+          59,
+          59,
+          999
+        );
 
-  ...(search && {
-    OR: [
-      {
-        invoiceNumber: {
-          contains: search,
-          mode: "insensitive",
-        },
-      },
+        break;
+    }
 
-      {
-        commercialReference: {
-          contains: search,
-          mode: "insensitive",
-        },
-      },
+    const where: Prisma.InvoiceWhereInput = {
+      ...(status && {
+        status,
+      }),
 
-      {
-        shipment: {
-          shipmentNumber: {
-            contains: search,
-            mode: "insensitive",
-          },
-        },
-      },
+      ...(currency && {
+        currency,
+      }),
 
-      {
-        shipment: {
-          client: {
-            companyName: {
+      ...(shipmentId && {
+        shipmentId,
+      }),
+
+      ...(search && {
+        OR: [
+          {
+            invoiceNumber: {
               contains: search,
               mode: "insensitive",
             },
           },
+
+          {
+            commercialReference: {
+              contains: search,
+              mode: "insensitive",
+            },
+          },
+
+          {
+            shipment: {
+              shipmentNumber: {
+                contains: search,
+                mode: "insensitive",
+              },
+            },
+          },
+
+          {
+            shipment: {
+              client: {
+                companyName: {
+                  contains: search,
+                  mode: "insensitive",
+                },
+              },
+            },
+          },
+        ],
+      }),
+
+      ...((fromDate ||
+        toDate ||
+        startDate) && {
+        invoiceDate: {
+          ...(fromDate
+            ? {
+                gte: new Date(
+                  fromDate
+                ),
+              }
+            : startDate
+            ? {
+                gte: startDate,
+              }
+            : {}),
+
+          ...(toDate
+            ? {
+                lte: new Date(
+                  toDate
+                ),
+              }
+            : endDate
+            ? {
+                lte: endDate,
+              }
+            : {}),
         },
+      }),
+    };
+
+    const [data, total] =
+      await Promise.all([
+        prisma.invoice.findMany({
+          where,
+
+          include:
+            this.listInclude,
+
+          orderBy: {
+            [sortBy]:
+              sortOrder,
+          },
+
+          skip:
+            (page - 1) * limit,
+
+          take:
+            limit,
+        }),
+
+        prisma.invoice.count({
+          where,
+        }),
+      ]);
+
+    return {
+      data,
+
+      pagination: {
+        page,
+        limit,
+        total,
+
+        totalPages:
+          Math.ceil(
+            total / limit
+          ),
       },
-    ],
-  }),
-
-  // Date Range
- ...((fromDate ||
-  toDate ||
-  startDate) && {
-  invoiceDate: {
-    ...(fromDate
-      ? {
-          gte: new Date(
-            fromDate
-          ),
-        }
-      : startDate
-      ? {
-          gte: startDate,
-        }
-      : {}),
-
-    ...(toDate
-      ? {
-          lte: new Date(
-            toDate
-          ),
-        }
-      : endDate
-      ? {
-          lte: endDate,
-        }
-      : {}),
-  },
-}),
-};
-
-  const [data, total] =
-    await Promise.all([
-
-      prisma.invoice.findMany({
-
-        where,
-
-        include:
-          this.listInclude,
-
-        orderBy: {
-          [sortBy]:
-            sortOrder,
-        },
-
-        skip:
-          (page - 1) * limit,
-
-        take:
-          limit,
-
-      }),
-
-      prisma.invoice.count({
-        where,
-      }),
-
-    ]);
-
-  return {
-
-    data,
-
-    pagination: {
-
-      page,
-
-      limit,
-
-      total,
-
-      totalPages: Math.ceil(
-        total / limit
-      ),
-
-    },
-
-  };
-
-}
+    };
+  }
 
   /*
   =====================================
@@ -411,72 +414,219 @@ switch (datePreset) {
 
   /*
   =====================================
+  Update Status
+  =====================================
+  */
+
+ async updateStatus(
+  id: string,
+  status: InvoiceStatus
+) {
+  return prisma.invoice.update({
+    where: {
+      id,
+    },
+
+    data: {
+      status,
+    },
+
+    include: this.detailsInclude,
+  });
+}
+  /*
+  =====================================
   Update
   =====================================
   */
 
-  async update(
-    id: string,
-    data: UpdateInvoiceDto
-  ) {
-    const invoice =
-      await this.findById(id);
+/* =====================================
+   Update Invoice
+===================================== */
 
-    if (!invoice) {
-      throw new Error(
-        "Invoice not found."
-      );
-    }
+async update(
+  id: string,
+  data: UpdateInvoiceDto
+) {
+  const existingInvoice =
+    await this.findById(id);
 
-    // If updating items,
-    // calculations will be handled
-    // in the service layer.
-
-    return prisma.invoice.update({
-      where: {
-        id,
-      },
-
-      data: {
-        invoiceDate:
-          data.invoiceDate
-            ? new Date(
-                data.invoiceDate
-              )
-            : undefined,
-
-        currency:
-          data.currency,
-
-        exchangeRate:
-          data.exchangeRate,
-
-        paymentTerms:
-          data.paymentTerms,
-
-        status:
-          data.status,
-
-        incoterm:
-          data.incoterm,
-
-        commercialReference:
-          data.commercialReference,
-
-        transportUnits:
-          data.transportUnits,
-
-        freight:
-          data.freight,
-
-        remarks:
-          data.remarks,
-      },
-
-      include:
-        this.detailsInclude,
-    });
+  if (!existingInvoice) {
+    throw new Error(
+      "Invoice not found."
+    );
   }
+
+  /*
+   * =====================================
+   * Prepare invoice items
+   * =====================================
+   */
+
+  let items:
+    | {
+        description: string;
+        hsCode?: string;
+        packageType?: string;
+        packages?: number;
+        grossWeight?: number;
+        netWeight?: number;
+        quantity: number;
+        unit?: string;
+        unitPrice: number;
+        total: number;
+        remarks?: string;
+      }[]
+    | undefined;
+
+  let subtotal:
+    | number
+    | undefined;
+
+  let totalAmount:
+    | number
+    | undefined;
+
+  /*
+   * Only replace invoice items when
+   * items were included in the request.
+   */
+
+  if (data.items !== undefined) {
+    items = data.items.map((item) => ({
+      description:
+        item.description,
+
+      hsCode:
+        item.hsCode || undefined,
+
+      packageType:
+        item.packageType || undefined,
+
+      packages:
+        item.packages,
+
+      grossWeight:
+        item.grossWeight,
+
+      netWeight:
+        item.netWeight,
+
+      quantity:
+        Number(item.quantity),
+
+      unit:
+        item.unit || undefined,
+
+      unitPrice:
+        Number(item.unitPrice),
+
+      total:
+        Number(item.quantity) *
+        Number(item.unitPrice),
+
+      remarks:
+        item.remarks || undefined,
+    }));
+
+    /*
+     * Calculate subtotal from ALL items.
+     */
+
+    subtotal = items.reduce(
+      (sum, item) =>
+        sum + item.total,
+      0
+    );
+
+    /*
+     * Calculate grand total.
+     */
+
+    totalAmount =
+      subtotal +
+      Number(
+        data.freight ??
+          existingInvoice.freight
+      );
+  }
+
+  /*
+   * =====================================
+   * Update invoice
+   * =====================================
+   */
+
+  return prisma.invoice.update({
+    where: {
+      id,
+    },
+
+    data: {
+      invoiceDate:
+        data.invoiceDate
+          ? new Date(
+              data.invoiceDate
+            )
+          : undefined,
+
+      externalInvoiceNumber:
+        data.externalInvoiceNumber !==
+        undefined
+          ? data.externalInvoiceNumber ||
+            null
+          : undefined,
+
+      currency:
+        data.currency,
+
+      exchangeRate:
+        data.exchangeRate,
+
+      paymentTerms:
+        data.paymentTerms,
+
+      status:
+        data.status,
+
+      incoterm:
+        data.incoterm,
+
+      commercialReference:
+        data.commercialReference,
+
+      transportUnits:
+        data.transportUnits,
+
+      freight:
+        data.freight,
+
+      remarks:
+        data.remarks,
+
+      /*
+       * =================================
+       * Replace ALL invoice items
+       * =================================
+       */
+
+      ...(items !== undefined && {
+        subtotal,
+
+        totalAmount,
+
+        items: {
+          deleteMany: {},
+
+          create: items,
+        },
+      }),
+    },
+
+    include:
+      this.detailsInclude,
+  });
+}
 
   /*
   =====================================
@@ -499,7 +649,6 @@ switch (datePreset) {
   */
 
   private listInclude = {
-
     shipment: {
       select: {
         id: true,
@@ -517,7 +666,6 @@ switch (datePreset) {
     _count: {
       select: {
         items: true,
-
         documents: true,
       },
     },
@@ -530,16 +678,11 @@ switch (datePreset) {
   */
 
   private detailsInclude = {
-
     shipment: {
       include: {
-
         client: true,
-
         exporter: true,
-
         consignee: true,
-
         allocation: true,
       },
     },
@@ -551,7 +694,6 @@ switch (datePreset) {
     _count: {
       select: {
         items: true,
-
         documents: true,
       },
     },

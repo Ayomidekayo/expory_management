@@ -72,6 +72,17 @@ Delete
 =====================================
 */
 
+router.patch(
+  "/:id/status",
+  containerController.updateStatus
+);
+
+router.patch(
+  "/:id/terminal-charge",
+  authenticate,
+  authorize("ADMIN", "STAFF"),
+  containerController.updateTerminalCharge
+);
 router.delete(
   "/:id",
   authenticate,

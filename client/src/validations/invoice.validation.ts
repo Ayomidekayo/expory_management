@@ -1,9 +1,17 @@
 import z from "zod";
 
-export const createInvoiceSchema = z.object({
-  shipmentId: z.string().min(1),
+/* ===========================================
+   CREATE INVOICE
+=========================================== */
 
-  invoiceDate: z.string().min(1),
+export const createInvoiceSchema = z.object({
+  shipmentId: z
+    .string()
+    .min(1, "Shipment is required"),
+
+  invoiceDate: z
+    .string()
+    .min(1, "Invoice date is required"),
 
   currency: z.enum([
     "NGN",
@@ -11,7 +19,19 @@ export const createInvoiceSchema = z.object({
     "EUR",
   ]),
 
-  exchangeRate: z.coerce.number().optional(),
+  exchangeRate: z.coerce
+    .number()
+    .optional(),
+
+  /*
+   * Invoice number supplied by
+   * client/vendor.
+   */
+  externalInvoiceNumber: z
+    .string()
+    .trim()
+    .optional()
+    .or(z.literal("")),
 
   paymentTerms: z
     .enum([
@@ -25,17 +45,23 @@ export const createInvoiceSchema = z.object({
     ])
     .optional(),
 
+  /*
+   * Default invoice status
+   */
   status: z
     .enum([
+      "UNPAID",
       "DRAFT",
       "SENT",
       "APPROVED",
       "PAID",
       "CANCELLED",
     ])
-    .default("DRAFT"),
+    .default("UNPAID"),
 
-  incoterm: z.string().optional(),
+  incoterm: z
+    .string()
+    .optional(),
 
   commercialReference:
     z.string().optional(),
@@ -43,40 +69,69 @@ export const createInvoiceSchema = z.object({
   transportUnits:
     z.coerce.number().optional(),
 
-  freight: z.coerce.number(),
+  freight: z.coerce
+    .number()
+    .min(
+      0,
+      "Freight cannot be negative"
+    ),
 
-  remarks: z.string().optional(),
+  remarks:
+    z.string().optional(),
 
-  items: z.array(
-    z.object({
-      description: z.string().min(1),
+  items: z
+    .array(
+      z.object({
+        description: z
+          .string()
+          .min(
+            1,
+            "Description is required"
+          ),
 
-      hsCode: z.string().optional(),
+        hsCode:
+          z.string().optional(),
 
-      packageType: z.string().optional(),
+        packageType:
+          z.string().optional(),
 
-      packages:
-        z.coerce.number().optional(),
+        packages:
+          z.coerce
+            .number()
+            .optional(),
 
-      grossWeight:
-        z.coerce.number().optional(),
+        grossWeight:
+          z.coerce
+            .number()
+            .optional(),
 
-      netWeight:
-        z.coerce.number().optional(),
+        netWeight:
+          z.coerce
+            .number()
+            .optional(),
 
-      quantity:
-        z.coerce.number(),
+        quantity:
+          z.coerce.number(),
 
-      unit: z.string().optional(),
+        unit:
+          z.string().optional(),
 
-      unitPrice:
-        z.coerce.number(),
+        unitPrice:
+          z.coerce.number(),
 
-      remarks:
-        z.string().optional(),
-    })
-  ),
+        remarks:
+          z.string().optional(),
+      })
+    )
+    .min(
+      1,
+      "At least one invoice item is required."
+    ),
 });
+
+/* ===========================================
+   UPDATE
+=========================================== */
 
 export const updateInvoiceSchema =
   createInvoiceSchema.partial();
@@ -86,13 +141,21 @@ export const updateInvoiceSchema =
 =========================================== */
 
 export type CreateInvoiceInput =
-  z.input<typeof createInvoiceSchema>;
+  z.input<
+    typeof createInvoiceSchema
+  >;
 
 export type CreateInvoiceOutput =
-  z.output<typeof createInvoiceSchema>;
+  z.output<
+    typeof createInvoiceSchema
+  >;
 
 export type UpdateInvoiceInput =
-  z.input<typeof updateInvoiceSchema>;
+  z.input<
+    typeof updateInvoiceSchema
+  >;
 
 export type UpdateInvoiceOutput =
-  z.output<typeof updateInvoiceSchema>;
+  z.output<
+    typeof updateInvoiceSchema
+  >;

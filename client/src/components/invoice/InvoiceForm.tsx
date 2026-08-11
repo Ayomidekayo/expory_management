@@ -1,5 +1,9 @@
 import { useEffect } from "react";
-import { useForm, useWatch } from "react-hook-form";
+import {
+  useForm,
+  useWatch,
+} from "react-hook-form";
+
 import { zodResolver } from "@hookform/resolvers/zod";
 
 import { Form } from "../ui/form";
@@ -40,92 +44,217 @@ export default function InvoiceForm({
     undefined,
     CreateInvoiceOutput
   >({
-    resolver: zodResolver(createInvoiceSchema),
+    resolver:
+      zodResolver(
+        createInvoiceSchema
+      ),
 
     defaultValues: {
       shipmentId: "",
+
       invoiceDate: "",
+
       currency: "NGN",
+
       exchangeRate: 1,
-      paymentTerms: undefined,
-      status: "DRAFT",
+
+      /*
+       * Client/vendor supplied
+       * invoice number.
+       */
+      externalInvoiceNumber: "",
+
+      paymentTerms:
+        undefined,
+
+      /*
+       * IMPORTANT:
+       * New invoices are UNPAID
+       * by default.
+       */
+      status: "UNPAID",
+
       incoterm: "",
-      commercialReference: "",
-      transportUnits: undefined,
+
+      commercialReference:
+        "",
+
+      transportUnits:
+        undefined,
+
       freight: 0,
+
       remarks: "",
 
       items: [
         {
           description: "",
+
           hsCode: "",
+
           packageType: "",
-          packages: undefined,
-          grossWeight: undefined,
-          netWeight: undefined,
+
+          packages:
+            undefined,
+
+          grossWeight:
+            undefined,
+
+          netWeight:
+            undefined,
+
           quantity: 1,
+
           unit: "",
+
           unitPrice: 0,
+
           remarks: "",
         },
       ],
 
+      /*
+       * Editing an existing invoice:
+       * override the defaults with
+       * values received from backend.
+       */
       ...defaultValues,
     },
   });
 
+  /*
+   * Reset the form when invoice
+   * details arrive from the API.
+   */
   useEffect(() => {
     if (defaultValues) {
-      form.reset(defaultValues);
-    }
-  }, [defaultValues, form]);
+      form.reset({
+        ...defaultValues,
 
+        /*
+         * Make sure an invoice without
+         * a status falls back to UNPAID.
+         */
+        status:
+          defaultValues.status ??
+          "UNPAID",
+
+        /*
+         * Make sure external invoice
+         * number is always a safe string
+         * for the input.
+         */
+        externalInvoiceNumber:
+          defaultValues
+            .externalInvoiceNumber ??
+          "",
+      });
+    }
+  }, [
+    defaultValues,
+    form,
+  ]);
+
+  /*
+   * Watch invoice items
+   */
   const items =
     useWatch({
-      control: form.control,
+      control:
+        form.control,
       name: "items",
     }) ?? [];
 
+  /*
+   * Watch freight
+   */
   const freight =
     Number(
       useWatch({
-        control: form.control,
+        control:
+          form.control,
         name: "freight",
       })
     ) || 0;
 
-  const subtotal = items.reduce(
-    (sum, item) =>
-      sum +
-      Number(item.quantity || 0) *
-        Number(item.unitPrice || 0),
-    0
-  );
+  /*
+   * Calculate subtotal
+   */
+  const subtotal =
+    items.reduce(
+      (sum, item) =>
+        sum +
+        Number(
+          item.quantity || 0
+        ) *
+        Number(
+          item.unitPrice || 0
+        ),
+      0
+    );
 
   return (
     <Form {...form}>
       <form
-        onSubmit={form.handleSubmit(onSubmit)}
+        onSubmit={form.handleSubmit(
+          onSubmit
+        )}
         className="space-y-8"
       >
-        <InvoiceInformation form={form} />
 
-        <ShipmentInformation form={form} />
+        {/* =================================
+            INVOICE INFORMATION
+        ================================= */}
 
-        <InvoiceItems form={form} />
+        <InvoiceInformation
+          form={form}
+        />
+
+        {/* =================================
+            SHIPMENT INFORMATION
+        ================================= */}
+
+        <ShipmentInformation
+          form={form}
+        />
+
+        {/* =================================
+            INVOICE ITEMS
+        ================================= */}
+
+        <InvoiceItems
+          form={form}
+        />
+
+        {/* =================================
+            TOTALS
+        ================================= */}
 
         <Totals
           subtotal={subtotal}
           freight={freight}
-          total={subtotal + freight}
+          total={
+            subtotal + freight
+          }
         />
 
-        <Remarks form={form} />
+        {/* =================================
+            REMARKS
+        ================================= */}
+
+        <Remarks
+          form={form}
+        />
+
+        {/* =================================
+            ACTIONS
+        ================================= */}
 
         <FormActions
           isEditing={isEditing}
           loading={loading}
         />
+
       </form>
     </Form>
   );

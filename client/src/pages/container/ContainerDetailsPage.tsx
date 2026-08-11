@@ -10,6 +10,7 @@ import PackingListInformationCard from "../../components/container/details/Packi
 import WeightInformationCard from "../../components/container/details/WeightInformationCard";
 import DocumentsCard from "../../components/container/details/DocumentsCard";
 import { Button } from "../../components/ui/button";
+import TerminalChargeInformationCard from "../../components/container/details/TerminalChargeInformationCard";
 
 export default function ContainerDetailsPage() {
   const { id } = useParams();
@@ -104,6 +105,10 @@ export default function ContainerDetailsPage() {
         <WeightInformationCard
           container={container}
         />
+
+         <TerminalChargeInformationCard
+    container={container}
+  />
 
       </div>
 

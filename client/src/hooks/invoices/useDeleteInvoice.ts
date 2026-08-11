@@ -1,42 +1,24 @@
-import { useMutation } from "@tanstack/react-query";
-import { useQueryClient } from "@tanstack/react-query";
-import { toast } from "sonner";
+import {
+  useMutation,
+  useQueryClient,
+} from "@tanstack/react-query";
 
-import { deleteInvoice } from "../../api/invoice.api";
+import {
+  deleteInvoice,
+} from "../../api/invoice.api";
 
 export function useDeleteInvoice() {
-
   const queryClient =
     useQueryClient();
 
   return useMutation({
+    mutationFn: (id: string) =>
+      deleteInvoice(id),
 
-    mutationFn:
-      deleteInvoice,
-
-    onSuccess() {
-
+    onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: [
-          "invoices",
-        ],
+        queryKey: ["invoices"],
       });
-
-      toast.success(
-        "Invoice deleted successfully."
-      );
-
     },
-
-    onError(error: any) {
-
-      toast.error(
-        error?.response?.data?.message ??
-          "Unable to delete invoice."
-      );
-
-    },
-
   });
-
 }

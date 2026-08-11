@@ -7,12 +7,20 @@ import type { PackingList } from "./packing-list";
 import type { Shipment } from "./shipment.types";
 import type { Transit } from "./transit.type";
 
+/* ===========================================
+   CONTAINER TYPE
+=========================================== */
+
 export type ContainerType =
   | "DRY"
   | "REEFER"
   | "OPEN_TOP"
   | "FLAT_RACK"
-  | "TANK"
+  | "TANK";
+
+/* ===========================================
+   CONTAINER SIZE
+=========================================== */
 
 export type ContainerSize =
   | "FT20"
@@ -20,11 +28,23 @@ export type ContainerSize =
   | "FT40_HC"
   | "FT45";
 
+/* ===========================================
+   CONTAINER STATUS
+=========================================== */
+
 export type ContainerStatus =
   | "EMPTY"
   | "LOADED"
   | "IN_TRANSIT"
-  | "DELIVERED"
+  | "DELIVERED";
+
+/* ===========================================
+   TERMINAL CHARGE STATUS
+=========================================== */
+
+export type TerminalChargeStatus =
+  | "UNPAID"
+  | "PAID";
 
 /* ===========================================
    CONTAINER
@@ -62,6 +82,9 @@ export interface Container {
   destination?: string | null;
 
   status: ContainerStatus;
+
+  terminalChargeStatus: TerminalChargeStatus;
+  terminalChargeAmount?: number | null;
 
   shippingLine?: string | null;
 
@@ -114,6 +137,8 @@ export interface CreateContainerDto {
 
   status?: ContainerStatus;
 
+  terminalChargeStatus?: TerminalChargeStatus;
+
   shippingLine?: string;
 
   bookingReference?: string;
@@ -145,6 +170,8 @@ export interface ContainerQuery {
 
   status?: ContainerStatus;
 
+  terminalChargeStatus?: TerminalChargeStatus;
+
   containerType?: ContainerType;
 
   containerSize?: ContainerSize;
@@ -153,7 +180,8 @@ export interface ContainerQuery {
     | "createdAt"
     | "containerNumber"
     | "grossWeight"
-    | "status";
+    | "status"
+    | "terminalChargeStatus";
 
   sortOrder?: "asc" | "desc";
 }

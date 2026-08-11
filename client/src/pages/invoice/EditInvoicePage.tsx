@@ -10,8 +10,6 @@ import { useUpdateInvoice } from "../../hooks/invoices/useUpdateInvoice";
 import { useInvoice } from "../../hooks/invoices/useInvoice";
 import { toInputDate } from "../../utils/date";
 
-
-
 export default function EditInvoicePage() {
   const { id } = useParams();
 
@@ -28,14 +26,12 @@ export default function EditInvoicePage() {
   if (isLoading) {
     return (
       <div className="flex justify-center py-24">
-
         <Loader2 className="h-8 w-8 animate-spin" />
-
       </div>
     );
   }
 
-  if (!data) {
+  if (!data?.data) {
     return (
       <div className="py-20 text-center">
         Invoice not found.
@@ -49,7 +45,6 @@ export default function EditInvoicePage() {
     <div className="space-y-6">
 
       <div>
-
         <h1 className="text-3xl font-bold">
           Edit Invoice
         </h1>
@@ -57,23 +52,72 @@ export default function EditInvoicePage() {
         <p className="text-muted-foreground">
           Update invoice information.
         </p>
-
       </div>
 
       <InvoiceForm
         isEditing
-
         loading={
           updateInvoice.isPending
         }
 
         defaultValues={{
-          ...invoice,
+          shipmentId:
+            invoice.shipmentId,
 
+          /*
+           * System-generated invoice number
+           * is not editable here.
+           */
           invoiceDate:
             toInputDate(
               invoice.invoiceDate
             ),
+
+          currency:
+            invoice.currency,
+
+          exchangeRate:
+            invoice.exchangeRate ??
+            undefined,
+
+          /*
+           * Client/vendor supplied
+           * invoice number.
+           */
+          externalInvoiceNumber:
+            invoice.externalInvoiceNumber ??
+            "",
+
+          paymentTerms:
+            invoice.paymentTerms ??
+            undefined,
+
+          /*
+           * Preserve the current status.
+           * If somehow missing, default to UNPAID.
+           */
+          status:
+            invoice.status ??
+            "UNPAID",
+
+          incoterm:
+            invoice.incoterm ??
+            "",
+
+          commercialReference:
+            invoice.commercialReference ??
+            "",
+
+          transportUnits:
+            invoice.transportUnits ??
+            undefined,
+
+          freight:
+            Number(invoice.freight ?? 0),
+
+          remarks:
+            invoice.remarks ??
+            "",
 
           items:
             invoice.items.map(
@@ -82,7 +126,8 @@ export default function EditInvoicePage() {
                   item.description,
 
                 hsCode:
-                  item.hsCode ?? "",
+                  item.hsCode ??
+                  "",
 
                 packageType:
                   item.packageType ??
@@ -106,7 +151,8 @@ export default function EditInvoicePage() {
                   ),
 
                 unit:
-                  item.unit ?? "",
+                  item.unit ??
+                  "",
 
                 unitPrice:
                   Number(
@@ -127,10 +173,11 @@ export default function EditInvoicePage() {
               payload: values,
             },
             {
-              onSuccess: () =>
+              onSuccess: () => {
                 navigate(
                   "/invoices"
-                ),
+                );
+              },
             }
           )
         }

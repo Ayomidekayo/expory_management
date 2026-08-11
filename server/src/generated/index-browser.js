@@ -213,6 +213,7 @@ exports.Prisma.InvoiceScalarFieldEnum = {
   id: 'id',
   shipmentId: 'shipmentId',
   invoiceNumber: 'invoiceNumber',
+  externalInvoiceNumber: 'externalInvoiceNumber',
   invoiceDate: 'invoiceDate',
   currency: 'currency',
   exchangeRate: 'exchangeRate',
@@ -247,6 +248,10 @@ exports.Prisma.ContainerScalarFieldEnum = {
   shippingLine: 'shippingLine',
   bookingReference: 'bookingReference',
   containerCondition: 'containerCondition',
+  terminalChargeStatus: 'terminalChargeStatus',
+  terminalChargeAmount: 'terminalChargeAmount',
+  terminalChargeCurrency: 'terminalChargeCurrency',
+  terminalChargePaidAt: 'terminalChargePaidAt',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };
@@ -444,6 +449,7 @@ exports.DocumentType = exports.$Enums.DocumentType = {
   INSPECTION_CERTIFICATE: 'INSPECTION_CERTIFICATE',
   EXPORT_PERMIT: 'EXPORT_PERMIT',
   CONTAINER_DOCUMENT: 'CONTAINER_DOCUMENT',
+  TERMINAL_PAYMENT_RECEIPT: 'TERMINAL_PAYMENT_RECEIPT',
   TRANSIT_INVOICE: 'TRANSIT_INVOICE',
   OTHER: 'OTHER'
 };
@@ -475,6 +481,7 @@ exports.Currency = exports.$Enums.Currency = {
 };
 
 exports.InvoiceStatus = exports.$Enums.InvoiceStatus = {
+  UNPAID: 'UNPAID',
   DRAFT: 'DRAFT',
   SENT: 'SENT',
   APPROVED: 'APPROVED',
@@ -512,6 +519,12 @@ exports.ContainerStatus = exports.$Enums.ContainerStatus = {
   LOADED: 'LOADED',
   IN_TRANSIT: 'IN_TRANSIT',
   DELIVERED: 'DELIVERED'
+};
+
+exports.TerminalChargeStatus = exports.$Enums.TerminalChargeStatus = {
+  UNPAID: 'UNPAID',
+  PAID: 'PAID',
+  WAIVED: 'WAIVED'
 };
 
 exports.ServiceType = exports.$Enums.ServiceType = {

@@ -1,5 +1,3 @@
-
-
 import type { Shipment } from "./shipment.types";
 
 /* ===========================================
@@ -12,6 +10,7 @@ export type Currency =
   | "EUR";
 
 export type InvoiceStatus =
+  | "UNPAID"
   | "DRAFT"
   | "SENT"
   | "APPROVED"
@@ -33,6 +32,8 @@ export type PaymentTerms =
 
 export interface InvoiceItem {
   id: string;
+
+  invoiceId: string;
 
   description: string;
 
@@ -62,6 +63,22 @@ export interface InvoiceItem {
 }
 
 /* ===========================================
+   DOCUMENT
+=========================================== */
+
+export interface Document {
+  id: string;
+
+  fileName: string;
+
+  fileUrl: string;
+
+  documentType: string;
+
+  createdAt: string;
+}
+
+/* ===========================================
    INVOICE
 =========================================== */
 
@@ -73,6 +90,8 @@ export interface Invoice {
   shipment: Shipment;
 
   invoiceNumber: string;
+
+  externalInvoiceNumber?: string | null;
 
   invoiceDate: string;
 
@@ -110,22 +129,11 @@ export interface Invoice {
     items: number;
 
     documents: number;
-    
   };
 }
-export interface Document {
-  id: string;
 
-  fileName: string;
-
-  fileUrl: string;
-
-  documentType: string;
-
-  createdAt: string;
-}
 /* ===========================================
-   CREATE DTO
+   CREATE INVOICE DTO
 =========================================== */
 
 export interface CreateInvoiceDto {
@@ -136,6 +144,8 @@ export interface CreateInvoiceDto {
   currency: Currency;
 
   exchangeRate?: number;
+
+  externalInvoiceNumber?: string;
 
   paymentTerms?: PaymentTerms;
 
@@ -154,10 +164,37 @@ export interface CreateInvoiceDto {
   items: Omit<
     InvoiceItem,
     | "id"
+    | "invoiceId"
     | "total"
     | "createdAt"
     | "updatedAt"
   >[];
+}
+
+/* ===========================================
+   CREATE INVOICE ITEM DTO
+=========================================== */
+
+export interface CreateInvoiceItemDto {
+  description: string;
+
+  hsCode?: string;
+
+  packageType?: string;
+
+  packages?: number;
+
+  grossWeight?: number;
+
+  netWeight?: number;
+
+  quantity: number;
+
+  unit?: string;
+
+  unitPrice: number;
+
+  remarks?: string;
 }
 
 /* ===========================================
@@ -184,38 +221,16 @@ export interface InvoiceQuery {
 
   shipmentId?: string;
 
-  sortBy?:
-    | "invoiceDate"
-    | "invoiceNumber"
-    | "createdAt"
-    | "totalAmount";
-
-  sortOrder?: "asc" | "desc";
-}
-
-export interface InvoiceQuery {
-  page?: number;
-
-  limit?: number;
-
-  search?: string;
-
-  status?: InvoiceStatus;
-
-  currency?: Currency;
-
-  shipmentId?: string;
-
   fromDate?: string;
 
   toDate?: string;
 
-datePreset?:
-  | "TODAY"
-  | "THIS_WEEK"
-  | "THIS_MONTH"
-  | "THIS_QUARTER"
-  | "THIS_YEAR";
+  datePreset?:
+    | "TODAY"
+    | "THIS_WEEK"
+    | "THIS_MONTH"
+    | "THIS_QUARTER"
+    | "THIS_YEAR";
 
   sortBy?:
     | "invoiceDate"

@@ -1,5 +1,12 @@
 import axiosInstance from "../lib/axios";
-import type { CreateInvoiceDto, Invoice, InvoiceQuery, UpdateInvoiceDto } from "../types/invoice";
+
+import type {
+  CreateInvoiceDto,
+  Invoice,
+  InvoiceQuery,
+  InvoiceStatus,
+  UpdateInvoiceDto,
+} from "../types/invoice";
 
 interface InvoiceListResponse {
   success: boolean;
@@ -78,13 +85,34 @@ export async function updateInvoice({
   payload,
 }: {
   id: string;
-
   payload: UpdateInvoiceDto;
 }) {
   const { data } =
     await axiosInstance.patch<InvoiceResponse>(
       `/invoices/${id}`,
       payload
+    );
+
+  return data;
+}
+
+/* ===========================================
+   UPDATE STATUS
+=========================================== */
+
+export async function updateInvoiceStatus({
+  id,
+  status,
+}: {
+  id: string;
+  status: InvoiceStatus;
+}) {
+  const { data } =
+    await axiosInstance.patch<InvoiceResponse>(
+      `/invoices/${id}/status`,
+      {
+        status,
+      }
     );
 
   return data;

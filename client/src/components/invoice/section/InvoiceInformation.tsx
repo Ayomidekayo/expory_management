@@ -31,6 +31,10 @@ interface Props {
   >;
 }
 
+/* ===========================================
+   OPTIONS
+=========================================== */
+
 const currencies = [
   {
     value: "NGN",
@@ -79,6 +83,10 @@ const paymentTerms = [
 
 const statuses = [
   {
+    value: "UNPAID",
+    label: "Unpaid",
+  },
+  {
     value: "DRAFT",
     label: "Draft",
   },
@@ -100,30 +108,55 @@ const statuses = [
   },
 ];
 
+/* ===========================================
+   SHARED FIELD STYLES
+=========================================== */
+
+const inputClassName =
+  "h-11 rounded-lg border-slate-200 bg-white px-3.5 text-sm shadow-sm transition-all placeholder:text-slate-400 focus-visible:border-emerald-500 focus-visible:ring-2 focus-visible:ring-emerald-500/20";
+
+const selectClassName =
+  "h-11 w-full rounded-lg border-slate-200 bg-white px-3.5 text-sm shadow-sm transition-all focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20";
+
+const labelClassName =
+  "text-sm font-medium text-slate-700";
+
 export default function InvoiceInformation({
   form,
 }: Props) {
   return (
-    <div className="rounded-xl border bg-white p-6">
+    <div className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm sm:p-6">
+
+      {/* =========================================
+          HEADER
+      ========================================= */}
+
       <div className="mb-6">
-        <h2 className="text-xl font-semibold">
+        <h2 className="text-xl font-semibold tracking-tight text-slate-900">
           Invoice Information
         </h2>
 
-        <p className="text-sm text-muted-foreground">
+        <p className="mt-1 text-sm text-slate-500">
           Commercial invoice details.
         </p>
       </div>
 
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-        {/* Invoice Date */}
+      {/* =========================================
+          FORM GRID
+      ========================================= */}
+
+      <div className="grid grid-cols-1 gap-x-5 gap-y-5 sm:grid-cols-2 lg:grid-cols-3">
+
+        {/* =========================================
+            INVOICE DATE
+        ========================================= */}
 
         <FormField
           control={form.control}
           name="invoiceDate"
           render={({ field }) => (
-            <FormItem>
-              <FormLabel>
+            <FormItem className="space-y-2">
+              <FormLabel className={labelClassName}>
                 Invoice Date
               </FormLabel>
 
@@ -136,6 +169,7 @@ export default function InvoiceInformation({
                       ? field.value
                       : ""
                   }
+                  className={inputClassName}
                 />
               </FormControl>
 
@@ -144,14 +178,51 @@ export default function InvoiceInformation({
           )}
         />
 
-        {/* Currency */}
+        {/* =========================================
+            EXTERNAL INVOICE NUMBER
+        ========================================= */}
+
+        <FormField
+          control={form.control}
+          name="externalInvoiceNumber"
+          render={({ field }) => (
+            <FormItem className="space-y-2">
+              <FormLabel className={labelClassName}>
+                External Invoice Number
+              </FormLabel>
+
+              <FormControl>
+                <Input
+                  placeholder="Client/vendor invoice number"
+                  {...field}
+                  value={
+                    typeof field.value === "string"
+                      ? field.value
+                      : ""
+                  }
+                  className={inputClassName}
+                />
+              </FormControl>
+
+              <p className="min-h-4 text-xs text-slate-400">
+                Optional
+              </p>
+
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        {/* =========================================
+            CURRENCY
+        ========================================= */}
 
         <FormField
           control={form.control}
           name="currency"
           render={({ field }) => (
-            <FormItem>
-              <FormLabel>
+            <FormItem className="space-y-2">
+              <FormLabel className={labelClassName}>
                 Currency
               </FormLabel>
 
@@ -164,8 +235,10 @@ export default function InvoiceInformation({
                 onValueChange={field.onChange}
               >
                 <FormControl>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Currency" />
+                  <SelectTrigger
+                    className={selectClassName}
+                  >
+                    <SelectValue placeholder="Select currency" />
                   </SelectTrigger>
                 </FormControl>
 
@@ -186,14 +259,16 @@ export default function InvoiceInformation({
           )}
         />
 
-        {/* Exchange Rate */}
+        {/* =========================================
+            EXCHANGE RATE
+        ========================================= */}
 
         <FormField
           control={form.control}
           name="exchangeRate"
           render={({ field }) => (
-            <FormItem>
-              <FormLabel>
+            <FormItem className="space-y-2">
+              <FormLabel className={labelClassName}>
                 Exchange Rate
               </FormLabel>
 
@@ -201,7 +276,7 @@ export default function InvoiceInformation({
                 <Input
                   type="number"
                   step="0.0001"
-                  placeholder="1.00"
+                  placeholder="1.0000"
                   value={
                     typeof field.value === "number"
                       ? field.value
@@ -211,11 +286,10 @@ export default function InvoiceInformation({
                     field.onChange(
                       e.target.value === ""
                         ? undefined
-                        : Number(
-                            e.target.value
-                          )
+                        : Number(e.target.value)
                     )
                   }
+                  className={inputClassName}
                 />
               </FormControl>
 
@@ -224,14 +298,16 @@ export default function InvoiceInformation({
           )}
         />
 
-        {/* Payment Terms */}
+        {/* =========================================
+            PAYMENT TERMS
+        ========================================= */}
 
         <FormField
           control={form.control}
           name="paymentTerms"
           render={({ field }) => (
-            <FormItem>
-              <FormLabel>
+            <FormItem className="space-y-2">
+              <FormLabel className={labelClassName}>
                 Payment Terms
               </FormLabel>
 
@@ -244,8 +320,10 @@ export default function InvoiceInformation({
                 onValueChange={field.onChange}
               >
                 <FormControl>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select Payment Terms" />
+                  <SelectTrigger
+                    className={selectClassName}
+                  >
+                    <SelectValue placeholder="Select payment terms" />
                   </SelectTrigger>
                 </FormControl>
 
@@ -266,14 +344,16 @@ export default function InvoiceInformation({
           )}
         />
 
-        {/* Status */}
+        {/* =========================================
+            STATUS
+        ========================================= */}
 
         <FormField
           control={form.control}
           name="status"
           render={({ field }) => (
-            <FormItem>
-              <FormLabel>
+            <FormItem className="space-y-2">
+              <FormLabel className={labelClassName}>
                 Status
               </FormLabel>
 
@@ -281,13 +361,15 @@ export default function InvoiceInformation({
                 value={
                   typeof field.value === "string"
                     ? field.value
-                    : ""
+                    : "UNPAID"
                 }
                 onValueChange={field.onChange}
               >
                 <FormControl>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Status" />
+                  <SelectTrigger
+                    className={selectClassName}
+                  >
+                    <SelectValue placeholder="Select status" />
                   </SelectTrigger>
                 </FormControl>
 
@@ -308,20 +390,23 @@ export default function InvoiceInformation({
           )}
         />
 
-        {/* Transport Units */}
+        {/* =========================================
+            TRANSPORT UNITS
+        ========================================= */}
 
         <FormField
           control={form.control}
           name="transportUnits"
           render={({ field }) => (
-            <FormItem>
-              <FormLabel>
+            <FormItem className="space-y-2">
+              <FormLabel className={labelClassName}>
                 Transport Units
               </FormLabel>
 
               <FormControl>
                 <Input
                   type="number"
+                  min="0"
                   placeholder="0"
                   value={
                     typeof field.value === "number"
@@ -332,11 +417,10 @@ export default function InvoiceInformation({
                     field.onChange(
                       e.target.value === ""
                         ? undefined
-                        : Number(
-                            e.target.value
-                          )
+                        : Number(e.target.value)
                     )
                   }
+                  className={inputClassName}
                 />
               </FormControl>
 
@@ -345,20 +429,23 @@ export default function InvoiceInformation({
           )}
         />
 
-        {/* Freight */}
+        {/* =========================================
+            FREIGHT
+        ========================================= */}
 
         <FormField
           control={form.control}
           name="freight"
           render={({ field }) => (
-            <FormItem>
-              <FormLabel>
+            <FormItem className="space-y-2">
+              <FormLabel className={labelClassName}>
                 Freight
               </FormLabel>
 
               <FormControl>
                 <Input
                   type="number"
+                  min="0"
                   step="0.01"
                   placeholder="0.00"
                   value={
@@ -370,11 +457,10 @@ export default function InvoiceInformation({
                     field.onChange(
                       e.target.value === ""
                         ? 0
-                        : Number(
-                            e.target.value
-                          )
+                        : Number(e.target.value)
                     )
                   }
+                  className={inputClassName}
                 />
               </FormControl>
 
@@ -383,14 +469,16 @@ export default function InvoiceInformation({
           )}
         />
 
-        {/* Incoterm */}
+        {/* =========================================
+            INCOTERM
+        ========================================= */}
 
         <FormField
           control={form.control}
           name="incoterm"
           render={({ field }) => (
-            <FormItem>
-              <FormLabel>
+            <FormItem className="space-y-2">
+              <FormLabel className={labelClassName}>
                 Incoterm
               </FormLabel>
 
@@ -403,6 +491,7 @@ export default function InvoiceInformation({
                       ? field.value
                       : ""
                   }
+                  className={inputClassName}
                 />
               </FormControl>
 
@@ -411,26 +500,29 @@ export default function InvoiceInformation({
           )}
         />
 
-        {/* Commercial Reference */}
+        {/* =========================================
+            COMMERCIAL REFERENCE
+        ========================================= */}
 
         <FormField
           control={form.control}
           name="commercialReference"
           render={({ field }) => (
-            <FormItem className="lg:col-span-2">
-              <FormLabel>
+            <FormItem className="sm:col-span-2 lg:col-span-2 space-y-2">
+              <FormLabel className={labelClassName}>
                 Commercial Reference
               </FormLabel>
 
               <FormControl>
                 <Input
-                  placeholder="Reference Number"
+                  placeholder="Reference number"
                   {...field}
                   value={
                     typeof field.value === "string"
                       ? field.value
                       : ""
                   }
+                  className={inputClassName}
                 />
               </FormControl>
 
@@ -438,6 +530,7 @@ export default function InvoiceInformation({
             </FormItem>
           )}
         />
+
       </div>
     </div>
   );

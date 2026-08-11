@@ -9,15 +9,17 @@ import invoiceService from "../services/invoice.service";
 import {
   createInvoiceSchema,
   updateInvoiceSchema,
+  updateInvoiceStatusSchema,
 } from "../validations/invoice.validation";
 
 import { InvoiceQueryDto } from "../validations/invoice-query.validation";
 
 class InvoiceController {
+
   /*
-  =====================================
-  Create Invoice
-  =====================================
+  ==========================================
+  CREATE
+  ==========================================
   */
 
   async create(
@@ -27,15 +29,21 @@ class InvoiceController {
   ) {
     try {
       const data =
-        createInvoiceSchema.parse(req.body);
+        createInvoiceSchema.parse(
+          req.body
+        );
 
       const invoice =
-        await invoiceService.create(data);
+        await invoiceService.create(
+          data
+        );
 
       res.status(201).json({
         success: true,
+
         message:
           "Invoice created successfully.",
+
         data: invoice,
       });
     } catch (error) {
@@ -44,9 +52,9 @@ class InvoiceController {
   }
 
   /*
-  =====================================
-  Get All Invoices
-  =====================================
+  ==========================================
+  GET ALL
+  ==========================================
   */
 
   async findAll(
@@ -56,10 +64,14 @@ class InvoiceController {
   ) {
     try {
       const query =
-        InvoiceQueryDto.parse(req.query);
+        InvoiceQueryDto.parse(
+          req.query
+        );
 
       const invoices =
-        await invoiceService.findAll(query);
+        await invoiceService.findAll(
+          query
+        );
 
       res.status(200).json({
         success: true,
@@ -71,9 +83,9 @@ class InvoiceController {
   }
 
   /*
-  =====================================
-  Get Invoice
-  =====================================
+  ==========================================
+  GET ONE
+  ==========================================
   */
 
   async findOne(
@@ -82,10 +94,13 @@ class InvoiceController {
     next: NextFunction
   ) {
     try {
-      const id = String(req.params.id);
+      const id =
+        String(req.params.id);
 
       const invoice =
-        await invoiceService.findById(id);
+        await invoiceService.findById(
+          id
+        );
 
       res.status(200).json({
         success: true,
@@ -97,9 +112,48 @@ class InvoiceController {
   }
 
   /*
-  =====================================
-  Update Invoice
-  =====================================
+  ==========================================
+  UPDATE STATUS
+  ==========================================
+  */
+
+  async updateStatus(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) {
+    try {
+      const id =
+        String(req.params.id);
+
+      const { status } =
+        updateInvoiceStatusSchema.parse(
+          req.body
+        );
+
+      const invoice =
+        await invoiceService.updateStatus(
+          id,
+          status
+        );
+
+      res.status(200).json({
+        success: true,
+
+        message:
+          "Invoice status updated successfully.",
+
+        data: invoice,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  /*
+  ==========================================
+  UPDATE
+  ==========================================
   */
 
   async update(
@@ -108,10 +162,13 @@ class InvoiceController {
     next: NextFunction
   ) {
     try {
-      const id = String(req.params.id);
+      const id =
+        String(req.params.id);
 
       const data =
-        updateInvoiceSchema.parse(req.body);
+        updateInvoiceSchema.parse(
+          req.body
+        );
 
       const invoice =
         await invoiceService.update(
@@ -121,8 +178,10 @@ class InvoiceController {
 
       res.status(200).json({
         success: true,
+
         message:
           "Invoice updated successfully.",
+
         data: invoice,
       });
     } catch (error) {
@@ -131,9 +190,9 @@ class InvoiceController {
   }
 
   /*
-  =====================================
-  Delete Invoice
-  =====================================
+  ==========================================
+  DELETE
+  ==========================================
   */
 
   async delete(
@@ -142,12 +201,14 @@ class InvoiceController {
     next: NextFunction
   ) {
     try {
-      const id = String(req.params.id);
+      const id =
+        String(req.params.id);
 
       await invoiceService.delete(id);
 
       res.status(200).json({
         success: true,
+
         message:
           "Invoice deleted successfully.",
       });
