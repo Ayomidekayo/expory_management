@@ -2,6 +2,14 @@ import { useEffect } from "react";
 import type { UseFormReturn } from "react-hook-form";
 
 import {
+  FileText,
+  Package,
+  Receipt,
+  Route,
+  Ship,
+} from "lucide-react";
+
+import {
   FormControl,
   FormField,
   FormItem,
@@ -21,12 +29,11 @@ import { useShipments } from "../../../hooks/shipments/useShipments";
 import { useContainers } from "../../../hooks/container/useContainers";
 import { usePackingLists } from "../../../hooks/packingList/usePackingLists";
 import { useTransits } from "../../../hooks/transit/useTransits";
-
+import { useInvoices } from "../../../hooks/invoices/useInvoices";
 
 import type {
   CreateDocumentInput,
 } from "../../../validations/document.validation";
-import { useInvoices } from "../../../hooks/invoices/useInvoices";
 
 interface Props {
   form: UseFormReturn<CreateDocumentInput>;
@@ -35,11 +42,8 @@ interface Props {
 export default function RelatedRecordInformation({
   form,
 }: Props) {
-  const shipmentId =
-    form.watch("shipmentId");
-
-  const attachTo =
-    form.watch("attachTo");
+  const shipmentId = form.watch("shipmentId");
+  const attachTo = form.watch("attachTo");
 
   /*
   =====================================
@@ -47,32 +51,27 @@ export default function RelatedRecordInformation({
   =====================================
   */
 
-  const { data: shipments } =
-    useShipments();
+  const { data: shipments } = useShipments();
 
-  const { data: containers } =
-    useContainers({
-      shipmentId,
-    });
+  const { data: containers } = useContainers({
+    shipmentId,
+  });
 
-  const { data: packingLists } =
-    usePackingLists({
-      shipmentId,
-    });
+  const { data: packingLists } = usePackingLists({
+    shipmentId,
+  });
 
-  const { data: transits } =
-    useTransits({
-      shipmentId,
-    });
+  const { data: transits } = useTransits({
+    shipmentId,
+  });
 
-  const { data: invoices } =
-    useInvoices({
-      shipmentId,
-    });
+  const { data: invoices } = useInvoices({
+    shipmentId,
+  });
 
   /*
   =====================================
-  Reset child records only
+  Reset child records
   =====================================
   */
 
@@ -86,425 +85,485 @@ export default function RelatedRecordInformation({
   }, [shipmentId, form]);
 
   return (
-    <div className="rounded-xl border bg-white p-6">
+    <div className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
+      {/* =====================================================
+          HEADER
+      ====================================================== */}
 
-      <div className="mb-6">
-        <h2 className="text-xl font-semibold">
-          Related Record
-        </h2>
+      <div className="border-b border-slate-200 bg-slate-50/60 px-4 py-5 sm:px-6">
+        <div className="flex items-start gap-3">
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-violet-50 text-violet-600">
+            <FileText className="h-5 w-5" />
+          </div>
 
-        <p className="text-sm text-muted-foreground">
-          Select the shipment, then choose
-          what this document belongs to.
-        </p>
+          <div className="min-w-0">
+            <h2 className="text-lg font-semibold text-slate-900">
+              Related Record
+            </h2>
+
+            <p className="mt-1 text-sm leading-5 text-slate-500">
+              Select the shipment, then choose what this
+              document belongs to.
+            </p>
+          </div>
+        </div>
       </div>
 
-      <div className="grid gap-6 md:grid-cols-2">
+      {/* =====================================================
+          CONTENT
+      ====================================================== */}
 
-        {/* Shipment */}
+      <div className="p-4 sm:p-6">
+        <div className="grid gap-5 md:grid-cols-2">
+          {/* =================================================
+              SHIPMENT
+          ================================================= */}
 
-        <FormField
-          control={form.control}
-          name="shipmentId"
-          render={({ field }) => (
-            <FormItem>
+          <FormField
+            control={form.control}
+            name="shipmentId"
+            render={({ field }) => (
+              <FormItem className="min-w-0">
+                <FormLabel className="mb-2 block text-sm font-medium text-slate-700">
+                  Shipment
+                </FormLabel>
 
-              <FormLabel>
-                Shipment
-              </FormLabel>
+                <Select
+                  value={field.value ?? ""}
+                  onValueChange={field.onChange}
+                  disabled={!!field.value}
+                >
+                  <FormControl>
+                    <SelectTrigger
+                      className="
+                        h-11
+                        w-full
+                        border-slate-200
+                        bg-white
+                        shadow-sm
+                        transition-all
+                        hover:border-slate-300
+                        focus:ring-2
+                        focus:ring-blue-500/20
+                        disabled:cursor-not-allowed
+                        disabled:bg-slate-50
+                        disabled:opacity-70
+                        sm:h-12
+                      "
+                    >
+                      <div className="flex min-w-0 items-center gap-2">
+                        <Ship className="h-4 w-4 shrink-0 text-blue-500" />
 
-              <Select
-                value={field.value ?? ""}
-                onValueChange={field.onChange}
-                disabled={
-                  !!field.value
-                }
-              >
-                <FormControl>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select Shipment" />
-                  </SelectTrigger>
-                </FormControl>
+                        <SelectValue placeholder="Select Shipment" />
+                      </div>
+                    </SelectTrigger>
+                  </FormControl>
 
-                <SelectContent>
-
-                  {shipments?.data?.map(
-                    (shipment) => (
+                  <SelectContent
+                    position="popper"
+                    align="start"
+                    className="
+                      z-50
+                      w-[var(--radix-select-trigger-width)]
+                      min-w-[var(--radix-select-trigger-width)]
+                      max-w-[calc(100vw-2rem)]
+                      border-slate-200
+                      bg-white
+                      shadow-xl
+                    "
+                  >
+                    {shipments?.data?.map((shipment) => (
                       <SelectItem
                         key={shipment.id}
                         value={shipment.id}
+                        className="
+                          cursor-pointer
+                          py-2.5
+                          focus:bg-blue-50
+                          focus:text-blue-700
+                        "
                       >
-                        {
-                          shipment.shipmentNumber
-                        }
+                        {shipment.shipmentNumber}
                       </SelectItem>
-                    )
-                  )}
+                    ))}
+                  </SelectContent>
+                </Select>
 
-                </SelectContent>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
-              </Select>
+          {/* =================================================
+              ATTACH TO
+          ================================================= */}
 
-              <FormMessage />
+          <FormField
+            control={form.control}
+            name="attachTo"
+            render={({ field }) => (
+              <FormItem className="min-w-0">
+                <FormLabel className="mb-2 block text-sm font-medium text-slate-700">
+                  Attach To
+                </FormLabel>
 
-            </FormItem>
+                <Select
+                  value={field.value}
+                  onValueChange={(value) => {
+                    field.onChange(value);
+
+                    form.resetField("containerId");
+                    form.resetField("packingListId");
+                    form.resetField("transitId");
+                    form.resetField("invoiceId");
+                  }}
+                >
+                  <FormControl>
+                    <SelectTrigger
+                      className="
+                        h-11
+                        w-full
+                        border-slate-200
+                        bg-white
+                        shadow-sm
+                        transition-all
+                        hover:border-slate-300
+                        focus:ring-2
+                        focus:ring-violet-500/20
+                        sm:h-12
+                      "
+                    >
+                      <SelectValue placeholder="Select Record Type" />
+                    </SelectTrigger>
+                  </FormControl>
+
+                  <SelectContent
+                    position="popper"
+                    align="start"
+                    className="
+                      z-50
+                      w-[var(--radix-select-trigger-width)]
+                      min-w-[var(--radix-select-trigger-width)]
+                      max-w-[calc(100vw-2rem)]
+                      border-slate-200
+                      bg-white
+                      shadow-xl
+                    "
+                  >
+                    <SelectItem
+                      value="SHIPMENT"
+                      className="py-2.5 focus:bg-blue-50 focus:text-blue-700"
+                    >
+                      <SelectOption
+                        icon={
+                          <Ship className="h-4 w-4 text-blue-500" />
+                        }
+                        label="Shipment"
+                      />
+                    </SelectItem>
+
+                    <SelectItem
+                      value="CONTAINER"
+                      className="py-2.5 focus:bg-emerald-50 focus:text-emerald-700"
+                    >
+                      <SelectOption
+                        icon={
+                          <Package className="h-4 w-4 text-emerald-500" />
+                        }
+                        label="Container"
+                      />
+                    </SelectItem>
+
+                    <SelectItem
+                      value="PACKING_LIST"
+                      className="py-2.5 focus:bg-amber-50 focus:text-amber-700"
+                    >
+                      <SelectOption
+                        icon={
+                          <FileText className="h-4 w-4 text-amber-500" />
+                        }
+                        label="Packing List"
+                      />
+                    </SelectItem>
+
+                    <SelectItem
+                      value="TRANSIT"
+                      className="py-2.5 focus:bg-purple-50 focus:text-purple-700"
+                    >
+                      <SelectOption
+                        icon={
+                          <Route className="h-4 w-4 text-purple-500" />
+                        }
+                        label="Transit"
+                      />
+                    </SelectItem>
+
+                    <SelectItem
+                      value="INVOICE"
+                      className="py-2.5 focus:bg-rose-50 focus:text-rose-700"
+                    >
+                      <SelectOption
+                        icon={
+                          <Receipt className="h-4 w-4 text-rose-500" />
+                        }
+                        label="Invoice"
+                      />
+                    </SelectItem>
+                  </SelectContent>
+                </Select>
+
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          {/* =================================================
+              CONTAINER
+          ================================================= */}
+
+          {attachTo === "CONTAINER" && (
+            <RelatedSelect
+              form={form}
+              name="containerId"
+              label="Container"
+              placeholder={
+                shipmentId
+                  ? "Select Container"
+                  : "Select Shipment First"
+              }
+              disabled={!shipmentId}
+              icon={
+                <Package className="h-4 w-4 text-emerald-500" />
+              }
+              options={
+                containers?.data?.map((container) => ({
+                  id: container.id,
+                  label: container.containerNumber,
+                })) ?? []
+              }
+            />
           )}
-        />
 
-        {/* Attach To */}
+          {/* =================================================
+              PACKING LIST
+          ================================================= */}
 
-        <FormField
-          control={form.control}
-          name="attachTo"
-          render={({ field }) => (
-            <FormItem>
-
-              <FormLabel>
-                Attach To
-              </FormLabel>
-
-              <Select
-                value={field.value}
-                onValueChange={(value) => {
-                  field.onChange(value);
-
-                  // Don't reset shipment
-
-                  form.resetField(
-                    "containerId"
-                  );
-
-                  form.resetField(
-                    "packingListId"
-                  );
-
-                  form.resetField(
-                    "transitId"
-                  );
-
-                  form.resetField(
-                    "invoiceId"
-                  );
-                }}
-              >
-
-                <FormControl>
-
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select Record Type" />
-                  </SelectTrigger>
-
-                </FormControl>
-
-                <SelectContent>
-
-                  <SelectItem value="SHIPMENT">
-                    Shipment
-                  </SelectItem>
-
-                  <SelectItem value="CONTAINER">
-                    Container
-                  </SelectItem>
-
-                  <SelectItem value="PACKING_LIST">
-                    Packing List
-                  </SelectItem>
-
-                  <SelectItem value="TRANSIT">
-                    Transit
-                  </SelectItem>
-
-                  <SelectItem value="INVOICE">
-                    Invoice
-                  </SelectItem>
-
-                </SelectContent>
-
-              </Select>
-
-              <FormMessage />
-
-            </FormItem>
+          {attachTo === "PACKING_LIST" && (
+            <RelatedSelect
+              form={form}
+              name="packingListId"
+              label="Packing List"
+              placeholder={
+                shipmentId
+                  ? "Select Packing List"
+                  : "Select Shipment First"
+              }
+              disabled={!shipmentId}
+              icon={
+                <FileText className="h-4 w-4 text-amber-500" />
+              }
+              options={
+                packingLists?.data?.map((packing) => ({
+                  id: packing.id,
+                  label: packing.packingListNumber,
+                })) ?? []
+              }
+            />
           )}
-        />
 
-        {/* Container */}
+          {/* =================================================
+              TRANSIT
+          ================================================= */}
 
-        {attachTo === "CONTAINER" && (
-          <FormField
-            control={form.control}
-            name="containerId"
-            render={({ field }) => (
-              <FormItem>
+          {attachTo === "TRANSIT" && (
+            <RelatedSelect
+              form={form}
+              name="transitId"
+              label="Transit"
+              placeholder={
+                shipmentId
+                  ? "Select Transit"
+                  : "Select Shipment First"
+              }
+              disabled={!shipmentId}
+              icon={
+                <Route className="h-4 w-4 text-purple-500" />
+              }
+              options={
+                transits?.data?.map((transit) => ({
+                  id: transit.id,
+                  label: transit.transitNumber,
+                })) ?? []
+              }
+            />
+          )}
 
-                <FormLabel>
-                  Container
-                </FormLabel>
+          {/* =================================================
+              INVOICE
+          ================================================= */}
 
-                <Select
-                  disabled={!shipmentId}
-                  value={
-                    field.value ?? ""
-                  }
-                  onValueChange={
-                    field.onChange
-                  }
-                >
-
-                  <FormControl>
-
-                    <SelectTrigger>
-
-                      <SelectValue
-                        placeholder={
-                          shipmentId
-                            ? "Select Container"
-                            : "Select Shipment First"
-                        }
-                      />
-
-                    </SelectTrigger>
-
-                  </FormControl>
-
-                  <SelectContent>
-
-                    {containers?.data?.map(
-                      (container) => (
-                        <SelectItem
-                          key={
-                            container.id
-                          }
-                          value={
-                            container.id
-                          }
-                        >
-                          {
-                            container.containerNumber
-                          }
-                        </SelectItem>
-                      )
-                    )}
-
-                  </SelectContent>
-
-                </Select>
-
-                <FormMessage />
-
-              </FormItem>
-            )}
-          />
-        )}
-
-        {/* Packing List */}
-
-        {attachTo ===
-          "PACKING_LIST" && (
-          <FormField
-            control={form.control}
-            name="packingListId"
-            render={({ field }) => (
-              <FormItem>
-
-                <FormLabel>
-                  Packing List
-                </FormLabel>
-
-                <Select
-                  disabled={!shipmentId}
-                  value={
-                    field.value ?? ""
-                  }
-                  onValueChange={
-                    field.onChange
-                  }
-                >
-
-                  <FormControl>
-
-                    <SelectTrigger>
-
-                      <SelectValue
-                        placeholder={
-                          shipmentId
-                            ? "Select Packing List"
-                            : "Select Shipment First"
-                        }
-                      />
-
-                    </SelectTrigger>
-
-                  </FormControl>
-
-                  <SelectContent>
-
-                    {packingLists?.data?.map(
-                      (packing) => (
-                        <SelectItem
-                          key={packing.id}
-                          value={packing.id}
-                        >
-                          {
-                            packing.packingListNumber
-                          }
-                        </SelectItem>
-                      )
-                    )}
-
-                  </SelectContent>
-
-                </Select>
-
-                <FormMessage />
-
-              </FormItem>
-            )}
-          />
-        )}
-
-        {/* Transit */}
-
-        {attachTo ===
-          "TRANSIT" && (
-          <FormField
-            control={form.control}
-            name="transitId"
-            render={({ field }) => (
-              <FormItem>
-
-                <FormLabel>
-                  Transit
-                </FormLabel>
-
-                <Select
-                  disabled={!shipmentId}
-                  value={
-                    field.value ?? ""
-                  }
-                  onValueChange={
-                    field.onChange
-                  }
-                >
-
-                  <FormControl>
-
-                    <SelectTrigger>
-
-                      <SelectValue
-                        placeholder={
-                          shipmentId
-                            ? "Select Transit"
-                            : "Select Shipment First"
-                        }
-                      />
-
-                    </SelectTrigger>
-
-                  </FormControl>
-
-                  <SelectContent>
-
-                    {transits?.data?.map(
-                      (transit) => (
-                        <SelectItem
-                          key={
-                            transit.id
-                          }
-                          value={
-                            transit.id
-                          }
-                        >
-                          {
-                            transit.transitNumber
-                          }
-                        </SelectItem>
-                      )
-                    )}
-
-                  </SelectContent>
-
-                </Select>
-
-                <FormMessage />
-
-              </FormItem>
-            )}
-          />
-        )}
-
-        {/* Invoice */}
-
-        {attachTo ===
-          "INVOICE" && (
-          <FormField
-            control={form.control}
-            name="invoiceId"
-            render={({ field }) => (
-              <FormItem>
-
-                <FormLabel>
-                  Invoice
-                </FormLabel>
-
-                <Select
-                  disabled={!shipmentId}
-                  value={
-                    field.value ?? ""
-                  }
-                  onValueChange={
-                    field.onChange
-                  }
-                >
-
-                  <FormControl>
-
-                    <SelectTrigger>
-
-                      <SelectValue
-                        placeholder={
-                          shipmentId
-                            ? "Select Invoice"
-                            : "Select Shipment First"
-                        }
-                      />
-
-                    </SelectTrigger>
-
-                  </FormControl>
-
-                  <SelectContent>
-
-                    {invoices?.data?.map(
-                      (invoice) => (
-                        <SelectItem
-                          key={
-                            invoice.id
-                          }
-                          value={
-                            invoice.id
-                          }
-                        >
-                          {
-                            invoice.invoiceNumber
-                          }
-                        </SelectItem>
-                      )
-                    )}
-
-                  </SelectContent>
-
-                </Select>
-
-                <FormMessage />
-
-              </FormItem>
-            )}
-          />
-        )}
-
+          {attachTo === "INVOICE" && (
+            <RelatedSelect
+              form={form}
+              name="invoiceId"
+              label="Invoice"
+              placeholder={
+                shipmentId
+                  ? "Select Invoice"
+                  : "Select Shipment First"
+              }
+              disabled={!shipmentId}
+              icon={
+                <Receipt className="h-4 w-4 text-rose-500" />
+              }
+              options={
+                invoices?.data?.map((invoice) => ({
+                  id: invoice.id,
+                  label: invoice.invoiceNumber,
+                })) ?? []
+              }
+            />
+          )}
+        </div>
       </div>
+    </div>
+  );
+}
 
+/*
+=========================================================
+RELATED SELECT
+=========================================================
+*/
+
+interface RelatedSelectProps {
+  form: UseFormReturn<CreateDocumentInput>;
+  name:
+    | "containerId"
+    | "packingListId"
+    | "transitId"
+    | "invoiceId";
+  label: string;
+  placeholder: string;
+  disabled: boolean;
+  icon: React.ReactNode;
+  options: {
+    id: string;
+    label: string;
+  }[];
+}
+
+function RelatedSelect({
+  form,
+  name,
+  label,
+  placeholder,
+  disabled,
+  icon,
+  options,
+}: RelatedSelectProps) {
+  return (
+    <FormField
+      control={form.control}
+      name={name}
+      render={({ field }) => (
+        <FormItem className="min-w-0">
+          <FormLabel className="mb-2 block text-sm font-medium text-slate-700">
+            {label}
+          </FormLabel>
+
+          <Select
+            disabled={disabled}
+            value={field.value ?? ""}
+            onValueChange={field.onChange}
+          >
+            <FormControl>
+              <SelectTrigger
+                className="
+                  h-11
+                  w-full
+                  border-slate-200
+                  bg-white
+                  shadow-sm
+                  transition-all
+                  hover:border-slate-300
+                  focus:ring-2
+                  focus:ring-violet-500/20
+                  disabled:cursor-not-allowed
+                  disabled:bg-slate-50
+                  disabled:opacity-60
+                  sm:h-12
+                "
+              >
+                <div className="flex min-w-0 items-center gap-2">
+                  {icon}
+
+                  <SelectValue placeholder={placeholder} />
+                </div>
+              </SelectTrigger>
+            </FormControl>
+
+            <SelectContent
+              position="popper"
+              align="start"
+              className="
+                z-50
+                w-[var(--radix-select-trigger-width)]
+                min-w-[var(--radix-select-trigger-width)]
+                max-w-[calc(100vw-2rem)]
+                border-slate-200
+                bg-white
+                shadow-xl
+              "
+            >
+              {options.length === 0 ? (
+                <div className="px-3 py-6 text-center text-sm text-slate-500">
+                  No {label.toLowerCase()} found.
+                </div>
+              ) : (
+                options.map((option) => (
+                  <SelectItem
+                    key={option.id}
+                    value={option.id}
+                    className="
+                      cursor-pointer
+                      py-2.5
+                      focus:bg-violet-50
+                      focus:text-violet-700
+                    "
+                  >
+                    {option.label}
+                  </SelectItem>
+                ))
+              )}
+            </SelectContent>
+          </Select>
+
+          <FormMessage />
+        </FormItem>
+      )}
+    />
+  );
+}
+
+/*
+=========================================================
+SELECT OPTION
+=========================================================
+*/
+
+function SelectOption({
+  icon,
+  label,
+}: {
+  icon: React.ReactNode;
+  label: string;
+}) {
+  return (
+    <div className="flex items-center gap-2">
+      {icon}
+
+      <span>{label}</span>
     </div>
   );
 }

@@ -1,6 +1,4 @@
-import {
-  ShipWheel
-} from "lucide-react";
+import { ShipWheel } from "lucide-react";
 
 import type { Shipment } from "../../../types/shipment.types";
 
@@ -16,16 +14,14 @@ function Row({
   value?: string | null;
 }) {
   return (
-    <div className="flex items-center justify-between border-b py-3 last:border-0">
-
-      <span className="text-sm text-muted-foreground">
+    <div className="flex items-center justify-between gap-6 border-b border-slate-100 py-3 last:border-0">
+      <span className="text-sm text-slate-500">
         {label}
       </span>
 
-      <span className="font-medium">
+      <span className="max-w-[60%] break-words text-right text-sm font-medium text-slate-900">
         {value || "-"}
       </span>
-
     </div>
   );
 }
@@ -34,22 +30,28 @@ export default function BookingInformationCard({
   shipment,
 }: Props) {
   return (
-    <div className="rounded-xl border bg-white">
+    <div className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
+      {/* Header */}
+      <div className="border-b border-slate-200 bg-slate-50/60 px-5 py-4">
+        <div className="flex items-center gap-3">
+          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 text-primary">
+            <ShipWheel className="h-5 w-5" />
+          </div>
 
-      <div className="border-b p-5">
+          <div>
+            <h2 className="text-base font-semibold text-slate-900">
+              Booking Information
+            </h2>
 
-        <h2 className="flex items-center gap-2 text-lg font-semibold">
-
-          <ShipWheel className="h-5 w-5 text-primary" />
-
-          Booking Information
-
-        </h2>
-
+            <p className="mt-0.5 text-sm text-slate-500">
+              Shipping and vessel booking details.
+            </p>
+          </div>
+        </div>
       </div>
 
+      {/* Content */}
       <div className="p-5">
-
         <Row
           label="Booking Number"
           value={shipment.bookingNumber}
@@ -79,9 +81,7 @@ export default function BookingInformationCard({
           label="Port of Discharge"
           value={shipment.portOfDischarge}
         />
-
       </div>
-
     </div>
   );
 }

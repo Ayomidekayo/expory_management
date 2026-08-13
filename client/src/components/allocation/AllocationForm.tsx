@@ -188,7 +188,7 @@ export default function AllocationForm({
       console.log(errors);
     }
   )}
->
+className="space-y-8">
         <ClientInformation form={form} />
 
         <ServiceInformation form={form} />

@@ -31,8 +31,8 @@ export default function FormActions({
             <Save className="mr-2 h-4 w-4" />
 
             {isEditing
-              ? "Update Packing List"
-              : "Create Packing List"}
+              ? "Update container"
+              : "Create container"}
           </>
         )}
       </Button>

@@ -106,15 +106,25 @@ class AllocationRepository {
 
     const where: Prisma.AllocationWhereInput = {
       ...(status && { status }),
+
       ...(priority && { priority }),
+
       ...(serviceType && { serviceType }),
+
       ...(transportMode && { transportMode }),
+
       ...(clientId && { clientId }),
+
       ...(exporterId && { exporterId }),
+
       ...(consigneeId && { consigneeId }),
+
       ...(assignedToId && { assignedToId }),
+
       ...(createdById && { createdById }),
+
       ...(approvedById && { approvedById }),
+
       ...(isActive !== undefined && {
         isActive,
       }),
@@ -127,18 +137,21 @@ class AllocationRepository {
               mode: "insensitive",
             },
           },
+
           {
             cargoDescription: {
               contains: search,
               mode: "insensitive",
             },
           },
+
           {
             commodityName: {
               contains: search,
               mode: "insensitive",
             },
           },
+
           {
             client: {
               companyName: {
@@ -151,26 +164,47 @@ class AllocationRepository {
       }),
     };
 
-    const [data, total] =
-      await prisma.$transaction([
-        prisma.allocation.findMany({
-          where,
+    /*
+    =====================================
+    Fetch Data + Count
+    =====================================
 
-          include: this.include,
+    Do NOT use $transaction here.
 
-          orderBy: {
-            [sortBy]: sortOrder,
-          },
+    The previous implementation kept both
+    queries inside a transaction and the large
+    allocation include caused the transaction
+    to exceed Prisma's default 5 second timeout.
 
-          skip: (page - 1) * limit,
+    Promise.all allows both independent read
+    operations to execute without holding an
+    unnecessary transaction open.
+    */
 
-          take: limit,
-        }),
+    const [data, total] = await Promise.all([
+      prisma.allocation.findMany({
+        where,
 
-        prisma.allocation.count({
-          where,
-        }),
-      ]);
+        /*
+        Use the lightweight include for the
+        allocation listing.
+        */
+
+        include: this.listInclude,
+
+        orderBy: {
+          [sortBy]: sortOrder,
+        },
+
+        skip: (page - 1) * limit,
+
+        take: limit,
+      }),
+
+      prisma.allocation.count({
+        where,
+      }),
+    ]);
 
     return {
       data,
@@ -255,85 +289,242 @@ class AllocationRepository {
 
   /*
   =====================================
-  Shared Include
+  Lightweight Include
   =====================================
+
+  Used by findAll().
+
+  We intentionally do NOT load:
+
+  - documents
+  - containers
+  - invoices
+  - packing list
+  - transits
+
+  for every allocation in the list.
+
+  Those relationships can be loaded when
+  viewing a single allocation.
   */
-private readonly include =
-  Prisma.validator<Prisma.AllocationInclude>()({
 
-    client: true,
+  private readonly listInclude =
+    Prisma.validator<Prisma.AllocationInclude>()({
+      client: true,
 
-    exporter: true,
+      exporter: true,
 
-    consignee: true,
+      consignee: true,
 
-    shipment: {
-      include: {
-        client: true,
-        exporter: true,
-        consignee: true,
+      shipment: {
+        select: {
+          id: true,
 
-        createdBy: {
-          select: {
-            id: true,
-            name: true,
-            email: true,
-          },
-        },
+          shipmentNumber: true,
 
-        documents: true,
+          shipmentDate: true,
 
-        containers: {
-          orderBy: {
-            createdAt: Prisma.SortOrder.desc,
-          },
-        },
+          status: true,
 
-        invoice: true,
-
-        packingList: true,
-
-        transits: {
-          orderBy: {
-            createdAt: Prisma.SortOrder.desc,
-          },
+          transportMode: true,
         },
       },
-    },
 
-    // THIS is what your frontend should use
-    attachedDocuments: true,
-
-    createdBy: {
-      select: {
-        id: true,
-        name: true,
-        email: true,
+      createdBy: {
+        select: {
+          id: true,
+          name: true,
+          email: true,
+        },
       },
-    },
 
-    assignedTo: {
-      select: {
-        id: true,
-        name: true,
-        email: true,
+      assignedTo: {
+        select: {
+          id: true,
+          name: true,
+          email: true,
+        },
       },
-    },
 
-    approvedBy: {
-      select: {
-        id: true,
-        name: true,
-        email: true,
+      approvedBy: {
+        select: {
+          id: true,
+          name: true,
+          email: true,
+        },
       },
-    },
 
-    _count: {
-      select: {
-        attachedDocuments: true,
+      _count: {
+        select: {
+          attachedDocuments: true,
+        },
       },
-    },
-  });
+    });
+
+  /*
+  =====================================
+  Full Include
+  =====================================
+
+  Used by:
+
+  - create()
+  - findById()
+  - update()
+  - updateStatus()
+
+  This gives the details page the complete
+  allocation + shipment information.
+  */
+
+  private readonly include =
+    Prisma.validator<Prisma.AllocationInclude>()({
+      /*
+      =====================================
+      Parties
+      =====================================
+      */
+
+      client: true,
+
+      exporter: true,
+
+      consignee: true,
+
+      /*
+      =====================================
+      Shipment
+      =====================================
+      */
+
+      shipment: {
+        include: {
+          /*
+          Parties
+          */
+
+          client: true,
+
+          exporter: true,
+
+          consignee: true,
+
+          /*
+          Created By
+          */
+
+          createdBy: {
+            select: {
+              id: true,
+              name: true,
+              email: true,
+            },
+          },
+
+          /*
+          Shipment Documents
+          */
+
+          documents: true,
+
+          /*
+          Containers
+          */
+
+          containers: {
+            orderBy: {
+              createdAt:
+                Prisma.SortOrder.desc,
+            },
+          },
+
+          /*
+          Multiple Invoices
+          */
+
+          invoices: true,
+
+          /*
+          Packing List
+          */
+
+          packingList: true,
+
+          /*
+          Transits
+          */
+
+          transits: {
+            orderBy: {
+              createdAt:
+                Prisma.SortOrder.desc,
+            },
+          },
+        },
+      },
+
+      /*
+      =====================================
+      Allocation Documents
+      =====================================
+      */
+
+      attachedDocuments: true,
+
+      /*
+      =====================================
+      Created By
+      =====================================
+      */
+
+      createdBy: {
+        select: {
+          id: true,
+          name: true,
+          email: true,
+        },
+      },
+
+      /*
+      =====================================
+      Assigned To
+      =====================================
+      */
+
+      assignedTo: {
+        select: {
+          id: true,
+          name: true,
+          email: true,
+        },
+      },
+
+      /*
+      =====================================
+      Approved By
+      =====================================
+      */
+
+      approvedBy: {
+        select: {
+          id: true,
+          name: true,
+          email: true,
+        },
+      },
+
+      /*
+      =====================================
+      Counts
+      =====================================
+      */
+
+      _count: {
+        select: {
+          attachedDocuments: true,
+        },
+      },
+    });
 }
 
 export default new AllocationRepository();

@@ -8,7 +8,13 @@ import {
   Truck,
 } from "lucide-react";
 
-import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "../ui/card";
+
 import type { Shipment } from "../../types/shipment.types";
 
 interface Props {
@@ -22,22 +28,35 @@ interface TimelineStep {
   icon: React.ReactNode;
 }
 
-export default function ShipmentTimeline({ shipment }: Props) {
+export default function ShipmentTimeline({
+  shipment,
+}: Props) {
+  const invoiceCount =
+    shipment.invoices?.length ?? 0;
+
   const steps: TimelineStep[] = [
     {
       title: "Shipment Created",
-      description: "Shipment record has been created.",
+      description:
+        "Shipment record has been created.",
       completed: true,
-      icon: <Truck className="h-5 w-5" />,
+      icon: (
+        <Truck className="h-5 w-5" />
+      ),
     },
 
     {
-      title: "Invoice",
-      description: shipment.invoice
-        ? "Invoice has been generated."
-        : "Invoice pending.",
-      completed: !!shipment.invoice,
-      icon: <FileText className="h-5 w-5" />,
+      title: "Invoices",
+      description:
+        invoiceCount > 0
+          ? `${invoiceCount} invoice${
+              invoiceCount > 1 ? "s" : ""
+            } created.`
+          : "Invoice pending.",
+      completed: invoiceCount > 0,
+      icon: (
+        <FileText className="h-5 w-5" />
+      ),
     },
 
     {
@@ -46,7 +65,9 @@ export default function ShipmentTimeline({ shipment }: Props) {
         ? "Packing list has been created."
         : "Packing list pending.",
       completed: !!shipment.packingList,
-      icon: <Package className="h-5 w-5" />,
+      icon: (
+        <Package className="h-5 w-5" />
+      ),
     },
 
     {
@@ -55,8 +76,11 @@ export default function ShipmentTimeline({ shipment }: Props) {
         shipment.transits.length > 0
           ? `${shipment.transits.length} transit record(s).`
           : "No transit records.",
-      completed: shipment.transits.length > 0,
-      icon: <Route className="h-5 w-5" />,
+      completed:
+        shipment.transits.length > 0,
+      icon: (
+        <Route className="h-5 w-5" />
+      ),
     },
 
     {
@@ -65,8 +89,11 @@ export default function ShipmentTimeline({ shipment }: Props) {
         shipment.documents.length > 0
           ? `${shipment.documents.length} uploaded document(s).`
           : "No documents uploaded.",
-      completed: shipment.documents.length > 0,
-      icon: <FolderOpen className="h-5 w-5" />,
+      completed:
+        shipment.documents.length > 0,
+      icon: (
+        <FolderOpen className="h-5 w-5" />
+      ),
     },
 
     {
@@ -75,21 +102,29 @@ export default function ShipmentTimeline({ shipment }: Props) {
         shipment.status === "COMPLETED"
           ? "Shipment completed."
           : "Awaiting completion.",
-      completed: shipment.status === "COMPLETED",
-      icon: <CheckCircle2 className="h-5 w-5" />,
+      completed:
+        shipment.status === "COMPLETED",
+      icon: (
+        <CheckCircle2 className="h-5 w-5" />
+      ),
     },
   ];
 
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Shipment Progress</CardTitle>
+        <CardTitle>
+          Shipment Progress
+        </CardTitle>
       </CardHeader>
 
       <CardContent>
         <div className="space-y-6">
           {steps.map((step, index) => (
-            <div key={step.title} className="flex gap-4">
+            <div
+              key={step.title}
+              className="flex gap-4"
+            >
               <div className="flex flex-col items-center">
                 {step.completed ? (
                   <div className="flex h-10 w-10 items-center justify-center rounded-full bg-green-100 text-green-600">
@@ -107,7 +142,9 @@ export default function ShipmentTimeline({ shipment }: Props) {
               </div>
 
               <div className="pb-4">
-                <h4 className="font-medium">{step.title}</h4>
+                <h4 className="font-medium">
+                  {step.title}
+                </h4>
 
                 <p className="text-sm text-muted-foreground">
                   {step.description}

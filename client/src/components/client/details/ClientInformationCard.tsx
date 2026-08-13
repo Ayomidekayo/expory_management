@@ -1,13 +1,19 @@
 import {
+  Building2,
+  Contact,
+  MapPin,
+  Globe,
+  FileText,
+} from "lucide-react";
+
+import {
   Card,
   CardContent,
   CardHeader,
   CardTitle,
 } from "../../ui/card";
 
-import {
-  Badge,
-} from "../../ui/badge";
+import { Badge } from "../../ui/badge";
 
 import type { Client } from "../../../types/client.types";
 
@@ -23,16 +29,34 @@ function Item({
   value?: string | null;
 }) {
   return (
-    <div>
-
-      <p className="text-sm text-muted-foreground">
+    <div className="min-w-0 space-y-1">
+      <p className="text-xs font-medium uppercase tracking-wide text-slate-500">
         {label}
       </p>
 
-      <p className="font-medium">
+      <p className="break-words text-sm font-medium text-slate-900">
         {value || "-"}
       </p>
+    </div>
+  );
+}
 
+function SectionHeader({
+  icon,
+  title,
+}: {
+  icon: React.ReactNode;
+  title: string;
+}) {
+  return (
+    <div className="mb-5 flex items-center gap-3">
+      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-slate-200 bg-slate-50 text-slate-500">
+        {icon}
+      </div>
+
+      <h3 className="text-base font-semibold text-slate-900">
+        {title}
+      </h3>
     </div>
   );
 }
@@ -41,30 +65,40 @@ export default function ClientInformationCard({
   client,
 }: Props) {
   return (
-    <Card>
+    <Card className="overflow-hidden border-slate-200 bg-white shadow-sm">
+      {/* Header */}
+      <CardHeader className="border-b border-slate-200 bg-slate-50/70 px-6 py-5">
+        <div className="flex items-center gap-3">
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
+            <Building2 className="h-5 w-5" />
+          </div>
 
-      <CardHeader>
+          <div>
+            <CardTitle className="text-base font-semibold text-slate-900">
+              Client Information
+            </CardTitle>
 
-        <CardTitle>
-          Client Information
-        </CardTitle>
-
+            <p className="mt-0.5 text-sm text-slate-500">
+              Business, contact and address details.
+            </p>
+          </div>
+        </div>
       </CardHeader>
 
-      <CardContent className="space-y-10">
+      <CardContent className="space-y-8 p-6">
+        {/* =====================================
+            BUSINESS INFORMATION
+        ===================================== */}
 
-        {/* Business */}
+        <section>
+          <SectionHeader
+            icon={
+              <Building2 className="h-4 w-4" />
+            }
+            title="Business Information"
+          />
 
-        <div>
-
-          <h3 className="mb-4 text-lg font-semibold">
-
-            Business Information
-
-          </h3>
-
-          <div className="grid gap-6 md:grid-cols-3">
-
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             <Item
               label="Company Name"
               value={client.companyName}
@@ -90,12 +124,9 @@ export default function ClientInformationCard({
               value={client.taxNumber}
             />
 
-            <div>
-
-              <p className="text-sm text-muted-foreground">
-
+            <div className="space-y-1">
+              <p className="text-xs font-medium uppercase tracking-wide text-slate-500">
                 Status
-
               </p>
 
               <Badge
@@ -104,30 +135,32 @@ export default function ClientInformationCard({
                     ? "default"
                     : "destructive"
                 }
+                className="mt-1"
               >
                 {client.isActive
                   ? "Active"
                   : "Inactive"}
               </Badge>
-
             </div>
-
           </div>
+        </section>
 
-        </div>
+        {/* Divider */}
+        <div className="border-t border-slate-100" />
 
-        {/* Contact */}
+        {/* =====================================
+            CONTACT INFORMATION
+        ===================================== */}
 
-        <div>
+        <section>
+          <SectionHeader
+            icon={
+              <Contact className="h-4 w-4" />
+            }
+            title="Contact Information"
+          />
 
-          <h3 className="mb-4 text-lg font-semibold">
-
-            Contact Information
-
-          </h3>
-
-          <div className="grid gap-6 md:grid-cols-2">
-
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
             <Item
               label="Contact Person"
               value={client.contactPerson}
@@ -147,23 +180,25 @@ export default function ClientInformationCard({
               label="Alternate Phone"
               value={client.alternatePhone}
             />
-
           </div>
+        </section>
 
-        </div>
+        {/* Divider */}
+        <div className="border-t border-slate-100" />
 
-        {/* Address */}
+        {/* =====================================
+            ADDRESS INFORMATION
+        ===================================== */}
 
-        <div>
+        <section>
+          <SectionHeader
+            icon={
+              <MapPin className="h-4 w-4" />
+            }
+            title="Address Information"
+          />
 
-          <h3 className="mb-4 text-lg font-semibold">
-
-            Address Information
-
-          </h3>
-
-          <div className="grid gap-6 md:grid-cols-2">
-
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
             <Item
               label="Address"
               value={client.address}
@@ -183,31 +218,32 @@ export default function ClientInformationCard({
               label="Country"
               value={client.country}
             />
-
           </div>
+        </section>
 
-        </div>
+        {/* Divider */}
+        <div className="border-t border-slate-100" />
 
-        {/* Remarks */}
+        {/* =====================================
+            REMARKS
+        ===================================== */}
 
-        <div>
+        <section>
+          <SectionHeader
+            icon={
+              <FileText className="h-4 w-4" />
+            }
+            title="Remarks"
+          />
 
-          <h3 className="mb-4 text-lg font-semibold">
-
-            Remarks
-
-          </h3>
-
-          <p className="rounded-lg border bg-slate-50 p-4">
-
-            {client.remarks || "No remarks available."}
-
-          </p>
-
-        </div>
-
+          <div className="rounded-lg border border-slate-200 bg-slate-50/70 p-4">
+            <p className="whitespace-pre-wrap break-words text-sm leading-6 text-slate-700">
+              {client.remarks ||
+                "No remarks available."}
+            </p>
+          </div>
+        </section>
       </CardContent>
-
     </Card>
   );
 }

@@ -40,7 +40,9 @@ export default function ContainerForm({
     undefined,
     CreateContainerOutput
   >({
-    resolver: zodResolver(createContainerSchema),
+    resolver: zodResolver(
+      createContainerSchema
+    ),
 
     defaultValues: {
       shipmentId: "",
@@ -82,38 +84,98 @@ export default function ContainerForm({
   useEffect(() => {
     if (!defaultValues) return;
 
-    form.reset(defaultValues);
+    form.reset({
+      ...defaultValues,
+    });
   }, [defaultValues, form]);
-
-  console.log(form.formState.errors);
 
   return (
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(
           (values) => {
-            console.log("✅ VALID", values);
+            console.log(
+              "✅ VALID CONTAINER:",
+              values
+            );
+
             onSubmit(values);
           },
           (errors) => {
-            console.log("❌ VALIDATION ERRORS", errors);
+            console.log(
+              "❌ CONTAINER VALIDATION ERRORS:",
+              errors
+            );
           }
         )}
+        className="w-full"
       >
-        <ContainerInformation form={form} />
+        {/* =========================================
+            FORM CONTENT
+        ========================================= */}
 
-        <ShipmentInformation form={form} />
+        <div className="mx-auto w-full  space-y-6">
+          {/* =====================================
+              CONTAINER INFORMATION
+          ===================================== */}
 
-        <PhysicalInformation form={form} />
+          <section>
+            <ContainerInformation
+              form={form}
+            />
+          </section>
 
-        <LogisticsInformation form={form} />
+          {/* =====================================
+              SHIPMENT INFORMATION
+          ===================================== */}
 
-        <Summary form={form} />
+          <section>
+            <ShipmentInformation
+              form={form}
+            />
+          </section>
 
-        <FormActions
-          loading={loading}
-          isEditing={isEditing}
-        />
+          {/* =====================================
+              PHYSICAL INFORMATION
+          ===================================== */}
+
+          <section>
+            <PhysicalInformation
+              form={form}
+            />
+          </section>
+
+          {/* =====================================
+              LOGISTICS INFORMATION
+          ===================================== */}
+
+          <section>
+            <LogisticsInformation
+              form={form}
+            />
+          </section>
+
+          {/* =====================================
+              SUMMARY
+          ===================================== */}
+
+          <section>
+            <Summary form={form} />
+          </section>
+
+          {/* =====================================
+              ACTIONS
+          ===================================== */}
+
+          <div className="sticky bottom-0 z-10 -mx-4 border-t border-slate-200 bg-white/95 px-4 py-4 backdrop-blur sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
+            <div className="mx-auto max-w-7xl">
+              <FormActions
+                loading={loading}
+                isEditing={isEditing}
+              />
+            </div>
+          </div>
+        </div>
       </form>
     </Form>
   );

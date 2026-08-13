@@ -402,15 +402,27 @@ class InvoiceRepository {
   =====================================
   */
 
-  async findByShipmentId(
-    shipmentId: string
-  ) {
-    return prisma.invoice.findUnique({
-      where: {
-        shipmentId,
-      },
-    });
-  }
+/*
+=====================================
+Find All Invoices By Shipment
+=====================================
+*/
+
+async findByShipmentId(
+  shipmentId: string
+) {
+  return prisma.invoice.findMany({
+    where: {
+      shipmentId,
+    },
+
+    include: this.detailsInclude,
+
+    orderBy: {
+      createdAt: "asc",
+    },
+  });
+}
 
   /*
   =====================================

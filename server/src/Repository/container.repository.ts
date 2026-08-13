@@ -20,68 +20,49 @@ class ContainerRepository {
   =====================================
   */
 
-async create(
-  data: CreateContainerDto
-) {
-  return prisma.container.create({
-    data: {
-      shipmentId:
-        data.shipmentId,
+  async create(data: CreateContainerDto) {
+    return prisma.container.create({
+      data: {
+        shipmentId: data.shipmentId,
 
-      packingListId:
-        data.packingListId,
+        packingListId: data.packingListId,
 
-      containerNumber:
-        data.containerNumber,
+        containerNumber: data.containerNumber,
 
-      sealNumber:
-        data.sealNumber,
+        sealNumber: data.sealNumber,
 
-      containerType:
-        data.containerType,
+        containerType: data.containerType,
 
-      containerSize:
-        data.containerSize,
+        containerSize: data.containerSize,
 
-      grossWeight:
-        data.grossWeight,
+        grossWeight: data.grossWeight,
 
-      netWeight:
-        data.netWeight,
+        netWeight: data.netWeight,
 
-      tareWeight:
-        data.tareWeight,
+        tareWeight: data.tareWeight,
 
-      volume:
-        data.volume,
+        volume: data.volume,
 
-      loadingLocation:
-        data.loadingLocation,
+        loadingLocation: data.loadingLocation,
 
-      destination:
-        data.destination,
+        destination: data.destination,
 
-      status:
-        data.status,
+        status: data.status,
 
-      terminalChargeStatus:
-        data.terminalChargeStatus ??
-        "UNPAID",
+        terminalChargeStatus:
+          data.terminalChargeStatus ?? "UNPAID",
 
-      shippingLine:
-        data.shippingLine,
+        shippingLine: data.shippingLine,
 
-      bookingReference:
-        data.bookingReference,
+        bookingReference: data.bookingReference,
 
-      containerCondition:
-        data.containerCondition,
-    },
+        containerCondition:
+          data.containerCondition,
+      },
 
-    include:
-      this.detailsInclude,
-  });
-}
+      include: this.detailsInclude,
+    });
+  }
 
   /*
   =====================================
@@ -107,9 +88,7 @@ async create(
   =====================================
   */
 
-  async findAll(
-    query: ContainerQuery
-  ) {
+  async findAll(query: ContainerQuery) {
     const {
       page,
       limit,
@@ -117,15 +96,14 @@ async create(
       shipmentId,
       packingListId,
       status,
-       terminalChargeStatus,
+      terminalChargeStatus,
       containerType,
       containerSize,
       sortBy,
       sortOrder,
     } = query;
 
-    const where:
-      Prisma.ContainerWhereInput = {
+    const where: Prisma.ContainerWhereInput = {
       ...(shipmentId && {
         shipmentId,
       }),
@@ -137,9 +115,11 @@ async create(
       ...(status && {
         status,
       }),
- ...(terminalChargeStatus && {
-      terminalChargeStatus,
-    }),
+
+      ...(terminalChargeStatus && {
+        terminalChargeStatus,
+      }),
+
       ...(containerType && {
         containerType,
       }),
@@ -183,30 +163,25 @@ async create(
       }),
     };
 
-    const [data, total] =
-      await Promise.all([
-        prisma.container.findMany({
-          where,
+    const [data, total] = await Promise.all([
+      prisma.container.findMany({
+        where,
 
-          include:
-            this.listInclude,
+        include: this.listInclude,
 
-          orderBy: {
-            [sortBy]:
-              sortOrder,
-          },
+        orderBy: {
+          [sortBy]: sortOrder,
+        },
 
-          skip:
-            (page - 1) * limit,
+        skip: (page - 1) * limit,
 
-          take:
-            limit,
-        }),
+        take: limit,
+      }),
 
-        prisma.container.count({
-          where,
-        }),
-      ]);
+      prisma.container.count({
+        where,
+      }),
+    ]);
 
     return {
       data,
@@ -216,10 +191,7 @@ async create(
         limit,
         total,
 
-        totalPages:
-          Math.ceil(
-            total / limit
-          ),
+        totalPages: Math.ceil(total / limit),
       },
     };
   }
@@ -230,16 +202,13 @@ async create(
   =====================================
   */
 
-  async findById(
-    id: string
-  ) {
+  async findById(id: string) {
     return prisma.container.findUnique({
       where: {
         id,
       },
 
-      include:
-        this.detailsInclude,
+      include: this.detailsInclude,
     });
   }
 
@@ -261,57 +230,49 @@ async create(
 
   /*
   =====================================
-  Update Status
+  Update Physical Status
   =====================================
   */
 
-/*
-=====================================
-Update Physical Status
-=====================================
-*/
+  async updateStatus(
+    id: string,
+    status: ContainerStatus
+  ) {
+    return prisma.container.update({
+      where: {
+        id,
+      },
 
-async updateStatus(
-  id: string,
-  status: ContainerStatus
-) {
-  return prisma.container.update({
-    where: {
-      id,
-    },
+      data: {
+        status,
+      },
 
-    data: {
-      status,
-    },
+      include: this.detailsInclude,
+    });
+  }
 
-    include:
-      this.detailsInclude,
-  });
-}
+  /*
+  =====================================
+  Update Terminal Charge Status
+  =====================================
+  */
 
-/*
-=====================================
-Update Terminal Charge Status
-=====================================
-*/
+  async updateTerminalChargeStatus(
+    id: string,
+    terminalChargeStatus: TerminalChargeStatus
+  ) {
+    return prisma.container.update({
+      where: {
+        id,
+      },
 
-async updateTerminalChargeStatus(
-  id: string,
-  terminalChargeStatus: TerminalChargeStatus
-) {
-  return prisma.container.update({
-    where: {
-      id,
-    },
+      data: {
+        terminalChargeStatus,
+      },
 
-    data: {
-      terminalChargeStatus,
-    },
-
-    include:
-      this.detailsInclude,
-  });
-}
+      include: this.detailsInclude,
+    });
+  }
 
   /*
   =====================================
@@ -330,56 +291,108 @@ async updateTerminalChargeStatus(
 
       data,
 
-      include:
-        this.detailsInclude,
+      include: this.detailsInclude,
     });
   }
 
-
+  /*
+  =====================================
+  Update Terminal Charge
+  =====================================
+  */
 
   async updateTerminalCharge(
-  id: string,
-  status: TerminalChargeStatus,
-  amount?: number
-) {
-  return prisma.container.update({
-    where: {
-      id,
-    },
+    id: string,
+    status: TerminalChargeStatus,
+    amount?: number
+  ) {
+    return prisma.container.update({
+      where: {
+        id,
+      },
 
-    data: {
-      terminalChargeStatus:
-        status,
+      data: {
+        terminalChargeStatus: status,
 
-      terminalChargeAmount:
-        amount !== undefined
-          ? amount
-          : null,
-    },
+        terminalChargeAmount:
+          amount !== undefined
+            ? amount
+            : null,
+      },
 
-    include:
-      this.detailsInclude,
-  });
-}
+      include: this.detailsInclude,
+    });
+  }
+
   /*
   =====================================
   Delete
   =====================================
   */
 
-  async delete(
-    id: string
-  ) {
+  async delete(id: string) {
+    /*
+    Check whether the container exists
+    and whether it has any transit records.
+    */
+
+    const container =
+      await prisma.container.findUnique({
+        where: {
+          id,
+        },
+
+        select: {
+          id: true,
+
+          containerNumber: true,
+
+          _count: {
+            select: {
+              transits: true,
+            },
+          },
+        },
+      });
+
+    /*
+    Container does not exist
+    */
+
+    if (!container) {
+      throw new Error(
+        "Container not found"
+      );
+    }
+
+    /*
+    Prevent deletion when the container
+    is still being used by Transit.
+    */
+
+    if (container._count.transits > 0) {
+      throw new Error(
+        `Cannot delete container ${container.containerNumber}. ` +
+          `It has ${container._count.transits} ` +
+          `${
+            container._count.transits === 1
+              ? "transit record"
+              : "transit records"
+          } associated with it. ` +
+          `Remove the associated transit records first.`
+      );
+    }
+
+    /*
+    Safe to delete.
+    */
+
     return prisma.container.delete({
       where: {
         id,
       },
     });
   }
-
-
-
-
 
   /*
   =====================================

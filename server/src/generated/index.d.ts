@@ -22768,11 +22768,11 @@ export namespace Prisma {
 
   export type InvoiceWhereUniqueInput = Prisma.AtLeast<{
     id?: string
-    shipmentId?: string
     invoiceNumber?: string
     AND?: InvoiceWhereInput | InvoiceWhereInput[]
     OR?: InvoiceWhereInput[]
     NOT?: InvoiceWhereInput | InvoiceWhereInput[]
+    shipmentId?: StringFilter<"Invoice"> | string
     externalInvoiceNumber?: StringNullableFilter<"Invoice"> | string | null
     invoiceDate?: DateTimeFilter<"Invoice"> | Date | string
     currency?: EnumCurrencyFilter<"Invoice"> | $Enums.Currency
@@ -22791,7 +22791,7 @@ export namespace Prisma {
     documents?: DocumentListRelationFilter
     shipment?: XOR<ShipmentScalarRelationFilter, ShipmentWhereInput>
     items?: InvoiceItemListRelationFilter
-  }, "id" | "shipmentId" | "invoiceNumber">
+  }, "id" | "invoiceNumber">
 
   export type InvoiceOrderByWithAggregationInput = {
     id?: SortOrder

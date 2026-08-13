@@ -1,20 +1,12 @@
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 import type { UseFormReturn } from "react-hook-form";
+
+import {
+  MapPin,
+  Navigation,
+  Ship,
+  ClipboardList,
+  Settings2,
+} from "lucide-react";
 
 import {
   FormControl,
@@ -34,192 +26,266 @@ interface Props {
   form: UseFormReturn<CreateContainerInput>;
 }
 
-export default function LogisticsInformation({
-  form,
-}: Props) {
+/*
+=========================================
+FIELD ICON
+=========================================
+*/
+
+function FieldIcon({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
-    <div className="rounded-xl border bg-white p-6">
-
-      <div className="mb-6">
-
-        <h2 className="text-xl font-semibold">
-          Logistics Information
-        </h2>
-
-        <p className="text-sm text-muted-foreground">
-          Shipping and destination details.
-        </p>
-
-      </div>
-
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-
-        {/* Loading Location */}
-
-        <FormField
-          control={form.control}
-          name="loadingLocation"
-          render={({ field }) => (
-            <FormItem>
-
-              <FormLabel>
-                Loading Location
-              </FormLabel>
-
-              <FormControl>
-
-                <Input
-                  placeholder="Apapa Port"
-                  {...field}
-                  value={field.value ?? ""}
-                />
-
-              </FormControl>
-
-              <FormMessage />
-
-            </FormItem>
-          )}
-        />
-
-        {/* Destination */}
-
-        <FormField
-          control={form.control}
-          name="destination"
-          render={({ field }) => (
-            <FormItem>
-
-              <FormLabel>
-                Destination
-              </FormLabel>
-
-              <FormControl>
-
-                <Input
-                  placeholder="Shanghai, China"
-                  {...field}
-                  value={field.value ?? ""}
-                />
-
-              </FormControl>
-
-              <FormMessage />
-
-            </FormItem>
-          )}
-        />
-
-        {/* Shipping Line */}
-
-        <FormField
-          control={form.control}
-          name="shippingLine"
-          render={({ field }) => (
-            <FormItem>
-
-              <FormLabel>
-                Shipping Line
-              </FormLabel>
-
-              <FormControl>
-
-                <Input
-                  placeholder="Maersk"
-                  {...field}
-                  value={field.value ?? ""}
-                />
-
-              </FormControl>
-
-              <FormMessage />
-
-            </FormItem>
-          )}
-        />
-
-        {/* Booking Reference */}
-
-        <FormField
-          control={form.control}
-          name="bookingReference"
-          render={({ field }) => (
-            <FormItem>
-
-              <FormLabel>
-                Booking Reference
-              </FormLabel>
-
-              <FormControl>
-
-                <Input
-                  placeholder="BK-2026-0001"
-                  {...field}
-                  value={field.value ?? ""}
-                />
-
-              </FormControl>
-
-              <FormMessage />
-
-            </FormItem>
-          )}
-        />
-
-        {/* Container Condition */}
-
-        <FormField
-          control={form.control}
-          name="containerCondition"
-          render={({ field }) => (
-            <FormItem>
-
-              <FormLabel>
-                Container Condition
-              </FormLabel>
-
-              <FormControl>
-
-                <Input
-                  placeholder="Excellent"
-                  {...field}
-                  value={field.value ?? ""}
-                />
-
-              </FormControl>
-
-              <FormMessage />
-
-            </FormItem>
-          )}
-        />
-
-      </div>
-
+    <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-slate-200 bg-slate-50 text-slate-500">
+      {children}
     </div>
   );
 }
 
+export default function LogisticsInformation({
+  form,
+}: Props) {
+  return (
+    <div className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
+      {/* =========================================
+          HEADER
+      ========================================= */}
 
+      <div className="border-b border-slate-200 bg-slate-50/70 px-6 py-5">
+        <div className="flex items-center gap-3">
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
+            <Navigation className="h-5 w-5" />
+          </div>
 
+          <div>
+            <h2 className="text-base font-semibold text-slate-900">
+              Logistics Information
+            </h2>
 
-{/* <Select
-  value={field.value ?? ""}
-  onValueChange={field.onChange}
->
-  <FormControl>
-    <SelectTrigger>
-      <SelectValue placeholder="Select Condition" />
-    </SelectTrigger>
-  </FormControl>
+            <p className="mt-0.5 text-sm text-slate-500">
+              Provide the loading, destination, shipping,
+              and container logistics details.
+            </p>
+          </div>
+        </div>
+      </div>
 
-  <SelectContent>
-    <SelectItem value="NEW">New</SelectItem>
-    <SelectItem value="GOOD">Good</SelectItem>
-    <SelectItem value="FAIR">Fair</SelectItem>
-    <SelectItem value="DAMAGED">Damaged</SelectItem>
-    <SelectItem value="UNDER_REPAIR">
-      Under Repair
-    </SelectItem>
-  </SelectContent>
-</Select> */}
+      {/* =========================================
+          CONTENT
+      ========================================= */}
+
+      <div className="p-6">
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {/* =====================================
+              LOADING LOCATION
+          ===================================== */}
+
+          <FormField
+            control={form.control}
+            name="loadingLocation"
+            render={({ field }) => (
+              <FormItem className="min-w-0">
+                <FormLabel className="mb-2 block text-sm font-medium text-slate-700">
+                  Loading Location
+                </FormLabel>
+
+                <div className="flex min-w-0 items-center gap-3">
+                  <FieldIcon>
+                    <MapPin className="h-4 w-4" />
+                  </FieldIcon>
+
+                  <FormControl>
+                    <Input
+                      placeholder="e.g. Apapa Port"
+                      {...field}
+                      value={field.value ?? ""}
+                      className="h-11 w-full border-slate-200"
+                    />
+                  </FormControl>
+                </div>
+
+                <p className="mt-1 text-xs text-slate-500">
+                  Location where the container will be loaded.
+                </p>
+
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          {/* =====================================
+              DESTINATION
+          ===================================== */}
+
+          <FormField
+            control={form.control}
+            name="destination"
+            render={({ field }) => (
+              <FormItem className="min-w-0">
+                <FormLabel className="mb-2 block text-sm font-medium text-slate-700">
+                  Destination
+                </FormLabel>
+
+                <div className="flex min-w-0 items-center gap-3">
+                  <FieldIcon>
+                    <Navigation className="h-4 w-4" />
+                  </FieldIcon>
+
+                  <FormControl>
+                    <Input
+                      placeholder="e.g. Shanghai, China"
+                      {...field}
+                      value={field.value ?? ""}
+                      className="h-11 w-full border-slate-200"
+                    />
+                  </FormControl>
+                </div>
+
+                <p className="mt-1 text-xs text-slate-500">
+                  Final destination of the container.
+                </p>
+
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          {/* =====================================
+              SHIPPING LINE
+          ===================================== */}
+
+          <FormField
+            control={form.control}
+            name="shippingLine"
+            render={({ field }) => (
+              <FormItem className="min-w-0">
+                <FormLabel className="mb-2 block text-sm font-medium text-slate-700">
+                  Shipping Line
+                </FormLabel>
+
+                <div className="flex min-w-0 items-center gap-3">
+                  <FieldIcon>
+                    <Ship className="h-4 w-4" />
+                  </FieldIcon>
+
+                  <FormControl>
+                    <Input
+                      placeholder="e.g. Maersk"
+                      {...field}
+                      value={field.value ?? ""}
+                      className="h-11 w-full border-slate-200"
+                    />
+                  </FormControl>
+                </div>
+
+                <p className="mt-1 text-xs text-slate-500">
+                  Carrier or shipping company.
+                </p>
+
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          {/* =====================================
+              BOOKING REFERENCE
+          ===================================== */}
+
+          <FormField
+            control={form.control}
+            name="bookingReference"
+            render={({ field }) => (
+              <FormItem className="min-w-0">
+                <FormLabel className="mb-2 block text-sm font-medium text-slate-700">
+                  Booking Reference
+                </FormLabel>
+
+                <div className="flex min-w-0 items-center gap-3">
+                  <FieldIcon>
+                    <ClipboardList className="h-4 w-4" />
+                  </FieldIcon>
+
+                  <FormControl>
+                    <Input
+                      placeholder="e.g. BK-2026-0001"
+                      {...field}
+                      value={field.value ?? ""}
+                      className="h-11 w-full border-slate-200"
+                    />
+                  </FormControl>
+                </div>
+
+                <p className="mt-1 text-xs text-slate-500">
+                  Reference number provided for the booking.
+                </p>
+
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          {/* =====================================
+              CONTAINER CONDITION
+          ===================================== */}
+
+          <FormField
+            control={form.control}
+            name="containerCondition"
+            render={({ field }) => (
+              <FormItem className="min-w-0">
+                <FormLabel className="mb-2 block text-sm font-medium text-slate-700">
+                  Container Condition
+                </FormLabel>
+
+                <div className="flex min-w-0 items-center gap-3">
+                  <FieldIcon>
+                    <Settings2 className="h-4 w-4" />
+                  </FieldIcon>
+
+                  <FormControl>
+                    <Input
+                      placeholder="e.g. Excellent"
+                      {...field}
+                      value={field.value ?? ""}
+                      className="h-11 w-full border-slate-200"
+                    />
+                  </FormControl>
+                </div>
+
+                <p className="mt-1 text-xs text-slate-500">
+                  Current physical condition of the container.
+                </p>
+
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
+
+        {/* =========================================
+            INFORMATION NOTE
+        ========================================= */}
+
+        <div className="mt-6 flex items-start gap-3 rounded-lg border border-slate-200 bg-slate-50 p-4">
+          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-primary/10 text-primary">
+            <Navigation className="h-4 w-4" />
+          </div>
+
+          <div>
+            <p className="text-sm font-medium text-slate-800">
+              Logistics Details
+            </p>
+
+            <p className="mt-1 text-xs leading-5 text-slate-500">
+              Ensure the loading location, destination,
+              shipping line, and booking reference match
+              the shipment documentation.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}

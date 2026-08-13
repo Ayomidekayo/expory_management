@@ -27,44 +27,47 @@ export default function Remarks({
   form,
 }: Props) {
   return (
-    <div className="rounded-xl border bg-white p-6">
-      <div className="mb-6">
-        <h2 className="text-xl font-semibold">
+    <div className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
+      {/* Header */}
+
+      <div className="border-b border-slate-200 bg-slate-50/70 px-6 py-5">
+        <h2 className="text-base font-semibold text-slate-900">
           Remarks
         </h2>
 
-        <p className="text-sm text-muted-foreground">
-          Additional notes for this invoice.
+        <p className="mt-1 text-sm text-slate-500">
+          Add any additional notes or special instructions
+          for this invoice.
         </p>
       </div>
 
-      <FormField
-        control={form.control}
-        name="remarks"
-        render={({ field }) => (
-          <FormItem>
-            <FormLabel>
-              Remarks
-            </FormLabel>
+      {/* Content */}
 
-            <FormControl>
-              <Textarea
-                rows={5}
-                placeholder="Enter remarks..."
-                name={field.name}
-                ref={field.ref}
-                onBlur={field.onBlur}
-                value={field.value ?? ""}
-                onChange={(e) =>
-                  field.onChange(e.target.value)
-                }
-              />
-            </FormControl>
+      <div className="p-6">
+        <FormField
+          control={form.control}
+          name="remarks"
+          render={({ field }) => (
+            <FormItem className="w-full">
+              <FormLabel className="mb-2 block text-sm font-medium text-slate-700">
+                Remarks
+              </FormLabel>
 
-            <FormMessage />
-          </FormItem>
-        )}
-      />
+              <FormControl>
+                <Textarea
+                  {...field}
+                  value={field.value ?? ""}
+                  rows={6}
+                  placeholder="Enter additional notes, payment instructions, delivery details, or other relevant information..."
+                  className="min-h-[140px] w-full resize-y border-slate-200 bg-white px-4 py-3 text-sm leading-6 shadow-sm transition-colors placeholder:text-slate-400 focus:border-primary focus:ring-2 focus:ring-primary/10"
+                />
+              </FormControl>
+
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+      </div>
     </div>
   );
 }

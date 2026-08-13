@@ -1,8 +1,7 @@
-
-
 import { InvoiceStatus } from "../generated";
 
 import invoiceRepository from "../Repository/invoice.repository";
+
 import shipmentRepository from "../Repository/shipment.repository";
 
 import { ApiError } from "../utils/ApiError";
@@ -22,8 +21,7 @@ class InvoiceService {
   */
 
   private async generateInvoiceNumber() {
-    const year =
-      new Date().getFullYear();
+    const year = new Date().getFullYear();
 
     const latest =
       await invoiceRepository.findLatestInvoice();
@@ -43,45 +41,55 @@ class InvoiceService {
 
   /*
   =====================================
-  Create
+  Create Invoice
   =====================================
   */
 
   async create(
-  data: CreateInvoiceDto
-) {
-  const shipment =
-    await shipmentRepository.findById(
-      data.shipmentId
-    );
+    data: CreateInvoiceDto
+  ) {
+    /*
+    =====================================
+    Ensure Shipment Exists
+    =====================================
+    */
 
-  if (!shipment) {
-    throw new ApiError(
-      404,
-      "Shipment not found."
-    );
+    const shipment =
+      await shipmentRepository.findById(
+        data.shipmentId
+      );
+
+    if (!shipment) {
+      throw new ApiError(
+        404,
+        "Shipment not found."
+      );
+    }
+
+    /*
+    =====================================
+    IMPORTANT:
+    DO NOT CHECK WHETHER THE SHIPMENT
+    ALREADY HAS AN INVOICE.
+
+    One shipment can now have MANY invoices.
+    =====================================
+    */
+
+    const invoiceNumber =
+      await this.generateInvoiceNumber();
+
+    /*
+    =====================================
+    Create Invoice
+    =====================================
+    */
+
+    return invoiceRepository.create({
+      ...data,
+      invoiceNumber,
+    });
   }
-
-  const existing =
-    await invoiceRepository.findByShipmentId(
-      data.shipmentId
-    );
-
-  if (existing) {
-    throw new ApiError(
-      400,
-      "This shipment already has an invoice."
-    );
-  }
-
-  const invoiceNumber =
-    await this.generateInvoiceNumber();
-
-  return invoiceRepository.create({
-    ...data,
-    invoiceNumber,
-  });
-}
 
   /*
   =====================================
@@ -129,7 +137,10 @@ class InvoiceService {
     id: string,
     status: InvoiceStatus
   ) {
-    // Make sure invoice exists
+    /*
+    Make sure invoice exists.
+    */
+
     await this.findById(id);
 
     return invoiceRepository.updateStatus(
@@ -148,6 +159,10 @@ class InvoiceService {
     id: string,
     data: UpdateInvoiceDto
   ) {
+    /*
+    Make sure invoice exists.
+    */
+
     await this.findById(id);
 
     return invoiceRepository.update(
@@ -163,11 +178,14 @@ class InvoiceService {
   */
 
   async delete(id: string) {
+    /*
+    Make sure invoice exists.
+    */
+
     await this.findById(id);
 
     return invoiceRepository.delete(id);
   }
-  
 }
 
 export default new InvoiceService();

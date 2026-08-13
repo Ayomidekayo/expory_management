@@ -3,9 +3,7 @@ import {
   ChevronsUpDown,
 } from "lucide-react";
 
-import {
-  Button,
-} from "../../ui/button";
+import { Button } from "../../ui/button";
 
 import {
   Popover,
@@ -61,47 +59,59 @@ export default function ClientInformation({
   } = useAllocationLookups();
 
   return (
-    <div className="rounded-xl border bg-white p-6 space-y-6">
-      <div>
-        <h2 className="text-xl font-semibold">
-          Client Information
-        </h2>
+    <div className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
+      {/* =========================================
+          HEADER
+      ========================================= */}
 
-        <p className="text-sm text-slate-500">
-          Select the client, exporter and consignee.
-        </p>
+      <div className="border-b border-slate-200 bg-slate-50/70 px-6 py-5">
+        <div>
+          <h2 className="text-base font-semibold text-slate-900">
+            Client Information
+          </h2>
+
+          <p className="mt-0.5 text-sm text-slate-500">
+            Select the client, exporter and consignee.
+          </p>
+        </div>
       </div>
 
-      <div className="grid gap-6 md:grid-cols-3">
-        <SearchableSelect
-          form={form}
-          name="clientId"
-          label="Client"
-          options={clients.map((client) => ({
-            value: client.id,
-            label: client.companyName,
-          }))}
-        />
+      {/* =========================================
+          FORM CONTENT
+      ========================================= */}
 
-        <SearchableSelect
-          form={form}
-          name="exporterId"
-          label="Exporter"
-          options={exporters.map((exporter) => ({
-            value: exporter.id,
-            label: exporter.name,
-          }))}
-        />
+      <div className="p-6">
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+          <SearchableSelect
+            form={form}
+            name="clientId"
+            label="Client"
+            options={clients.map((client) => ({
+              value: client.id,
+              label: client.companyName,
+            }))}
+          />
 
-        <SearchableSelect
-          form={form}
-          name="consigneeId"
-          label="Consignee"
-          options={consignees.map((consignee) => ({
-            value: consignee.id,
-            label: consignee.name,
-          }))}
-        />
+          <SearchableSelect
+            form={form}
+            name="exporterId"
+            label="Exporter"
+            options={exporters.map((exporter) => ({
+              value: exporter.id,
+              label: exporter.name,
+            }))}
+          />
+
+          <SearchableSelect
+            form={form}
+            name="consigneeId"
+            label="Consignee"
+            options={consignees.map((consignee) => ({
+              value: consignee.id,
+              label: consignee.name,
+            }))}
+          />
+        </div>
       </div>
     </div>
   );
@@ -137,8 +147,10 @@ function SearchableSelect({
       control={form.control}
       name={name}
       render={({ field }) => (
-        <FormItem className="flex flex-col">
-          <FormLabel>{label}</FormLabel>
+        <FormItem className="min-w-0">
+          <FormLabel className="mb-2 block text-sm font-medium text-slate-700">
+            {label}
+          </FormLabel>
 
           <Popover>
             <PopoverTrigger asChild>
@@ -148,35 +160,39 @@ function SearchableSelect({
                   variant="outline"
                   role="combobox"
                   className={cn(
-                    "justify-between",
+                    "h-11 w-full justify-between border-slate-200 bg-white px-3 text-left font-normal shadow-sm hover:bg-slate-50",
                     !field.value &&
-                      "text-muted-foreground"
+                      "text-slate-400"
                   )}
                 >
-                  {options.find(
-                    (item) =>
-                      item.value === field.value
-                  )?.label ?? `Select ${label}`}
+                  <span className="truncate">
+                    {options.find(
+                      (item) =>
+                        item.value === field.value
+                    )?.label ??
+                      `Select ${label}`}
+                  </span>
 
-                  <ChevronsUpDown className="h-4 w-4 shrink-0 opacity-50" />
+                  <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 text-slate-400" />
                 </Button>
               </FormControl>
             </PopoverTrigger>
 
             <PopoverContent
-              className="w-full p-0"
+              className="w-[var(--radix-popover-trigger-width)] min-w-[220px] p-0"
               align="start"
             >
               <Command>
                 <CommandInput
-                  placeholder={`Search ${label}`}
+                  placeholder={`Search ${label}...`}
+                  className="h-10"
                 />
 
-                <CommandEmpty>
-                  No {label} found.
+                <CommandEmpty className="py-6 text-center text-sm text-slate-500">
+                  No {label.toLowerCase()} found.
                 </CommandEmpty>
 
-                <CommandGroup>
+                <CommandGroup className="max-h-64 overflow-y-auto p-1">
                   {options.map((option) => (
                     <CommandItem
                       key={option.value}
@@ -188,17 +204,20 @@ function SearchableSelect({
                             : option.value
                         )
                       }
+                      className="cursor-pointer rounded-md px-2 py-2.5"
                     >
                       <Check
                         className={cn(
-                          "mr-2 h-4 w-4",
+                          "mr-2 h-4 w-4 shrink-0 text-primary",
                           option.value === field.value
                             ? "opacity-100"
                             : "opacity-0"
                         )}
                       />
 
-                      {option.label}
+                      <span className="truncate">
+                        {option.label}
+                      </span>
                     </CommandItem>
                   ))}
                 </CommandGroup>

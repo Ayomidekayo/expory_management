@@ -5,12 +5,13 @@ import { zodResolver } from "@hookform/resolvers/zod";
 
 import { Form } from "../ui/form";
 
+import type { Exporter } from "../../types/exporter.types";
 
+import {
+  createExporterSchema,
+  type CreateExporterInput,
+} from "../../validations/exporter.validation";
 
-import type {
-  Exporter,
-} from "../../types/exporter.types";
-import { createExporterSchema, type CreateExporterInput } from "../../validations/exporter.validation";
 import BasicInformation from "./section/BasicInformation";
 import ContactInformation from "./section/ContactInformation";
 import AddressInformation from "./section/AddressInformation";
@@ -23,9 +24,7 @@ interface Props {
 
   isEditing?: boolean;
 
-  onSubmit: (
-    data: CreateExporterInput
-  ) => void;
+  onSubmit: (data: CreateExporterInput) => void;
 }
 
 export default function ExporterForm({
@@ -36,83 +35,70 @@ export default function ExporterForm({
 }: Props) {
   const navigate = useNavigate();
 
-  const form =
-    useForm<CreateExporterInput>({
-      resolver: zodResolver(
-        createExporterSchema
-      ),
+  const form = useForm<CreateExporterInput>({
+    resolver: zodResolver(createExporterSchema),
 
-      defaultValues: {
-        name: "",
-
-        contactPerson: "",
-
-        phone: "",
-
-        email: "",
-
-        address: "",
-      },
-    });
+    defaultValues: {
+      name: "",
+      contactPerson: "",
+      phone: "",
+      email: "",
+      address: "",
+    },
+  });
 
   useEffect(() => {
     if (!defaultValues) return;
 
     form.reset({
-      name:
-        defaultValues.name ?? "",
-
+      name: defaultValues.name ?? "",
       contactPerson:
-        defaultValues.contactPerson ??
-        "",
-
-      phone:
-        defaultValues.phone ?? "",
-
-      email:
-        defaultValues.email ?? "",
-
-      address:
-        defaultValues.address ?? "",
+        defaultValues.contactPerson ?? "",
+      phone: defaultValues.phone ?? "",
+      email: defaultValues.email ?? "",
+      address: defaultValues.address ?? "",
     });
-  }, [
-    defaultValues,
-    form,
-  ]);
+  }, [defaultValues, form]);
 
-  const submit = (
-    values: CreateExporterInput
-  ) => {
+  const submit = (values: CreateExporterInput) => {
     onSubmit(values);
   };
 
   return (
     <Form {...form}>
       <form
-        onSubmit={form.handleSubmit(
-          submit
-        )}
-        className="space-y-8"
+        onSubmit={form.handleSubmit(submit)}
+        className="w-full space-y-6"
       >
-        <BasicInformation
-          form={form}
-        />
+        {/* =====================================================
+            FORM SECTIONS
+        ===================================================== */}
 
-        <ContactInformation
-          form={form}
-        />
+        <div className="space-y-6">
+          {/* Basic Information */}
 
-        <AddressInformation
-          form={form}
-        />
+          <BasicInformation form={form} />
 
-        <FormActions
-          isLoading={loading}
-          isEdit={isEditing}
-          onCancel={() =>
-            navigate("/exporters")
-          }
-        />
+          {/* Contact Information */}
+
+          <ContactInformation form={form} />
+
+          {/* Address Information */}
+
+          <AddressInformation form={form} />
+        </div>
+
+        {/* =====================================================
+            FORM ACTIONS
+        ===================================================== */}
+
+        <div className="border-t border-slate-200 pt-6">
+          <FormActions
+            isLoading={loading}
+            isEdit={isEditing}
+            onCancel={() => navigate("/exporters")}
+          />
+        </div>
       </form>
     </Form>
   );
