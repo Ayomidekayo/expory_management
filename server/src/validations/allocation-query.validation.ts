@@ -9,23 +9,17 @@ import {
 
 /*
 =====================================
-Optional Query String
+Helpers
 =====================================
-
-Converts:
-
-""
-→ undefined
-
-This prevents empty filters from
-causing 400 validation errors.
 */
 
 const optionalString = z.preprocess(
   (value) => {
     if (
-      typeof value === "string" &&
-      value.trim() === ""
+      value === undefined ||
+      value === null ||
+      (typeof value === "string" &&
+        value.trim() === "")
     ) {
       return undefined;
     }
@@ -35,12 +29,6 @@ const optionalString = z.preprocess(
   z.string().optional()
 );
 
-/*
-=====================================
-Optional Enum
-=====================================
-*/
-
 const optionalEnum = <
   T extends Record<string, string>
 >(
@@ -49,8 +37,10 @@ const optionalEnum = <
   z.preprocess(
     (value) => {
       if (
-        typeof value === "string" &&
-        value.trim() === ""
+        value === undefined ||
+        value === null ||
+        (typeof value === "string" &&
+          value.trim() === "")
       ) {
         return undefined;
       }
@@ -66,109 +56,71 @@ Allocation Query
 =====================================
 */
 
-export const AllocationQueryDto = z.object({
-  /*
-  Pagination
-  */
+export const AllocationQueryDto = z
+  .object({
+    page: z.coerce
+      .number()
+      .int()
+      .min(1)
+      .default(1),
 
-  page: z.coerce
-    .number()
-    .int()
-    .min(1)
-    .default(1),
+    limit: z.coerce
+      .number()
+      .int()
+      .min(1)
+      .max(100)
+      .default(10),
 
-  limit: z.coerce
-    .number()
-    .int()
-    .min(1)
-    .max(100)
-    .default(10),
+    search: optionalString,
 
-  /*
-  Search
-  */
+    status: optionalEnum(
+      AllocationStatus
+    ),
 
-  search: optionalString,
+    priority: optionalEnum(
+      AllocationPriority
+    ),
 
-  /*
-  Filters
-  */
+    serviceType: optionalEnum(
+      ServiceType
+    ),
 
-  status: optionalEnum(
-    AllocationStatus
-  ),
+    transportMode: optionalEnum(
+      TransportMode
+    ),
 
-  priority: optionalEnum(
-    AllocationPriority
-  ),
+    clientId: optionalString,
 
-  serviceType: optionalEnum(
-    ServiceType
-  ),
+    exporterId: optionalString,
 
-  transportMode: optionalEnum(
-    TransportMode
-  ),
+    consigneeId: optionalString,
 
-  /*
-  Relations
-  */
+    assignedToId: optionalString,
 
-  clientId: optionalString,
+    createdById: optionalString,
 
-  exporterId: optionalString,
+    approvedById: optionalString,
 
-  consigneeId: optionalString,
+    isActive: z.preprocess(
+      (value) => {
+        if (
+          value === undefined ||
+          value === null ||
+          value === ""
+        ) {
+          return undefined;
+        }
 
-  assignedToId: optionalString,
+        if (value === "true") return true;
 
-  createdById: optionalString,
+        if (value === "false") return false;
 
-  approvedById: optionalString,
+        return value;
+      },
+      z.boolean().optional()
+    ),
 
-  /*
-  Active Filter
-  */
-
-  isActive: z.preprocess(
-    (value) => {
-      if (
-        value === undefined ||
-        value === null ||
-        value === ""
-      ) {
-        return undefined;
-      }
-
-      if (value === "true") {
-        return true;
-      }
-
-      if (value === "false") {
-        return false;
-      }
-
-      return value;
-    },
-    z.boolean().optional()
-  ),
-
-  /*
-  Sorting
-  */
-
-  sortBy: z.preprocess(
-    (value) => {
-      if (
-        typeof value === "string" &&
-        value.trim() === ""
-      ) {
-        return undefined;
-      }
-
-      return value;
-    },
-    z
+    sortBy: z
       .enum([
         "createdAt",
         "updatedAt",
@@ -177,26 +129,13 @@ export const AllocationQueryDto = z.object({
         "priority",
         "status",
       ])
-      .default("createdAt")
-  ),
+      .default("createdAt"),
 
-  sortOrder: z.preprocess(
-    (value) => {
-      if (
-        typeof value === "string" &&
-        value.trim() === ""
-      ) {
-        return undefined;
-      }
-
-      return value;
-    },
-    z
+    sortOrder: z
       .enum(["asc", "desc"])
-      .default("desc")
-  ),
-});
+      .default("desc"),
+  })
+  .strict();
 
-export type AllocationQuery = z.infer<
-  typeof AllocationQueryDto
->;
+export type AllocationQuery =
+  z.infer<typeof AllocationQueryDto>;

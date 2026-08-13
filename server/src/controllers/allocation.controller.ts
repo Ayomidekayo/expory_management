@@ -76,30 +76,45 @@ async updateStatus(
   =====================================
   */
 
-  async findAll(
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ) {
-    try {
-      const query =
-        AllocationQueryDto.parse(
-          req.query
-        );
+async findAll(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  try {
+    console.log(
+      "ALLOCATIONS QUERY:",
+      req.query
+    );
 
-      const allocations =
-        await allocationService.findAll(
-          query
-        );
+    const query =
+      AllocationQueryDto.parse(
+        req.query
+      );
 
-      res.status(200).json({
-        success: true,
-        ...allocations,
-      });
-    } catch (error) {
-      next(error);
-    }
+    console.log(
+      "ALLOCATIONS PARSED QUERY:",
+      query
+    );
+
+    const allocations =
+      await allocationService.findAll(
+        query
+      );
+
+    res.status(200).json({
+      success: true,
+      ...allocations,
+    });
+  } catch (error) {
+    console.error(
+      "GET /api/allocations ERROR:",
+      error
+    );
+
+    next(error);
   }
+}
 
   /*
   =====================================
