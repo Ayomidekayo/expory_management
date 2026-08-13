@@ -7,57 +7,194 @@ import {
   TransportMode,
 } from "../generated";
 
+/*
+=====================================
+Optional Query String
+=====================================
+
+Converts:
+
+""
+→ undefined
+
+This prevents empty filters from
+causing 400 validation errors.
+*/
+
+const optionalString = z.preprocess(
+  (value) => {
+    if (
+      typeof value === "string" &&
+      value.trim() === ""
+    ) {
+      return undefined;
+    }
+
+    return value;
+  },
+  z.string().optional()
+);
+
+/*
+=====================================
+Optional Enum
+=====================================
+*/
+
+const optionalEnum = <
+  T extends Record<string, string>
+>(
+  enumObject: T
+) =>
+  z.preprocess(
+    (value) => {
+      if (
+        typeof value === "string" &&
+        value.trim() === ""
+      ) {
+        return undefined;
+      }
+
+      return value;
+    },
+    z.nativeEnum(enumObject).optional()
+  );
+
+/*
+=====================================
+Allocation Query
+=====================================
+*/
+
 export const AllocationQueryDto = z.object({
-  page: z.coerce.number().min(1).default(1),
+  /*
+  Pagination
+  */
 
-  limit: z.coerce.number().min(1).max(100).default(10),
+  page: z.coerce
+    .number()
+    .int()
+    .min(1)
+    .default(1),
 
-  search: z.string().optional(),
+  limit: z.coerce
+    .number()
+    .int()
+    .min(1)
+    .max(100)
+    .default(10),
 
-  status: z
-    .nativeEnum(AllocationStatus)
-    .optional(),
+  /*
+  Search
+  */
 
-  priority: z
-    .nativeEnum(AllocationPriority)
-    .optional(),
+  search: optionalString,
 
-  serviceType: z
-    .nativeEnum(ServiceType)
-    .optional(),
+  /*
+  Filters
+  */
 
-  transportMode: z
-    .nativeEnum(TransportMode)
-    .optional(),
+  status: optionalEnum(
+    AllocationStatus
+  ),
 
-  clientId: z.string().optional(),
+  priority: optionalEnum(
+    AllocationPriority
+  ),
 
-  exporterId: z.string().optional(),
+  serviceType: optionalEnum(
+    ServiceType
+  ),
 
-  consigneeId: z.string().optional(),
+  transportMode: optionalEnum(
+    TransportMode
+  ),
 
-  assignedToId: z.string().optional(),
+  /*
+  Relations
+  */
 
-  createdById: z.string().optional(),
+  clientId: optionalString,
 
-  approvedById: z.string().optional(),
+  exporterId: optionalString,
 
-  isActive: z.coerce.boolean().optional(),
+  consigneeId: optionalString,
 
-  sortBy: z
-    .enum([
-      "createdAt",
-      "updatedAt",
-      "allocationNumber",
-      "expectedShipmentDate",
-      "priority",
-      "status",
-    ])
-    .default("createdAt"),
+  assignedToId: optionalString,
 
-  sortOrder: z
-    .enum(["asc", "desc"])
-    .default("desc"),
+  createdById: optionalString,
+
+  approvedById: optionalString,
+
+  /*
+  Active Filter
+  */
+
+  isActive: z.preprocess(
+    (value) => {
+      if (
+        value === undefined ||
+        value === null ||
+        value === ""
+      ) {
+        return undefined;
+      }
+
+      if (value === "true") {
+        return true;
+      }
+
+      if (value === "false") {
+        return false;
+      }
+
+      return value;
+    },
+    z.boolean().optional()
+  ),
+
+  /*
+  Sorting
+  */
+
+  sortBy: z.preprocess(
+    (value) => {
+      if (
+        typeof value === "string" &&
+        value.trim() === ""
+      ) {
+        return undefined;
+      }
+
+      return value;
+    },
+    z
+      .enum([
+        "createdAt",
+        "updatedAt",
+        "allocationNumber",
+        "expectedShipmentDate",
+        "priority",
+        "status",
+      ])
+      .default("createdAt")
+  ),
+
+  sortOrder: z.preprocess(
+    (value) => {
+      if (
+        typeof value === "string" &&
+        value.trim() === ""
+      ) {
+        return undefined;
+      }
+
+      return value;
+    },
+    z
+      .enum(["asc", "desc"])
+      .default("desc")
+  ),
 });
 
 export type AllocationQuery = z.infer<
