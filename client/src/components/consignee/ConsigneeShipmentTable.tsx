@@ -1,5 +1,4 @@
 import {
-  ClipboardList,
   Eye,
   Ship,
 } from "lucide-react";

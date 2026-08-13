@@ -2,7 +2,6 @@ import {
   Building2,
   Contact,
   MapPin,
-  Globe,
   FileText,
 } from "lucide-react";
 

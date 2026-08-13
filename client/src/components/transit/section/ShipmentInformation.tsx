@@ -24,9 +24,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../../ui/select";
-
-import { Input } from "../../ui/input";
-
 import type {
   CreateTransitInput,
   CreateTransitOutput,
