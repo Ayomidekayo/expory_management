@@ -55,6 +55,7 @@ export default function InvoiceTable({
     <div className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
       <div className="overflow-x-auto">
         <Table>
+
           {/* HEADER */}
 
           <TableHeader>
@@ -146,6 +147,7 @@ export default function InvoiceTable({
               </TableRow>
             )}
           </TableBody>
+
         </Table>
       </div>
     </div>

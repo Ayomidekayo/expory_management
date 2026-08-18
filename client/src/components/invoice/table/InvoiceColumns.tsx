@@ -40,6 +40,105 @@ interface Props {
   ) => void;
 
   statusUpdatingId?: string;
+};
+
+/*
+=====================================
+Format Invoice Date
+=====================================
+
+Invoice date is a calendar date.
+
+We intentionally DO NOT use:
+
+new Date(value)
+toLocaleDateString()
+
+because those methods can apply
+timezone conversion and cause a date
+such as:
+
+2026-08-18
+
+to appear as:
+
+17/08/2026
+
+Instead, we extract the date portion
+directly from the backend value.
+=====================================
+*/
+
+function formatInvoiceDate(
+  value?: string | Date | null
+): string {
+  if (!value) {
+    return "-";
+  }
+
+  let dateString: string;
+
+  if (typeof value === "string") {
+    /*
+    Backend may return:
+
+    2026-08-18
+    or
+    2026-08-18T00:00:00.000Z
+
+    In both cases, the first 10
+    characters represent the actual
+    calendar date.
+    */
+
+    dateString = value.slice(0, 10);
+  } else {
+    /*
+    If the value is already a Date,
+    use its ISO representation and
+    extract only the calendar portion.
+
+    We still do NOT use local timezone
+    formatting.
+    */
+
+    dateString = value
+      .toISOString()
+      .slice(0, 10);
+  }
+
+  const [year, month, day] =
+    dateString.split("-");
+
+  if (
+    !year ||
+    !month ||
+    !day
+  ) {
+    return "-";
+  }
+
+  const months = [
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "Jun",
+    "Jul",
+    "Aug",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dec",
+  ];
+
+  const monthIndex =
+    Number(month) - 1;
+
+  return `${day} ${
+    months[monthIndex] ?? month
+  } ${year}`;
 }
 
 export const invoiceColumns = ({
@@ -114,9 +213,9 @@ export const invoiceColumns = ({
 
     cell: ({ row }) => (
       <span className="text-slate-600">
-        {new Date(
+        {formatInvoiceDate(
           row.original.invoiceDate
-        ).toLocaleDateString("en-GB")}
+        )}
       </span>
     ),
   },

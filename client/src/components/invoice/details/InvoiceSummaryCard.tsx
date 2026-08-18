@@ -14,6 +14,53 @@ interface Props {
   invoice: Invoice;
 }
 
+/*
+=====================================
+Date Only Formatter
+=====================================
+
+Invoice Date is a calendar date.
+Do not convert it through the browser
+timezone.
+*/
+
+function formatDateOnly(
+  value?: string | Date | null
+): string {
+  if (!value) return "-";
+
+  const dateString =
+    typeof value === "string"
+      ? value.slice(0, 10)
+      : value.toISOString().slice(0, 10);
+
+  const [year, month, day] =
+    dateString.split("-");
+
+  if (!year || !month || !day) {
+    return "-";
+  }
+
+  const months = [
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "Jun",
+    "Jul",
+    "Aug",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dec",
+  ];
+
+  return `${day} ${
+    months[Number(month) - 1] ?? month
+  } ${year}`;
+}
+
 function Row({
   icon,
   label,
@@ -53,7 +100,6 @@ export default function InvoiceSummaryCard({
 
       <div className="p-5">
 
-        {/* SYSTEM GENERATED NUMBER */}
         <Row
           icon={
             <FileText className="h-4 w-4 text-primary" />
@@ -62,7 +108,6 @@ export default function InvoiceSummaryCard({
           value={invoice.invoiceNumber}
         />
 
-        {/* CLIENT / VENDOR NUMBER */}
         <Row
           icon={
             <FileText className="h-4 w-4 text-emerald-600" />
@@ -81,14 +126,15 @@ export default function InvoiceSummaryCard({
           }
         />
 
+        {/* FIXED DATE */}
         <Row
           icon={
             <CalendarDays className="h-4 w-4 text-blue-600" />
           }
           label="Invoice Date"
-          value={new Date(
+          value={formatDateOnly(
             invoice.invoiceDate
-          ).toLocaleDateString()}
+          )}
         />
 
         <Row
@@ -144,9 +190,13 @@ export default function InvoiceSummaryCard({
             <Package className="h-4 w-4 text-pink-600" />
           }
           label="Incoterm"
-          value={invoice.incoterm ?? "-"}
+          value={
+            invoice.incoterm ?? "-"
+          }
         />
 
+        {/* Created is a timestamp, so timezone
+            conversion is acceptable here. */}
         <Row
           icon={
             <Clock className="h-4 w-4 text-gray-600" />
@@ -157,6 +207,7 @@ export default function InvoiceSummaryCard({
           ).toLocaleDateString()}
         />
 
+        {/* Updated is also a timestamp. */}
         <Row
           icon={
             <Clock className="h-4 w-4 text-gray-600" />
