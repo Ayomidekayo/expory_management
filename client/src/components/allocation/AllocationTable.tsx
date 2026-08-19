@@ -67,7 +67,9 @@ export default function AllocationTable() {
             <TableHead>
               Allocation No.
             </TableHead>
-
+          <TableHead>
+          Cargo Type
+          </TableHead>
             <TableHead>
               Client
             </TableHead>
@@ -121,6 +123,10 @@ export default function AllocationTable() {
                   {allocation.allocationNumber}
                 </TableCell>
 
+
+<TableCell>
+  {allocation.cargoType ?? "-"}
+</TableCell>
                 <TableCell>
                   {allocation.client
                     ?.companyName ??
