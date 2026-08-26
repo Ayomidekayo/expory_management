@@ -58,7 +58,8 @@ DOCUMENT
 */
 export interface Document {
   id: string;
-
+  documentType: DocumentType;
+  
   type: DocumentType;
 
   fileName: string;
@@ -96,7 +97,7 @@ export interface Document {
   transit?: Transit;
 
   uploadedAt: string;
-
+createdAt: string;
   updatedAt: string;
 }
 

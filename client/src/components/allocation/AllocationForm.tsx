@@ -22,6 +22,8 @@ import {
 
 import type { Allocation } from "../../types/allocation.types";
 
+
+
 interface Props {
   defaultValues?: Partial<Allocation>;
   loading?: boolean;
@@ -200,7 +202,6 @@ className="space-y-8">
         <FinancialInformation form={form} />
 
         <RemarksSection form={form} />
-
         <WorkflowInformation form={form} />
 
         <FormActions

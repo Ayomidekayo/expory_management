@@ -24,8 +24,8 @@ export default function ShipmentDocumentsCard({
   shipment,
 }: Props) {
   const documents = shipment.documents ?? [];
-console.log("Shipment:", shipment);
-console.log("Documents:", shipment.documents);
+console.log("New Shipment:", shipment);
+console.log("New Documents:", shipment.documents);
 
   useDeleteDocument();
 

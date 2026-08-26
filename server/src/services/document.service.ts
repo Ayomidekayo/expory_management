@@ -37,11 +37,57 @@ class DocumentService {
       );
     }
 
+    /*
+    =====================================
+    Debug Parent IDs
+    =====================================
+    */
+
+    console.log(
+      "Creating document with parent IDs:",
+      {
+        allocationId:
+          data.allocationId,
+
+        shipmentId:
+          data.shipmentId,
+
+        containerId:
+          data.containerId,
+
+        packingListId:
+          data.packingListId,
+
+        invoiceId:
+          data.invoiceId,
+
+        transitId:
+          data.transitId,
+      }
+    );
+
+    /*
+    =====================================
+    Validate Parent
+    =====================================
+    */
+
     await this.validateParentRecord(data);
 
-    // Upload to Supabase
+    /*
+    =====================================
+    Upload To Supabase
+    =====================================
+    */
+
     const uploaded =
       await uploadToSupabase(file);
+
+    /*
+    =====================================
+    Create Document
+    =====================================
+    */
 
     return documentRepository.create({
       ...data,
@@ -153,18 +199,46 @@ class DocumentService {
   private async validateParentRecord(
     data: CreateDocumentDto
   ) {
+    /*
+    =====================================
+    Allocation
+    =====================================
+    */
+
     if (data.allocationId) {
+      console.log(
+        "Checking allocation:",
+        data.allocationId
+      );
+
       const allocation =
         await allocationRepository.findById(
           data.allocationId
         );
 
+      console.log(
+        "Allocation result:",
+        allocation
+          ? {
+              id: allocation.id,
+              allocationNumber:
+                allocation.allocationNumber,
+            }
+          : null
+      );
+
       if (!allocation) {
         throw new Error(
-          "Allocation not found."
+          `Allocation not found: ${data.allocationId}`
         );
       }
     }
+
+    /*
+    =====================================
+    Shipment
+    =====================================
+    */
 
     if (data.shipmentId) {
       const shipment =
@@ -174,10 +248,16 @@ class DocumentService {
 
       if (!shipment) {
         throw new Error(
-          "Shipment not found."
+          `Shipment not found: ${data.shipmentId}`
         );
       }
     }
+
+    /*
+    =====================================
+    Container
+    =====================================
+    */
 
     if (data.containerId) {
       const container =
@@ -187,10 +267,16 @@ class DocumentService {
 
       if (!container) {
         throw new Error(
-          "Container not found."
+          `Container not found: ${data.containerId}`
         );
       }
     }
+
+    /*
+    =====================================
+    Packing List
+    =====================================
+    */
 
     if (data.packingListId) {
       const packingList =
@@ -200,10 +286,16 @@ class DocumentService {
 
       if (!packingList) {
         throw new Error(
-          "Packing List not found."
+          `Packing List not found: ${data.packingListId}`
         );
       }
     }
+
+    /*
+    =====================================
+    Invoice
+    =====================================
+    */
 
     if (data.invoiceId) {
       const invoice =
@@ -213,10 +305,16 @@ class DocumentService {
 
       if (!invoice) {
         throw new Error(
-          "Invoice not found."
+          `Invoice not found: ${data.invoiceId}`
         );
       }
     }
+
+    /*
+    =====================================
+    Transit
+    =====================================
+    */
 
     if (data.transitId) {
       const transit =
@@ -226,7 +324,7 @@ class DocumentService {
 
       if (!transit) {
         throw new Error(
-          "Transit not found."
+          `Transit not found: ${data.transitId}`
         );
       }
     }

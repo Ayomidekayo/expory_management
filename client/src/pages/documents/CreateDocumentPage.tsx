@@ -2,6 +2,7 @@ import {
   useNavigate,
   useSearchParams,
 } from "react-router-dom";
+
 import { toast } from "sonner";
 
 import { useCreateDocument } from "../../hooks/document/useCreateDocument";
@@ -15,8 +16,13 @@ import DocumentForm from "../../components/documents/DocumentForm";
 export default function CreateDocumentPage() {
   const navigate = useNavigate();
 
-  const [searchParams] =
-    useSearchParams();
+  const [searchParams] = useSearchParams();
+
+  /*
+  =====================================
+  URL Attachment IDs
+  =====================================
+  */
 
   const allocationId =
     searchParams.get("allocationId");
@@ -39,12 +45,45 @@ export default function CreateDocumentPage() {
   const createMutation =
     useCreateDocument();
 
+  /*
+  =====================================
+  Determine Attachment Target
+  =====================================
+  */
+
+  const attachTo =
+    allocationId
+      ? "ALLOCATION"
+      : shipmentId
+      ? "SHIPMENT"
+      : containerId
+      ? "CONTAINER"
+      : packingListId
+      ? "PACKING_LIST"
+      : invoiceId
+      ? "INVOICE"
+      : transitId
+      ? "TRANSIT"
+      : "SHIPMENT";
+
+  /*
+  =====================================
+  Submit
+  =====================================
+  */
+
   async function onSubmit(
     values: CreateDocumentInput
   ) {
     try {
       const formData =
         new FormData();
+
+      /*
+      =====================================
+      Required Fields
+      =====================================
+      */
 
       formData.append(
         "file",
@@ -56,81 +95,128 @@ export default function CreateDocumentPage() {
         values.type
       );
 
-      if (values.remarks) {
+      /*
+      =====================================
+      Remarks
+      =====================================
+      */
+
+      if (values.remarks?.trim()) {
         formData.append(
           "remarks",
-          values.remarks
+          values.remarks.trim()
         );
       }
 
-      if (
+      /*
+      =====================================
+      Attachment IDs
+      =====================================
+
+      URL parameter takes precedence.
+
+      This is useful when the user clicks:
+
+      Add Document
+
+      from a specific allocation,
+      shipment, invoice, etc.
+      */
+
+      const finalAllocationId =
         allocationId ??
-        values.allocationId
-      ) {
+        values.allocationId;
+
+      const finalShipmentId =
+        shipmentId ??
+        values.shipmentId;
+
+      const finalContainerId =
+        containerId ??
+        values.containerId;
+
+      const finalPackingListId =
+        packingListId ??
+        values.packingListId;
+
+      const finalTransitId =
+        transitId ??
+        values.transitId;
+
+      const finalInvoiceId =
+        invoiceId ??
+        values.invoiceId;
+
+      /*
+      =====================================
+      Append IDs
+      =====================================
+      */
+
+      if (finalAllocationId) {
         formData.append(
           "allocationId",
-          allocationId ??
-            values.allocationId!
+          finalAllocationId
         );
       }
 
-      if (
-        shipmentId ??
-        values.shipmentId
-      ) {
+      if (finalShipmentId) {
         formData.append(
           "shipmentId",
-          shipmentId ??
-            values.shipmentId!
+          finalShipmentId
         );
       }
 
-      if (
-        containerId ??
-        values.containerId
-      ) {
+      if (finalContainerId) {
         formData.append(
           "containerId",
-          containerId ??
-            values.containerId!
+          finalContainerId
         );
       }
 
-      if (
-        packingListId ??
-        values.packingListId
-      ) {
+      if (finalPackingListId) {
         formData.append(
           "packingListId",
-          packingListId ??
-            values.packingListId!
+          finalPackingListId
         );
       }
 
-      if (
-        transitId ??
-        values.transitId
-      ) {
+      if (finalTransitId) {
         formData.append(
           "transitId",
-          transitId ??
-            values.transitId!
+          finalTransitId
         );
       }
 
-      if (
-        invoiceId ??
-        values.invoiceId
-      ) {
+      if (finalInvoiceId) {
         formData.append(
           "invoiceId",
-          invoiceId ??
-            values.invoiceId!
+          finalInvoiceId
         );
       }
-for (const [key, value] of formData.entries()) {
-  console.log(key, value);
-}
+
+      /*
+      =====================================
+      Debug
+      =====================================
+      */
+
+      for (const [
+        key,
+        value,
+      ] of formData.entries()) {
+        console.log(
+          key,
+          value
+        );
+      }
+
+      /*
+      =====================================
+      Create Document
+      =====================================
+      */
+
       await createMutation.mutateAsync(
         formData
       );
@@ -138,6 +224,12 @@ for (const [key, value] of formData.entries()) {
       toast.success(
         "Document uploaded successfully."
       );
+
+      /*
+      =====================================
+      Return To Parent
+      =====================================
+      */
 
       if (allocationId) {
         navigate(
@@ -183,6 +275,11 @@ for (const [key, value] of formData.entries()) {
 
       navigate("/documents");
     } catch (error: any) {
+      console.error(
+        "Document upload error:",
+        error
+      );
+
       toast.error(
         error?.response?.data?.message ??
           "Failed to upload document."
@@ -190,8 +287,15 @@ for (const [key, value] of formData.entries()) {
     }
   }
 
+  /*
+  =====================================
+  Render
+  =====================================
+  */
+
   return (
     <div className="space-y-6">
+
       <div>
         <h1 className="text-3xl font-bold">
           Upload Document
@@ -205,19 +309,7 @@ for (const [key, value] of formData.entries()) {
 
       <DocumentForm
         defaultValues={{
-          attachTo: allocationId
-            ? "ALLOCATION"
-            : shipmentId
-            ? "SHIPMENT"
-            : containerId
-            ? "CONTAINER"
-            : packingListId
-            ? "PACKING_LIST"
-            : invoiceId
-            ? "INVOICE"
-            : transitId
-            ? "TRANSIT"
-            : "SHIPMENT",
+          attachTo,
 
           allocationId:
             allocationId ?? "",
@@ -242,6 +334,7 @@ for (const [key, value] of formData.entries()) {
           createMutation.isPending
         }
       />
+
     </div>
   );
 }

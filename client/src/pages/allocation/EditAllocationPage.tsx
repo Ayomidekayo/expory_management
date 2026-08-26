@@ -11,24 +11,18 @@ import {
 } from "react-router-dom";
 
 import { Button } from "../../components/ui/button";
-
 import AllocationForm from "../../components/allocation/AllocationForm";
-
 import { useAllocation } from "../../hooks/allocation/useAllocation";
 import { useUpdateAllocation } from "../../hooks/allocation/useUpdateAllocation";
+import AllocationDocumentsCard from "../../components/allocation/details/AllocationDocumentsCard";
+
 
 export default function EditAllocationPage() {
   const { id } = useParams();
-
   const navigate = useNavigate();
 
-  const updateAllocation =
-    useUpdateAllocation();
-
-  const {
-    data,
-    isLoading,
-  } = useAllocation(id);
+  const updateAllocation = useUpdateAllocation();
+  const { data, isLoading } = useAllocation(id);
 
   if (isLoading) {
     return (
@@ -46,13 +40,12 @@ export default function EditAllocationPage() {
     );
   }
 
+  const allocation = data.data;
+
   return (
     <div className="space-y-6">
-
       {/* Header */}
-
       <div className="flex items-center gap-4">
-
         <Link to="/allocations">
           <Button
             variant="outline"
@@ -83,18 +76,15 @@ export default function EditAllocationPage() {
           <h1 className="text-3xl font-bold text-slate-900">
             Edit Allocation
           </h1>
-
           <p className="mt-1 text-slate-500">
             Update allocation information.
           </p>
         </div>
-
       </div>
 
       {/* Form */}
-
       <AllocationForm
-        defaultValues={data.data}
+        defaultValues={allocation}
         isEditing
         loading={updateAllocation.isPending}
         onSubmit={(values) =>
@@ -104,13 +94,13 @@ export default function EditAllocationPage() {
               payload: values,
             },
             {
-              onSuccess: () =>
-                navigate("/allocations"),
+              onSuccess: () => navigate("/allocations"),
             }
           )
         }
       />
 
+      <AllocationDocumentsCard allocation={allocation} />
     </div>
   );
 }

@@ -55,7 +55,7 @@ export type TransportMode =
 
 export interface Allocation {
   id: string;
-
+  allocationId: string;
   allocationNumber: string;
 
   clientId: string;
@@ -72,7 +72,7 @@ export interface Allocation {
   cargoType?: string;
   commodityCode?: string;
   commodityName?: string;
-
+ attachedDocuments?: Document[];
   quantity?: number;
   packageType?: string;
   numberOfPackages?: number;

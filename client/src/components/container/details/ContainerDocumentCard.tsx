@@ -5,61 +5,123 @@ import {
   Upload,
 } from "lucide-react";
 
-import { Link, useLocation } from "react-router-dom";
+import {
+  Link,
+  useLocation,
+} from "react-router-dom";
 
-import type { Allocation } from "../../types/allocation.types";
+import { Button } from "../../ui/button";
 
-import { Button } from "../ui/button";
-import DeleteDocumentDialog from "../documents/DeleteDocumentDialog";
+import DeleteDocumentDialog from "../../documents/DeleteDocumentDialog";
+import type { Container } from "../../../types/container.type";
 
 interface Props {
-  allocation: Allocation;
+  container: Container;
 }
 
-export default function AllocationDocumentsCard({
-  allocation,
+/*
+=====================================
+NORMALIZED DOCUMENT
+=====================================
+*/
+
+interface RelatedDocument {
+  id: string;
+  fileName: string;
+  fileUrl: string;
+  documentType: string;
+  fileSize?: number | null;
+  createdAt: string;
+  source: "Invoice" | "Shipment";
+}
+
+export default function ContainerDocumentsCard({
+  container,
 }: Props) {
   const location = useLocation();
 
   /*
   =====================================
-  Allocation Documents
+  Container Documents
   =====================================
   */
 
-  const allocationDocuments =
-    allocation.attachedDocuments ?? [];
+  const containerDocuments: RelatedDocument[] =
+    (container.documents ?? []).map((doc) => ({
+      id: doc.id,
+      fileName: doc.fileName,
+      fileUrl: doc.fileUrl,
+      documentType: doc.documentType,
+      fileSize: doc.fileSize,
+      createdAt: doc.createdAt,
+      source: "Invoice",
+    }));
 
   /*
   =====================================
   Shipment Documents
   =====================================
+  
+  Shipment's document structure may be
+  different from Invoice's document
+  structure, so normalize it here.
   */
 
-  const shipmentDocuments =
-    allocation.shipment?.documents ?? [];
+  const shipmentDocuments: RelatedDocument[] =
+    (container.shipment?.documents ?? []).map(
+      (doc) => ({
+        id: doc.id,
+        fileName: doc.fileName,
+        fileUrl: doc.fileUrl,
+
+        documentType:
+          "documentType" in doc
+            ? String(doc.documentType)       
+            : "FILE",
+
+        fileSize:
+          "fileSize" in doc
+            ? (doc.fileSize ?? null)
+            : null,
+
+        createdAt:
+          "createdAt" in doc
+            ? String(doc.createdAt)
+            : new Date().toISOString(),
+
+        source: "Shipment",
+      })
+    );
 
   /*
   =====================================
-  Combine Documents
+  Combine
   =====================================
   */
 
-  const documents = [
-    ...allocationDocuments.map((doc) => ({
-      ...doc,
-      source: "Allocation" as const,
-    })),
-
-    ...shipmentDocuments.map((doc) => ({
-      ...doc,
-      source: "Shipment" as const,
-    })),
+  const documents: RelatedDocument[] = [
+    ...containerDocuments,
+    ...shipmentDocuments,
   ];
 
+  /*
+  =====================================
+  DEBUG
+  =====================================
+  */
+
   console.log(
-    "Allocation Documents:",
-    allocationDocuments
+    "========== CONTAINER DOCUMENT DEBUG =========="
+  );
+
+  console.log(
+    "Container:",
+    container
+  );
+
+  console.log(
+    "Container Documents:",
+    containerDocuments
   );
 
   console.log(
@@ -79,7 +141,7 @@ export default function AllocationDocumentsCard({
   */
 
   const uploadUrl =
-    `/documents/create?allocationId=${allocation.id}` +
+    `/documents/create?containerId=${container.id}` +
     `&returnTo=${encodeURIComponent(
       location.pathname
     )}`;
@@ -95,25 +157,31 @@ export default function AllocationDocumentsCard({
 
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
 
+          {/* TITLE */}
+
           <div className="flex items-center gap-3">
 
             <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-50">
+
               <FileText className="h-5 w-5 text-blue-600" />
+
             </div>
 
             <div>
+
               <h2 className="text-lg font-semibold text-slate-900">
                 Related Documents
               </h2>
 
               <p className="mt-1 text-sm text-slate-500">
-                Documents uploaded directly to this allocation and its shipment.
+                Documents uploaded directly to this container and its shipment.
               </p>
+
             </div>
 
           </div>
 
-          {/* Upload */}
+          {/* UPLOAD */}
 
           <Button
             asChild
@@ -128,8 +196,11 @@ export default function AllocationDocumentsCard({
             "
           >
             <Link to={uploadUrl}>
+
               <Upload className="mr-2 h-4 w-4" />
+
               Upload Document
+
             </Link>
           </Button>
 
@@ -145,6 +216,10 @@ export default function AllocationDocumentsCard({
 
         {documents.length === 0 ? (
 
+          /* =====================================
+             EMPTY STATE
+          ===================================== */
+
           <div
             className="
               rounded-xl
@@ -159,7 +234,9 @@ export default function AllocationDocumentsCard({
           >
 
             <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-slate-100">
+
               <FileText className="h-7 w-7 text-slate-400" />
+
             </div>
 
             <h3 className="mt-4 font-semibold text-slate-900">
@@ -167,8 +244,8 @@ export default function AllocationDocumentsCard({
             </h3>
 
             <p className="mx-auto mt-2 max-w-md text-sm text-slate-500">
-              No documents have been uploaded for this allocation.
-              Upload supporting documents to keep the allocation records complete.
+              No documents have been uploaded for this invoice.
+              Upload supporting documents to keep the invoice records complete.
             </p>
 
             <Button
@@ -185,14 +262,21 @@ export default function AllocationDocumentsCard({
               "
             >
               <Link to={uploadUrl}>
+
                 <Upload className="mr-2 h-4 w-4" />
+
                 Upload First Document
+
               </Link>
             </Button>
 
           </div>
 
         ) : (
+
+          /* =====================================
+             DOCUMENT LIST
+          ===================================== */
 
           <div className="space-y-4">
 
@@ -216,14 +300,14 @@ export default function AllocationDocumentsCard({
                 "
               >
 
-                {/* =====================================
-                    DOCUMENT INFORMATION
-                ===================================== */}
+                {/* DOCUMENT INFORMATION */}
 
                 <div className="flex min-w-0 items-start gap-4">
 
                   <div className="shrink-0 rounded-lg bg-blue-100 p-3">
+
                     <FileText className="h-6 w-6 text-blue-600" />
+
                   </div>
 
                   <div className="min-w-0">
@@ -234,25 +318,33 @@ export default function AllocationDocumentsCard({
 
                     <div className="mt-2 flex flex-wrap items-center gap-2 text-sm">
 
+                      {/* SOURCE */}
+
                       <span className="rounded-full bg-emerald-100 px-2 py-1 text-xs font-medium text-emerald-700">
                         {doc.source}
                       </span>
 
+                      {/* DOCUMENT TYPE */}
+
                       <span className="rounded-full bg-slate-100 px-2 py-1 text-xs font-medium text-slate-700">
-                        {doc.type}
+                        {doc.documentType}
                       </span>
 
                       <span className="text-slate-300">
                         •
                       </span>
 
+                      {/* DATE */}
+
                       <span className="text-slate-500">
                         {new Date(
-                          doc.uploadedAt
+                          doc.createdAt
                         ).toLocaleDateString()}
                       </span>
 
-                      {doc.fileSize && (
+                      {/* SIZE */}
+
+                      {doc.fileSize != null && (
                         <>
                           <span className="text-slate-300">
                             •
@@ -270,9 +362,7 @@ export default function AllocationDocumentsCard({
 
                 </div>
 
-                {/* =====================================
-                    ACTIONS
-                ===================================== */}
+                {/* ACTIONS */}
 
                 <div className="flex shrink-0 items-center gap-2">
 

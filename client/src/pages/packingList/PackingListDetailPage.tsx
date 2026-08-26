@@ -14,7 +14,8 @@ import PackingItemsTable from "../../components/packing-list/details/PackingItem
 
 import SummaryCard from "../../components/packing-list/details/SummaryCard";
 import RemarksCard from "../../components/packing-list/details/RemarkCard";
-import DocumentsCard from "../../components/packing-list/details/DocumentsCard";
+import PackingListDocumentCard from "../../components/packing-list/details/PackingListDocumentCard";
+
 
 
 
@@ -83,7 +84,7 @@ export default function PackingListDetailsPage() {
 
       </div>
 
-      <DocumentsCard
+      <PackingListDocumentCard
         packingList={packingList}
       />
 

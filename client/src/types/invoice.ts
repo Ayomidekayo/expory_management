@@ -68,14 +68,12 @@ export interface InvoiceItem {
 
 export interface Document {
   id: string;
-
   fileName: string;
-
   fileUrl: string;
-
   documentType: string;
-
+  fileSize?: number | null;
   createdAt: string;
+  updatedAt?: string;
 }
 
 /* ===========================================

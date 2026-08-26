@@ -13,9 +13,9 @@ import {
   useTransit,
 } from "../../hooks/transit/useTransit";
 import PricingInformationCard from "../../components/transit/details/PricingInformationCard";
-import DocumentsCard from "../../components/transit/details/DocumentsCard";
 import TransitInformationCard from "../../components/transit/details/TransitInformationCard";
 import ShipmentInformationCard from "../../components/transit/details/ShipmentInformationCard";
+import TransitDocumentsCard from "../../components/transit/details/TransitDocumentsCard";
 
 export default function TransitDetailsPage() {
 
@@ -95,9 +95,9 @@ export default function TransitDetailsPage() {
           transit={transit}
         />
 
-        <DocumentsCard
-  documents={transit.documents ?? []}
-/>
+        <TransitDocumentsCard
+          transit={transit}
+        />
 
       </div>
 

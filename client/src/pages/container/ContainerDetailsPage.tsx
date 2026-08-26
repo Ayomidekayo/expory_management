@@ -8,9 +8,9 @@ import ShipmentInformationCard from "../../components/container/details/Shipment
 import ContainerInformationCard from "../../components/container/details/ContainerInformationCard";
 import PackingListInformationCard from "../../components/container/details/PackingListInformationCard";
 import WeightInformationCard from "../../components/container/details/WeightInformationCard";
-import DocumentsCard from "../../components/container/details/DocumentsCard";
 import { Button } from "../../components/ui/button";
 import TerminalChargeInformationCard from "../../components/container/details/TerminalChargeInformationCard";
+import ContainerDocumentsCard from "../../components/container/details/ContainerDocumentCard";
 
 export default function ContainerDetailsPage() {
   const { id } = useParams();
@@ -114,8 +114,8 @@ export default function ContainerDetailsPage() {
 
       {/* Documents */}
 
-      <DocumentsCard
-        documents={container.documents}
+      <ContainerDocumentsCard
+        container={container}
       />
 
     </div>

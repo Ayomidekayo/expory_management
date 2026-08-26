@@ -15,6 +15,7 @@ import {
 import { Badge } from "../ui/badge";
 import { useShipments } from "../../hooks/shipments/useShipments";
 import ShipmentRowActions from "./ShipmentRowActions";
+import { formatDateOnly } from "../../utils/date";
 
 export default function ShipmentTable() {
   const {
@@ -105,98 +106,64 @@ export default function ShipmentTable() {
 
           <TableBody>
 
-            {data.data.map(
-              (shipment) => (
-                <TableRow
-                  key={shipment.id}
-                >
+            {data.data.map((shipment) => (
 
-                  <TableCell className="font-semibold">
+              <TableRow key={shipment.id}>
 
-                    {shipment.shipmentNumber}
+                <TableCell className="font-semibold">
+                  {shipment.shipmentNumber}
+                </TableCell>
 
-                  </TableCell>
+                <TableCell>
+                  {formatDateOnly(
+                    shipment.shipmentDate
+                  )}
+                </TableCell>
 
-                  <TableCell>
+                <TableCell>
+                  {shipment.client.companyName}
+                </TableCell>
 
-                    {new Date(
-                      shipment.shipmentDate
-                    ).toLocaleDateString()}
+                <TableCell>
+                  {shipment.exporter.name}
+                </TableCell>
 
-                  </TableCell>
+                <TableCell className="hidden lg:table-cell">
+                  {shipment.xfNumber ?? "-"}
+                </TableCell>
 
-                  <TableCell>
+                <TableCell className="hidden lg:table-cell">
+                  {shipment.nxpNumber ?? "-"}
+                </TableCell>
 
-                    {
-                      shipment.client
-                        .companyName
-                    }
+                <TableCell className="hidden xl:table-cell">
+                  {shipment.cciNumber ?? "-"}
+                </TableCell>
 
-                  </TableCell>
+                <TableCell>
+                  <Badge variant="outline">
+                    {shipment.transportMode}
+                  </Badge>
+                </TableCell>
 
-                  <TableCell>
+                <TableCell>
+                  <Badge variant="secondary">
+                    {shipment.status.replaceAll(
+                      "_",
+                      " "
+                    )}
+                  </Badge>
+                </TableCell>
 
-                    {
-                      shipment.exporter
-                        .name
-                    }
+                <TableCell className="text-right">
+                  <ShipmentRowActions
+                    shipment={shipment}
+                  />
+                </TableCell>
 
-                  </TableCell>
+              </TableRow>
 
-                  <TableCell className="hidden lg:table-cell">
-
-                    {shipment.xfNumber ?? "-"}
-
-                  </TableCell>
-
-                  <TableCell className="hidden lg:table-cell">
-
-                    {shipment.nxpNumber ?? "-"}
-
-                  </TableCell>
-
-                  <TableCell className="hidden xl:table-cell">
-
-                    {shipment.cciNumber ?? "-"}
-
-                  </TableCell>
-
-                  <TableCell>
-
-                    <Badge
-                      variant="outline"
-                    >
-                      {
-                        shipment.transportMode
-                      }
-                    </Badge>
-
-                  </TableCell>
-
-                  <TableCell>
-
-                    <Badge
-                      variant="secondary"
-                    >
-                      {shipment.status.replaceAll(
-                        "_",
-                        " "
-                      )}
-                    </Badge>
-
-                  </TableCell>
-
-                  <TableCell className="text-right">
-
-                    <ShipmentRowActions
-                      shipment={shipment}
-                    />
-
-                  </TableCell>
-
-                </TableRow>
-              )
-            )}
+            ))}
 
           </TableBody>
 

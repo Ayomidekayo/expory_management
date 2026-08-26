@@ -12,8 +12,8 @@ import InvoiceSummaryCard from "../../components/invoice/details/InvoiceSummaryC
 import InvoiceItemsTable from "../../components/invoice/details/InvoiceItemsTable";
 import FinancialSummaryCard from "../../components/invoice/details/FinancialSummaryCard";
 import RemarksCard from "../../components/invoice/details/RemarksCard";
-import DocumentsCard from "../../components/invoice/details/DocumentCard";
 import ShipmentInformationCard from "../../components/invoice/details/ShipmentInformationCard";
+import InvoiceDocumentsCard from "../../components/invoice/details/InvoiceDocumentsCard";
 
 export default function InvoiceDetailsPage() {
   const { id } = useParams();
@@ -95,7 +95,7 @@ export default function InvoiceDetailsPage() {
 
       </div>
 
-      <DocumentsCard
+      <InvoiceDocumentsCard
         invoice={invoice}
       />
 
