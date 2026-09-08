@@ -10,7 +10,7 @@ export default function RegisterPage() {
         <div className="hidden lg:flex flex-col justify-center bg-emerald-800  text-white p-14">
 
           <h1 className="text-5xl font-bold">
-          OGW Kay Impect Management System
+          OGW Kay Impex Management System
           </h1>
 
           <p className="mt-6 text-blue-100 leading-8">

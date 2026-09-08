@@ -34,10 +34,10 @@ export default function LoginPage() {
             </div>
 
             <span className="text-lg font-semibold tracking-wide">
-             Kayode Impect Management 
+             OGW Kay Impex Management 
             </span>
 
-          </div>
+          </div> 
 
           <h1 className="text-5xl font-bold leading-tight">
             OGW Kayo Impect Management
