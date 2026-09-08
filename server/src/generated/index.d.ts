@@ -2358,11 +2358,13 @@ export namespace Prisma {
    */
 
   export type ExporterCountOutputType = {
+    documents: number
     allocations: number
     shipments: number
   }
 
   export type ExporterCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    documents?: boolean | ExporterCountOutputTypeCountDocumentsArgs
     allocations?: boolean | ExporterCountOutputTypeCountAllocationsArgs
     shipments?: boolean | ExporterCountOutputTypeCountShipmentsArgs
   }
@@ -2376,6 +2378,13 @@ export namespace Prisma {
      * Select specific fields to fetch from the ExporterCountOutputType
      */
     select?: ExporterCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * ExporterCountOutputType without action
+   */
+  export type ExporterCountOutputTypeCountDocumentsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: DocumentWhereInput
   }
 
   /**
@@ -2400,11 +2409,13 @@ export namespace Prisma {
   export type ConsigneeCountOutputType = {
     allocations: number
     shipments: number
+    documents: number
   }
 
   export type ConsigneeCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     allocations?: boolean | ConsigneeCountOutputTypeCountAllocationsArgs
     shipments?: boolean | ConsigneeCountOutputTypeCountShipmentsArgs
+    documents?: boolean | ConsigneeCountOutputTypeCountDocumentsArgs
   }
 
   // Custom InputTypes
@@ -2430,6 +2441,13 @@ export namespace Prisma {
    */
   export type ConsigneeCountOutputTypeCountShipmentsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: ShipmentWhereInput
+  }
+
+  /**
+   * ConsigneeCountOutputType without action
+   */
+  export type ConsigneeCountOutputTypeCountDocumentsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: DocumentWhereInput
   }
 
 
@@ -2698,11 +2716,13 @@ export namespace Prisma {
   export type ClientCountOutputType = {
     allocations: number
     shipments: number
+    documents: number
   }
 
   export type ClientCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     allocations?: boolean | ClientCountOutputTypeCountAllocationsArgs
     shipments?: boolean | ClientCountOutputTypeCountShipmentsArgs
+    documents?: boolean | ClientCountOutputTypeCountDocumentsArgs
   }
 
   // Custom InputTypes
@@ -2728,6 +2748,13 @@ export namespace Prisma {
    */
   export type ClientCountOutputTypeCountShipmentsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: ShipmentWhereInput
+  }
+
+  /**
+   * ClientCountOutputType without action
+   */
+  export type ClientCountOutputTypeCountDocumentsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: DocumentWhereInput
   }
 
 
@@ -5442,6 +5469,7 @@ export namespace Prisma {
     contactPerson?: boolean
     createdAt?: boolean
     updatedAt?: boolean
+    documents?: boolean | Exporter$documentsArgs<ExtArgs>
     allocations?: boolean | Exporter$allocationsArgs<ExtArgs>
     shipments?: boolean | Exporter$shipmentsArgs<ExtArgs>
     _count?: boolean | ExporterCountOutputTypeDefaultArgs<ExtArgs>
@@ -5482,6 +5510,7 @@ export namespace Prisma {
 
   export type ExporterOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "address" | "phone" | "email" | "contactPerson" | "createdAt" | "updatedAt", ExtArgs["result"]["exporter"]>
   export type ExporterInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    documents?: boolean | Exporter$documentsArgs<ExtArgs>
     allocations?: boolean | Exporter$allocationsArgs<ExtArgs>
     shipments?: boolean | Exporter$shipmentsArgs<ExtArgs>
     _count?: boolean | ExporterCountOutputTypeDefaultArgs<ExtArgs>
@@ -5492,6 +5521,7 @@ export namespace Prisma {
   export type $ExporterPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "Exporter"
     objects: {
+      documents: Prisma.$DocumentPayload<ExtArgs>[]
       allocations: Prisma.$AllocationPayload<ExtArgs>[]
       shipments: Prisma.$ShipmentPayload<ExtArgs>[]
     }
@@ -5898,6 +5928,7 @@ export namespace Prisma {
    */
   export interface Prisma__ExporterClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
+    documents<T extends Exporter$documentsArgs<ExtArgs> = {}>(args?: Subset<T, Exporter$documentsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$DocumentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     allocations<T extends Exporter$allocationsArgs<ExtArgs> = {}>(args?: Subset<T, Exporter$allocationsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AllocationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     shipments<T extends Exporter$shipmentsArgs<ExtArgs> = {}>(args?: Subset<T, Exporter$shipmentsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ShipmentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
@@ -6330,6 +6361,30 @@ export namespace Prisma {
   }
 
   /**
+   * Exporter.documents
+   */
+  export type Exporter$documentsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Document
+     */
+    select?: DocumentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Document
+     */
+    omit?: DocumentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DocumentInclude<ExtArgs> | null
+    where?: DocumentWhereInput
+    orderBy?: DocumentOrderByWithRelationInput | DocumentOrderByWithRelationInput[]
+    cursor?: DocumentWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: DocumentScalarFieldEnum | DocumentScalarFieldEnum[]
+  }
+
+  /**
    * Exporter.allocations
    */
   export type Exporter$allocationsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -6626,6 +6681,7 @@ export namespace Prisma {
     updatedAt?: boolean
     allocations?: boolean | Consignee$allocationsArgs<ExtArgs>
     shipments?: boolean | Consignee$shipmentsArgs<ExtArgs>
+    documents?: boolean | Consignee$documentsArgs<ExtArgs>
     _count?: boolean | ConsigneeCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["consignee"]>
 
@@ -6681,6 +6737,7 @@ export namespace Prisma {
   export type ConsigneeInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     allocations?: boolean | Consignee$allocationsArgs<ExtArgs>
     shipments?: boolean | Consignee$shipmentsArgs<ExtArgs>
+    documents?: boolean | Consignee$documentsArgs<ExtArgs>
     _count?: boolean | ConsigneeCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type ConsigneeIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
@@ -6691,6 +6748,7 @@ export namespace Prisma {
     objects: {
       allocations: Prisma.$AllocationPayload<ExtArgs>[]
       shipments: Prisma.$ShipmentPayload<ExtArgs>[]
+      documents: Prisma.$DocumentPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -7102,6 +7160,7 @@ export namespace Prisma {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     allocations<T extends Consignee$allocationsArgs<ExtArgs> = {}>(args?: Subset<T, Consignee$allocationsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AllocationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     shipments<T extends Consignee$shipmentsArgs<ExtArgs> = {}>(args?: Subset<T, Consignee$shipmentsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ShipmentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    documents<T extends Consignee$documentsArgs<ExtArgs> = {}>(args?: Subset<T, Consignee$documentsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$DocumentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -7582,6 +7641,30 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: ShipmentScalarFieldEnum | ShipmentScalarFieldEnum[]
+  }
+
+  /**
+   * Consignee.documents
+   */
+  export type Consignee$documentsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Document
+     */
+    select?: DocumentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Document
+     */
+    omit?: DocumentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DocumentInclude<ExtArgs> | null
+    where?: DocumentWhereInput
+    orderBy?: DocumentOrderByWithRelationInput | DocumentOrderByWithRelationInput[]
+    cursor?: DocumentWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: DocumentScalarFieldEnum | DocumentScalarFieldEnum[]
   }
 
   /**
@@ -19066,6 +19149,7 @@ export namespace Prisma {
     updatedAt?: boolean
     allocations?: boolean | Client$allocationsArgs<ExtArgs>
     shipments?: boolean | Client$shipmentsArgs<ExtArgs>
+    documents?: boolean | Client$documentsArgs<ExtArgs>
     _count?: boolean | ClientCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["client"]>
 
@@ -19136,6 +19220,7 @@ export namespace Prisma {
   export type ClientInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     allocations?: boolean | Client$allocationsArgs<ExtArgs>
     shipments?: boolean | Client$shipmentsArgs<ExtArgs>
+    documents?: boolean | Client$documentsArgs<ExtArgs>
     _count?: boolean | ClientCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type ClientIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
@@ -19146,6 +19231,7 @@ export namespace Prisma {
     objects: {
       allocations: Prisma.$AllocationPayload<ExtArgs>[]
       shipments: Prisma.$ShipmentPayload<ExtArgs>[]
+      documents: Prisma.$DocumentPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -19562,6 +19648,7 @@ export namespace Prisma {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     allocations<T extends Client$allocationsArgs<ExtArgs> = {}>(args?: Subset<T, Client$allocationsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AllocationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     shipments<T extends Client$shipmentsArgs<ExtArgs> = {}>(args?: Subset<T, Client$shipmentsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ShipmentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    documents<T extends Client$documentsArgs<ExtArgs> = {}>(args?: Subset<T, Client$documentsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$DocumentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -20050,6 +20137,30 @@ export namespace Prisma {
   }
 
   /**
+   * Client.documents
+   */
+  export type Client$documentsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Document
+     */
+    select?: DocumentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Document
+     */
+    omit?: DocumentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: DocumentInclude<ExtArgs> | null
+    where?: DocumentWhereInput
+    orderBy?: DocumentOrderByWithRelationInput | DocumentOrderByWithRelationInput[]
+    cursor?: DocumentWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: DocumentScalarFieldEnum | DocumentScalarFieldEnum[]
+  }
+
+  /**
    * Client without action
    */
   export type ClientDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -20104,6 +20215,9 @@ export namespace Prisma {
     invoiceId: string | null
     packingListId: string | null
     transitId: string | null
+    clientId: string | null
+    exporterId: string | null
+    consigneeId: string | null
     uploadedAt: Date | null
     updatedAt: Date | null
   }
@@ -20124,6 +20238,9 @@ export namespace Prisma {
     invoiceId: string | null
     packingListId: string | null
     transitId: string | null
+    clientId: string | null
+    exporterId: string | null
+    consigneeId: string | null
     uploadedAt: Date | null
     updatedAt: Date | null
   }
@@ -20144,6 +20261,9 @@ export namespace Prisma {
     invoiceId: number
     packingListId: number
     transitId: number
+    clientId: number
+    exporterId: number
+    consigneeId: number
     uploadedAt: number
     updatedAt: number
     _all: number
@@ -20174,6 +20294,9 @@ export namespace Prisma {
     invoiceId?: true
     packingListId?: true
     transitId?: true
+    clientId?: true
+    exporterId?: true
+    consigneeId?: true
     uploadedAt?: true
     updatedAt?: true
   }
@@ -20194,6 +20317,9 @@ export namespace Prisma {
     invoiceId?: true
     packingListId?: true
     transitId?: true
+    clientId?: true
+    exporterId?: true
+    consigneeId?: true
     uploadedAt?: true
     updatedAt?: true
   }
@@ -20214,6 +20340,9 @@ export namespace Prisma {
     invoiceId?: true
     packingListId?: true
     transitId?: true
+    clientId?: true
+    exporterId?: true
+    consigneeId?: true
     uploadedAt?: true
     updatedAt?: true
     _all?: true
@@ -20321,6 +20450,9 @@ export namespace Prisma {
     invoiceId: string | null
     packingListId: string | null
     transitId: string | null
+    clientId: string | null
+    exporterId: string | null
+    consigneeId: string | null
     uploadedAt: Date
     updatedAt: Date
     _count: DocumentCountAggregateOutputType | null
@@ -20360,8 +20492,14 @@ export namespace Prisma {
     invoiceId?: boolean
     packingListId?: boolean
     transitId?: boolean
+    clientId?: boolean
+    exporterId?: boolean
+    consigneeId?: boolean
     uploadedAt?: boolean
     updatedAt?: boolean
+    client?: boolean | Document$clientArgs<ExtArgs>
+    exporter?: boolean | Document$exporterArgs<ExtArgs>
+    consignee?: boolean | Document$consigneeArgs<ExtArgs>
     allocation?: boolean | Document$allocationArgs<ExtArgs>
     container?: boolean | Document$containerArgs<ExtArgs>
     invoice?: boolean | Document$invoiceArgs<ExtArgs>
@@ -20386,8 +20524,14 @@ export namespace Prisma {
     invoiceId?: boolean
     packingListId?: boolean
     transitId?: boolean
+    clientId?: boolean
+    exporterId?: boolean
+    consigneeId?: boolean
     uploadedAt?: boolean
     updatedAt?: boolean
+    client?: boolean | Document$clientArgs<ExtArgs>
+    exporter?: boolean | Document$exporterArgs<ExtArgs>
+    consignee?: boolean | Document$consigneeArgs<ExtArgs>
     allocation?: boolean | Document$allocationArgs<ExtArgs>
     container?: boolean | Document$containerArgs<ExtArgs>
     invoice?: boolean | Document$invoiceArgs<ExtArgs>
@@ -20412,8 +20556,14 @@ export namespace Prisma {
     invoiceId?: boolean
     packingListId?: boolean
     transitId?: boolean
+    clientId?: boolean
+    exporterId?: boolean
+    consigneeId?: boolean
     uploadedAt?: boolean
     updatedAt?: boolean
+    client?: boolean | Document$clientArgs<ExtArgs>
+    exporter?: boolean | Document$exporterArgs<ExtArgs>
+    consignee?: boolean | Document$consigneeArgs<ExtArgs>
     allocation?: boolean | Document$allocationArgs<ExtArgs>
     container?: boolean | Document$containerArgs<ExtArgs>
     invoice?: boolean | Document$invoiceArgs<ExtArgs>
@@ -20438,12 +20588,18 @@ export namespace Prisma {
     invoiceId?: boolean
     packingListId?: boolean
     transitId?: boolean
+    clientId?: boolean
+    exporterId?: boolean
+    consigneeId?: boolean
     uploadedAt?: boolean
     updatedAt?: boolean
   }
 
-  export type DocumentOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "type" | "fileName" | "originalName" | "fileUrl" | "publicId" | "mimeType" | "fileSize" | "remarks" | "allocationId" | "shipmentId" | "containerId" | "invoiceId" | "packingListId" | "transitId" | "uploadedAt" | "updatedAt", ExtArgs["result"]["document"]>
+  export type DocumentOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "type" | "fileName" | "originalName" | "fileUrl" | "publicId" | "mimeType" | "fileSize" | "remarks" | "allocationId" | "shipmentId" | "containerId" | "invoiceId" | "packingListId" | "transitId" | "clientId" | "exporterId" | "consigneeId" | "uploadedAt" | "updatedAt", ExtArgs["result"]["document"]>
   export type DocumentInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    client?: boolean | Document$clientArgs<ExtArgs>
+    exporter?: boolean | Document$exporterArgs<ExtArgs>
+    consignee?: boolean | Document$consigneeArgs<ExtArgs>
     allocation?: boolean | Document$allocationArgs<ExtArgs>
     container?: boolean | Document$containerArgs<ExtArgs>
     invoice?: boolean | Document$invoiceArgs<ExtArgs>
@@ -20452,6 +20608,9 @@ export namespace Prisma {
     transit?: boolean | Document$transitArgs<ExtArgs>
   }
   export type DocumentIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    client?: boolean | Document$clientArgs<ExtArgs>
+    exporter?: boolean | Document$exporterArgs<ExtArgs>
+    consignee?: boolean | Document$consigneeArgs<ExtArgs>
     allocation?: boolean | Document$allocationArgs<ExtArgs>
     container?: boolean | Document$containerArgs<ExtArgs>
     invoice?: boolean | Document$invoiceArgs<ExtArgs>
@@ -20460,6 +20619,9 @@ export namespace Prisma {
     transit?: boolean | Document$transitArgs<ExtArgs>
   }
   export type DocumentIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    client?: boolean | Document$clientArgs<ExtArgs>
+    exporter?: boolean | Document$exporterArgs<ExtArgs>
+    consignee?: boolean | Document$consigneeArgs<ExtArgs>
     allocation?: boolean | Document$allocationArgs<ExtArgs>
     container?: boolean | Document$containerArgs<ExtArgs>
     invoice?: boolean | Document$invoiceArgs<ExtArgs>
@@ -20471,6 +20633,9 @@ export namespace Prisma {
   export type $DocumentPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "Document"
     objects: {
+      client: Prisma.$ClientPayload<ExtArgs> | null
+      exporter: Prisma.$ExporterPayload<ExtArgs> | null
+      consignee: Prisma.$ConsigneePayload<ExtArgs> | null
       allocation: Prisma.$AllocationPayload<ExtArgs> | null
       container: Prisma.$ContainerPayload<ExtArgs> | null
       invoice: Prisma.$InvoicePayload<ExtArgs> | null
@@ -20494,6 +20659,9 @@ export namespace Prisma {
       invoiceId: string | null
       packingListId: string | null
       transitId: string | null
+      clientId: string | null
+      exporterId: string | null
+      consigneeId: string | null
       uploadedAt: Date
       updatedAt: Date
     }, ExtArgs["result"]["document"]>
@@ -20890,6 +21058,9 @@ export namespace Prisma {
    */
   export interface Prisma__DocumentClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
+    client<T extends Document$clientArgs<ExtArgs> = {}>(args?: Subset<T, Document$clientArgs<ExtArgs>>): Prisma__ClientClient<$Result.GetResult<Prisma.$ClientPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    exporter<T extends Document$exporterArgs<ExtArgs> = {}>(args?: Subset<T, Document$exporterArgs<ExtArgs>>): Prisma__ExporterClient<$Result.GetResult<Prisma.$ExporterPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    consignee<T extends Document$consigneeArgs<ExtArgs> = {}>(args?: Subset<T, Document$consigneeArgs<ExtArgs>>): Prisma__ConsigneeClient<$Result.GetResult<Prisma.$ConsigneePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     allocation<T extends Document$allocationArgs<ExtArgs> = {}>(args?: Subset<T, Document$allocationArgs<ExtArgs>>): Prisma__AllocationClient<$Result.GetResult<Prisma.$AllocationPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     container<T extends Document$containerArgs<ExtArgs> = {}>(args?: Subset<T, Document$containerArgs<ExtArgs>>): Prisma__ContainerClient<$Result.GetResult<Prisma.$ContainerPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     invoice<T extends Document$invoiceArgs<ExtArgs> = {}>(args?: Subset<T, Document$invoiceArgs<ExtArgs>>): Prisma__InvoiceClient<$Result.GetResult<Prisma.$InvoicePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
@@ -20940,6 +21111,9 @@ export namespace Prisma {
     readonly invoiceId: FieldRef<"Document", 'String'>
     readonly packingListId: FieldRef<"Document", 'String'>
     readonly transitId: FieldRef<"Document", 'String'>
+    readonly clientId: FieldRef<"Document", 'String'>
+    readonly exporterId: FieldRef<"Document", 'String'>
+    readonly consigneeId: FieldRef<"Document", 'String'>
     readonly uploadedAt: FieldRef<"Document", 'DateTime'>
     readonly updatedAt: FieldRef<"Document", 'DateTime'>
   }
@@ -21340,6 +21514,63 @@ export namespace Prisma {
      * Limit how many Documents to delete.
      */
     limit?: number
+  }
+
+  /**
+   * Document.client
+   */
+  export type Document$clientArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Client
+     */
+    select?: ClientSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Client
+     */
+    omit?: ClientOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ClientInclude<ExtArgs> | null
+    where?: ClientWhereInput
+  }
+
+  /**
+   * Document.exporter
+   */
+  export type Document$exporterArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Exporter
+     */
+    select?: ExporterSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Exporter
+     */
+    omit?: ExporterOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ExporterInclude<ExtArgs> | null
+    where?: ExporterWhereInput
+  }
+
+  /**
+   * Document.consignee
+   */
+  export type Document$consigneeArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Consignee
+     */
+    select?: ConsigneeSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Consignee
+     */
+    omit?: ConsigneeOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ConsigneeInclude<ExtArgs> | null
+    where?: ConsigneeWhereInput
   }
 
   /**
@@ -21819,6 +22050,9 @@ export namespace Prisma {
     invoiceId: 'invoiceId',
     packingListId: 'packingListId',
     transitId: 'transitId',
+    clientId: 'clientId',
+    exporterId: 'exporterId',
+    consigneeId: 'consigneeId',
     uploadedAt: 'uploadedAt',
     updatedAt: 'updatedAt'
   };
@@ -22364,6 +22598,7 @@ export namespace Prisma {
     contactPerson?: StringNullableFilter<"Exporter"> | string | null
     createdAt?: DateTimeFilter<"Exporter"> | Date | string
     updatedAt?: DateTimeFilter<"Exporter"> | Date | string
+    documents?: DocumentListRelationFilter
     allocations?: AllocationListRelationFilter
     shipments?: ShipmentListRelationFilter
   }
@@ -22377,6 +22612,7 @@ export namespace Prisma {
     contactPerson?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    documents?: DocumentOrderByRelationAggregateInput
     allocations?: AllocationOrderByRelationAggregateInput
     shipments?: ShipmentOrderByRelationAggregateInput
   }
@@ -22393,6 +22629,7 @@ export namespace Prisma {
     contactPerson?: StringNullableFilter<"Exporter"> | string | null
     createdAt?: DateTimeFilter<"Exporter"> | Date | string
     updatedAt?: DateTimeFilter<"Exporter"> | Date | string
+    documents?: DocumentListRelationFilter
     allocations?: AllocationListRelationFilter
     shipments?: ShipmentListRelationFilter
   }, "id">
@@ -22444,6 +22681,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFilter<"Consignee"> | Date | string
     allocations?: AllocationListRelationFilter
     shipments?: ShipmentListRelationFilter
+    documents?: DocumentListRelationFilter
   }
 
   export type ConsigneeOrderByWithRelationInput = {
@@ -22462,6 +22700,7 @@ export namespace Prisma {
     updatedAt?: SortOrder
     allocations?: AllocationOrderByRelationAggregateInput
     shipments?: ShipmentOrderByRelationAggregateInput
+    documents?: DocumentOrderByRelationAggregateInput
   }
 
   export type ConsigneeWhereUniqueInput = Prisma.AtLeast<{
@@ -22483,6 +22722,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFilter<"Consignee"> | Date | string
     allocations?: AllocationListRelationFilter
     shipments?: ShipmentListRelationFilter
+    documents?: DocumentListRelationFilter
   }, "id">
 
   export type ConsigneeOrderByWithAggregationInput = {
@@ -23737,6 +23977,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFilter<"Client"> | Date | string
     allocations?: AllocationListRelationFilter
     shipments?: ShipmentListRelationFilter
+    documents?: DocumentListRelationFilter
   }
 
   export type ClientOrderByWithRelationInput = {
@@ -23760,6 +24001,7 @@ export namespace Prisma {
     updatedAt?: SortOrder
     allocations?: AllocationOrderByRelationAggregateInput
     shipments?: ShipmentOrderByRelationAggregateInput
+    documents?: DocumentOrderByRelationAggregateInput
   }
 
   export type ClientWhereUniqueInput = Prisma.AtLeast<{
@@ -23786,6 +24028,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFilter<"Client"> | Date | string
     allocations?: AllocationListRelationFilter
     shipments?: ShipmentListRelationFilter
+    documents?: DocumentListRelationFilter
   }, "id" | "clientCode">
 
   export type ClientOrderByWithAggregationInput = {
@@ -23855,8 +24098,14 @@ export namespace Prisma {
     invoiceId?: StringNullableFilter<"Document"> | string | null
     packingListId?: StringNullableFilter<"Document"> | string | null
     transitId?: StringNullableFilter<"Document"> | string | null
+    clientId?: StringNullableFilter<"Document"> | string | null
+    exporterId?: StringNullableFilter<"Document"> | string | null
+    consigneeId?: StringNullableFilter<"Document"> | string | null
     uploadedAt?: DateTimeFilter<"Document"> | Date | string
     updatedAt?: DateTimeFilter<"Document"> | Date | string
+    client?: XOR<ClientNullableScalarRelationFilter, ClientWhereInput> | null
+    exporter?: XOR<ExporterNullableScalarRelationFilter, ExporterWhereInput> | null
+    consignee?: XOR<ConsigneeNullableScalarRelationFilter, ConsigneeWhereInput> | null
     allocation?: XOR<AllocationNullableScalarRelationFilter, AllocationWhereInput> | null
     container?: XOR<ContainerNullableScalarRelationFilter, ContainerWhereInput> | null
     invoice?: XOR<InvoiceNullableScalarRelationFilter, InvoiceWhereInput> | null
@@ -23881,8 +24130,14 @@ export namespace Prisma {
     invoiceId?: SortOrderInput | SortOrder
     packingListId?: SortOrderInput | SortOrder
     transitId?: SortOrderInput | SortOrder
+    clientId?: SortOrderInput | SortOrder
+    exporterId?: SortOrderInput | SortOrder
+    consigneeId?: SortOrderInput | SortOrder
     uploadedAt?: SortOrder
     updatedAt?: SortOrder
+    client?: ClientOrderByWithRelationInput
+    exporter?: ExporterOrderByWithRelationInput
+    consignee?: ConsigneeOrderByWithRelationInput
     allocation?: AllocationOrderByWithRelationInput
     container?: ContainerOrderByWithRelationInput
     invoice?: InvoiceOrderByWithRelationInput
@@ -23910,8 +24165,14 @@ export namespace Prisma {
     invoiceId?: StringNullableFilter<"Document"> | string | null
     packingListId?: StringNullableFilter<"Document"> | string | null
     transitId?: StringNullableFilter<"Document"> | string | null
+    clientId?: StringNullableFilter<"Document"> | string | null
+    exporterId?: StringNullableFilter<"Document"> | string | null
+    consigneeId?: StringNullableFilter<"Document"> | string | null
     uploadedAt?: DateTimeFilter<"Document"> | Date | string
     updatedAt?: DateTimeFilter<"Document"> | Date | string
+    client?: XOR<ClientNullableScalarRelationFilter, ClientWhereInput> | null
+    exporter?: XOR<ExporterNullableScalarRelationFilter, ExporterWhereInput> | null
+    consignee?: XOR<ConsigneeNullableScalarRelationFilter, ConsigneeWhereInput> | null
     allocation?: XOR<AllocationNullableScalarRelationFilter, AllocationWhereInput> | null
     container?: XOR<ContainerNullableScalarRelationFilter, ContainerWhereInput> | null
     invoice?: XOR<InvoiceNullableScalarRelationFilter, InvoiceWhereInput> | null
@@ -23936,6 +24197,9 @@ export namespace Prisma {
     invoiceId?: SortOrderInput | SortOrder
     packingListId?: SortOrderInput | SortOrder
     transitId?: SortOrderInput | SortOrder
+    clientId?: SortOrderInput | SortOrder
+    exporterId?: SortOrderInput | SortOrder
+    consigneeId?: SortOrderInput | SortOrder
     uploadedAt?: SortOrder
     updatedAt?: SortOrder
     _count?: DocumentCountOrderByAggregateInput
@@ -23964,6 +24228,9 @@ export namespace Prisma {
     invoiceId?: StringNullableWithAggregatesFilter<"Document"> | string | null
     packingListId?: StringNullableWithAggregatesFilter<"Document"> | string | null
     transitId?: StringNullableWithAggregatesFilter<"Document"> | string | null
+    clientId?: StringNullableWithAggregatesFilter<"Document"> | string | null
+    exporterId?: StringNullableWithAggregatesFilter<"Document"> | string | null
+    consigneeId?: StringNullableWithAggregatesFilter<"Document"> | string | null
     uploadedAt?: DateTimeWithAggregatesFilter<"Document"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"Document"> | Date | string
   }
@@ -24219,6 +24486,7 @@ export namespace Prisma {
     contactPerson?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
+    documents?: DocumentCreateNestedManyWithoutExporterInput
     allocations?: AllocationCreateNestedManyWithoutExporterInput
     shipments?: ShipmentCreateNestedManyWithoutExporterInput
   }
@@ -24232,6 +24500,7 @@ export namespace Prisma {
     contactPerson?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
+    documents?: DocumentUncheckedCreateNestedManyWithoutExporterInput
     allocations?: AllocationUncheckedCreateNestedManyWithoutExporterInput
     shipments?: ShipmentUncheckedCreateNestedManyWithoutExporterInput
   }
@@ -24245,6 +24514,7 @@ export namespace Prisma {
     contactPerson?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    documents?: DocumentUpdateManyWithoutExporterNestedInput
     allocations?: AllocationUpdateManyWithoutExporterNestedInput
     shipments?: ShipmentUpdateManyWithoutExporterNestedInput
   }
@@ -24258,6 +24528,7 @@ export namespace Prisma {
     contactPerson?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    documents?: DocumentUncheckedUpdateManyWithoutExporterNestedInput
     allocations?: AllocationUncheckedUpdateManyWithoutExporterNestedInput
     shipments?: ShipmentUncheckedUpdateManyWithoutExporterNestedInput
   }
@@ -24311,6 +24582,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     allocations?: AllocationCreateNestedManyWithoutConsigneeInput
     shipments?: ShipmentCreateNestedManyWithoutConsigneeInput
+    documents?: DocumentCreateNestedManyWithoutConsigneeInput
   }
 
   export type ConsigneeUncheckedCreateInput = {
@@ -24329,6 +24601,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     allocations?: AllocationUncheckedCreateNestedManyWithoutConsigneeInput
     shipments?: ShipmentUncheckedCreateNestedManyWithoutConsigneeInput
+    documents?: DocumentUncheckedCreateNestedManyWithoutConsigneeInput
   }
 
   export type ConsigneeUpdateInput = {
@@ -24347,6 +24620,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     allocations?: AllocationUpdateManyWithoutConsigneeNestedInput
     shipments?: ShipmentUpdateManyWithoutConsigneeNestedInput
+    documents?: DocumentUpdateManyWithoutConsigneeNestedInput
   }
 
   export type ConsigneeUncheckedUpdateInput = {
@@ -24365,6 +24639,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     allocations?: AllocationUncheckedUpdateManyWithoutConsigneeNestedInput
     shipments?: ShipmentUncheckedUpdateManyWithoutConsigneeNestedInput
+    documents?: DocumentUncheckedUpdateManyWithoutConsigneeNestedInput
   }
 
   export type ConsigneeCreateManyInput = {
@@ -25846,6 +26121,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     allocations?: AllocationCreateNestedManyWithoutClientInput
     shipments?: ShipmentCreateNestedManyWithoutClientInput
+    documents?: DocumentCreateNestedManyWithoutClientInput
   }
 
   export type ClientUncheckedCreateInput = {
@@ -25869,6 +26145,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     allocations?: AllocationUncheckedCreateNestedManyWithoutClientInput
     shipments?: ShipmentUncheckedCreateNestedManyWithoutClientInput
+    documents?: DocumentUncheckedCreateNestedManyWithoutClientInput
   }
 
   export type ClientUpdateInput = {
@@ -25892,6 +26169,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     allocations?: AllocationUpdateManyWithoutClientNestedInput
     shipments?: ShipmentUpdateManyWithoutClientNestedInput
+    documents?: DocumentUpdateManyWithoutClientNestedInput
   }
 
   export type ClientUncheckedUpdateInput = {
@@ -25915,6 +26193,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     allocations?: AllocationUncheckedUpdateManyWithoutClientNestedInput
     shipments?: ShipmentUncheckedUpdateManyWithoutClientNestedInput
+    documents?: DocumentUncheckedUpdateManyWithoutClientNestedInput
   }
 
   export type ClientCreateManyInput = {
@@ -25992,6 +26271,9 @@ export namespace Prisma {
     remarks?: string | null
     uploadedAt?: Date | string
     updatedAt?: Date | string
+    client?: ClientCreateNestedOneWithoutDocumentsInput
+    exporter?: ExporterCreateNestedOneWithoutDocumentsInput
+    consignee?: ConsigneeCreateNestedOneWithoutDocumentsInput
     allocation?: AllocationCreateNestedOneWithoutAttachedDocumentsInput
     container?: ContainerCreateNestedOneWithoutDocumentsInput
     invoice?: InvoiceCreateNestedOneWithoutDocumentsInput
@@ -26016,6 +26298,9 @@ export namespace Prisma {
     invoiceId?: string | null
     packingListId?: string | null
     transitId?: string | null
+    clientId?: string | null
+    exporterId?: string | null
+    consigneeId?: string | null
     uploadedAt?: Date | string
     updatedAt?: Date | string
   }
@@ -26032,6 +26317,9 @@ export namespace Prisma {
     remarks?: NullableStringFieldUpdateOperationsInput | string | null
     uploadedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    client?: ClientUpdateOneWithoutDocumentsNestedInput
+    exporter?: ExporterUpdateOneWithoutDocumentsNestedInput
+    consignee?: ConsigneeUpdateOneWithoutDocumentsNestedInput
     allocation?: AllocationUpdateOneWithoutAttachedDocumentsNestedInput
     container?: ContainerUpdateOneWithoutDocumentsNestedInput
     invoice?: InvoiceUpdateOneWithoutDocumentsNestedInput
@@ -26056,6 +26344,9 @@ export namespace Prisma {
     invoiceId?: NullableStringFieldUpdateOperationsInput | string | null
     packingListId?: NullableStringFieldUpdateOperationsInput | string | null
     transitId?: NullableStringFieldUpdateOperationsInput | string | null
+    clientId?: NullableStringFieldUpdateOperationsInput | string | null
+    exporterId?: NullableStringFieldUpdateOperationsInput | string | null
+    consigneeId?: NullableStringFieldUpdateOperationsInput | string | null
     uploadedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -26076,6 +26367,9 @@ export namespace Prisma {
     invoiceId?: string | null
     packingListId?: string | null
     transitId?: string | null
+    clientId?: string | null
+    exporterId?: string | null
+    consigneeId?: string | null
     uploadedAt?: Date | string
     updatedAt?: Date | string
   }
@@ -26110,6 +26404,9 @@ export namespace Prisma {
     invoiceId?: NullableStringFieldUpdateOperationsInput | string | null
     packingListId?: NullableStringFieldUpdateOperationsInput | string | null
     transitId?: NullableStringFieldUpdateOperationsInput | string | null
+    clientId?: NullableStringFieldUpdateOperationsInput | string | null
+    exporterId?: NullableStringFieldUpdateOperationsInput | string | null
+    consigneeId?: NullableStringFieldUpdateOperationsInput | string | null
     uploadedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -26428,6 +26725,16 @@ export namespace Prisma {
     _max?: NestedIntNullableFilter<$PrismaModel>
   }
 
+  export type DocumentListRelationFilter = {
+    every?: DocumentWhereInput
+    some?: DocumentWhereInput
+    none?: DocumentWhereInput
+  }
+
+  export type DocumentOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
   export type ExporterCountOrderByAggregateInput = {
     id?: SortOrder
     name?: SortOrder
@@ -26550,12 +26857,6 @@ export namespace Prisma {
     none?: ContainerWhereInput
   }
 
-  export type DocumentListRelationFilter = {
-    every?: DocumentWhereInput
-    some?: DocumentWhereInput
-    none?: DocumentWhereInput
-  }
-
   export type InvoiceListRelationFilter = {
     every?: InvoiceWhereInput
     some?: InvoiceWhereInput
@@ -26599,10 +26900,6 @@ export namespace Prisma {
   }
 
   export type ContainerOrderByRelationAggregateInput = {
-    _count?: SortOrder
-  }
-
-  export type DocumentOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -27720,6 +28017,11 @@ export namespace Prisma {
     _max?: NestedEnumClientTypeFilter<$PrismaModel>
   }
 
+  export type ClientNullableScalarRelationFilter = {
+    is?: ClientWhereInput | null
+    isNot?: ClientWhereInput | null
+  }
+
   export type ContainerNullableScalarRelationFilter = {
     is?: ContainerWhereInput | null
     isNot?: ContainerWhereInput | null
@@ -27751,6 +28053,9 @@ export namespace Prisma {
     invoiceId?: SortOrder
     packingListId?: SortOrder
     transitId?: SortOrder
+    clientId?: SortOrder
+    exporterId?: SortOrder
+    consigneeId?: SortOrder
     uploadedAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -27775,6 +28080,9 @@ export namespace Prisma {
     invoiceId?: SortOrder
     packingListId?: SortOrder
     transitId?: SortOrder
+    clientId?: SortOrder
+    exporterId?: SortOrder
+    consigneeId?: SortOrder
     uploadedAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -27795,6 +28103,9 @@ export namespace Prisma {
     invoiceId?: SortOrder
     packingListId?: SortOrder
     transitId?: SortOrder
+    clientId?: SortOrder
+    exporterId?: SortOrder
+    consigneeId?: SortOrder
     uploadedAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -28075,6 +28386,13 @@ export namespace Prisma {
     update?: XOR<XOR<UserUpdateToOneWithWhereWithoutUploadedDocumentsInput, UserUpdateWithoutUploadedDocumentsInput>, UserUncheckedUpdateWithoutUploadedDocumentsInput>
   }
 
+  export type DocumentCreateNestedManyWithoutExporterInput = {
+    create?: XOR<DocumentCreateWithoutExporterInput, DocumentUncheckedCreateWithoutExporterInput> | DocumentCreateWithoutExporterInput[] | DocumentUncheckedCreateWithoutExporterInput[]
+    connectOrCreate?: DocumentCreateOrConnectWithoutExporterInput | DocumentCreateOrConnectWithoutExporterInput[]
+    createMany?: DocumentCreateManyExporterInputEnvelope
+    connect?: DocumentWhereUniqueInput | DocumentWhereUniqueInput[]
+  }
+
   export type AllocationCreateNestedManyWithoutExporterInput = {
     create?: XOR<AllocationCreateWithoutExporterInput, AllocationUncheckedCreateWithoutExporterInput> | AllocationCreateWithoutExporterInput[] | AllocationUncheckedCreateWithoutExporterInput[]
     connectOrCreate?: AllocationCreateOrConnectWithoutExporterInput | AllocationCreateOrConnectWithoutExporterInput[]
@@ -28089,6 +28407,13 @@ export namespace Prisma {
     connect?: ShipmentWhereUniqueInput | ShipmentWhereUniqueInput[]
   }
 
+  export type DocumentUncheckedCreateNestedManyWithoutExporterInput = {
+    create?: XOR<DocumentCreateWithoutExporterInput, DocumentUncheckedCreateWithoutExporterInput> | DocumentCreateWithoutExporterInput[] | DocumentUncheckedCreateWithoutExporterInput[]
+    connectOrCreate?: DocumentCreateOrConnectWithoutExporterInput | DocumentCreateOrConnectWithoutExporterInput[]
+    createMany?: DocumentCreateManyExporterInputEnvelope
+    connect?: DocumentWhereUniqueInput | DocumentWhereUniqueInput[]
+  }
+
   export type AllocationUncheckedCreateNestedManyWithoutExporterInput = {
     create?: XOR<AllocationCreateWithoutExporterInput, AllocationUncheckedCreateWithoutExporterInput> | AllocationCreateWithoutExporterInput[] | AllocationUncheckedCreateWithoutExporterInput[]
     connectOrCreate?: AllocationCreateOrConnectWithoutExporterInput | AllocationCreateOrConnectWithoutExporterInput[]
@@ -28101,6 +28426,20 @@ export namespace Prisma {
     connectOrCreate?: ShipmentCreateOrConnectWithoutExporterInput | ShipmentCreateOrConnectWithoutExporterInput[]
     createMany?: ShipmentCreateManyExporterInputEnvelope
     connect?: ShipmentWhereUniqueInput | ShipmentWhereUniqueInput[]
+  }
+
+  export type DocumentUpdateManyWithoutExporterNestedInput = {
+    create?: XOR<DocumentCreateWithoutExporterInput, DocumentUncheckedCreateWithoutExporterInput> | DocumentCreateWithoutExporterInput[] | DocumentUncheckedCreateWithoutExporterInput[]
+    connectOrCreate?: DocumentCreateOrConnectWithoutExporterInput | DocumentCreateOrConnectWithoutExporterInput[]
+    upsert?: DocumentUpsertWithWhereUniqueWithoutExporterInput | DocumentUpsertWithWhereUniqueWithoutExporterInput[]
+    createMany?: DocumentCreateManyExporterInputEnvelope
+    set?: DocumentWhereUniqueInput | DocumentWhereUniqueInput[]
+    disconnect?: DocumentWhereUniqueInput | DocumentWhereUniqueInput[]
+    delete?: DocumentWhereUniqueInput | DocumentWhereUniqueInput[]
+    connect?: DocumentWhereUniqueInput | DocumentWhereUniqueInput[]
+    update?: DocumentUpdateWithWhereUniqueWithoutExporterInput | DocumentUpdateWithWhereUniqueWithoutExporterInput[]
+    updateMany?: DocumentUpdateManyWithWhereWithoutExporterInput | DocumentUpdateManyWithWhereWithoutExporterInput[]
+    deleteMany?: DocumentScalarWhereInput | DocumentScalarWhereInput[]
   }
 
   export type AllocationUpdateManyWithoutExporterNestedInput = {
@@ -28129,6 +28468,20 @@ export namespace Prisma {
     update?: ShipmentUpdateWithWhereUniqueWithoutExporterInput | ShipmentUpdateWithWhereUniqueWithoutExporterInput[]
     updateMany?: ShipmentUpdateManyWithWhereWithoutExporterInput | ShipmentUpdateManyWithWhereWithoutExporterInput[]
     deleteMany?: ShipmentScalarWhereInput | ShipmentScalarWhereInput[]
+  }
+
+  export type DocumentUncheckedUpdateManyWithoutExporterNestedInput = {
+    create?: XOR<DocumentCreateWithoutExporterInput, DocumentUncheckedCreateWithoutExporterInput> | DocumentCreateWithoutExporterInput[] | DocumentUncheckedCreateWithoutExporterInput[]
+    connectOrCreate?: DocumentCreateOrConnectWithoutExporterInput | DocumentCreateOrConnectWithoutExporterInput[]
+    upsert?: DocumentUpsertWithWhereUniqueWithoutExporterInput | DocumentUpsertWithWhereUniqueWithoutExporterInput[]
+    createMany?: DocumentCreateManyExporterInputEnvelope
+    set?: DocumentWhereUniqueInput | DocumentWhereUniqueInput[]
+    disconnect?: DocumentWhereUniqueInput | DocumentWhereUniqueInput[]
+    delete?: DocumentWhereUniqueInput | DocumentWhereUniqueInput[]
+    connect?: DocumentWhereUniqueInput | DocumentWhereUniqueInput[]
+    update?: DocumentUpdateWithWhereUniqueWithoutExporterInput | DocumentUpdateWithWhereUniqueWithoutExporterInput[]
+    updateMany?: DocumentUpdateManyWithWhereWithoutExporterInput | DocumentUpdateManyWithWhereWithoutExporterInput[]
+    deleteMany?: DocumentScalarWhereInput | DocumentScalarWhereInput[]
   }
 
   export type AllocationUncheckedUpdateManyWithoutExporterNestedInput = {
@@ -28173,6 +28526,13 @@ export namespace Prisma {
     connect?: ShipmentWhereUniqueInput | ShipmentWhereUniqueInput[]
   }
 
+  export type DocumentCreateNestedManyWithoutConsigneeInput = {
+    create?: XOR<DocumentCreateWithoutConsigneeInput, DocumentUncheckedCreateWithoutConsigneeInput> | DocumentCreateWithoutConsigneeInput[] | DocumentUncheckedCreateWithoutConsigneeInput[]
+    connectOrCreate?: DocumentCreateOrConnectWithoutConsigneeInput | DocumentCreateOrConnectWithoutConsigneeInput[]
+    createMany?: DocumentCreateManyConsigneeInputEnvelope
+    connect?: DocumentWhereUniqueInput | DocumentWhereUniqueInput[]
+  }
+
   export type AllocationUncheckedCreateNestedManyWithoutConsigneeInput = {
     create?: XOR<AllocationCreateWithoutConsigneeInput, AllocationUncheckedCreateWithoutConsigneeInput> | AllocationCreateWithoutConsigneeInput[] | AllocationUncheckedCreateWithoutConsigneeInput[]
     connectOrCreate?: AllocationCreateOrConnectWithoutConsigneeInput | AllocationCreateOrConnectWithoutConsigneeInput[]
@@ -28185,6 +28545,13 @@ export namespace Prisma {
     connectOrCreate?: ShipmentCreateOrConnectWithoutConsigneeInput | ShipmentCreateOrConnectWithoutConsigneeInput[]
     createMany?: ShipmentCreateManyConsigneeInputEnvelope
     connect?: ShipmentWhereUniqueInput | ShipmentWhereUniqueInput[]
+  }
+
+  export type DocumentUncheckedCreateNestedManyWithoutConsigneeInput = {
+    create?: XOR<DocumentCreateWithoutConsigneeInput, DocumentUncheckedCreateWithoutConsigneeInput> | DocumentCreateWithoutConsigneeInput[] | DocumentUncheckedCreateWithoutConsigneeInput[]
+    connectOrCreate?: DocumentCreateOrConnectWithoutConsigneeInput | DocumentCreateOrConnectWithoutConsigneeInput[]
+    createMany?: DocumentCreateManyConsigneeInputEnvelope
+    connect?: DocumentWhereUniqueInput | DocumentWhereUniqueInput[]
   }
 
   export type EnumTransportModeFieldUpdateOperationsInput = {
@@ -28219,6 +28586,20 @@ export namespace Prisma {
     deleteMany?: ShipmentScalarWhereInput | ShipmentScalarWhereInput[]
   }
 
+  export type DocumentUpdateManyWithoutConsigneeNestedInput = {
+    create?: XOR<DocumentCreateWithoutConsigneeInput, DocumentUncheckedCreateWithoutConsigneeInput> | DocumentCreateWithoutConsigneeInput[] | DocumentUncheckedCreateWithoutConsigneeInput[]
+    connectOrCreate?: DocumentCreateOrConnectWithoutConsigneeInput | DocumentCreateOrConnectWithoutConsigneeInput[]
+    upsert?: DocumentUpsertWithWhereUniqueWithoutConsigneeInput | DocumentUpsertWithWhereUniqueWithoutConsigneeInput[]
+    createMany?: DocumentCreateManyConsigneeInputEnvelope
+    set?: DocumentWhereUniqueInput | DocumentWhereUniqueInput[]
+    disconnect?: DocumentWhereUniqueInput | DocumentWhereUniqueInput[]
+    delete?: DocumentWhereUniqueInput | DocumentWhereUniqueInput[]
+    connect?: DocumentWhereUniqueInput | DocumentWhereUniqueInput[]
+    update?: DocumentUpdateWithWhereUniqueWithoutConsigneeInput | DocumentUpdateWithWhereUniqueWithoutConsigneeInput[]
+    updateMany?: DocumentUpdateManyWithWhereWithoutConsigneeInput | DocumentUpdateManyWithWhereWithoutConsigneeInput[]
+    deleteMany?: DocumentScalarWhereInput | DocumentScalarWhereInput[]
+  }
+
   export type AllocationUncheckedUpdateManyWithoutConsigneeNestedInput = {
     create?: XOR<AllocationCreateWithoutConsigneeInput, AllocationUncheckedCreateWithoutConsigneeInput> | AllocationCreateWithoutConsigneeInput[] | AllocationUncheckedCreateWithoutConsigneeInput[]
     connectOrCreate?: AllocationCreateOrConnectWithoutConsigneeInput | AllocationCreateOrConnectWithoutConsigneeInput[]
@@ -28245,6 +28626,20 @@ export namespace Prisma {
     update?: ShipmentUpdateWithWhereUniqueWithoutConsigneeInput | ShipmentUpdateWithWhereUniqueWithoutConsigneeInput[]
     updateMany?: ShipmentUpdateManyWithWhereWithoutConsigneeInput | ShipmentUpdateManyWithWhereWithoutConsigneeInput[]
     deleteMany?: ShipmentScalarWhereInput | ShipmentScalarWhereInput[]
+  }
+
+  export type DocumentUncheckedUpdateManyWithoutConsigneeNestedInput = {
+    create?: XOR<DocumentCreateWithoutConsigneeInput, DocumentUncheckedCreateWithoutConsigneeInput> | DocumentCreateWithoutConsigneeInput[] | DocumentUncheckedCreateWithoutConsigneeInput[]
+    connectOrCreate?: DocumentCreateOrConnectWithoutConsigneeInput | DocumentCreateOrConnectWithoutConsigneeInput[]
+    upsert?: DocumentUpsertWithWhereUniqueWithoutConsigneeInput | DocumentUpsertWithWhereUniqueWithoutConsigneeInput[]
+    createMany?: DocumentCreateManyConsigneeInputEnvelope
+    set?: DocumentWhereUniqueInput | DocumentWhereUniqueInput[]
+    disconnect?: DocumentWhereUniqueInput | DocumentWhereUniqueInput[]
+    delete?: DocumentWhereUniqueInput | DocumentWhereUniqueInput[]
+    connect?: DocumentWhereUniqueInput | DocumentWhereUniqueInput[]
+    update?: DocumentUpdateWithWhereUniqueWithoutConsigneeInput | DocumentUpdateWithWhereUniqueWithoutConsigneeInput[]
+    updateMany?: DocumentUpdateManyWithWhereWithoutConsigneeInput | DocumentUpdateManyWithWhereWithoutConsigneeInput[]
+    deleteMany?: DocumentScalarWhereInput | DocumentScalarWhereInput[]
   }
 
   export type ContainerCreateNestedManyWithoutShipmentInput = {
@@ -29263,6 +29658,13 @@ export namespace Prisma {
     connect?: ShipmentWhereUniqueInput | ShipmentWhereUniqueInput[]
   }
 
+  export type DocumentCreateNestedManyWithoutClientInput = {
+    create?: XOR<DocumentCreateWithoutClientInput, DocumentUncheckedCreateWithoutClientInput> | DocumentCreateWithoutClientInput[] | DocumentUncheckedCreateWithoutClientInput[]
+    connectOrCreate?: DocumentCreateOrConnectWithoutClientInput | DocumentCreateOrConnectWithoutClientInput[]
+    createMany?: DocumentCreateManyClientInputEnvelope
+    connect?: DocumentWhereUniqueInput | DocumentWhereUniqueInput[]
+  }
+
   export type AllocationUncheckedCreateNestedManyWithoutClientInput = {
     create?: XOR<AllocationCreateWithoutClientInput, AllocationUncheckedCreateWithoutClientInput> | AllocationCreateWithoutClientInput[] | AllocationUncheckedCreateWithoutClientInput[]
     connectOrCreate?: AllocationCreateOrConnectWithoutClientInput | AllocationCreateOrConnectWithoutClientInput[]
@@ -29275,6 +29677,13 @@ export namespace Prisma {
     connectOrCreate?: ShipmentCreateOrConnectWithoutClientInput | ShipmentCreateOrConnectWithoutClientInput[]
     createMany?: ShipmentCreateManyClientInputEnvelope
     connect?: ShipmentWhereUniqueInput | ShipmentWhereUniqueInput[]
+  }
+
+  export type DocumentUncheckedCreateNestedManyWithoutClientInput = {
+    create?: XOR<DocumentCreateWithoutClientInput, DocumentUncheckedCreateWithoutClientInput> | DocumentCreateWithoutClientInput[] | DocumentUncheckedCreateWithoutClientInput[]
+    connectOrCreate?: DocumentCreateOrConnectWithoutClientInput | DocumentCreateOrConnectWithoutClientInput[]
+    createMany?: DocumentCreateManyClientInputEnvelope
+    connect?: DocumentWhereUniqueInput | DocumentWhereUniqueInput[]
   }
 
   export type EnumClientTypeFieldUpdateOperationsInput = {
@@ -29309,6 +29718,20 @@ export namespace Prisma {
     deleteMany?: ShipmentScalarWhereInput | ShipmentScalarWhereInput[]
   }
 
+  export type DocumentUpdateManyWithoutClientNestedInput = {
+    create?: XOR<DocumentCreateWithoutClientInput, DocumentUncheckedCreateWithoutClientInput> | DocumentCreateWithoutClientInput[] | DocumentUncheckedCreateWithoutClientInput[]
+    connectOrCreate?: DocumentCreateOrConnectWithoutClientInput | DocumentCreateOrConnectWithoutClientInput[]
+    upsert?: DocumentUpsertWithWhereUniqueWithoutClientInput | DocumentUpsertWithWhereUniqueWithoutClientInput[]
+    createMany?: DocumentCreateManyClientInputEnvelope
+    set?: DocumentWhereUniqueInput | DocumentWhereUniqueInput[]
+    disconnect?: DocumentWhereUniqueInput | DocumentWhereUniqueInput[]
+    delete?: DocumentWhereUniqueInput | DocumentWhereUniqueInput[]
+    connect?: DocumentWhereUniqueInput | DocumentWhereUniqueInput[]
+    update?: DocumentUpdateWithWhereUniqueWithoutClientInput | DocumentUpdateWithWhereUniqueWithoutClientInput[]
+    updateMany?: DocumentUpdateManyWithWhereWithoutClientInput | DocumentUpdateManyWithWhereWithoutClientInput[]
+    deleteMany?: DocumentScalarWhereInput | DocumentScalarWhereInput[]
+  }
+
   export type AllocationUncheckedUpdateManyWithoutClientNestedInput = {
     create?: XOR<AllocationCreateWithoutClientInput, AllocationUncheckedCreateWithoutClientInput> | AllocationCreateWithoutClientInput[] | AllocationUncheckedCreateWithoutClientInput[]
     connectOrCreate?: AllocationCreateOrConnectWithoutClientInput | AllocationCreateOrConnectWithoutClientInput[]
@@ -29335,6 +29758,38 @@ export namespace Prisma {
     update?: ShipmentUpdateWithWhereUniqueWithoutClientInput | ShipmentUpdateWithWhereUniqueWithoutClientInput[]
     updateMany?: ShipmentUpdateManyWithWhereWithoutClientInput | ShipmentUpdateManyWithWhereWithoutClientInput[]
     deleteMany?: ShipmentScalarWhereInput | ShipmentScalarWhereInput[]
+  }
+
+  export type DocumentUncheckedUpdateManyWithoutClientNestedInput = {
+    create?: XOR<DocumentCreateWithoutClientInput, DocumentUncheckedCreateWithoutClientInput> | DocumentCreateWithoutClientInput[] | DocumentUncheckedCreateWithoutClientInput[]
+    connectOrCreate?: DocumentCreateOrConnectWithoutClientInput | DocumentCreateOrConnectWithoutClientInput[]
+    upsert?: DocumentUpsertWithWhereUniqueWithoutClientInput | DocumentUpsertWithWhereUniqueWithoutClientInput[]
+    createMany?: DocumentCreateManyClientInputEnvelope
+    set?: DocumentWhereUniqueInput | DocumentWhereUniqueInput[]
+    disconnect?: DocumentWhereUniqueInput | DocumentWhereUniqueInput[]
+    delete?: DocumentWhereUniqueInput | DocumentWhereUniqueInput[]
+    connect?: DocumentWhereUniqueInput | DocumentWhereUniqueInput[]
+    update?: DocumentUpdateWithWhereUniqueWithoutClientInput | DocumentUpdateWithWhereUniqueWithoutClientInput[]
+    updateMany?: DocumentUpdateManyWithWhereWithoutClientInput | DocumentUpdateManyWithWhereWithoutClientInput[]
+    deleteMany?: DocumentScalarWhereInput | DocumentScalarWhereInput[]
+  }
+
+  export type ClientCreateNestedOneWithoutDocumentsInput = {
+    create?: XOR<ClientCreateWithoutDocumentsInput, ClientUncheckedCreateWithoutDocumentsInput>
+    connectOrCreate?: ClientCreateOrConnectWithoutDocumentsInput
+    connect?: ClientWhereUniqueInput
+  }
+
+  export type ExporterCreateNestedOneWithoutDocumentsInput = {
+    create?: XOR<ExporterCreateWithoutDocumentsInput, ExporterUncheckedCreateWithoutDocumentsInput>
+    connectOrCreate?: ExporterCreateOrConnectWithoutDocumentsInput
+    connect?: ExporterWhereUniqueInput
+  }
+
+  export type ConsigneeCreateNestedOneWithoutDocumentsInput = {
+    create?: XOR<ConsigneeCreateWithoutDocumentsInput, ConsigneeUncheckedCreateWithoutDocumentsInput>
+    connectOrCreate?: ConsigneeCreateOrConnectWithoutDocumentsInput
+    connect?: ConsigneeWhereUniqueInput
   }
 
   export type AllocationCreateNestedOneWithoutAttachedDocumentsInput = {
@@ -29371,6 +29826,36 @@ export namespace Prisma {
     create?: XOR<TransitCreateWithoutDocumentsInput, TransitUncheckedCreateWithoutDocumentsInput>
     connectOrCreate?: TransitCreateOrConnectWithoutDocumentsInput
     connect?: TransitWhereUniqueInput
+  }
+
+  export type ClientUpdateOneWithoutDocumentsNestedInput = {
+    create?: XOR<ClientCreateWithoutDocumentsInput, ClientUncheckedCreateWithoutDocumentsInput>
+    connectOrCreate?: ClientCreateOrConnectWithoutDocumentsInput
+    upsert?: ClientUpsertWithoutDocumentsInput
+    disconnect?: ClientWhereInput | boolean
+    delete?: ClientWhereInput | boolean
+    connect?: ClientWhereUniqueInput
+    update?: XOR<XOR<ClientUpdateToOneWithWhereWithoutDocumentsInput, ClientUpdateWithoutDocumentsInput>, ClientUncheckedUpdateWithoutDocumentsInput>
+  }
+
+  export type ExporterUpdateOneWithoutDocumentsNestedInput = {
+    create?: XOR<ExporterCreateWithoutDocumentsInput, ExporterUncheckedCreateWithoutDocumentsInput>
+    connectOrCreate?: ExporterCreateOrConnectWithoutDocumentsInput
+    upsert?: ExporterUpsertWithoutDocumentsInput
+    disconnect?: ExporterWhereInput | boolean
+    delete?: ExporterWhereInput | boolean
+    connect?: ExporterWhereUniqueInput
+    update?: XOR<XOR<ExporterUpdateToOneWithWhereWithoutDocumentsInput, ExporterUpdateWithoutDocumentsInput>, ExporterUncheckedUpdateWithoutDocumentsInput>
+  }
+
+  export type ConsigneeUpdateOneWithoutDocumentsNestedInput = {
+    create?: XOR<ConsigneeCreateWithoutDocumentsInput, ConsigneeUncheckedCreateWithoutDocumentsInput>
+    connectOrCreate?: ConsigneeCreateOrConnectWithoutDocumentsInput
+    upsert?: ConsigneeUpsertWithoutDocumentsInput
+    disconnect?: ConsigneeWhereInput | boolean
+    delete?: ConsigneeWhereInput | boolean
+    connect?: ConsigneeWhereUniqueInput
+    update?: XOR<XOR<ConsigneeUpdateToOneWithWhereWithoutDocumentsInput, ConsigneeUpdateWithoutDocumentsInput>, ConsigneeUncheckedUpdateWithoutDocumentsInput>
   }
 
   export type AllocationUpdateOneWithoutAttachedDocumentsNestedInput = {
@@ -30925,6 +31410,60 @@ export namespace Prisma {
     approvedAllocations?: AllocationUncheckedUpdateManyWithoutApprovedByNestedInput
   }
 
+  export type DocumentCreateWithoutExporterInput = {
+    id?: string
+    type: $Enums.DocumentType
+    fileName: string
+    originalName?: string | null
+    fileUrl: string
+    publicId?: string | null
+    mimeType?: string | null
+    fileSize?: number | null
+    remarks?: string | null
+    uploadedAt?: Date | string
+    updatedAt?: Date | string
+    client?: ClientCreateNestedOneWithoutDocumentsInput
+    consignee?: ConsigneeCreateNestedOneWithoutDocumentsInput
+    allocation?: AllocationCreateNestedOneWithoutAttachedDocumentsInput
+    container?: ContainerCreateNestedOneWithoutDocumentsInput
+    invoice?: InvoiceCreateNestedOneWithoutDocumentsInput
+    packingList?: PackingListCreateNestedOneWithoutDocumentsInput
+    shipment?: ShipmentCreateNestedOneWithoutDocumentsInput
+    transit?: TransitCreateNestedOneWithoutDocumentsInput
+  }
+
+  export type DocumentUncheckedCreateWithoutExporterInput = {
+    id?: string
+    type: $Enums.DocumentType
+    fileName: string
+    originalName?: string | null
+    fileUrl: string
+    publicId?: string | null
+    mimeType?: string | null
+    fileSize?: number | null
+    remarks?: string | null
+    allocationId?: string | null
+    shipmentId?: string | null
+    containerId?: string | null
+    invoiceId?: string | null
+    packingListId?: string | null
+    transitId?: string | null
+    clientId?: string | null
+    consigneeId?: string | null
+    uploadedAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type DocumentCreateOrConnectWithoutExporterInput = {
+    where: DocumentWhereUniqueInput
+    create: XOR<DocumentCreateWithoutExporterInput, DocumentUncheckedCreateWithoutExporterInput>
+  }
+
+  export type DocumentCreateManyExporterInputEnvelope = {
+    data: DocumentCreateManyExporterInput | DocumentCreateManyExporterInput[]
+    skipDuplicates?: boolean
+  }
+
   export type AllocationCreateWithoutExporterInput = {
     id?: string
     allocationNumber: string
@@ -31117,6 +31656,48 @@ export namespace Prisma {
   export type ShipmentCreateManyExporterInputEnvelope = {
     data: ShipmentCreateManyExporterInput | ShipmentCreateManyExporterInput[]
     skipDuplicates?: boolean
+  }
+
+  export type DocumentUpsertWithWhereUniqueWithoutExporterInput = {
+    where: DocumentWhereUniqueInput
+    update: XOR<DocumentUpdateWithoutExporterInput, DocumentUncheckedUpdateWithoutExporterInput>
+    create: XOR<DocumentCreateWithoutExporterInput, DocumentUncheckedCreateWithoutExporterInput>
+  }
+
+  export type DocumentUpdateWithWhereUniqueWithoutExporterInput = {
+    where: DocumentWhereUniqueInput
+    data: XOR<DocumentUpdateWithoutExporterInput, DocumentUncheckedUpdateWithoutExporterInput>
+  }
+
+  export type DocumentUpdateManyWithWhereWithoutExporterInput = {
+    where: DocumentScalarWhereInput
+    data: XOR<DocumentUpdateManyMutationInput, DocumentUncheckedUpdateManyWithoutExporterInput>
+  }
+
+  export type DocumentScalarWhereInput = {
+    AND?: DocumentScalarWhereInput | DocumentScalarWhereInput[]
+    OR?: DocumentScalarWhereInput[]
+    NOT?: DocumentScalarWhereInput | DocumentScalarWhereInput[]
+    id?: StringFilter<"Document"> | string
+    type?: EnumDocumentTypeFilter<"Document"> | $Enums.DocumentType
+    fileName?: StringFilter<"Document"> | string
+    originalName?: StringNullableFilter<"Document"> | string | null
+    fileUrl?: StringFilter<"Document"> | string
+    publicId?: StringNullableFilter<"Document"> | string | null
+    mimeType?: StringNullableFilter<"Document"> | string | null
+    fileSize?: IntNullableFilter<"Document"> | number | null
+    remarks?: StringNullableFilter<"Document"> | string | null
+    allocationId?: StringNullableFilter<"Document"> | string | null
+    shipmentId?: StringNullableFilter<"Document"> | string | null
+    containerId?: StringNullableFilter<"Document"> | string | null
+    invoiceId?: StringNullableFilter<"Document"> | string | null
+    packingListId?: StringNullableFilter<"Document"> | string | null
+    transitId?: StringNullableFilter<"Document"> | string | null
+    clientId?: StringNullableFilter<"Document"> | string | null
+    exporterId?: StringNullableFilter<"Document"> | string | null
+    consigneeId?: StringNullableFilter<"Document"> | string | null
+    uploadedAt?: DateTimeFilter<"Document"> | Date | string
+    updatedAt?: DateTimeFilter<"Document"> | Date | string
   }
 
   export type AllocationUpsertWithWhereUniqueWithoutExporterInput = {
@@ -31345,6 +31926,60 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type DocumentCreateWithoutConsigneeInput = {
+    id?: string
+    type: $Enums.DocumentType
+    fileName: string
+    originalName?: string | null
+    fileUrl: string
+    publicId?: string | null
+    mimeType?: string | null
+    fileSize?: number | null
+    remarks?: string | null
+    uploadedAt?: Date | string
+    updatedAt?: Date | string
+    client?: ClientCreateNestedOneWithoutDocumentsInput
+    exporter?: ExporterCreateNestedOneWithoutDocumentsInput
+    allocation?: AllocationCreateNestedOneWithoutAttachedDocumentsInput
+    container?: ContainerCreateNestedOneWithoutDocumentsInput
+    invoice?: InvoiceCreateNestedOneWithoutDocumentsInput
+    packingList?: PackingListCreateNestedOneWithoutDocumentsInput
+    shipment?: ShipmentCreateNestedOneWithoutDocumentsInput
+    transit?: TransitCreateNestedOneWithoutDocumentsInput
+  }
+
+  export type DocumentUncheckedCreateWithoutConsigneeInput = {
+    id?: string
+    type: $Enums.DocumentType
+    fileName: string
+    originalName?: string | null
+    fileUrl: string
+    publicId?: string | null
+    mimeType?: string | null
+    fileSize?: number | null
+    remarks?: string | null
+    allocationId?: string | null
+    shipmentId?: string | null
+    containerId?: string | null
+    invoiceId?: string | null
+    packingListId?: string | null
+    transitId?: string | null
+    clientId?: string | null
+    exporterId?: string | null
+    uploadedAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type DocumentCreateOrConnectWithoutConsigneeInput = {
+    where: DocumentWhereUniqueInput
+    create: XOR<DocumentCreateWithoutConsigneeInput, DocumentUncheckedCreateWithoutConsigneeInput>
+  }
+
+  export type DocumentCreateManyConsigneeInputEnvelope = {
+    data: DocumentCreateManyConsigneeInput | DocumentCreateManyConsigneeInput[]
+    skipDuplicates?: boolean
+  }
+
   export type AllocationUpsertWithWhereUniqueWithoutConsigneeInput = {
     where: AllocationWhereUniqueInput
     update: XOR<AllocationUpdateWithoutConsigneeInput, AllocationUncheckedUpdateWithoutConsigneeInput>
@@ -31375,6 +32010,22 @@ export namespace Prisma {
   export type ShipmentUpdateManyWithWhereWithoutConsigneeInput = {
     where: ShipmentScalarWhereInput
     data: XOR<ShipmentUpdateManyMutationInput, ShipmentUncheckedUpdateManyWithoutConsigneeInput>
+  }
+
+  export type DocumentUpsertWithWhereUniqueWithoutConsigneeInput = {
+    where: DocumentWhereUniqueInput
+    update: XOR<DocumentUpdateWithoutConsigneeInput, DocumentUncheckedUpdateWithoutConsigneeInput>
+    create: XOR<DocumentCreateWithoutConsigneeInput, DocumentUncheckedCreateWithoutConsigneeInput>
+  }
+
+  export type DocumentUpdateWithWhereUniqueWithoutConsigneeInput = {
+    where: DocumentWhereUniqueInput
+    data: XOR<DocumentUpdateWithoutConsigneeInput, DocumentUncheckedUpdateWithoutConsigneeInput>
+  }
+
+  export type DocumentUpdateManyWithWhereWithoutConsigneeInput = {
+    where: DocumentScalarWhereInput
+    data: XOR<DocumentUpdateManyMutationInput, DocumentUncheckedUpdateManyWithoutConsigneeInput>
   }
 
   export type ContainerCreateWithoutShipmentInput = {
@@ -31453,6 +32104,9 @@ export namespace Prisma {
     remarks?: string | null
     uploadedAt?: Date | string
     updatedAt?: Date | string
+    client?: ClientCreateNestedOneWithoutDocumentsInput
+    exporter?: ExporterCreateNestedOneWithoutDocumentsInput
+    consignee?: ConsigneeCreateNestedOneWithoutDocumentsInput
     allocation?: AllocationCreateNestedOneWithoutAttachedDocumentsInput
     container?: ContainerCreateNestedOneWithoutDocumentsInput
     invoice?: InvoiceCreateNestedOneWithoutDocumentsInput
@@ -31475,6 +32129,9 @@ export namespace Prisma {
     invoiceId?: string | null
     packingListId?: string | null
     transitId?: string | null
+    clientId?: string | null
+    exporterId?: string | null
+    consigneeId?: string | null
     uploadedAt?: Date | string
     updatedAt?: Date | string
   }
@@ -31713,6 +32370,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     allocations?: AllocationCreateNestedManyWithoutClientInput
+    documents?: DocumentCreateNestedManyWithoutClientInput
   }
 
   export type ClientUncheckedCreateWithoutShipmentsInput = {
@@ -31735,6 +32393,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     allocations?: AllocationUncheckedCreateNestedManyWithoutClientInput
+    documents?: DocumentUncheckedCreateNestedManyWithoutClientInput
   }
 
   export type ClientCreateOrConnectWithoutShipmentsInput = {
@@ -31757,6 +32416,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     allocations?: AllocationCreateNestedManyWithoutConsigneeInput
+    documents?: DocumentCreateNestedManyWithoutConsigneeInput
   }
 
   export type ConsigneeUncheckedCreateWithoutShipmentsInput = {
@@ -31774,6 +32434,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     allocations?: AllocationUncheckedCreateNestedManyWithoutConsigneeInput
+    documents?: DocumentUncheckedCreateNestedManyWithoutConsigneeInput
   }
 
   export type ConsigneeCreateOrConnectWithoutShipmentsInput = {
@@ -31833,6 +32494,7 @@ export namespace Prisma {
     contactPerson?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
+    documents?: DocumentCreateNestedManyWithoutExporterInput
     allocations?: AllocationCreateNestedManyWithoutExporterInput
   }
 
@@ -31845,6 +32507,7 @@ export namespace Prisma {
     contactPerson?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
+    documents?: DocumentUncheckedCreateNestedManyWithoutExporterInput
     allocations?: AllocationUncheckedCreateNestedManyWithoutExporterInput
   }
 
@@ -31964,29 +32627,6 @@ export namespace Prisma {
   export type DocumentUpdateManyWithWhereWithoutShipmentInput = {
     where: DocumentScalarWhereInput
     data: XOR<DocumentUpdateManyMutationInput, DocumentUncheckedUpdateManyWithoutShipmentInput>
-  }
-
-  export type DocumentScalarWhereInput = {
-    AND?: DocumentScalarWhereInput | DocumentScalarWhereInput[]
-    OR?: DocumentScalarWhereInput[]
-    NOT?: DocumentScalarWhereInput | DocumentScalarWhereInput[]
-    id?: StringFilter<"Document"> | string
-    type?: EnumDocumentTypeFilter<"Document"> | $Enums.DocumentType
-    fileName?: StringFilter<"Document"> | string
-    originalName?: StringNullableFilter<"Document"> | string | null
-    fileUrl?: StringFilter<"Document"> | string
-    publicId?: StringNullableFilter<"Document"> | string | null
-    mimeType?: StringNullableFilter<"Document"> | string | null
-    fileSize?: IntNullableFilter<"Document"> | number | null
-    remarks?: StringNullableFilter<"Document"> | string | null
-    allocationId?: StringNullableFilter<"Document"> | string | null
-    shipmentId?: StringNullableFilter<"Document"> | string | null
-    containerId?: StringNullableFilter<"Document"> | string | null
-    invoiceId?: StringNullableFilter<"Document"> | string | null
-    packingListId?: StringNullableFilter<"Document"> | string | null
-    transitId?: StringNullableFilter<"Document"> | string | null
-    uploadedAt?: DateTimeFilter<"Document"> | Date | string
-    updatedAt?: DateTimeFilter<"Document"> | Date | string
   }
 
   export type InvoiceUpsertWithWhereUniqueWithoutShipmentInput = {
@@ -32222,6 +32862,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     allocations?: AllocationUpdateManyWithoutClientNestedInput
+    documents?: DocumentUpdateManyWithoutClientNestedInput
   }
 
   export type ClientUncheckedUpdateWithoutShipmentsInput = {
@@ -32244,6 +32885,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     allocations?: AllocationUncheckedUpdateManyWithoutClientNestedInput
+    documents?: DocumentUncheckedUpdateManyWithoutClientNestedInput
   }
 
   export type ConsigneeUpsertWithoutShipmentsInput = {
@@ -32272,6 +32914,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     allocations?: AllocationUpdateManyWithoutConsigneeNestedInput
+    documents?: DocumentUpdateManyWithoutConsigneeNestedInput
   }
 
   export type ConsigneeUncheckedUpdateWithoutShipmentsInput = {
@@ -32289,6 +32932,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     allocations?: AllocationUncheckedUpdateManyWithoutConsigneeNestedInput
+    documents?: DocumentUncheckedUpdateManyWithoutConsigneeNestedInput
   }
 
   export type UserUpsertWithoutShipmentsInput = {
@@ -32360,6 +33004,7 @@ export namespace Prisma {
     contactPerson?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    documents?: DocumentUpdateManyWithoutExporterNestedInput
     allocations?: AllocationUpdateManyWithoutExporterNestedInput
   }
 
@@ -32372,6 +33017,7 @@ export namespace Prisma {
     contactPerson?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    documents?: DocumentUncheckedUpdateManyWithoutExporterNestedInput
     allocations?: AllocationUncheckedUpdateManyWithoutExporterNestedInput
   }
 
@@ -32427,6 +33073,9 @@ export namespace Prisma {
     remarks?: string | null
     uploadedAt?: Date | string
     updatedAt?: Date | string
+    client?: ClientCreateNestedOneWithoutDocumentsInput
+    exporter?: ExporterCreateNestedOneWithoutDocumentsInput
+    consignee?: ConsigneeCreateNestedOneWithoutDocumentsInput
     allocation?: AllocationCreateNestedOneWithoutAttachedDocumentsInput
     container?: ContainerCreateNestedOneWithoutDocumentsInput
     packingList?: PackingListCreateNestedOneWithoutDocumentsInput
@@ -32449,6 +33098,9 @@ export namespace Prisma {
     containerId?: string | null
     packingListId?: string | null
     transitId?: string | null
+    clientId?: string | null
+    exporterId?: string | null
+    consigneeId?: string | null
     uploadedAt?: Date | string
     updatedAt?: Date | string
   }
@@ -32836,6 +33488,9 @@ export namespace Prisma {
     remarks?: string | null
     uploadedAt?: Date | string
     updatedAt?: Date | string
+    client?: ClientCreateNestedOneWithoutDocumentsInput
+    exporter?: ExporterCreateNestedOneWithoutDocumentsInput
+    consignee?: ConsigneeCreateNestedOneWithoutDocumentsInput
     allocation?: AllocationCreateNestedOneWithoutAttachedDocumentsInput
     invoice?: InvoiceCreateNestedOneWithoutDocumentsInput
     packingList?: PackingListCreateNestedOneWithoutDocumentsInput
@@ -32858,6 +33513,9 @@ export namespace Prisma {
     invoiceId?: string | null
     packingListId?: string | null
     transitId?: string | null
+    clientId?: string | null
+    exporterId?: string | null
+    consigneeId?: string | null
     uploadedAt?: Date | string
     updatedAt?: Date | string
   }
@@ -33260,6 +33918,9 @@ export namespace Prisma {
     remarks?: string | null
     uploadedAt?: Date | string
     updatedAt?: Date | string
+    client?: ClientCreateNestedOneWithoutDocumentsInput
+    exporter?: ExporterCreateNestedOneWithoutDocumentsInput
+    consignee?: ConsigneeCreateNestedOneWithoutDocumentsInput
     allocation?: AllocationCreateNestedOneWithoutAttachedDocumentsInput
     container?: ContainerCreateNestedOneWithoutDocumentsInput
     invoice?: InvoiceCreateNestedOneWithoutDocumentsInput
@@ -33282,6 +33943,9 @@ export namespace Prisma {
     containerId?: string | null
     invoiceId?: string | null
     transitId?: string | null
+    clientId?: string | null
+    exporterId?: string | null
+    consigneeId?: string | null
     uploadedAt?: Date | string
     updatedAt?: Date | string
   }
@@ -33642,6 +34306,9 @@ export namespace Prisma {
     remarks?: string | null
     uploadedAt?: Date | string
     updatedAt?: Date | string
+    client?: ClientCreateNestedOneWithoutDocumentsInput
+    exporter?: ExporterCreateNestedOneWithoutDocumentsInput
+    consignee?: ConsigneeCreateNestedOneWithoutDocumentsInput
     allocation?: AllocationCreateNestedOneWithoutAttachedDocumentsInput
     container?: ContainerCreateNestedOneWithoutDocumentsInput
     invoice?: InvoiceCreateNestedOneWithoutDocumentsInput
@@ -33664,6 +34331,9 @@ export namespace Prisma {
     containerId?: string | null
     invoiceId?: string | null
     packingListId?: string | null
+    clientId?: string | null
+    exporterId?: string | null
+    consigneeId?: string | null
     uploadedAt?: Date | string
     updatedAt?: Date | string
   }
@@ -34076,6 +34746,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     shipments?: ShipmentCreateNestedManyWithoutClientInput
+    documents?: DocumentCreateNestedManyWithoutClientInput
   }
 
   export type ClientUncheckedCreateWithoutAllocationsInput = {
@@ -34098,6 +34769,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     shipments?: ShipmentUncheckedCreateNestedManyWithoutClientInput
+    documents?: DocumentUncheckedCreateNestedManyWithoutClientInput
   }
 
   export type ClientCreateOrConnectWithoutAllocationsInput = {
@@ -34120,6 +34792,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     shipments?: ShipmentCreateNestedManyWithoutConsigneeInput
+    documents?: DocumentCreateNestedManyWithoutConsigneeInput
   }
 
   export type ConsigneeUncheckedCreateWithoutAllocationsInput = {
@@ -34137,6 +34810,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     shipments?: ShipmentUncheckedCreateNestedManyWithoutConsigneeInput
+    documents?: DocumentUncheckedCreateNestedManyWithoutConsigneeInput
   }
 
   export type ConsigneeCreateOrConnectWithoutAllocationsInput = {
@@ -34196,6 +34870,7 @@ export namespace Prisma {
     contactPerson?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
+    documents?: DocumentCreateNestedManyWithoutExporterInput
     shipments?: ShipmentCreateNestedManyWithoutExporterInput
   }
 
@@ -34208,6 +34883,7 @@ export namespace Prisma {
     contactPerson?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
+    documents?: DocumentUncheckedCreateNestedManyWithoutExporterInput
     shipments?: ShipmentUncheckedCreateNestedManyWithoutExporterInput
   }
 
@@ -34270,6 +34946,9 @@ export namespace Prisma {
     remarks?: string | null
     uploadedAt?: Date | string
     updatedAt?: Date | string
+    client?: ClientCreateNestedOneWithoutDocumentsInput
+    exporter?: ExporterCreateNestedOneWithoutDocumentsInput
+    consignee?: ConsigneeCreateNestedOneWithoutDocumentsInput
     container?: ContainerCreateNestedOneWithoutDocumentsInput
     invoice?: InvoiceCreateNestedOneWithoutDocumentsInput
     packingList?: PackingListCreateNestedOneWithoutDocumentsInput
@@ -34292,6 +34971,9 @@ export namespace Prisma {
     invoiceId?: string | null
     packingListId?: string | null
     transitId?: string | null
+    clientId?: string | null
+    exporterId?: string | null
+    consigneeId?: string | null
     uploadedAt?: Date | string
     updatedAt?: Date | string
   }
@@ -34508,6 +35190,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     shipments?: ShipmentUpdateManyWithoutClientNestedInput
+    documents?: DocumentUpdateManyWithoutClientNestedInput
   }
 
   export type ClientUncheckedUpdateWithoutAllocationsInput = {
@@ -34530,6 +35213,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     shipments?: ShipmentUncheckedUpdateManyWithoutClientNestedInput
+    documents?: DocumentUncheckedUpdateManyWithoutClientNestedInput
   }
 
   export type ConsigneeUpsertWithoutAllocationsInput = {
@@ -34558,6 +35242,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     shipments?: ShipmentUpdateManyWithoutConsigneeNestedInput
+    documents?: DocumentUpdateManyWithoutConsigneeNestedInput
   }
 
   export type ConsigneeUncheckedUpdateWithoutAllocationsInput = {
@@ -34575,6 +35260,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     shipments?: ShipmentUncheckedUpdateManyWithoutConsigneeNestedInput
+    documents?: DocumentUncheckedUpdateManyWithoutConsigneeNestedInput
   }
 
   export type UserUpsertWithoutCreatedAllocationsInput = {
@@ -34646,6 +35332,7 @@ export namespace Prisma {
     contactPerson?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    documents?: DocumentUpdateManyWithoutExporterNestedInput
     shipments?: ShipmentUpdateManyWithoutExporterNestedInput
   }
 
@@ -34658,6 +35345,7 @@ export namespace Prisma {
     contactPerson?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    documents?: DocumentUncheckedUpdateManyWithoutExporterNestedInput
     shipments?: ShipmentUncheckedUpdateManyWithoutExporterNestedInput
   }
 
@@ -34966,6 +35654,60 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type DocumentCreateWithoutClientInput = {
+    id?: string
+    type: $Enums.DocumentType
+    fileName: string
+    originalName?: string | null
+    fileUrl: string
+    publicId?: string | null
+    mimeType?: string | null
+    fileSize?: number | null
+    remarks?: string | null
+    uploadedAt?: Date | string
+    updatedAt?: Date | string
+    exporter?: ExporterCreateNestedOneWithoutDocumentsInput
+    consignee?: ConsigneeCreateNestedOneWithoutDocumentsInput
+    allocation?: AllocationCreateNestedOneWithoutAttachedDocumentsInput
+    container?: ContainerCreateNestedOneWithoutDocumentsInput
+    invoice?: InvoiceCreateNestedOneWithoutDocumentsInput
+    packingList?: PackingListCreateNestedOneWithoutDocumentsInput
+    shipment?: ShipmentCreateNestedOneWithoutDocumentsInput
+    transit?: TransitCreateNestedOneWithoutDocumentsInput
+  }
+
+  export type DocumentUncheckedCreateWithoutClientInput = {
+    id?: string
+    type: $Enums.DocumentType
+    fileName: string
+    originalName?: string | null
+    fileUrl: string
+    publicId?: string | null
+    mimeType?: string | null
+    fileSize?: number | null
+    remarks?: string | null
+    allocationId?: string | null
+    shipmentId?: string | null
+    containerId?: string | null
+    invoiceId?: string | null
+    packingListId?: string | null
+    transitId?: string | null
+    exporterId?: string | null
+    consigneeId?: string | null
+    uploadedAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type DocumentCreateOrConnectWithoutClientInput = {
+    where: DocumentWhereUniqueInput
+    create: XOR<DocumentCreateWithoutClientInput, DocumentUncheckedCreateWithoutClientInput>
+  }
+
+  export type DocumentCreateManyClientInputEnvelope = {
+    data: DocumentCreateManyClientInput | DocumentCreateManyClientInput[]
+    skipDuplicates?: boolean
+  }
+
   export type AllocationUpsertWithWhereUniqueWithoutClientInput = {
     where: AllocationWhereUniqueInput
     update: XOR<AllocationUpdateWithoutClientInput, AllocationUncheckedUpdateWithoutClientInput>
@@ -34996,6 +35738,145 @@ export namespace Prisma {
   export type ShipmentUpdateManyWithWhereWithoutClientInput = {
     where: ShipmentScalarWhereInput
     data: XOR<ShipmentUpdateManyMutationInput, ShipmentUncheckedUpdateManyWithoutClientInput>
+  }
+
+  export type DocumentUpsertWithWhereUniqueWithoutClientInput = {
+    where: DocumentWhereUniqueInput
+    update: XOR<DocumentUpdateWithoutClientInput, DocumentUncheckedUpdateWithoutClientInput>
+    create: XOR<DocumentCreateWithoutClientInput, DocumentUncheckedCreateWithoutClientInput>
+  }
+
+  export type DocumentUpdateWithWhereUniqueWithoutClientInput = {
+    where: DocumentWhereUniqueInput
+    data: XOR<DocumentUpdateWithoutClientInput, DocumentUncheckedUpdateWithoutClientInput>
+  }
+
+  export type DocumentUpdateManyWithWhereWithoutClientInput = {
+    where: DocumentScalarWhereInput
+    data: XOR<DocumentUpdateManyMutationInput, DocumentUncheckedUpdateManyWithoutClientInput>
+  }
+
+  export type ClientCreateWithoutDocumentsInput = {
+    id?: string
+    clientCode: string
+    companyName: string
+    clientType?: $Enums.ClientType
+    contactPerson?: string | null
+    email?: string | null
+    phone?: string | null
+    alternatePhone?: string | null
+    address?: string | null
+    city?: string | null
+    state?: string | null
+    country?: string | null
+    website?: string | null
+    taxNumber?: string | null
+    remarks?: string | null
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    allocations?: AllocationCreateNestedManyWithoutClientInput
+    shipments?: ShipmentCreateNestedManyWithoutClientInput
+  }
+
+  export type ClientUncheckedCreateWithoutDocumentsInput = {
+    id?: string
+    clientCode: string
+    companyName: string
+    clientType?: $Enums.ClientType
+    contactPerson?: string | null
+    email?: string | null
+    phone?: string | null
+    alternatePhone?: string | null
+    address?: string | null
+    city?: string | null
+    state?: string | null
+    country?: string | null
+    website?: string | null
+    taxNumber?: string | null
+    remarks?: string | null
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    allocations?: AllocationUncheckedCreateNestedManyWithoutClientInput
+    shipments?: ShipmentUncheckedCreateNestedManyWithoutClientInput
+  }
+
+  export type ClientCreateOrConnectWithoutDocumentsInput = {
+    where: ClientWhereUniqueInput
+    create: XOR<ClientCreateWithoutDocumentsInput, ClientUncheckedCreateWithoutDocumentsInput>
+  }
+
+  export type ExporterCreateWithoutDocumentsInput = {
+    id?: string
+    name: string
+    address?: string | null
+    phone?: string | null
+    email?: string | null
+    contactPerson?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    allocations?: AllocationCreateNestedManyWithoutExporterInput
+    shipments?: ShipmentCreateNestedManyWithoutExporterInput
+  }
+
+  export type ExporterUncheckedCreateWithoutDocumentsInput = {
+    id?: string
+    name: string
+    address?: string | null
+    phone?: string | null
+    email?: string | null
+    contactPerson?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    allocations?: AllocationUncheckedCreateNestedManyWithoutExporterInput
+    shipments?: ShipmentUncheckedCreateNestedManyWithoutExporterInput
+  }
+
+  export type ExporterCreateOrConnectWithoutDocumentsInput = {
+    where: ExporterWhereUniqueInput
+    create: XOR<ExporterCreateWithoutDocumentsInput, ExporterUncheckedCreateWithoutDocumentsInput>
+  }
+
+  export type ConsigneeCreateWithoutDocumentsInput = {
+    id?: string
+    name: string
+    contactPerson?: string | null
+    address?: string | null
+    phone?: string | null
+    email?: string | null
+    transporter?: string | null
+    placeOfLoading: string
+    transitRoute: string
+    portOfDischarge: string
+    transportMode: $Enums.TransportMode
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    allocations?: AllocationCreateNestedManyWithoutConsigneeInput
+    shipments?: ShipmentCreateNestedManyWithoutConsigneeInput
+  }
+
+  export type ConsigneeUncheckedCreateWithoutDocumentsInput = {
+    id?: string
+    name: string
+    contactPerson?: string | null
+    address?: string | null
+    phone?: string | null
+    email?: string | null
+    transporter?: string | null
+    placeOfLoading: string
+    transitRoute: string
+    portOfDischarge: string
+    transportMode: $Enums.TransportMode
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    allocations?: AllocationUncheckedCreateNestedManyWithoutConsigneeInput
+    shipments?: ShipmentUncheckedCreateNestedManyWithoutConsigneeInput
+  }
+
+  export type ConsigneeCreateOrConnectWithoutDocumentsInput = {
+    where: ConsigneeWhereUniqueInput
+    create: XOR<ConsigneeCreateWithoutDocumentsInput, ConsigneeUncheckedCreateWithoutDocumentsInput>
   }
 
   export type AllocationCreateWithoutAttachedDocumentsInput = {
@@ -35374,6 +36255,147 @@ export namespace Prisma {
   export type TransitCreateOrConnectWithoutDocumentsInput = {
     where: TransitWhereUniqueInput
     create: XOR<TransitCreateWithoutDocumentsInput, TransitUncheckedCreateWithoutDocumentsInput>
+  }
+
+  export type ClientUpsertWithoutDocumentsInput = {
+    update: XOR<ClientUpdateWithoutDocumentsInput, ClientUncheckedUpdateWithoutDocumentsInput>
+    create: XOR<ClientCreateWithoutDocumentsInput, ClientUncheckedCreateWithoutDocumentsInput>
+    where?: ClientWhereInput
+  }
+
+  export type ClientUpdateToOneWithWhereWithoutDocumentsInput = {
+    where?: ClientWhereInput
+    data: XOR<ClientUpdateWithoutDocumentsInput, ClientUncheckedUpdateWithoutDocumentsInput>
+  }
+
+  export type ClientUpdateWithoutDocumentsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    clientCode?: StringFieldUpdateOperationsInput | string
+    companyName?: StringFieldUpdateOperationsInput | string
+    clientType?: EnumClientTypeFieldUpdateOperationsInput | $Enums.ClientType
+    contactPerson?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    alternatePhone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    city?: NullableStringFieldUpdateOperationsInput | string | null
+    state?: NullableStringFieldUpdateOperationsInput | string | null
+    country?: NullableStringFieldUpdateOperationsInput | string | null
+    website?: NullableStringFieldUpdateOperationsInput | string | null
+    taxNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    remarks?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    allocations?: AllocationUpdateManyWithoutClientNestedInput
+    shipments?: ShipmentUpdateManyWithoutClientNestedInput
+  }
+
+  export type ClientUncheckedUpdateWithoutDocumentsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    clientCode?: StringFieldUpdateOperationsInput | string
+    companyName?: StringFieldUpdateOperationsInput | string
+    clientType?: EnumClientTypeFieldUpdateOperationsInput | $Enums.ClientType
+    contactPerson?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    alternatePhone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    city?: NullableStringFieldUpdateOperationsInput | string | null
+    state?: NullableStringFieldUpdateOperationsInput | string | null
+    country?: NullableStringFieldUpdateOperationsInput | string | null
+    website?: NullableStringFieldUpdateOperationsInput | string | null
+    taxNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    remarks?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    allocations?: AllocationUncheckedUpdateManyWithoutClientNestedInput
+    shipments?: ShipmentUncheckedUpdateManyWithoutClientNestedInput
+  }
+
+  export type ExporterUpsertWithoutDocumentsInput = {
+    update: XOR<ExporterUpdateWithoutDocumentsInput, ExporterUncheckedUpdateWithoutDocumentsInput>
+    create: XOR<ExporterCreateWithoutDocumentsInput, ExporterUncheckedCreateWithoutDocumentsInput>
+    where?: ExporterWhereInput
+  }
+
+  export type ExporterUpdateToOneWithWhereWithoutDocumentsInput = {
+    where?: ExporterWhereInput
+    data: XOR<ExporterUpdateWithoutDocumentsInput, ExporterUncheckedUpdateWithoutDocumentsInput>
+  }
+
+  export type ExporterUpdateWithoutDocumentsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    contactPerson?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    allocations?: AllocationUpdateManyWithoutExporterNestedInput
+    shipments?: ShipmentUpdateManyWithoutExporterNestedInput
+  }
+
+  export type ExporterUncheckedUpdateWithoutDocumentsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    contactPerson?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    allocations?: AllocationUncheckedUpdateManyWithoutExporterNestedInput
+    shipments?: ShipmentUncheckedUpdateManyWithoutExporterNestedInput
+  }
+
+  export type ConsigneeUpsertWithoutDocumentsInput = {
+    update: XOR<ConsigneeUpdateWithoutDocumentsInput, ConsigneeUncheckedUpdateWithoutDocumentsInput>
+    create: XOR<ConsigneeCreateWithoutDocumentsInput, ConsigneeUncheckedCreateWithoutDocumentsInput>
+    where?: ConsigneeWhereInput
+  }
+
+  export type ConsigneeUpdateToOneWithWhereWithoutDocumentsInput = {
+    where?: ConsigneeWhereInput
+    data: XOR<ConsigneeUpdateWithoutDocumentsInput, ConsigneeUncheckedUpdateWithoutDocumentsInput>
+  }
+
+  export type ConsigneeUpdateWithoutDocumentsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    contactPerson?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    transporter?: NullableStringFieldUpdateOperationsInput | string | null
+    placeOfLoading?: StringFieldUpdateOperationsInput | string
+    transitRoute?: StringFieldUpdateOperationsInput | string
+    portOfDischarge?: StringFieldUpdateOperationsInput | string
+    transportMode?: EnumTransportModeFieldUpdateOperationsInput | $Enums.TransportMode
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    allocations?: AllocationUpdateManyWithoutConsigneeNestedInput
+    shipments?: ShipmentUpdateManyWithoutConsigneeNestedInput
+  }
+
+  export type ConsigneeUncheckedUpdateWithoutDocumentsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    contactPerson?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    transporter?: NullableStringFieldUpdateOperationsInput | string | null
+    placeOfLoading?: StringFieldUpdateOperationsInput | string
+    transitRoute?: StringFieldUpdateOperationsInput | string
+    portOfDischarge?: StringFieldUpdateOperationsInput | string
+    transportMode?: EnumTransportModeFieldUpdateOperationsInput | $Enums.TransportMode
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    allocations?: AllocationUncheckedUpdateManyWithoutConsigneeNestedInput
+    shipments?: ShipmentUncheckedUpdateManyWithoutConsigneeNestedInput
   }
 
   export type AllocationUpsertWithoutAttachedDocumentsInput = {
@@ -36598,6 +37620,28 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type DocumentCreateManyExporterInput = {
+    id?: string
+    type: $Enums.DocumentType
+    fileName: string
+    originalName?: string | null
+    fileUrl: string
+    publicId?: string | null
+    mimeType?: string | null
+    fileSize?: number | null
+    remarks?: string | null
+    allocationId?: string | null
+    shipmentId?: string | null
+    containerId?: string | null
+    invoiceId?: string | null
+    packingListId?: string | null
+    transitId?: string | null
+    clientId?: string | null
+    consigneeId?: string | null
+    uploadedAt?: Date | string
+    updatedAt?: Date | string
+  }
+
   export type AllocationCreateManyExporterInput = {
     id?: string
     allocationNumber: string
@@ -36675,6 +37719,72 @@ export namespace Prisma {
     allocationId?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
+  }
+
+  export type DocumentUpdateWithoutExporterInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    type?: EnumDocumentTypeFieldUpdateOperationsInput | $Enums.DocumentType
+    fileName?: StringFieldUpdateOperationsInput | string
+    originalName?: NullableStringFieldUpdateOperationsInput | string | null
+    fileUrl?: StringFieldUpdateOperationsInput | string
+    publicId?: NullableStringFieldUpdateOperationsInput | string | null
+    mimeType?: NullableStringFieldUpdateOperationsInput | string | null
+    fileSize?: NullableIntFieldUpdateOperationsInput | number | null
+    remarks?: NullableStringFieldUpdateOperationsInput | string | null
+    uploadedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    client?: ClientUpdateOneWithoutDocumentsNestedInput
+    consignee?: ConsigneeUpdateOneWithoutDocumentsNestedInput
+    allocation?: AllocationUpdateOneWithoutAttachedDocumentsNestedInput
+    container?: ContainerUpdateOneWithoutDocumentsNestedInput
+    invoice?: InvoiceUpdateOneWithoutDocumentsNestedInput
+    packingList?: PackingListUpdateOneWithoutDocumentsNestedInput
+    shipment?: ShipmentUpdateOneWithoutDocumentsNestedInput
+    transit?: TransitUpdateOneWithoutDocumentsNestedInput
+  }
+
+  export type DocumentUncheckedUpdateWithoutExporterInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    type?: EnumDocumentTypeFieldUpdateOperationsInput | $Enums.DocumentType
+    fileName?: StringFieldUpdateOperationsInput | string
+    originalName?: NullableStringFieldUpdateOperationsInput | string | null
+    fileUrl?: StringFieldUpdateOperationsInput | string
+    publicId?: NullableStringFieldUpdateOperationsInput | string | null
+    mimeType?: NullableStringFieldUpdateOperationsInput | string | null
+    fileSize?: NullableIntFieldUpdateOperationsInput | number | null
+    remarks?: NullableStringFieldUpdateOperationsInput | string | null
+    allocationId?: NullableStringFieldUpdateOperationsInput | string | null
+    shipmentId?: NullableStringFieldUpdateOperationsInput | string | null
+    containerId?: NullableStringFieldUpdateOperationsInput | string | null
+    invoiceId?: NullableStringFieldUpdateOperationsInput | string | null
+    packingListId?: NullableStringFieldUpdateOperationsInput | string | null
+    transitId?: NullableStringFieldUpdateOperationsInput | string | null
+    clientId?: NullableStringFieldUpdateOperationsInput | string | null
+    consigneeId?: NullableStringFieldUpdateOperationsInput | string | null
+    uploadedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type DocumentUncheckedUpdateManyWithoutExporterInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    type?: EnumDocumentTypeFieldUpdateOperationsInput | $Enums.DocumentType
+    fileName?: StringFieldUpdateOperationsInput | string
+    originalName?: NullableStringFieldUpdateOperationsInput | string | null
+    fileUrl?: StringFieldUpdateOperationsInput | string
+    publicId?: NullableStringFieldUpdateOperationsInput | string | null
+    mimeType?: NullableStringFieldUpdateOperationsInput | string | null
+    fileSize?: NullableIntFieldUpdateOperationsInput | number | null
+    remarks?: NullableStringFieldUpdateOperationsInput | string | null
+    allocationId?: NullableStringFieldUpdateOperationsInput | string | null
+    shipmentId?: NullableStringFieldUpdateOperationsInput | string | null
+    containerId?: NullableStringFieldUpdateOperationsInput | string | null
+    invoiceId?: NullableStringFieldUpdateOperationsInput | string | null
+    packingListId?: NullableStringFieldUpdateOperationsInput | string | null
+    transitId?: NullableStringFieldUpdateOperationsInput | string | null
+    clientId?: NullableStringFieldUpdateOperationsInput | string | null
+    consigneeId?: NullableStringFieldUpdateOperationsInput | string | null
+    uploadedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type AllocationUpdateWithoutExporterInput = {
@@ -37009,6 +38119,28 @@ export namespace Prisma {
     updatedAt?: Date | string
   }
 
+  export type DocumentCreateManyConsigneeInput = {
+    id?: string
+    type: $Enums.DocumentType
+    fileName: string
+    originalName?: string | null
+    fileUrl: string
+    publicId?: string | null
+    mimeType?: string | null
+    fileSize?: number | null
+    remarks?: string | null
+    allocationId?: string | null
+    shipmentId?: string | null
+    containerId?: string | null
+    invoiceId?: string | null
+    packingListId?: string | null
+    transitId?: string | null
+    clientId?: string | null
+    exporterId?: string | null
+    uploadedAt?: Date | string
+    updatedAt?: Date | string
+  }
+
   export type AllocationUpdateWithoutConsigneeInput = {
     id?: StringFieldUpdateOperationsInput | string
     allocationNumber?: StringFieldUpdateOperationsInput | string
@@ -37262,6 +38394,72 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type DocumentUpdateWithoutConsigneeInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    type?: EnumDocumentTypeFieldUpdateOperationsInput | $Enums.DocumentType
+    fileName?: StringFieldUpdateOperationsInput | string
+    originalName?: NullableStringFieldUpdateOperationsInput | string | null
+    fileUrl?: StringFieldUpdateOperationsInput | string
+    publicId?: NullableStringFieldUpdateOperationsInput | string | null
+    mimeType?: NullableStringFieldUpdateOperationsInput | string | null
+    fileSize?: NullableIntFieldUpdateOperationsInput | number | null
+    remarks?: NullableStringFieldUpdateOperationsInput | string | null
+    uploadedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    client?: ClientUpdateOneWithoutDocumentsNestedInput
+    exporter?: ExporterUpdateOneWithoutDocumentsNestedInput
+    allocation?: AllocationUpdateOneWithoutAttachedDocumentsNestedInput
+    container?: ContainerUpdateOneWithoutDocumentsNestedInput
+    invoice?: InvoiceUpdateOneWithoutDocumentsNestedInput
+    packingList?: PackingListUpdateOneWithoutDocumentsNestedInput
+    shipment?: ShipmentUpdateOneWithoutDocumentsNestedInput
+    transit?: TransitUpdateOneWithoutDocumentsNestedInput
+  }
+
+  export type DocumentUncheckedUpdateWithoutConsigneeInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    type?: EnumDocumentTypeFieldUpdateOperationsInput | $Enums.DocumentType
+    fileName?: StringFieldUpdateOperationsInput | string
+    originalName?: NullableStringFieldUpdateOperationsInput | string | null
+    fileUrl?: StringFieldUpdateOperationsInput | string
+    publicId?: NullableStringFieldUpdateOperationsInput | string | null
+    mimeType?: NullableStringFieldUpdateOperationsInput | string | null
+    fileSize?: NullableIntFieldUpdateOperationsInput | number | null
+    remarks?: NullableStringFieldUpdateOperationsInput | string | null
+    allocationId?: NullableStringFieldUpdateOperationsInput | string | null
+    shipmentId?: NullableStringFieldUpdateOperationsInput | string | null
+    containerId?: NullableStringFieldUpdateOperationsInput | string | null
+    invoiceId?: NullableStringFieldUpdateOperationsInput | string | null
+    packingListId?: NullableStringFieldUpdateOperationsInput | string | null
+    transitId?: NullableStringFieldUpdateOperationsInput | string | null
+    clientId?: NullableStringFieldUpdateOperationsInput | string | null
+    exporterId?: NullableStringFieldUpdateOperationsInput | string | null
+    uploadedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type DocumentUncheckedUpdateManyWithoutConsigneeInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    type?: EnumDocumentTypeFieldUpdateOperationsInput | $Enums.DocumentType
+    fileName?: StringFieldUpdateOperationsInput | string
+    originalName?: NullableStringFieldUpdateOperationsInput | string | null
+    fileUrl?: StringFieldUpdateOperationsInput | string
+    publicId?: NullableStringFieldUpdateOperationsInput | string | null
+    mimeType?: NullableStringFieldUpdateOperationsInput | string | null
+    fileSize?: NullableIntFieldUpdateOperationsInput | number | null
+    remarks?: NullableStringFieldUpdateOperationsInput | string | null
+    allocationId?: NullableStringFieldUpdateOperationsInput | string | null
+    shipmentId?: NullableStringFieldUpdateOperationsInput | string | null
+    containerId?: NullableStringFieldUpdateOperationsInput | string | null
+    invoiceId?: NullableStringFieldUpdateOperationsInput | string | null
+    packingListId?: NullableStringFieldUpdateOperationsInput | string | null
+    transitId?: NullableStringFieldUpdateOperationsInput | string | null
+    clientId?: NullableStringFieldUpdateOperationsInput | string | null
+    exporterId?: NullableStringFieldUpdateOperationsInput | string | null
+    uploadedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type ContainerCreateManyShipmentInput = {
     id?: string
     packingListId?: string | null
@@ -37302,6 +38500,9 @@ export namespace Prisma {
     invoiceId?: string | null
     packingListId?: string | null
     transitId?: string | null
+    clientId?: string | null
+    exporterId?: string | null
+    consigneeId?: string | null
     uploadedAt?: Date | string
     updatedAt?: Date | string
   }
@@ -37437,6 +38638,9 @@ export namespace Prisma {
     remarks?: NullableStringFieldUpdateOperationsInput | string | null
     uploadedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    client?: ClientUpdateOneWithoutDocumentsNestedInput
+    exporter?: ExporterUpdateOneWithoutDocumentsNestedInput
+    consignee?: ConsigneeUpdateOneWithoutDocumentsNestedInput
     allocation?: AllocationUpdateOneWithoutAttachedDocumentsNestedInput
     container?: ContainerUpdateOneWithoutDocumentsNestedInput
     invoice?: InvoiceUpdateOneWithoutDocumentsNestedInput
@@ -37459,6 +38663,9 @@ export namespace Prisma {
     invoiceId?: NullableStringFieldUpdateOperationsInput | string | null
     packingListId?: NullableStringFieldUpdateOperationsInput | string | null
     transitId?: NullableStringFieldUpdateOperationsInput | string | null
+    clientId?: NullableStringFieldUpdateOperationsInput | string | null
+    exporterId?: NullableStringFieldUpdateOperationsInput | string | null
+    consigneeId?: NullableStringFieldUpdateOperationsInput | string | null
     uploadedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -37478,6 +38685,9 @@ export namespace Prisma {
     invoiceId?: NullableStringFieldUpdateOperationsInput | string | null
     packingListId?: NullableStringFieldUpdateOperationsInput | string | null
     transitId?: NullableStringFieldUpdateOperationsInput | string | null
+    clientId?: NullableStringFieldUpdateOperationsInput | string | null
+    exporterId?: NullableStringFieldUpdateOperationsInput | string | null
+    consigneeId?: NullableStringFieldUpdateOperationsInput | string | null
     uploadedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -37623,6 +38833,9 @@ export namespace Prisma {
     containerId?: string | null
     packingListId?: string | null
     transitId?: string | null
+    clientId?: string | null
+    exporterId?: string | null
+    consigneeId?: string | null
     uploadedAt?: Date | string
     updatedAt?: Date | string
   }
@@ -37656,6 +38869,9 @@ export namespace Prisma {
     remarks?: NullableStringFieldUpdateOperationsInput | string | null
     uploadedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    client?: ClientUpdateOneWithoutDocumentsNestedInput
+    exporter?: ExporterUpdateOneWithoutDocumentsNestedInput
+    consignee?: ConsigneeUpdateOneWithoutDocumentsNestedInput
     allocation?: AllocationUpdateOneWithoutAttachedDocumentsNestedInput
     container?: ContainerUpdateOneWithoutDocumentsNestedInput
     packingList?: PackingListUpdateOneWithoutDocumentsNestedInput
@@ -37678,6 +38894,9 @@ export namespace Prisma {
     containerId?: NullableStringFieldUpdateOperationsInput | string | null
     packingListId?: NullableStringFieldUpdateOperationsInput | string | null
     transitId?: NullableStringFieldUpdateOperationsInput | string | null
+    clientId?: NullableStringFieldUpdateOperationsInput | string | null
+    exporterId?: NullableStringFieldUpdateOperationsInput | string | null
+    consigneeId?: NullableStringFieldUpdateOperationsInput | string | null
     uploadedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -37697,6 +38916,9 @@ export namespace Prisma {
     containerId?: NullableStringFieldUpdateOperationsInput | string | null
     packingListId?: NullableStringFieldUpdateOperationsInput | string | null
     transitId?: NullableStringFieldUpdateOperationsInput | string | null
+    clientId?: NullableStringFieldUpdateOperationsInput | string | null
+    exporterId?: NullableStringFieldUpdateOperationsInput | string | null
+    consigneeId?: NullableStringFieldUpdateOperationsInput | string | null
     uploadedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -37767,6 +38989,9 @@ export namespace Prisma {
     invoiceId?: string | null
     packingListId?: string | null
     transitId?: string | null
+    clientId?: string | null
+    exporterId?: string | null
+    consigneeId?: string | null
     uploadedAt?: Date | string
     updatedAt?: Date | string
   }
@@ -37803,6 +39028,9 @@ export namespace Prisma {
     remarks?: NullableStringFieldUpdateOperationsInput | string | null
     uploadedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    client?: ClientUpdateOneWithoutDocumentsNestedInput
+    exporter?: ExporterUpdateOneWithoutDocumentsNestedInput
+    consignee?: ConsigneeUpdateOneWithoutDocumentsNestedInput
     allocation?: AllocationUpdateOneWithoutAttachedDocumentsNestedInput
     invoice?: InvoiceUpdateOneWithoutDocumentsNestedInput
     packingList?: PackingListUpdateOneWithoutDocumentsNestedInput
@@ -37825,6 +39053,9 @@ export namespace Prisma {
     invoiceId?: NullableStringFieldUpdateOperationsInput | string | null
     packingListId?: NullableStringFieldUpdateOperationsInput | string | null
     transitId?: NullableStringFieldUpdateOperationsInput | string | null
+    clientId?: NullableStringFieldUpdateOperationsInput | string | null
+    exporterId?: NullableStringFieldUpdateOperationsInput | string | null
+    consigneeId?: NullableStringFieldUpdateOperationsInput | string | null
     uploadedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -37844,6 +39075,9 @@ export namespace Prisma {
     invoiceId?: NullableStringFieldUpdateOperationsInput | string | null
     packingListId?: NullableStringFieldUpdateOperationsInput | string | null
     transitId?: NullableStringFieldUpdateOperationsInput | string | null
+    clientId?: NullableStringFieldUpdateOperationsInput | string | null
+    exporterId?: NullableStringFieldUpdateOperationsInput | string | null
+    consigneeId?: NullableStringFieldUpdateOperationsInput | string | null
     uploadedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -37950,6 +39184,9 @@ export namespace Prisma {
     containerId?: string | null
     invoiceId?: string | null
     transitId?: string | null
+    clientId?: string | null
+    exporterId?: string | null
+    consigneeId?: string | null
     uploadedAt?: Date | string
     updatedAt?: Date | string
   }
@@ -38057,6 +39294,9 @@ export namespace Prisma {
     remarks?: NullableStringFieldUpdateOperationsInput | string | null
     uploadedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    client?: ClientUpdateOneWithoutDocumentsNestedInput
+    exporter?: ExporterUpdateOneWithoutDocumentsNestedInput
+    consignee?: ConsigneeUpdateOneWithoutDocumentsNestedInput
     allocation?: AllocationUpdateOneWithoutAttachedDocumentsNestedInput
     container?: ContainerUpdateOneWithoutDocumentsNestedInput
     invoice?: InvoiceUpdateOneWithoutDocumentsNestedInput
@@ -38079,6 +39319,9 @@ export namespace Prisma {
     containerId?: NullableStringFieldUpdateOperationsInput | string | null
     invoiceId?: NullableStringFieldUpdateOperationsInput | string | null
     transitId?: NullableStringFieldUpdateOperationsInput | string | null
+    clientId?: NullableStringFieldUpdateOperationsInput | string | null
+    exporterId?: NullableStringFieldUpdateOperationsInput | string | null
+    consigneeId?: NullableStringFieldUpdateOperationsInput | string | null
     uploadedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -38098,6 +39341,9 @@ export namespace Prisma {
     containerId?: NullableStringFieldUpdateOperationsInput | string | null
     invoiceId?: NullableStringFieldUpdateOperationsInput | string | null
     transitId?: NullableStringFieldUpdateOperationsInput | string | null
+    clientId?: NullableStringFieldUpdateOperationsInput | string | null
+    exporterId?: NullableStringFieldUpdateOperationsInput | string | null
+    consigneeId?: NullableStringFieldUpdateOperationsInput | string | null
     uploadedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -38153,6 +39399,9 @@ export namespace Prisma {
     containerId?: string | null
     invoiceId?: string | null
     packingListId?: string | null
+    clientId?: string | null
+    exporterId?: string | null
+    consigneeId?: string | null
     uploadedAt?: Date | string
     updatedAt?: Date | string
   }
@@ -38169,6 +39418,9 @@ export namespace Prisma {
     remarks?: NullableStringFieldUpdateOperationsInput | string | null
     uploadedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    client?: ClientUpdateOneWithoutDocumentsNestedInput
+    exporter?: ExporterUpdateOneWithoutDocumentsNestedInput
+    consignee?: ConsigneeUpdateOneWithoutDocumentsNestedInput
     allocation?: AllocationUpdateOneWithoutAttachedDocumentsNestedInput
     container?: ContainerUpdateOneWithoutDocumentsNestedInput
     invoice?: InvoiceUpdateOneWithoutDocumentsNestedInput
@@ -38191,6 +39443,9 @@ export namespace Prisma {
     containerId?: NullableStringFieldUpdateOperationsInput | string | null
     invoiceId?: NullableStringFieldUpdateOperationsInput | string | null
     packingListId?: NullableStringFieldUpdateOperationsInput | string | null
+    clientId?: NullableStringFieldUpdateOperationsInput | string | null
+    exporterId?: NullableStringFieldUpdateOperationsInput | string | null
+    consigneeId?: NullableStringFieldUpdateOperationsInput | string | null
     uploadedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -38210,6 +39465,9 @@ export namespace Prisma {
     containerId?: NullableStringFieldUpdateOperationsInput | string | null
     invoiceId?: NullableStringFieldUpdateOperationsInput | string | null
     packingListId?: NullableStringFieldUpdateOperationsInput | string | null
+    clientId?: NullableStringFieldUpdateOperationsInput | string | null
+    exporterId?: NullableStringFieldUpdateOperationsInput | string | null
+    consigneeId?: NullableStringFieldUpdateOperationsInput | string | null
     uploadedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -38245,6 +39503,9 @@ export namespace Prisma {
     invoiceId?: string | null
     packingListId?: string | null
     transitId?: string | null
+    clientId?: string | null
+    exporterId?: string | null
+    consigneeId?: string | null
     uploadedAt?: Date | string
     updatedAt?: Date | string
   }
@@ -38309,6 +39570,9 @@ export namespace Prisma {
     remarks?: NullableStringFieldUpdateOperationsInput | string | null
     uploadedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    client?: ClientUpdateOneWithoutDocumentsNestedInput
+    exporter?: ExporterUpdateOneWithoutDocumentsNestedInput
+    consignee?: ConsigneeUpdateOneWithoutDocumentsNestedInput
     container?: ContainerUpdateOneWithoutDocumentsNestedInput
     invoice?: InvoiceUpdateOneWithoutDocumentsNestedInput
     packingList?: PackingListUpdateOneWithoutDocumentsNestedInput
@@ -38331,6 +39595,9 @@ export namespace Prisma {
     invoiceId?: NullableStringFieldUpdateOperationsInput | string | null
     packingListId?: NullableStringFieldUpdateOperationsInput | string | null
     transitId?: NullableStringFieldUpdateOperationsInput | string | null
+    clientId?: NullableStringFieldUpdateOperationsInput | string | null
+    exporterId?: NullableStringFieldUpdateOperationsInput | string | null
+    consigneeId?: NullableStringFieldUpdateOperationsInput | string | null
     uploadedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -38350,6 +39617,9 @@ export namespace Prisma {
     invoiceId?: NullableStringFieldUpdateOperationsInput | string | null
     packingListId?: NullableStringFieldUpdateOperationsInput | string | null
     transitId?: NullableStringFieldUpdateOperationsInput | string | null
+    clientId?: NullableStringFieldUpdateOperationsInput | string | null
+    exporterId?: NullableStringFieldUpdateOperationsInput | string | null
+    consigneeId?: NullableStringFieldUpdateOperationsInput | string | null
     uploadedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -38430,6 +39700,28 @@ export namespace Prisma {
     createdById: string
     allocationId?: string | null
     createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type DocumentCreateManyClientInput = {
+    id?: string
+    type: $Enums.DocumentType
+    fileName: string
+    originalName?: string | null
+    fileUrl: string
+    publicId?: string | null
+    mimeType?: string | null
+    fileSize?: number | null
+    remarks?: string | null
+    allocationId?: string | null
+    shipmentId?: string | null
+    containerId?: string | null
+    invoiceId?: string | null
+    packingListId?: string | null
+    transitId?: string | null
+    exporterId?: string | null
+    consigneeId?: string | null
+    uploadedAt?: Date | string
     updatedAt?: Date | string
   }
 
@@ -38683,6 +39975,72 @@ export namespace Prisma {
     createdById?: StringFieldUpdateOperationsInput | string
     allocationId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type DocumentUpdateWithoutClientInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    type?: EnumDocumentTypeFieldUpdateOperationsInput | $Enums.DocumentType
+    fileName?: StringFieldUpdateOperationsInput | string
+    originalName?: NullableStringFieldUpdateOperationsInput | string | null
+    fileUrl?: StringFieldUpdateOperationsInput | string
+    publicId?: NullableStringFieldUpdateOperationsInput | string | null
+    mimeType?: NullableStringFieldUpdateOperationsInput | string | null
+    fileSize?: NullableIntFieldUpdateOperationsInput | number | null
+    remarks?: NullableStringFieldUpdateOperationsInput | string | null
+    uploadedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    exporter?: ExporterUpdateOneWithoutDocumentsNestedInput
+    consignee?: ConsigneeUpdateOneWithoutDocumentsNestedInput
+    allocation?: AllocationUpdateOneWithoutAttachedDocumentsNestedInput
+    container?: ContainerUpdateOneWithoutDocumentsNestedInput
+    invoice?: InvoiceUpdateOneWithoutDocumentsNestedInput
+    packingList?: PackingListUpdateOneWithoutDocumentsNestedInput
+    shipment?: ShipmentUpdateOneWithoutDocumentsNestedInput
+    transit?: TransitUpdateOneWithoutDocumentsNestedInput
+  }
+
+  export type DocumentUncheckedUpdateWithoutClientInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    type?: EnumDocumentTypeFieldUpdateOperationsInput | $Enums.DocumentType
+    fileName?: StringFieldUpdateOperationsInput | string
+    originalName?: NullableStringFieldUpdateOperationsInput | string | null
+    fileUrl?: StringFieldUpdateOperationsInput | string
+    publicId?: NullableStringFieldUpdateOperationsInput | string | null
+    mimeType?: NullableStringFieldUpdateOperationsInput | string | null
+    fileSize?: NullableIntFieldUpdateOperationsInput | number | null
+    remarks?: NullableStringFieldUpdateOperationsInput | string | null
+    allocationId?: NullableStringFieldUpdateOperationsInput | string | null
+    shipmentId?: NullableStringFieldUpdateOperationsInput | string | null
+    containerId?: NullableStringFieldUpdateOperationsInput | string | null
+    invoiceId?: NullableStringFieldUpdateOperationsInput | string | null
+    packingListId?: NullableStringFieldUpdateOperationsInput | string | null
+    transitId?: NullableStringFieldUpdateOperationsInput | string | null
+    exporterId?: NullableStringFieldUpdateOperationsInput | string | null
+    consigneeId?: NullableStringFieldUpdateOperationsInput | string | null
+    uploadedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type DocumentUncheckedUpdateManyWithoutClientInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    type?: EnumDocumentTypeFieldUpdateOperationsInput | $Enums.DocumentType
+    fileName?: StringFieldUpdateOperationsInput | string
+    originalName?: NullableStringFieldUpdateOperationsInput | string | null
+    fileUrl?: StringFieldUpdateOperationsInput | string
+    publicId?: NullableStringFieldUpdateOperationsInput | string | null
+    mimeType?: NullableStringFieldUpdateOperationsInput | string | null
+    fileSize?: NullableIntFieldUpdateOperationsInput | number | null
+    remarks?: NullableStringFieldUpdateOperationsInput | string | null
+    allocationId?: NullableStringFieldUpdateOperationsInput | string | null
+    shipmentId?: NullableStringFieldUpdateOperationsInput | string | null
+    containerId?: NullableStringFieldUpdateOperationsInput | string | null
+    invoiceId?: NullableStringFieldUpdateOperationsInput | string | null
+    packingListId?: NullableStringFieldUpdateOperationsInput | string | null
+    transitId?: NullableStringFieldUpdateOperationsInput | string | null
+    exporterId?: NullableStringFieldUpdateOperationsInput | string | null
+    consigneeId?: NullableStringFieldUpdateOperationsInput | string | null
+    uploadedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 

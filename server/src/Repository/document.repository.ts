@@ -58,6 +58,9 @@ class DocumentRepository {
         invoiceId: data.invoiceId,
 
         transitId: data.transitId,
+        exporterId: data.exporterId,
+        clientId: data.clientId,
+        consigneeId: data.consigneeId,
       },
 
       include: this.detailsInclude,
@@ -83,6 +86,9 @@ class DocumentRepository {
       packingListId,
       invoiceId,
       transitId,
+      exporterId,
+      clientId,
+      consigneeId,
       type,
       sortBy,
       sortOrder,
@@ -111,6 +117,18 @@ class DocumentRepository {
 
       ...(transitId && {
         transitId,
+      }),
+
+      ...(exporterId && {
+        exporterId,
+      }),
+
+      ...(clientId && {
+        clientId,
+      }),
+
+      ...(consigneeId && {
+        consigneeId,
       }),
 
       ...(type && {
@@ -282,6 +300,28 @@ class DocumentRepository {
         transitNumber: true,
       },
     },
+
+    exporter : {
+      select: {
+        id: true,
+        name: true,
+      },
+    },
+    client: {
+      select: {
+        id: true,
+         companyName: true,
+      },
+    },
+    consignee: {
+      select: {
+        id: true,
+        name: true,
+      },
+    }
+
+
+
   };
 
   private readonly detailsInclude = {
@@ -291,7 +331,12 @@ class DocumentRepository {
         allocationNumber: true,
       },
     },
-
+exporter: {
+      select: {
+        id: true,
+        name: true,
+      },
+    },
     shipment: true,
 
     container: true,
@@ -301,7 +346,20 @@ class DocumentRepository {
     invoice: true,
 
     transit: true,
-  };
+    client: {
+      select: {
+        id: true,
+         companyName: true,
+      },
+    },
+    consignee: {
+      select: {
+        id: true, 
+        name: true,
+  },
+}
+}
+
 }
 
 export default new DocumentRepository();

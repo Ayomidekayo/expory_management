@@ -43,7 +43,10 @@ export const DocumentQueryDto = z.object({
   invoiceId: optionalString,
 
   transitId: optionalString,
-
+  exporterId: optionalString,
+  clientId: optionalString,
+  consigneeId: optionalString,
+  
   type: z
     .preprocess(
       (value) => (value === "" ? undefined : value),

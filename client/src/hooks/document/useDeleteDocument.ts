@@ -65,6 +65,22 @@ queryClient.invalidateQueries({
       queryClient.invalidateQueries({
         queryKey: ["exporters"],
       });
+
+       queryClient.invalidateQueries({
+        queryKey: ["client"],
+      });
+
+      queryClient.invalidateQueries({
+        queryKey: ["clients"],
+      });
+
+       queryClient.invalidateQueries({
+        queryKey: ["consignee"],
+      });
+
+      queryClient.invalidateQueries({
+        queryKey: ["consignees"],
+      });
     },
   });
 }

@@ -9,6 +9,7 @@ import ClientShipmentTable from "../../components/client/details/ClientShipmentT
 import ClientAllocationTable from "../../components/client/details/ClientAllocationTable";
 import ClientStatisticsCard from "../../components/client/details/ClientStatisticsCard";
 import ClientInformationCard from "../../components/client/details/ClientInformationCard";
+import ClientDocumentsCard from "../../components/client/details/ClientDocumentsCard";
 
 export default function ClientDetailsPage() {
   const { id } = useParams();
@@ -83,6 +84,8 @@ export default function ClientDetailsPage() {
       <ClientInformationCard
         client={client}
       />
+
+      <ClientDocumentsCard client={client} />
 
       <ClientAllocationTable
         allocations={client.allocations ?? []}

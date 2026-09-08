@@ -7,6 +7,7 @@ import ConsigneeStatisticsCard from "../../components/consignee/details/Consigne
 import ConsigneeInformationCard from "../../components/consignee/details/ConsigneeInformationCard";
 import ConsigneeAllocationTable from "../../components/consignee/ConsigneeAllocationTable";
 import ConsigneeShipmentTable from "../../components/consignee/ConsigneeShipmentTable";
+import ConsigneeDocumentsCard from "../../components/consignee/details/ConsigneeDocumentsCard";
 
 export default function ConsigneeDetailsPage() {
   const { id } = useParams();
@@ -38,6 +39,7 @@ export default function ConsigneeDetailsPage() {
       <ConsigneeStatisticsCard consignee={consignee} />
 
       <ConsigneeInformationCard consignee={consignee} />
+      <ConsigneeDocumentsCard consignee={consignee} />
 
       <ConsigneeAllocationTable allocations={consignee.allocations ?? []} />
 

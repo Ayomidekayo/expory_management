@@ -1,10 +1,12 @@
+import type { Document } from "./document";
+
 export type ClientType =
   | "COMPANY"
   | "INDIVIDUAL";
 
 export interface Client {
   id: string;
-
+documents: Document[];
   clientCode: string;
 
   companyName: string;

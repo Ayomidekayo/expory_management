@@ -72,6 +72,7 @@ model Exporter {
   contactPerson String?
   createdAt     DateTime     @default(now())
   updatedAt     DateTime     @updatedAt
+   documents Document[]
   allocations   Allocation[]
   shipments     Shipment[]
 }
@@ -92,6 +93,7 @@ model Consignee {
   updatedAt       DateTime      @updatedAt
   allocations     Allocation[]
   shipments       Shipment[]
+   documents Document[]
 }
 
 model Shipment {
@@ -374,6 +376,7 @@ model Client {
   updatedAt      DateTime     @updatedAt
   allocations    Allocation[]
   shipments      Shipment[]
+   documents Document[]
 }
 
 model Document {
@@ -397,8 +400,18 @@ model Document {
   packingListId String?
   transitId     String?
 
+
+ clientId String?
+  exporterId String?
+  consigneeId String?
+
   uploadedAt    DateTime     @default(now())
   updatedAt     DateTime     @updatedAt
+
+
+  client Client? @relation(fields: [clientId], references: [id])
+  exporter Exporter? @relation(fields: [exporterId], references: [id])
+  consignee Consignee? @relation(fields: [consigneeId], references: [id])
 
   allocation    Allocation?  @relation(fields: [allocationId], references: [id])
   container     Container?   @relation(fields: [containerId], references: [id])

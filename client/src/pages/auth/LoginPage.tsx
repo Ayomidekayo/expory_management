@@ -34,13 +34,13 @@ export default function LoginPage() {
             </div>
 
             <span className="text-lg font-semibold tracking-wide">
-              Export Management
+             Kayode Impect Management 
             </span>
 
           </div>
 
           <h1 className="text-5xl font-bold leading-tight">
-            Export Management
+            Kayode Impect Management
             <br />
             System
           </h1>

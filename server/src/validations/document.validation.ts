@@ -34,6 +34,9 @@ const documentSchema = z.object({
   invoiceId: optionalString,
 
   transitId: optionalString,
+  exporterId: optionalString,
+  clientId: optionalString,
+  consigneeId: optionalString,
 });
 
 /*
@@ -51,13 +54,16 @@ export const createDocumentSchema =
       data.packingListId,
       data.invoiceId,
       data.transitId,
+      data.exporterId,
+      data.clientId,
+      data.consigneeId,
     ].filter(Boolean);
 
     if (parentIds.length === 0) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
         message:
-          "A document must belong to one record (Allocation, Shipment, Container, Packing List, Invoice or Transit).",
+          "A document must belong to one record (Allocation, Shipment, Container, Packing List, Invoice, Client, Exporter, Consignee, or Transit).",
         path: ["allocationId"],
       });
     }
@@ -89,6 +95,9 @@ export const updateDocumentSchema =
         data.packingListId,
         data.invoiceId,
         data.transitId,
+        data.exporterId,
+        data.clientId,
+        data.consigneeId,
       ].filter(Boolean);
 
       if (parentIds.length > 1) {

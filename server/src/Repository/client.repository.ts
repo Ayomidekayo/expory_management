@@ -155,11 +155,12 @@ async findById(id: string) {
       },
 
       shipments: true,
-
+  documents: true,
       _count: {
         select: {
           allocations: true,
           shipments: true,
+          documents: true,
         },
       },
     },

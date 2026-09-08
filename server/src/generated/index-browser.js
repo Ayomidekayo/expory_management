@@ -411,6 +411,9 @@ exports.Prisma.DocumentScalarFieldEnum = {
   invoiceId: 'invoiceId',
   packingListId: 'packingListId',
   transitId: 'transitId',
+  clientId: 'clientId',
+  exporterId: 'exporterId',
+  consigneeId: 'consigneeId',
   uploadedAt: 'uploadedAt',
   updatedAt: 'updatedAt'
 };

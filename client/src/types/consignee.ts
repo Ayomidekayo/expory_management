@@ -2,11 +2,12 @@ import type { TransportMode } from "../enums";
 
 
 import type { Allocation } from "./allocation.types";
+import type { Document } from "./document";
 import type { Shipment } from "./shipment.types";
 
 export interface Consignee {
   id: string;
-
+documents: Document[];
   name: string;
 
   contactPerson?: string;

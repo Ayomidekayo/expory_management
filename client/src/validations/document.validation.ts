@@ -13,7 +13,15 @@ export const createDocumentSchema = z.object({
     "PACKING_LIST",
     "TRANSIT",
     "INVOICE",
+    "EXPORTER",
+    "CLIENT",
+    "CONSIGNEE",
   ]),
+
+  clientId: z.string().optional(),
+    exporterId: z.string().optional(),
+    consigneeId: z.string().optional(),
+
 
   shipmentId: z.string().optional(),
 

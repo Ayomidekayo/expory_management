@@ -19,6 +19,9 @@ import {
   uploadToSupabase,
   deleteFromSupabase,
 } from "./supabase-storage.service";
+import exporterRepository from "../Repository/exporter.repository";
+import clientRepository from "../Repository/client.repository";
+import consigneeRepository from "../Repository/consignee.repository";
 
 class DocumentService {
   /*
@@ -63,7 +66,15 @@ class DocumentService {
 
         transitId:
           data.transitId,
+
+           exporterId: 
+        data.exporterId,
+
+       clientId: data.clientId,
+       consigneeId: data.consigneeId,
       }
+
+     
     );
 
     /*
@@ -197,138 +208,195 @@ class DocumentService {
   */
 
   private async validateParentRecord(
-    data: CreateDocumentDto
-  ) {
-    /*
-    =====================================
-    Allocation
-    =====================================
-    */
+  data: CreateDocumentDto
+) {
+  /*
+  =====================================
+  Allocation
+  =====================================
+  */
 
-    if (data.allocationId) {
-      console.log(
-        "Checking allocation:",
+  if (data.allocationId) {
+    console.log(
+      "Checking allocation:",
+      data.allocationId
+    );
+
+    const allocation =
+      await allocationRepository.findById(
         data.allocationId
       );
 
-      const allocation =
-        await allocationRepository.findById(
-          data.allocationId
-        );
+    console.log(
+      "Allocation result:",
+      allocation
+        ? {
+            id: allocation.id,
+            allocationNumber:
+              allocation.allocationNumber,
+          }
+        : null
+    );
 
-      console.log(
-        "Allocation result:",
-        allocation
-          ? {
-              id: allocation.id,
-              allocationNumber:
-                allocation.allocationNumber,
-            }
-          : null
+    if (!allocation) {
+      throw new Error(
+        `Allocation not found: ${data.allocationId}`
       );
-
-      if (!allocation) {
-        throw new Error(
-          `Allocation not found: ${data.allocationId}`
-        );
-      }
-    }
-
-    /*
-    =====================================
-    Shipment
-    =====================================
-    */
-
-    if (data.shipmentId) {
-      const shipment =
-        await shipmentRepository.findById(
-          data.shipmentId
-        );
-
-      if (!shipment) {
-        throw new Error(
-          `Shipment not found: ${data.shipmentId}`
-        );
-      }
-    }
-
-    /*
-    =====================================
-    Container
-    =====================================
-    */
-
-    if (data.containerId) {
-      const container =
-        await containerRepository.findById(
-          data.containerId
-        );
-
-      if (!container) {
-        throw new Error(
-          `Container not found: ${data.containerId}`
-        );
-      }
-    }
-
-    /*
-    =====================================
-    Packing List
-    =====================================
-    */
-
-    if (data.packingListId) {
-      const packingList =
-        await packingListRepository.findById(
-          data.packingListId
-        );
-
-      if (!packingList) {
-        throw new Error(
-          `Packing List not found: ${data.packingListId}`
-        );
-      }
-    }
-
-    /*
-    =====================================
-    Invoice
-    =====================================
-    */
-
-    if (data.invoiceId) {
-      const invoice =
-        await invoiceRepository.findById(
-          data.invoiceId
-        );
-
-      if (!invoice) {
-        throw new Error(
-          `Invoice not found: ${data.invoiceId}`
-        );
-      }
-    }
-
-    /*
-    =====================================
-    Transit
-    =====================================
-    */
-
-    if (data.transitId) {
-      const transit =
-        await transitRepository.findById(
-          data.transitId
-        );
-
-      if (!transit) {
-        throw new Error(
-          `Transit not found: ${data.transitId}`
-        );
-      }
     }
   }
+
+  /*
+  =====================================
+  Shipment
+  =====================================
+  */
+
+  if (data.shipmentId) {
+    const shipment =
+      await shipmentRepository.findById(
+        data.shipmentId
+      );
+
+    if (!shipment) {
+      throw new Error(
+        `Shipment not found: ${data.shipmentId}`
+      );
+    }
+  }
+
+  /*
+  =====================================
+  Container
+  =====================================
+  */
+
+  if (data.containerId) {
+    const container =
+      await containerRepository.findById(
+        data.containerId
+      );
+
+    if (!container) {
+      throw new Error(
+        `Container not found: ${data.containerId}`
+      );
+    }
+  }
+
+  /*
+  =====================================
+  Packing List
+  =====================================
+  */
+
+  if (data.packingListId) {
+    const packingList =
+      await packingListRepository.findById(
+        data.packingListId
+      );
+
+    if (!packingList) {
+      throw new Error(
+        `Packing List not found: ${data.packingListId}`
+      );
+    }
+  }
+
+  /*
+  =====================================
+  Invoice
+  =====================================
+  */
+
+  if (data.invoiceId) {
+    const invoice =
+      await invoiceRepository.findById(
+        data.invoiceId
+      );
+
+    if (!invoice) {
+      throw new Error(
+        `Invoice not found: ${data.invoiceId}`
+      );
+    }
+  }
+
+  /*
+  =====================================
+  Transit
+  =====================================
+  */
+
+  if (data.transitId) {
+    const transit =
+      await transitRepository.findById(
+        data.transitId
+      );
+
+    if (!transit) {
+      throw new Error(
+        `Transit not found: ${data.transitId}`
+      );
+    }
+  }
+
+  /*
+  =====================================
+  Exporter
+  =====================================
+  */
+
+  if (data.exporterId) {
+    const exporter =
+      await exporterRepository.findById(
+        data.exporterId
+      );
+
+    if (!exporter) {
+      throw new Error(
+        `Exporter not found: ${data.exporterId}`
+      );
+    }
+  }
+
+  /*
+  =====================================
+  Client
+  =====================================
+  */
+
+  if (data.clientId) {
+    const client =
+      await clientRepository.findById(
+        data.clientId
+      );
+
+    if (!client) {
+      throw new Error(
+        `Client not found: ${data.clientId}`
+      );
+    }
+  }
+
+  /*
+  =====================================
+  Consignee
+  =====================================
+  */
+
+  if (data.consigneeId) {
+    const consignee =
+      await consigneeRepository.findById(
+        data.consigneeId
+      );
+
+    if (!consignee) {
+      throw new Error(
+        `Consignee not found: ${data.consigneeId}`
+      );
+    }
+  }
+}
 }
 
 export default new DocumentService();

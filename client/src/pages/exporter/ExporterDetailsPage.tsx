@@ -15,6 +15,7 @@ import ExporterShipmentTable from "../../components/exporter/detail/ExporterShip
 import ExporterAllocationTable from "../../components/exporter/detail/ExporterAllocationTable";
 import ExporterInformationCard from "../../components/exporter/detail/ExporterInformationCard";
 import ExporterStatisticsCard from "../../components/exporter/detail/ExporterStatisticsCard";
+import ExporterDocumentsCard from "../../components/exporter/detail/ExporterDocumentsCard";
 
 export default function ExporterDetailsPage() {
   const { id } = useParams();
@@ -94,6 +95,10 @@ export default function ExporterDetailsPage() {
         allocations={
           exporter.allocations ?? []
         }
+      />
+
+      <ExporterDocumentsCard
+        exporter={exporter}
       />
 
       <ExporterShipmentTable

@@ -37,9 +37,11 @@ export class ExporterRepository {
             shipmentDate: "desc",
           },
         },
+        documents:true,
 
         _count: {
           select: {
+            documents: true,
             allocations: true,
             shipments: true,
           },

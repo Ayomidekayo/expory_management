@@ -42,6 +42,15 @@ export default function CreateDocumentPage() {
   const invoiceId =
     searchParams.get("invoiceId");
 
+  const exporterId =
+    searchParams.get("exporterId");
+
+  const clientId =
+    searchParams.get("clientId");
+
+  const consigneeId =
+    searchParams.get("consigneeId");
+
   const createMutation =
     useCreateDocument();
 
@@ -49,10 +58,19 @@ export default function CreateDocumentPage() {
   =====================================
   Determine Attachment Target
   =====================================
+
+  URL attachment takes precedence.
+  Only one target should be selected.
   */
 
   const attachTo =
-    allocationId
+    clientId
+      ? "CLIENT"
+      : exporterId
+      ? "EXPORTER"
+      : consigneeId
+      ? "CONSIGNEE"
+      : allocationId
       ? "ALLOCATION"
       : shipmentId
       ? "SHIPMENT"
@@ -110,18 +128,24 @@ export default function CreateDocumentPage() {
 
       /*
       =====================================
-      Attachment IDs
+      Final Attachment IDs
       =====================================
 
-      URL parameter takes precedence.
-
-      This is useful when the user clicks:
-
-      Add Document
-
-      from a specific allocation,
-      shipment, invoice, etc.
+      URL parameter takes precedence over
+      the value coming from the form.
       */
+
+      const finalClientId =
+        clientId ??
+        values.clientId;
+
+      const finalExporterId =
+        exporterId ??
+        values.exporterId;
+
+      const finalConsigneeId =
+        consigneeId ??
+        values.consigneeId;
 
       const finalAllocationId =
         allocationId ??
@@ -139,60 +163,112 @@ export default function CreateDocumentPage() {
         packingListId ??
         values.packingListId;
 
-      const finalTransitId =
-        transitId ??
-        values.transitId;
-
       const finalInvoiceId =
         invoiceId ??
         values.invoiceId;
 
+      const finalTransitId =
+        transitId ??
+        values.transitId;
+
       /*
       =====================================
-      Append IDs
+      Attach ONLY To Selected Target
       =====================================
+
+      This is important.
+
+      We do not want to send:
+
+      clientId + shipmentId
+
+      at the same time.
+
+      The document must have exactly
+      one owner.
       */
 
-      if (finalAllocationId) {
-        formData.append(
-          "allocationId",
-          finalAllocationId
-        );
-      }
+      switch (attachTo) {
+        case "CLIENT":
+          if (finalClientId) {
+            formData.append(
+              "clientId",
+              finalClientId
+            );
+          }
+          break;
 
-      if (finalShipmentId) {
-        formData.append(
-          "shipmentId",
-          finalShipmentId
-        );
-      }
+        case "EXPORTER":
+          if (finalExporterId) {
+            formData.append(
+              "exporterId",
+              finalExporterId
+            );
+          }
+          break;
 
-      if (finalContainerId) {
-        formData.append(
-          "containerId",
-          finalContainerId
-        );
-      }
+        case "CONSIGNEE":
+          if (finalConsigneeId) {
+            formData.append(
+              "consigneeId",
+              finalConsigneeId
+            );
+          }
+          break;
 
-      if (finalPackingListId) {
-        formData.append(
-          "packingListId",
-          finalPackingListId
-        );
-      }
+        case "ALLOCATION":
+          if (finalAllocationId) {
+            formData.append(
+              "allocationId",
+              finalAllocationId
+            );
+          }
+          break;
 
-      if (finalTransitId) {
-        formData.append(
-          "transitId",
-          finalTransitId
-        );
-      }
+        case "SHIPMENT":
+          if (finalShipmentId) {
+            formData.append(
+              "shipmentId",
+              finalShipmentId
+            );
+          }
+          break;
 
-      if (finalInvoiceId) {
-        formData.append(
-          "invoiceId",
-          finalInvoiceId
-        );
+        case "CONTAINER":
+          if (finalContainerId) {
+            formData.append(
+              "containerId",
+              finalContainerId
+            );
+          }
+          break;
+
+        case "PACKING_LIST":
+          if (finalPackingListId) {
+            formData.append(
+              "packingListId",
+              finalPackingListId
+            );
+          }
+          break;
+
+        case "INVOICE":
+          if (finalInvoiceId) {
+            formData.append(
+              "invoiceId",
+              finalInvoiceId
+            );
+          }
+          break;
+
+        case "TRANSIT":
+          if (finalTransitId) {
+            formData.append(
+              "transitId",
+              finalTransitId
+            );
+          }
+          break;
       }
 
       /*
@@ -201,15 +277,20 @@ export default function CreateDocumentPage() {
       =====================================
       */
 
+      console.log(
+        "========== DOCUMENT FORM DATA =========="
+      );
+
       for (const [
         key,
         value,
       ] of formData.entries()) {
-        console.log(
-          key,
-          value
-        );
+        console.log(key, value);
       }
+
+      console.log(
+        "========================================"
+      );
 
       /*
       =====================================
@@ -230,6 +311,27 @@ export default function CreateDocumentPage() {
       Return To Parent
       =====================================
       */
+
+      if (clientId) {
+        navigate(
+          `/clients/${clientId}`
+        );
+        return;
+      }
+
+      if (exporterId) {
+        navigate(
+          `/exporters/${exporterId}`
+        );
+        return;
+      }
+
+      if (consigneeId) {
+        navigate(
+          `/consignees/${consigneeId}`
+        );
+        return;
+      }
 
       if (allocationId) {
         navigate(
@@ -310,6 +412,15 @@ export default function CreateDocumentPage() {
       <DocumentForm
         defaultValues={{
           attachTo,
+
+          clientId:
+            clientId ?? "",
+
+          exporterId:
+            exporterId ?? "",
+
+          consigneeId:
+            consigneeId ?? "",
 
           allocationId:
             allocationId ?? "",

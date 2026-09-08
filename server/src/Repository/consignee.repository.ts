@@ -9,30 +9,57 @@ class ConsigneeRepository {
   =====================================
   */
 
-  private include = {
-    allocations: {
-      include: {
-        client: true,
-      },
+private include = {
+  /*
+  =====================================
+  Allocations
+  =====================================
+  */
 
-      orderBy: {
-        createdAt: "desc" as const,
-      },
+  allocations: {
+    include: {
+      client: true,
     },
 
-    shipments: {
-      orderBy: {
-        shipmentDate: "desc" as const,
-      },
+    orderBy: {
+      createdAt: "desc" as const,
     },
+  },
 
-    _count: {
-      select: {
-        allocations: true,
-        shipments: true,
-      },
+  /*
+  =====================================
+  Shipments
+  =====================================
+  */
+
+  shipments: {
+    orderBy: {
+      shipmentDate: "desc" as const,
     },
-  };
+  },
+
+  /*
+  =====================================
+  Documents
+  =====================================
+  */
+
+  documents: true,
+
+  /*
+  =====================================
+  Counts
+  =====================================
+  */
+
+  _count: {
+    select: {
+      allocations: true,
+      shipments: true,
+      documents: true,
+    },
+  },
+};
 
   /*
   =====================================
