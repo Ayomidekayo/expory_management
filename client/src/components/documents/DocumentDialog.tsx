@@ -1,10 +1,10 @@
 import { useCreateDocument } from "../../hooks/document/useCreateDocument";
 import { useDocument } from "../../hooks/document/useDocument";
 import { useUpdateDocument } from "../../hooks/document/useUpdateDocuments";
+import type { UpdateDocumentDto } from "../../types/document";
 
 import type {
   CreateDocumentInput,
-  UpdateDocumentInput,
 } from "../../validations/document.validation";
 
 import {
@@ -37,13 +37,13 @@ export default function DocumentDialog({
   const updateMutation = useUpdateDocument();
 
   function handleSubmit(
-    data: CreateDocumentInput | UpdateDocumentInput
+    data: CreateDocumentInput 
   ) {
     if (isEditing && documentId) {
       updateMutation.mutate(
         {
           id: documentId,
-          payload: data as UpdateDocumentInput,
+          payload: data as UpdateDocumentDto,
         },
         {
           onSuccess: () => {

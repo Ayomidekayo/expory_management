@@ -41,27 +41,25 @@ export default function DocumentForm({
 
       mode: "onChange",
 
-      defaultValues: {
-        type: "OTHER",
+    defaultValues: {
+  type: "OTHER",
+  attachTo: "SHIPMENT",
 
-        attachTo: "SHIPMENT",
+  exporterId: "",
+  clientId: "",
+  consigneeId: "",
 
-        allocationId: "",
+  allocationId: "",
+  shipmentId: "",
+  containerId: "",
+  packingListId: "",
+  transitId: "",
+  invoiceId: "",
 
-        shipmentId: "",
+  remarks: "",
 
-        containerId: "",
-
-        packingListId: "",
-
-        transitId: "",
-
-        invoiceId: "",
-
-        remarks: "",
-
-        ...defaultValues,
-      },
+  ...defaultValues,
+},
     });
 
   useEffect(() => {
@@ -83,7 +81,14 @@ export default function DocumentForm({
       shipmentId:
         defaultValues.shipmentId ??
         "",
+exporterId:
+  defaultValues.exporterId ?? "",
 
+clientId:
+  defaultValues.clientId ?? "",
+
+consigneeId:
+  defaultValues.consigneeId ?? "",
       containerId:
         defaultValues.containerId ??
         "",
@@ -105,6 +110,14 @@ export default function DocumentForm({
         "",
     });
   }, [defaultValues, form]);
+const exporterId =
+  form.watch("exporterId");
+
+const clientId =
+  form.watch("clientId");
+
+const consigneeId =
+  form.watch("consigneeId");
 
   const allocationId =
     form.watch("allocationId");
@@ -125,6 +138,10 @@ export default function DocumentForm({
     form.watch("transitId");
 
   const openedFromDetails =
+
+   !!exporterId ||
+  !!clientId ||
+  !!consigneeId ||
     !!allocationId ||
     !!shipmentId ||
     !!containerId ||

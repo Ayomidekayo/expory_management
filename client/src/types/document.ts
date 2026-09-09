@@ -18,44 +18,26 @@ QUERY
 
 export interface DocumentQuery {
   page?: number;
-
   limit?: number;
-
   search?: string;
 
+  exporterId?: string;
+  clientId?: string;
+  consigneeId?: string;
+
   allocationId?: string;
-
   shipmentId?: string;
-
   containerId?: string;
-
   packingListId?: string;
-
   invoiceId?: string;
-
   transitId?: string;
 
   type?: DocumentType;
 
   sortBy?: "uploadedAt" | "fileName" | "type";
-
   sortOrder?: "asc" | "desc";
 }
-// export enum DocumentType {
-//   INVOICE = "INVOICE",
-//   PACKING_LIST = "PACKING_LIST",
-//   NXP = "NXP",
-//   XF = "XF",
-//   CCI = "CCI",
-//   E_NUMBER = "E_NUMBER",
-//   TRANSIT_INVOICE = "TRANSIT_INVOICE",
-//   OTHER = "OTHER",
-// }
-/*
-===========================================
-DOCUMENT
-===========================================
-*/
+
 export interface Document {
   id: string;
   documentType: DocumentType;

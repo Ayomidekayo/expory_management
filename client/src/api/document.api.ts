@@ -1,9 +1,10 @@
 import axiosInstance from "../lib/axios";
 
 import type {
-  Document,
+Document,
   DocumentQuery,
   UpdateDocumentDto,
+
 } from "../types/document";
 
 /*
