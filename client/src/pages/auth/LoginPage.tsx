@@ -40,7 +40,7 @@ export default function LoginPage() {
           </div> 
 
           <h1 className="text-5xl font-bold leading-tight">
-            OGW Kayo Impect Management
+            OGW Kay Impex Management
             <br />
             System
           </h1>
