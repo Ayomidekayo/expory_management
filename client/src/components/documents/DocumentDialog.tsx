@@ -13,6 +13,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "../ui/dialog";
+
 import DocumentForm from "./DocumentForm";
 
 interface Props {
@@ -33,7 +34,6 @@ export default function DocumentDialog({
   const { data: document } = useDocument(documentId ?? "");
 
   const createMutation = useCreateDocument();
-
   const updateMutation = useUpdateDocument();
 
   function handleSubmit(
@@ -55,23 +55,20 @@ export default function DocumentDialog({
       return;
     }
 
-    const createData =
-      data as CreateDocumentInput;
+    const createData = data as CreateDocumentInput;
 
     const formData = new FormData();
 
+    // Document type
     formData.append("type", createData.type);
 
-    formData.append(
-      "attachTo",
-      "SHIPMENT"
-    );
+    // This dialog is specifically for shipment documents
+    formData.append("attachTo", "SHIPMENT");
 
-    formData.append(
-      "shipmentId",
-      shipmentId
-    );
+    // Required parent
+    formData.append("shipmentId", shipmentId);
 
+    // Optional relationships
     if (createData.allocationId) {
       formData.append(
         "allocationId",
@@ -114,6 +111,7 @@ export default function DocumentDialog({
       );
     }
 
+    // File
     formData.append(
       "file",
       createData.file
@@ -150,20 +148,15 @@ export default function DocumentDialog({
             document
               ? {
                   shipmentId:
-                    document.shipmentId ??
-                    "",
-                  attachTo:
-                    "SHIPMENT",
-                  type:
-                    document.type,
+                    document.shipmentId ?? "",
+                  attachTo: "SHIPMENT",
+                  type: document.type,
                   remarks:
-                    document.remarks ??
-                    "",
+                    document.remarks ?? "",
                 }
               : {
                   shipmentId,
-                  attachTo:
-                    "SHIPMENT",
+                  attachTo: "SHIPMENT",
                 }
           }
           onSubmit={handleSubmit}

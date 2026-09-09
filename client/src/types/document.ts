@@ -71,6 +71,11 @@ export interface Document {
   fileSize?: number;
 
   remarks?: string;
+exporterId?: string;
+
+clientId?: string;
+
+consigneeId?: string;
 
   shipmentId?: string;
 
@@ -111,6 +116,9 @@ export interface CreateDocumentDto {
   type: DocumentType;
 
   attachTo:
+    | "EXPORTER"
+    | "CLIENT"
+    | "CONSIGNEE"
     | "SHIPMENT"
     | "ALLOCATION"
     | "CONTAINER"
@@ -119,6 +127,12 @@ export interface CreateDocumentDto {
     | "INVOICE";
 
   remarks?: string;
+
+  exporterId?: string;
+
+  clientId?: string;
+
+  consigneeId?: string;
 
   shipmentId?: string;
 
