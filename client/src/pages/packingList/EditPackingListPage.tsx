@@ -114,20 +114,19 @@ export default function EditPackingListPage() {
 
         }}
 
-        onSubmit={(values) =>
-          updatePackingList.mutate(
-            {
-              id: id!,
-              payload: values,
-            },
-            {
-              onSuccess: () =>
-                navigate(
-                  `/packing-lists/${id}`
-                ),
-            }
-          )
-        }
+  onSubmit={(values) => {
+
+  updatePackingList.mutate(
+    {
+      id: id!,
+      payload: values,
+    },
+    {
+      onSuccess: () =>
+        navigate(`/packing-lists/${id}`),
+    }
+  );
+}}
 
       />
 

@@ -209,52 +209,73 @@ class PackingListRepository {
     });
   }
 
-  /*
-  =====================================
-  Update
-  =====================================
-  */
 
-  async update(
-    id: string,
-    data: UpdatePackingListDto
-  ) {
-    return prisma.packingList.update({
-      where: {
-        id,
-      },
 
-      data: {
-        packingDate:
-          data.packingDate
-            ? new Date(
-                data.packingDate
-              )
-            : undefined,
+/*
+=====================================
+Update
+=====================================
+*/
 
-        packageType:
-          data.packageType,
+async update(
+  id: string,
+  data: UpdatePackingListDto
+) {
+  const {
+    items,
+    ...packingListData
+  } = data;
 
-        totalPackages:
-          data.totalPackages,
+  return prisma.packingList.update({
+    where: {
+      id,
+    },
 
-        grossWeight:
-          data.grossWeight,
+    data: {
+      packingDate:
+        packingListData.packingDate
+          ? new Date(
+              packingListData.packingDate
+            )
+          : undefined,
 
-        netWeight:
-          data.netWeight,
+      packageType:
+        packingListData.packageType,
 
-        marksAndNumbers:
-          data.marksAndNumbers,
+      totalPackages:
+        packingListData.totalPackages,
 
-        remarks:
-          data.remarks,
-      },
+      grossWeight:
+        packingListData.grossWeight,
 
-      include:
-        this.detailsInclude,
-    });
-  }
+      netWeight:
+        packingListData.netWeight,
+
+      marksAndNumbers:
+        packingListData.marksAndNumbers,
+
+      remarks:
+        packingListData.remarks,
+
+      /*
+      =====================================
+      Update Packing List Items
+      =====================================
+      */
+
+      ...(items !== undefined && {
+        items: {
+          deleteMany: {},
+
+          create: items,
+        },
+      }),
+    },
+
+    include:
+      this.detailsInclude,
+  });
+}
 
   /*
   =====================================
@@ -308,35 +329,34 @@ class PackingListRepository {
   =====================================
   */
 
-  private detailsInclude = {
-    shipment: {
-      include: {
-        client: true,
-
-        exporter: true,
-
-        consignee: true,
-
-        allocation: true,
-      },
+private detailsInclude = {
+  shipment: {
+    include: {
+      client: true,
+      exporter: true,
+      consignee: true,
+      allocation: true,
     },
+  },
 
-    items: true,
-
-    documents: true,
-
-    containers: true,
-
-    _count: {
-      select: {
-        items: true,
-
-        documents: true,
-
-        containers: true,
-      },
+  items: {
+    orderBy: {
+      createdAt: Prisma.SortOrder.asc,
     },
-  };
+  },
+
+  documents: true,
+
+  containers: true,
+
+  _count: {
+    select: {
+      items: true,
+      documents: true,
+      containers: true,
+    },
+  },
+};
 }
 
 export default new PackingListRepository();
