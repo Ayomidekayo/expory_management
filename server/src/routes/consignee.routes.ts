@@ -1,19 +1,68 @@
 import { Router } from "express";
-import consigneeController from "../controllers/consignee.controller";
-import authenticate from "../middleware/auth.middleware";
 
+import consigneeController from "../controllers/consignee.controller";
+
+import authenticate from "../middleware/auth.middleware";
+import requirePermission from "../middleware/permission.middleware";
+
+import { Permission } from "../generated";
 
 const router = Router();
+
 router.use(authenticate);
 
-router.post("/", consigneeController.create);
+/*
+=====================================
+Consignee - Create
+=====================================
+*/
 
-router.get("/", consigneeController.findAll);
+router.post(
+  "/",
+  requirePermission(Permission.CREATE_CONSIGNEE),
+  consigneeController.create
+);
 
-router.get("/:id", consigneeController.findOne);
+/*
+=====================================
+Consignee - View
+=====================================
+*/
 
-router.patch("/:id", consigneeController.update);
+router.get(
+  "/",
+  requirePermission(Permission.VIEW_CONSIGNEES),
+  consigneeController.findAll
+);
 
-router.delete("/:id", consigneeController.delete);
+router.get(
+  "/:id",
+  requirePermission(Permission.VIEW_CONSIGNEES),
+  consigneeController.findOne
+);
+
+/*
+=====================================
+Consignee - Update
+=====================================
+*/
+
+router.patch(
+  "/:id",
+  requirePermission(Permission.EDIT_CONSIGNEE),
+  consigneeController.update
+);
+
+/*
+=====================================
+Consignee - Delete
+=====================================
+*/
+
+router.delete(
+  "/:id",
+  requirePermission(Permission.DELETE_CONSIGNEE),
+  consigneeController.delete
+);
 
 export default router;

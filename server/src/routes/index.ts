@@ -12,6 +12,7 @@ import allocationRoutes from "./allocation.routes";
 import transitRoutes from  "./transit.routes"
 import documentRoutes from "./document.routes";
 import userRoutes from "./user.routes";
+import  invoicePaymentRoutes  from "./invoice-payment.routes"
 
 const router = Router();
 
@@ -42,5 +43,9 @@ router.use(
 router.use(
   "/documents",
   documentRoutes
+);
+router.use(
+  "/invoice-payments",
+  invoicePaymentRoutes
 );
 export default router;

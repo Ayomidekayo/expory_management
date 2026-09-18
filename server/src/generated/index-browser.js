@@ -418,6 +418,26 @@ exports.Prisma.DocumentScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
+exports.Prisma.UserPermissionScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  permission: 'permission'
+};
+
+exports.Prisma.InvoicePaymentScalarFieldEnum = {
+  id: 'id',
+  invoiceId: 'invoiceId',
+  invoiceItemId: 'invoiceItemId',
+  amount: 'amount',
+  description: 'description',
+  paymentDate: 'paymentDate',
+  paymentMethod: 'paymentMethod',
+  reference: 'reference',
+  notes: 'notes',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -485,6 +505,7 @@ exports.Currency = exports.$Enums.Currency = {
 
 exports.InvoiceStatus = exports.$Enums.InvoiceStatus = {
   UNPAID: 'UNPAID',
+  PARTIALLY_PAID: 'PARTIALLY_PAID',
   DRAFT: 'DRAFT',
   SENT: 'SENT',
   APPROVED: 'APPROVED',
@@ -564,6 +585,55 @@ exports.ClientType = exports.$Enums.ClientType = {
   INDIVIDUAL: 'INDIVIDUAL'
 };
 
+exports.Permission = exports.$Enums.Permission = {
+  VIEW_DASHBOARD: 'VIEW_DASHBOARD',
+  VIEW_CLIENTS: 'VIEW_CLIENTS',
+  CREATE_CLIENT: 'CREATE_CLIENT',
+  EDIT_CLIENT: 'EDIT_CLIENT',
+  DELETE_CLIENT: 'DELETE_CLIENT',
+  VIEW_EXPORTERS: 'VIEW_EXPORTERS',
+  CREATE_EXPORTER: 'CREATE_EXPORTER',
+  EDIT_EXPORTER: 'EDIT_EXPORTER',
+  DELETE_EXPORTER: 'DELETE_EXPORTER',
+  VIEW_CONSIGNEES: 'VIEW_CONSIGNEES',
+  CREATE_CONSIGNEE: 'CREATE_CONSIGNEE',
+  EDIT_CONSIGNEE: 'EDIT_CONSIGNEE',
+  DELETE_CONSIGNEE: 'DELETE_CONSIGNEE',
+  VIEW_SHIPMENTS: 'VIEW_SHIPMENTS',
+  CREATE_SHIPMENT: 'CREATE_SHIPMENT',
+  EDIT_SHIPMENT: 'EDIT_SHIPMENT',
+  DELETE_SHIPMENT: 'DELETE_SHIPMENT',
+  VIEW_ALLOCATIONS: 'VIEW_ALLOCATIONS',
+  CREATE_ALLOCATION: 'CREATE_ALLOCATION',
+  EDIT_ALLOCATION: 'EDIT_ALLOCATION',
+  DELETE_ALLOCATION: 'DELETE_ALLOCATION',
+  VIEW_INVOICES: 'VIEW_INVOICES',
+  CREATE_INVOICE: 'CREATE_INVOICE',
+  EDIT_INVOICE: 'EDIT_INVOICE',
+  DELETE_INVOICE: 'DELETE_INVOICE',
+  VIEW_PACKING_LISTS: 'VIEW_PACKING_LISTS',
+  CREATE_PACKING_LIST: 'CREATE_PACKING_LIST',
+  EDIT_PACKING_LIST: 'EDIT_PACKING_LIST',
+  DELETE_PACKING_LIST: 'DELETE_PACKING_LIST',
+  VIEW_CONTAINERS: 'VIEW_CONTAINERS',
+  CREATE_CONTAINER: 'CREATE_CONTAINER',
+  EDIT_CONTAINER: 'EDIT_CONTAINER',
+  DELETE_CONTAINER: 'DELETE_CONTAINER',
+  VIEW_TRANSITS: 'VIEW_TRANSITS',
+  CREATE_TRANSIT: 'CREATE_TRANSIT',
+  EDIT_TRANSIT: 'EDIT_TRANSIT',
+  DELETE_TRANSIT: 'DELETE_TRANSIT',
+  VIEW_DOCUMENTS: 'VIEW_DOCUMENTS',
+  UPLOAD_DOCUMENT: 'UPLOAD_DOCUMENT',
+  DELETE_DOCUMENT: 'DELETE_DOCUMENT',
+  EDIT_DOCUMENT: 'EDIT_DOCUMENT',
+  VIEW_USERS: 'VIEW_USERS',
+  CREATE_USER: 'CREATE_USER',
+  EDIT_USER: 'EDIT_USER',
+  DELETE_USER: 'DELETE_USER',
+  MANAGE_PERMISSIONS: 'MANAGE_PERMISSIONS'
+};
+
 exports.Prisma.ModelName = {
   User: 'User',
   AllocationDocument: 'AllocationDocument',
@@ -578,7 +648,9 @@ exports.Prisma.ModelName = {
   Transit: 'Transit',
   Allocation: 'Allocation',
   Client: 'Client',
-  Document: 'Document'
+  Document: 'Document',
+  UserPermission: 'UserPermission',
+  InvoicePayment: 'InvoicePayment'
 };
 
 /**

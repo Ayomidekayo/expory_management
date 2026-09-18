@@ -3,55 +3,83 @@ import { Router } from "express";
 import allocationController from "../controllers/allocation.controller";
 
 import authenticate from "../middleware/auth.middleware";
-import authorize from "../middleware/authorize.middleware";
+import requirePermission from "../middleware/permission.middleware";
+
+import { Permission } from "../generated";
 
 const router = Router();
 
 router.use(authenticate);
 
+/*
+=====================================
+Update Status
+=====================================
+*/
 
 router.patch(
   "/:id/status",
-  authorize(
-    "ADMIN",
-    "STAFF",
-    "OFFICER"
-  ),
+  requirePermission(Permission.EDIT_ALLOCATION),
   allocationController.updateStatus
 );
+
+/*
+=====================================
+Get All
+=====================================
+*/
+
 router.get(
   "/",
+  requirePermission(Permission.VIEW_ALLOCATIONS),
   allocationController.findAll
 );
 
+/*
+=====================================
+Get One
+=====================================
+*/
+
 router.get(
   "/:id",
+  requirePermission(Permission.VIEW_ALLOCATIONS),
   allocationController.findOne
 );
 
+/*
+=====================================
+Create
+=====================================
+*/
+
 router.post(
   "/",
-  authorize(
-    "ADMIN",
-    "STAFF",
-    "OFFICER"
-  ),
+  requirePermission(Permission.CREATE_ALLOCATION),
   allocationController.create
 );
 
+/*
+=====================================
+Update
+=====================================
+*/
+
 router.patch(
   "/:id",
-  authorize(
-    "ADMIN",
-    "STAFF",
-    "OFFICER"
-  ),
+  requirePermission(Permission.EDIT_ALLOCATION),
   allocationController.update
 );
 
+/*
+=====================================
+Delete
+=====================================
+*/
+
 router.delete(
   "/:id",
-  authorize("ADMIN"),
+  requirePermission(Permission.DELETE_ALLOCATION),
   allocationController.delete
 );
 

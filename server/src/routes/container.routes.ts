@@ -1,8 +1,11 @@
 import { Router } from "express";
 
 import containerController from "../controllers/container.controller";
+
 import authenticate from "../middleware/auth.middleware";
-import authorize from "../middleware/authorize.middleware";
+import requirePermission from "../middleware/permission.middleware";
+
+import { Permission } from "../generated";
 
 const router = Router();
 
@@ -15,7 +18,7 @@ Create
 router.post(
   "/",
   authenticate,
-  authorize("ADMIN", "STAFF"),
+  requirePermission(Permission.CREATE_CONTAINER),
   containerController.create
 );
 
@@ -28,11 +31,7 @@ Find All
 router.get(
   "/",
   authenticate,
-  authorize(
-    "ADMIN",
-    "STAFF",
-    "VIEWER"
-  ),
+  requirePermission(Permission.VIEW_CONTAINERS),
   containerController.findAll
 );
 
@@ -45,11 +44,7 @@ Find One
 router.get(
   "/:id",
   authenticate,
-  authorize(
-    "ADMIN",
-    "STAFF",
-    "VIEWER"
-  ),
+  requirePermission(Permission.VIEW_CONTAINERS),
   containerController.findById
 );
 
@@ -62,8 +57,34 @@ Update
 router.patch(
   "/:id",
   authenticate,
-  authorize("ADMIN", "STAFF"),
+  requirePermission(Permission.EDIT_CONTAINER),
   containerController.update
+);
+
+/*
+=====================================
+Update Status
+=====================================
+*/
+
+router.patch(
+  "/:id/status",
+  authenticate,
+  requirePermission(Permission.EDIT_CONTAINER),
+  containerController.updateStatus
+);
+
+/*
+=====================================
+Update Terminal Charge
+=====================================
+*/
+
+router.patch(
+  "/:id/terminal-charge",
+  authenticate,
+  requirePermission(Permission.EDIT_CONTAINER),
+  containerController.updateTerminalCharge
 );
 
 /*
@@ -72,21 +93,10 @@ Delete
 =====================================
 */
 
-router.patch(
-  "/:id/status",
-  containerController.updateStatus
-);
-
-router.patch(
-  "/:id/terminal-charge",
-  authenticate,
-  authorize("ADMIN", "STAFF"),
-  containerController.updateTerminalCharge
-);
 router.delete(
   "/:id",
   authenticate,
-  authorize("ADMIN"),
+  requirePermission(Permission.DELETE_CONTAINER),
   containerController.delete
 );
 

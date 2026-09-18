@@ -2,63 +2,47 @@ import { Router } from "express";
 
 import documentController from "../controllers/document.controller";
 
+import authenticate from "../middleware/auth.middleware";
+import requirePermission from "../middleware/permission.middleware";
+
+import { Permission } from "../generated";
 import { upload } from "../middleware/upload";
 
 const router = Router();
 
-/*
-=====================================
-Upload
-=====================================
-*/
-
 router.post(
   "/",
+  authenticate,
+  requirePermission(Permission.UPLOAD_DOCUMENT),
   upload.single("file"),
   documentController.create
 );
 
-/*
-=====================================
-Find All
-=====================================
-*/
-
 router.get(
   "/",
+  authenticate,
+  requirePermission(Permission.VIEW_DOCUMENTS),
   documentController.findAll
 );
 
-/*
-=====================================
-Find By Id
-=====================================
-*/
-
-router.get(
+router.get<{ id: string }>(
   "/:id",
+  authenticate,
+  requirePermission(Permission.VIEW_DOCUMENTS),
   documentController.findById
 );
 
-/*
-=====================================
-Update
-=====================================
-*/
-
-router.patch(
+router.patch<{ id: string }>(
   "/:id",
+  authenticate,
+  requirePermission(Permission.EDIT_DOCUMENT),
   documentController.update
 );
 
-/*
-=====================================
-Delete
-=====================================
-*/
-
-router.delete(
+router.delete<{ id: string }>(
   "/:id",
+  authenticate,
+  requirePermission(Permission.DELETE_DOCUMENT),
   documentController.delete
 );
 

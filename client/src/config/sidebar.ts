@@ -17,31 +17,30 @@ export interface SidebarItem {
   title: string;
   path: string;
   icon: any;
-  roles: string[];
+  permission: string;
   section?: string;
 }
 
 export const sidebarItems: SidebarItem[] = [
-  /*
-   * Dashboard
-   */
+  // =========================
+  // OVERVIEW
+  // =========================
   {
     title: "Dashboard",
     path: "/dashboard",
     icon: LayoutDashboard,
-    roles: ["ADMIN", "STAFF", "OFFICER", "VIEWER"],
+    permission: "VIEW_DASHBOARD",
     section: "Overview",
   },
 
-  /*
-   * Master Data
-   */
-
+  // =========================
+  // MASTER DATA
+  // =========================
   {
     title: "Clients",
     path: "/clients",
     icon: Building2,
-    roles: ["ADMIN", "STAFF"],
+    permission: "VIEW_CLIENTS",
     section: "Master Data",
   },
 
@@ -49,7 +48,7 @@ export const sidebarItems: SidebarItem[] = [
     title: "Exporters",
     path: "/exporters",
     icon: Users,
-    roles: ["ADMIN", "STAFF"],
+    permission: "VIEW_EXPORTERS",
     section: "Master Data",
   },
 
@@ -57,19 +56,18 @@ export const sidebarItems: SidebarItem[] = [
     title: "Consignees",
     path: "/consignees",
     icon: UserSquare2,
-    roles: ["ADMIN", "STAFF"],
+    permission: "VIEW_CONSIGNEES",
     section: "Master Data",
   },
 
-  /*
-   * Operations
-   */
-
+  // =========================
+  // OPERATIONS
+  // =========================
   {
     title: "Allocations",
     path: "/allocations",
     icon: BriefcaseBusiness,
-    roles: ["ADMIN", "STAFF", "OFFICER"],
+    permission: "VIEW_ALLOCATIONS",
     section: "Operations",
   },
 
@@ -77,7 +75,7 @@ export const sidebarItems: SidebarItem[] = [
     title: "Shipments",
     path: "/shipments",
     icon: Truck,
-    roles: ["ADMIN", "STAFF", "OFFICER"],
+    permission: "VIEW_SHIPMENTS",
     section: "Operations",
   },
 
@@ -85,7 +83,7 @@ export const sidebarItems: SidebarItem[] = [
     title: "Containers",
     path: "/containers",
     icon: Container,
-    roles: ["ADMIN", "STAFF", "OFFICER"],
+    permission: "VIEW_CONTAINERS",
     section: "Operations",
   },
 
@@ -93,19 +91,18 @@ export const sidebarItems: SidebarItem[] = [
     title: "Transits",
     path: "/transits",
     icon: Route,
-    roles: ["ADMIN", "STAFF", "OFFICER"],
+    permission: "VIEW_TRANSITS",
     section: "Operations",
   },
 
-  /*
-   * Documentation
-   */
-
+  // =========================
+  // DOCUMENTATION
+  // =========================
   {
     title: "Invoices",
     path: "/invoices",
     icon: FileText,
-    roles: ["ADMIN", "STAFF", "OFFICER"],
+    permission: "VIEW_INVOICES",
     section: "Documentation",
   },
 
@@ -113,7 +110,7 @@ export const sidebarItems: SidebarItem[] = [
     title: "Packing Lists",
     path: "/packing-lists",
     icon: ClipboardList,
-    roles: ["ADMIN", "STAFF"],
+    permission: "VIEW_PACKING_LISTS",
     section: "Documentation",
   },
 
@@ -121,23 +118,26 @@ export const sidebarItems: SidebarItem[] = [
     title: "Documents",
     path: "/documents",
     icon: FolderOpen,
-    roles: ["ADMIN", "STAFF"],
+    permission: "VIEW_DOCUMENTS",
     section: "Documentation",
   },
 
-  /*
-   * Analytics
-   *
-
-  /*
-   * Administration
-   */
+  // =========================
+  // ADMINISTRATION
+  // =========================
+  {
+    title: "User Management",
+    path: "/users",
+    icon: Users,
+    permission: "VIEW_USERS",
+    section: "Administration",
+  },
 
   {
     title: "Settings",
     path: "/settings",
     icon: Settings,
-    roles: ["ADMIN","STAFF"],
+    permission: "VIEW_DASHBOARD",
     section: "Administration",
   },
 ];

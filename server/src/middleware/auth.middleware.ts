@@ -1,4 +1,8 @@
-import { Request, Response, NextFunction } from "express";
+import {
+  Request,
+  Response,
+  NextFunction,
+} from "express";
 import { JwtPayload } from "jsonwebtoken";
 
 import { verifyToken } from "../lib/jwt";
@@ -14,7 +18,8 @@ const authenticate = async (
   next: NextFunction
 ) => {
   try {
-    const authHeader = req.headers.authorization;
+    const authHeader =
+      req.headers.authorization;
 
     if (
       !authHeader ||
@@ -28,15 +33,18 @@ const authenticate = async (
 
     const token = authHeader.split(" ")[1];
 
-    const payload = verifyToken(
-      token
-    ) as TokenPayload;
+    const payload =
+      verifyToken(token) as TokenPayload;
 
-    const user = await prisma.user.findUnique({
-      where: {
-        id: payload.userId,
-      },
-    });
+    const user =
+      await prisma.user.findUnique({
+        where: {
+          id: payload.userId,
+        },
+        include: {
+          permissions: true,
+        },
+      });
 
     if (!user) {
       return res.status(401).json({
@@ -57,10 +65,16 @@ const authenticate = async (
       name: user.name,
       email: user.email,
       role: user.role,
+
+      permissions: user.permissions.map(
+        (item) => item.permission
+      ),
     };
 
     next();
   } catch (error) {
+    console.error("Authentication error:", error);
+
     return res.status(401).json({
       success: false,
       message: "Invalid token.",

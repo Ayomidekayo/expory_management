@@ -4,8 +4,10 @@ import LoginPage from "../pages/auth/LoginPage";
 import RegisterPage from "../pages/auth/RegisterPage";
 
 import ProtectedRoute from "./ProtectedRoute";
+import PermissionRoute from "./PermissionRoute";
 
 import DashboardLayout from "../components/layout/DashboardLayout";
+
 import PackingListsPage from "../pages/packingList/PackingListsPage";
 import DocumentsPage from "../pages/documents/DocumentsPage";
 import AllocationDetailsPage from "../pages/allocation/AllocationDetailsPage";
@@ -14,54 +16,62 @@ import ExporterListPage from "../pages/exporter/ExporterListPage";
 import ExporterDetailsPage from "../pages/exporter/ExporterDetailsPage";
 import CreateExporterPage from "../pages/exporter/CreateExporterPage";
 import EditExporterPage from "../pages/exporter/EditExporterPage";
+
 import CreateConsigneePage from "../pages/consignee/CreateConsigneePage";
 import ConsigneeListPage from "../pages/consignee/ConsigneeListPage";
 import ConsigneeDetailsPage from "../pages/consignee/ConsigneeDetailsPage";
 import EditConsigneePage from "../pages/consignee/EditConsigneePage";
+
 import AllocationListPage from "../pages/allocation/AllocationListPage";
 import CreateAllocationPage from "../pages/allocation/CreateAllocationPage";
 import EditAllocationPage from "../pages/allocation/EditAllocationPage";
+
 import ShipmentDetailsPage from "../pages/shipment/ShipmentDetailsPage";
 import EditShipmentPage from "../pages/shipment/EditShipmentPage";
 import CreateShipmentPage from "../pages/shipment/CreateShipmentPage";
 import ShipmentListPage from "../pages/shipment/ShipmentsListPage";
+
 import InvoiceListPage from "../pages/invoice/InvoiceListPage";
 import CreateInvoicePage from "../pages/invoice/CreateInvoicePage";
 import EditInvoicePage from "../pages/invoice/EditInvoicePage";
 import InvoiceDetailsPage from "../pages/invoice/InvoiceDetailsPage";
+
 import CreatePackingListPage from "../pages/packingList/CreatePackingListPage";
 import PackingListDetailsPage from "../pages/packingList/PackingListDetailPage";
 import EditPackingListPage from "../pages/packingList/EditPackingListPage";
+
 import ContainersPage from "../pages/container/ContainersPage";
 import ContainerDetailsPage from "../pages/container/ContainerDetailsPage";
 import CreateContainerPage from "../pages/container/CreateContainerPage";
 import EditContainerPage from "../pages/container/EditContainerPage";
+
 import EditTransitPage from "../pages/transit/EditTransitPage";
 import TransitsPage from "../pages/transit/TransitsPage";
 import CreateTransitPage from "../pages/transit/CreateTransitPage";
 import TransitDetailsPage from "../pages/transit/TransitDetailsPage";
+
 import CreateDocumentPage from "../pages/documents/CreateDocumentPage";
 import DocumentDetailsPage from "../pages/documents/DocumentDetailsPage";
+
 import ClientListPage from "../pages/client/ClientListPage";
 import ClientDetailsPage from "../pages/client/ClientDetailsPage";
 import CreateClientPage from "../pages/client/CreateClientPage";
 import EditClientPage from "../pages/client/EditClientPage";
+
 import { DashboardPage } from "../pages/dashboard/Dashboard";
 import ProfilePage from "../pages/settings/ProfilePage";
+import UsersPage from "../pages/user/UsersPage";
 
-
-
-
-
-
-console.log("ROUTER LOADED");
 export const router = createBrowserRouter([
   {
     path: "/",
     element: <Navigate to="/login" replace />,
   },
 
-  // Public Routes
+  // ================================
+  // PUBLIC ROUTES
+  // ================================
+
   {
     path: "/login",
     element: <LoginPage />,
@@ -72,7 +82,10 @@ export const router = createBrowserRouter([
     element: <RegisterPage />,
   },
 
-  // Protected Routes
+  // ================================
+  // PROTECTED ROUTES
+  // ================================
+
   {
     element: <ProtectedRoute />,
 
@@ -81,191 +94,438 @@ export const router = createBrowserRouter([
         element: <DashboardLayout />,
 
         children: [
+          // ================================
+          // DASHBOARD
+          // ================================
+
           {
             path: "/dashboard",
-            element: <DashboardPage />,
+            element: (
+              <PermissionRoute permission="VIEW_DASHBOARD">
+                <DashboardPage />
+              </PermissionRoute>
+            ),
           },
 
-              {
-            path: "/exporters/:id/edit",
-            element: <EditExporterPage/>,
-          },
-           {
-            path: "/exporters/new",
-            element: <CreateExporterPage/>,
-
-          },
-
-           {
-            path: "/exporters/:id",
-            element: <ExporterDetailsPage/>,
-         
-          },
+          // ================================
+          // EXPORTERS
+          // ================================
 
           {
             path: "/exporters",
-            element: <ExporterListPage/>,
-            // element: <ExportersPage />,
+            element: (
+              <PermissionRoute permission="VIEW_EXPORTERS">
+                <ExporterListPage />
+              </PermissionRoute>
+            ),
           },
+
+          {
+            path: "/exporters/new",
+            element: (
+              <PermissionRoute permission="CREATE_EXPORTER">
+                <CreateExporterPage />
+              </PermissionRoute>
+            ),
+          },
+
+          {
+            path: "/exporters/:id",
+            element: (
+              <PermissionRoute permission="VIEW_EXPORTERS">
+                <ExporterDetailsPage />
+              </PermissionRoute>
+            ),
+          },
+
+          {
+            path: "/exporters/:id/edit",
+            element: (
+              <PermissionRoute permission="EDIT_EXPORTER">
+                <EditExporterPage />
+              </PermissionRoute>
+            ),
+          },
+
+          // ================================
+          // CLIENTS
+          // ================================
+
           {
             path: "/clients",
-            element: <ClientListPage />,
-          },{
-                   path: "/clients/:id",
-            element: <ClientDetailsPage />,
+            element: (
+              <PermissionRoute permission="VIEW_CLIENTS">
+                <ClientListPage />
+              </PermissionRoute>
+            ),
           },
 
           {
-                   path: "/clients/new",
-            element: <CreateClientPage />,
-          },
-           {
-                   path: "/clients/:id/edit",
-            element: <EditClientPage />
+            path: "/clients/new",
+            element: (
+              <PermissionRoute permission="CREATE_CLIENT">
+                <CreateClientPage />
+              </PermissionRoute>
+            ),
           },
 
-        {
-  path: "/consignees",
-  element: <ConsigneeListPage />,
-},
-{
-  path: "/consignees/new",
-  element: <CreateConsigneePage />,
-},
-{
-  path: "/consignees/:id",
-  element: <ConsigneeDetailsPage />,
-},
-{
-  path: "/consignees/:id/edit",
-  element: <EditConsigneePage />,
-},
+          {
+            path: "/clients/:id",
+            element: (
+              <PermissionRoute permission="VIEW_CLIENTS">
+                <ClientDetailsPage />
+              </PermissionRoute>
+            ),
+          },
+
+          {
+            path: "/clients/:id/edit",
+            element: (
+              <PermissionRoute permission="EDIT_CLIENT">
+                <EditClientPage />
+              </PermissionRoute>
+            ),
+          },
+
+          // ================================
+          // CONSIGNEES
+          // ================================
+
+          {
+            path: "/consignees",
+            element: (
+              <PermissionRoute permission="VIEW_CONSIGNEES">
+                <ConsigneeListPage />
+              </PermissionRoute>
+            ),
+          },
+
+          {
+            path: "/consignees/new",
+            element: (
+              <PermissionRoute permission="CREATE_CONSIGNEE">
+                <CreateConsigneePage />
+              </PermissionRoute>
+            ),
+          },
+
+          {
+            path: "/consignees/:id",
+            element: (
+              <PermissionRoute permission="VIEW_CONSIGNEES">
+                <ConsigneeDetailsPage />
+              </PermissionRoute>
+            ),
+          },
+
+          {
+            path: "/consignees/:id/edit",
+            element: (
+              <PermissionRoute permission="EDIT_CONSIGNEE">
+                <EditConsigneePage />
+              </PermissionRoute>
+            ),
+          },
+
+          // ================================
+          // ALLOCATIONS
+          // ================================
+
           {
             path: "/allocations",
-            element:<AllocationListPage/>,
+            element: (
+              <PermissionRoute permission="VIEW_ALLOCATIONS">
+                <AllocationListPage />
+              </PermissionRoute>
+            ),
           },
+
           {
             path: "/allocations/new",
-            element:<CreateAllocationPage/>,
+            element: (
+              <PermissionRoute permission="CREATE_ALLOCATION">
+                <CreateAllocationPage />
+              </PermissionRoute>
+            ),
+          },
+
+          {
+            path: "/allocations/:id",
+            element: (
+              <PermissionRoute permission="VIEW_ALLOCATIONS">
+                <AllocationDetailsPage />
+              </PermissionRoute>
+            ),
           },
 
           {
             path: "/allocations/:id/edit",
-            element:<EditAllocationPage/>,
+            element: (
+              <PermissionRoute permission="EDIT_ALLOCATION">
+                <EditAllocationPage />
+              </PermissionRoute>
+            ),
           },
+
+          // ================================
+          // SHIPMENTS
+          // ================================
+
           {
-            path: "/allocations/:id",
-            element:<AllocationDetailsPage/>,
+            path: "/shipments",
+            element: (
+              <PermissionRoute permission="VIEW_SHIPMENTS">
+                <ShipmentListPage />
+              </PermissionRoute>
+            ),
           },
+
           {
-            path:"/shipments/new",
-  element:<CreateShipmentPage />,
+            path: "/shipments/new",
+            element: (
+              <PermissionRoute permission="CREATE_SHIPMENT">
+                <CreateShipmentPage />
+              </PermissionRoute>
+            ),
           },
+
           {
-          path:"/shipments/:id",
-          element:<ShipmentDetailsPage />,
+            path: "/shipments/:id",
+            element: (
+              <PermissionRoute permission="VIEW_SHIPMENTS">
+                <ShipmentDetailsPage />
+              </PermissionRoute>
+            ),
           },
+
           {
-            path:"/shipments",
-           element:<ShipmentListPage />,
+            path: "/shipments/:id/edit",
+            element: (
+              <PermissionRoute permission="EDIT_SHIPMENT">
+                <EditShipmentPage />
+              </PermissionRoute>
+            ),
           },
-           {
-            path:"/shipments/:id/edit",
-           element:<EditShipmentPage />,
-          },
+
+          // ================================
+          // INVOICES
+          // ================================
 
           {
             path: "/invoices",
-            element: <InvoiceListPage />,
+            element: (
+              <PermissionRoute permission="VIEW_INVOICES">
+                <InvoiceListPage />
+              </PermissionRoute>
+            ),
           },
-           {
+
+          {
             path: "/invoices/create",
-            element: <CreateInvoicePage/>,
+            element: (
+              <PermissionRoute permission="CREATE_INVOICE">
+                <CreateInvoicePage />
+              </PermissionRoute>
+            ),
           },
-  {
-            path:"/invoices/:id/edit",
-           element:<EditInvoicePage />,
-          },
-           {
+
+          {
             path: "/invoices/:id",
-            element: <InvoiceDetailsPage />,
-         },
+            element: (
+              <PermissionRoute permission="VIEW_INVOICES">
+                <InvoiceDetailsPage />
+              </PermissionRoute>
+            ),
+          },
+
+          {
+            path: "/invoices/:id/edit",
+            element: (
+              <PermissionRoute permission="EDIT_INVOICE">
+                <EditInvoicePage />
+              </PermissionRoute>
+            ),
+          },
+
+          // ================================
+          // PACKING LISTS
+          // ================================
 
           {
             path: "/packing-lists",
-            element: <PackingListsPage />,
+            element: (
+              <PermissionRoute permission="VIEW_PACKING_LISTS">
+                <PackingListsPage />
+              </PermissionRoute>
+            ),
           },
 
           {
-            path:"/packing-lists/create",
-            element:<CreatePackingListPage />
-          },{
-         
-  path:"/packing-lists/:id",
-  element:<PackingListDetailsPage />
+            path: "/packing-lists/create",
+            element: (
+              <PermissionRoute permission="CREATE_PACKING_LIST">
+                <CreatePackingListPage />
+              </PermissionRoute>
+            ),
           },
 
           {
-            path:"/packing-lists/:id/edit",
-           element:< EditPackingListPage/>,
+            path: "/packing-lists/:id",
+            element: (
+              <PermissionRoute permission="VIEW_PACKING_LISTS">
+                <PackingListDetailsPage />
+              </PermissionRoute>
+            ),
           },
+
+          {
+            path: "/packing-lists/:id/edit",
+            element: (
+              <PermissionRoute permission="EDIT_PACKING_LIST">
+                <EditPackingListPage />
+              </PermissionRoute>
+            ),
+          },
+
+          // ================================
+          // CONTAINERS
+          // ================================
+
+          {
+            path: "/containers",
+            element: (
+              <PermissionRoute permission="VIEW_CONTAINERS">
+                <ContainersPage />
+              </PermissionRoute>
+            ),
+          },
+
+          {
+            path: "/containers/create",
+            element: (
+              <PermissionRoute permission="CREATE_CONTAINER">
+                <CreateContainerPage />
+              </PermissionRoute>
+            ),
+          },
+
           {
             path: "/containers/:id",
-            element: <ContainerDetailsPage />,
-         },
+            element: (
+              <PermissionRoute permission="VIEW_CONTAINERS">
+                <ContainerDetailsPage />
+              </PermissionRoute>
+            ),
+          },
 
-           {
+          {
             path: "/containers/:id/edit",
-            element: <EditContainerPage />,
-         },
-           {
-            path:"/containers",
-           element:< ContainersPage/>,
-          },
-          {
-            path:"/containers/create",
-           element:< CreateContainerPage/>,
+            element: (
+              <PermissionRoute permission="EDIT_CONTAINER">
+                <EditContainerPage />
+              </PermissionRoute>
+            ),
           },
 
-           {
+          // ================================
+          // TRANSITS
+          // ================================
+
+          {
+            path: "/transits",
+            element: (
+              <PermissionRoute permission="VIEW_TRANSITS">
+                <TransitsPage />
+              </PermissionRoute>
+            ),
+          },
+
+          {
+            path: "/transits/create",
+            element: (
+              <PermissionRoute permission="CREATE_TRANSIT">
+                <CreateTransitPage />
+              </PermissionRoute>
+            ),
+          },
+
+          {
+            path: "/transits/:id",
+            element: (
+              <PermissionRoute permission="VIEW_TRANSITS">
+                <TransitDetailsPage />
+              </PermissionRoute>
+            ),
+          },
+
+          {
             path: "/transits/:id/edit",
-            element: <EditTransitPage />,
-         },
-           {
-            path:"/transits",
-           element:< TransitsPage/>,
+            element: (
+              <PermissionRoute permission="EDIT_TRANSIT">
+                <EditTransitPage />
+              </PermissionRoute>
+            ),
           },
-          {
-            path:"/transits/create",
-           element:< CreateTransitPage/>,
-          },
-          {
-            path:"/transits/:id",
-           element:<TransitDetailsPage />,
-          },
-          {
-            path:"/documents/create",
-           element:< CreateDocumentPage/>,
-          },
-          {
-            path:"/documents/:id",
-           element:<DocumentDetailsPage />,
-          },
+
+          // ================================
+          // DOCUMENTS
+          // ================================
 
           {
             path: "/documents",
-            element: <DocumentsPage />,
+            element: (
+              <PermissionRoute permission="VIEW_DOCUMENTS">
+                <DocumentsPage />
+              </PermissionRoute>
+            ),
           },
 
           {
+            path: "/documents/create",
+            element: (
+              <PermissionRoute permission="UPLOAD_DOCUMENT">
+                <CreateDocumentPage />
+              </PermissionRoute>
+            ),
+          },
+
+          {
+            path: "/documents/:id",
+            element: (
+              <PermissionRoute permission="VIEW_DOCUMENTS">
+                <DocumentDetailsPage />
+              </PermissionRoute>
+            ),
+          },
+          {
+  path: "users",
+  element: (
+    <PermissionRoute permission="VIEW_USERS">
+      <UsersPage />
+    </PermissionRoute>
+  ),
+},
+
+          // ================================
+          // SETTINGS
+          // ================================
+
+          {
             path: "/settings",
-            element: <ProfilePage />,
+            element: (
+              <PermissionRoute permission="VIEW_DASHBOARD">
+                <ProfilePage />
+              </PermissionRoute>
+            ),
           },
         ],
       },
     ],
   },
 
+  // ================================
+  // 404
+  // ================================
 
   {
     path: "*",

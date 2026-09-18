@@ -2,8 +2,9 @@ import { Router } from "express";
 
 import clientController from "../controllers/client.controller";
 import authenticate from "../middleware/auth.middleware";
-import authorize from "../middleware/authorize.middleware";
+import requirePermission from "../middleware/permission.middleware";
 
+import { Permission } from "../generated";
 
 const router = Router();
 
@@ -11,41 +12,67 @@ router.use(authenticate);
 
 /*
 =====================================
-Client CRUD
+Client - View
 =====================================
 */
 
 router.get(
   "/",
+  requirePermission(Permission.VIEW_CLIENTS),
   clientController.findAll
 );
 
 router.get(
   "/:id",
+  requirePermission(Permission.VIEW_CLIENTS),
   clientController.findOne
 );
 
+/*
+=====================================
+Client - Create
+=====================================
+*/
+
 router.post(
   "/",
-  authorize("ADMIN", "STAFF"),
+  requirePermission(Permission.CREATE_CLIENT),
   clientController.create
 );
 
+/*
+=====================================
+Client - Update
+=====================================
+*/
+
 router.patch(
   "/:id",
-  authorize("ADMIN", "STAFF"),
+  requirePermission(Permission.EDIT_CLIENT),
   clientController.update
 );
 
+/*
+=====================================
+Client - Update Status
+=====================================
+*/
+
 router.patch(
   "/:id/status",
-  authorize("ADMIN"),
+  requirePermission(Permission.EDIT_CLIENT),
   clientController.updateStatus
 );
 
+/*
+=====================================
+Client - Delete
+=====================================
+*/
+
 router.delete(
   "/:id",
-  authorize("ADMIN"),
+  requirePermission(Permission.DELETE_CLIENT),
   clientController.delete
 );
 

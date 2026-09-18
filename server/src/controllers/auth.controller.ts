@@ -66,6 +66,13 @@ export class AuthController {
     req: Request,
     res: Response
   ) {
+    if (!req.user) {
+      return res.status(401).json({
+        success: false,
+        message: "Authentication required.",
+      });
+    }
+
     const result =
       await AuthService.me(
         req.user.id

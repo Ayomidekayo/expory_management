@@ -2,71 +2,47 @@ import { Router } from "express";
 
 import transitController from "../controllers/transit.controller";
 
-import {
-  createTransitSchema,
-  updateTransitSchema,
-} from "../validations/transit.validation";
+import authenticate from "../middleware/auth.middleware";
+import requirePermission from "../middleware/permission.middleware";
 
-import {
-  TransitQueryDto,
-} from "../validations/transit-query.validation";
-import { validate } from "../middleware/validate";
+import { Permission } from "../generated";
 
 const router = Router();
 
-/*
-=====================================
-Create
-=====================================
-*/
+router.use(authenticate);
 
+// Create
 router.post(
   "/",
+  requirePermission(Permission.CREATE_TRANSIT),
   transitController.create
 );
 
-router.patch(
-  "/:id",
-  transitController.update
-);
-
-/*
-=====================================
-Find All
-=====================================
-*/
-
+// View all
 router.get(
   "/",
+  requirePermission(Permission.VIEW_TRANSITS),
   transitController.findAll
 );
 
-/*
-=====================================
-Find By Id
-=====================================
-*/
-
+// View one
 router.get(
   "/:id",
+  requirePermission(Permission.VIEW_TRANSITS),
   transitController.findById
 );
 
-/*
-=====================================
-Update
-=====================================
-*/
+// Edit
+router.patch(
+  "/:id",
+  requirePermission(Permission.EDIT_TRANSIT),
+  transitController.update
+);
 
-
-/*
-=====================================
-Delete
-=====================================
-*/
-
+// Delete
 router.delete(
   "/:id",
+  requirePermission(Permission.DELETE_TRANSIT),
   transitController.delete
 );
 

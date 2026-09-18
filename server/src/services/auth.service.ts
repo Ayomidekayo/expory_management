@@ -21,6 +21,7 @@ export class AuthService {
      * We deliberately do not reveal whether
      * the email already belongs to an account.
      */
+
     const REGISTRATION_ERROR_MESSAGE =
       "Unable to complete registration with the information provided. Please check your details and try again.";
 
@@ -36,12 +37,7 @@ export class AuthService {
       });
 
     /*
-     * Do NOT return:
-     *
-     * "Email already exists"
-     *
-     * because that reveals that an account
-     * exists with this email.
+     * Do NOT reveal that the email already exists.
      */
 
     if (existingUser) {
@@ -60,6 +56,9 @@ export class AuthService {
 
     /*
      * Create user.
+     *
+     * A newly registered user does not receive
+     * any individual permissions automatically.
      */
 
     const user =
@@ -69,10 +68,17 @@ export class AuthService {
           email,
           password: hashedPassword,
         },
+        include: {
+          permissions: true,
+        },
       });
 
     /*
      * Generate JWT.
+     *
+     * Permissions are deliberately NOT stored
+     * inside the JWT. They are loaded from the
+     * database by authenticate middleware.
      */
 
     const token = generateToken({
@@ -86,6 +92,7 @@ export class AuthService {
 
     const {
       password: _,
+      permissions,
       ...safeUser
     } = user;
 
@@ -96,7 +103,14 @@ export class AuthService {
         "User registered successfully",
 
       data: {
-        user: safeUser,
+        user: {
+          ...safeUser,
+
+          permissions: permissions.map(
+            (item) => item.permission
+          ),
+        },
+
         token,
       },
     };
@@ -121,13 +135,16 @@ export class AuthService {
       "Invalid email or password.";
 
     /*
-     * Find user.
+     * Find user together with permissions.
      */
 
     const user =
       await prisma.user.findUnique({
         where: {
           email,
+        },
+        include: {
+          permissions: true,
         },
       });
 
@@ -191,6 +208,7 @@ export class AuthService {
 
     const {
       password: _,
+      permissions,
       ...safeUser
     } = user;
 
@@ -200,7 +218,14 @@ export class AuthService {
       message: "Login successful",
 
       data: {
-        user: safeUser,
+        user: {
+          ...safeUser,
+
+          permissions: permissions.map(
+            (item) => item.permission
+          ),
+        },
+
         token,
       },
     };
@@ -227,6 +252,12 @@ export class AuthService {
           isActive: true,
           createdAt: true,
           updatedAt: true,
+
+          permissions: {
+            select: {
+              permission: true,
+            },
+          },
         },
       });
 
@@ -246,7 +277,15 @@ export class AuthService {
 
     return {
       success: true,
-      data: user,
+
+      data: {
+        ...user,
+
+        permissions:
+          user.permissions.map(
+            (item) => item.permission
+          ),
+      },
     };
   }
 }

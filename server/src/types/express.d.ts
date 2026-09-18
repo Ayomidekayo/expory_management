@@ -1,18 +1,15 @@
-import { Role } from "../generated";
+import { Role, Permission } from "../generated";
 
 declare global {
   namespace Express {
-    interface UserPayload {
-      id: string;
-      name: string;
-      email: string;
-      role: Role;
-    }
-
     interface Request {
-      user: UserPayload;
+      user?: {
+        id: string;
+        name: string;
+        email: string;
+        role: Role;
+        permissions: Permission[];
+      };
     }
   }
 }
-
-export {};

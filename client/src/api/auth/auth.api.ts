@@ -6,6 +6,7 @@ export interface User {
   email: string;
   role: string;
   isActive: boolean;
+  permissions: string[];
 }
 
 export interface LoginDto {
@@ -48,7 +49,6 @@ export const register = async (
 
 interface CurrentUserResponse {
   success: boolean;
-
   data: User;
 }
 

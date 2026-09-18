@@ -21,8 +21,8 @@ model User {
   jobTitle   String?
   avatar     String?
 
-  shipments Shipment[]
-
+  shipments           Shipment[]
+  permissions         UserPermission[]
   createdAllocations  Allocation[]         @relation("CreatedAllocations")
   assignedAllocations Allocation[]         @relation("AssignedAllocations")
   approvedAllocations Allocation[]         @relation("ApprovedAllocations")
@@ -144,26 +144,27 @@ model Shipment {
 }
 
 model Invoice {
-  id                    String        @id @default(cuid())
+  id                    String           @id @default(cuid())
   shipmentId            String
-  invoiceNumber         String        @unique
+  invoiceNumber         String           @unique
   // Invoice number supplied by the client/vendor
   externalInvoiceNumber String?
   invoiceDate           DateTime
   currency              Currency
-  exchangeRate          Decimal?      @db.Decimal(18, 4)
-  status                InvoiceStatus @default(UNPAID)
+  exchangeRate          Decimal?         @db.Decimal(18, 4)
+  status                InvoiceStatus    @default(UNPAID)
   paymentTerms          PaymentTerms?
   incoterm              String?
   commercialReference   String?
   transportUnits        Int?
-  freight               Decimal       @db.Decimal(18, 2)
-  subtotal              Decimal       @db.Decimal(18, 2)
-  totalAmount           Decimal       @db.Decimal(18, 2)
+  freight               Decimal          @db.Decimal(18, 2)
+  subtotal              Decimal          @db.Decimal(18, 2)
+  totalAmount           Decimal          @db.Decimal(18, 2)
   remarks               String?
-  createdAt             DateTime      @default(now())
-  updatedAt             DateTime      @updatedAt
+  createdAt             DateTime         @default(now())
+  updatedAt             DateTime         @updatedAt
   documents             Document[]
+  payments              InvoicePayment[]
 
   shipment Shipment      @relation(fields: [shipmentId], references: [id], onDelete: Cascade)
   items    InvoiceItem[]
@@ -205,22 +206,23 @@ model Container {
 }
 
 model InvoiceItem {
-  id          String   @id @default(cuid())
+  id          String           @id @default(cuid())
   invoiceId   String
   description String
   hsCode      String?
   packageType String?
   packages    Int?
-  grossWeight Decimal? @db.Decimal(18, 2)
-  netWeight   Decimal? @db.Decimal(18, 2)
-  quantity    Decimal  @db.Decimal(18, 2)
+  grossWeight Decimal?         @db.Decimal(18, 2)
+  netWeight   Decimal?         @db.Decimal(18, 2)
+  quantity    Decimal          @db.Decimal(18, 2)
   unit        String?
-  unitPrice   Decimal  @db.Decimal(18, 2)
-  total       Decimal  @db.Decimal(18, 2)
+  unitPrice   Decimal          @db.Decimal(18, 2)
+  total       Decimal          @db.Decimal(18, 2)
   remarks     String?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  invoice     Invoice  @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+  invoice     Invoice          @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+  payments    InvoicePayment[]
 
   @@index([invoiceId])
   @@index([hsCode])
@@ -550,9 +552,105 @@ enum PaymentTerms {
 
 enum InvoiceStatus {
   UNPAID
+  PARTIALLY_PAID
   DRAFT
   SENT
   APPROVED
   PAID
   CANCELLED
+}
+
+enum Permission {
+  VIEW_DASHBOARD
+
+  VIEW_CLIENTS
+  CREATE_CLIENT
+  EDIT_CLIENT
+  DELETE_CLIENT
+
+  VIEW_EXPORTERS
+  CREATE_EXPORTER
+  EDIT_EXPORTER
+  DELETE_EXPORTER
+
+  VIEW_CONSIGNEES
+  CREATE_CONSIGNEE
+  EDIT_CONSIGNEE
+  DELETE_CONSIGNEE
+
+  VIEW_SHIPMENTS
+  CREATE_SHIPMENT
+  EDIT_SHIPMENT
+  DELETE_SHIPMENT
+
+  VIEW_ALLOCATIONS
+  CREATE_ALLOCATION
+  EDIT_ALLOCATION
+  DELETE_ALLOCATION
+
+  VIEW_INVOICES
+  CREATE_INVOICE
+  EDIT_INVOICE
+  DELETE_INVOICE
+
+  VIEW_PACKING_LISTS
+  CREATE_PACKING_LIST
+  EDIT_PACKING_LIST
+  DELETE_PACKING_LIST
+
+  VIEW_CONTAINERS
+  CREATE_CONTAINER
+  EDIT_CONTAINER
+  DELETE_CONTAINER
+
+  VIEW_TRANSITS
+  CREATE_TRANSIT
+  EDIT_TRANSIT
+  DELETE_TRANSIT
+
+  VIEW_DOCUMENTS
+  UPLOAD_DOCUMENT
+  DELETE_DOCUMENT
+  EDIT_DOCUMENT
+
+  VIEW_USERS
+  CREATE_USER
+  EDIT_USER
+  DELETE_USER
+
+  MANAGE_PERMISSIONS
+}
+
+model UserPermission {
+  id String @id @default(cuid())
+
+  userId     String
+  permission Permission
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, permission])
+}
+
+model InvoicePayment {
+  id String @id @default(cuid())
+
+  invoiceId     String
+  invoiceItemId String?
+
+  amount        Decimal  @db.Decimal(18, 2)
+  description   String?
+  paymentDate   DateTime @default(now())
+  paymentMethod String?
+  reference     String?
+  notes         String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  invoice     Invoice      @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+  invoiceItem InvoiceItem? @relation(fields: [invoiceItemId], references: [id], onDelete: SetNull)
+
+  @@index([invoiceId])
+  @@index([invoiceItemId])
 }

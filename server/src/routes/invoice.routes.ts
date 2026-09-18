@@ -3,7 +3,9 @@ import { Router } from "express";
 import invoiceController from "../controllers/invoice.controller";
 
 import authenticate from "../middleware/auth.middleware";
-import authorize from "../middleware/authorize.middleware";
+import requirePermission from "../middleware/permission.middleware";
+
+import { Permission } from "../generated";
 
 const router = Router();
 
@@ -11,57 +13,67 @@ router.use(authenticate);
 
 /*
 =====================================
-Invoices
+Create Invoice
 =====================================
 */
 
 router.post(
   "/",
-  authenticate,
-  authorize("ADMIN", "STAFF"),
+  requirePermission(Permission.CREATE_INVOICE),
   invoiceController.create
 );
 
+/*
+=====================================
+View Invoices
+=====================================
+*/
+
 router.get(
   "/",
-  authenticate,
-  authorize(
-    "ADMIN",
-    "STAFF",
-    "VIEWER"
-  ),
+  requirePermission(Permission.VIEW_INVOICES),
   invoiceController.findAll
 );
 
 router.get(
   "/:id",
-  authenticate,
-  authorize(
-    "ADMIN",
-    "STAFF",
-    "VIEWER"
-  ),
+  requirePermission(Permission.VIEW_INVOICES),
   invoiceController.findOne
 );
 
+/*
+=====================================
+Update Invoice
+=====================================
+*/
+
 router.patch(
   "/:id",
-  authenticate,
-  authorize("ADMIN", "STAFF"),
+  requirePermission(Permission.EDIT_INVOICE),
   invoiceController.update
 );
 
+/*
+=====================================
+Update Invoice Status
+=====================================
+*/
+
 router.patch(
   "/:id/status",
-  authenticate,
-  authorize("ADMIN", "STAFF"),
+  requirePermission(Permission.EDIT_INVOICE),
   invoiceController.updateStatus
 );
 
+/*
+=====================================
+Delete Invoice
+=====================================
+*/
+
 router.delete(
   "/:id",
-  authenticate,
-  authorize("ADMIN"),
+  requirePermission(Permission.DELETE_INVOICE),
   invoiceController.delete
 );
 

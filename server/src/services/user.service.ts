@@ -1,23 +1,18 @@
-import bcrypt from "bcrypt";
-
-import userRepository from "../Repository/user.repository";
 
 import { ApiError } from "../utils/ApiError";
-
-import { ChangePasswordDto, UpdateProfileDto } from "../validations/user.validation";
-
+import { Permission, Role } from "../generated";
+import userRepository from "../Repository/user.repository";
+import bcrypt from "bcryptjs";
 class UserService {
   /*
   =====================================
-  Get Profile
+  Profile
   =====================================
   */
 
-  async getProfile(
-    userId: string
-  ) {
+  async getProfile(id: string) {
     const user =
-      await userRepository.findById(userId);
+      await userRepository.findById(id);
 
     if (!user) {
       throw new ApiError(
@@ -26,26 +21,189 @@ class UserService {
       );
     }
 
-    return user;
+    return {
+      ...user,
+      permissions:
+        user.permissions.map(
+          (item) => item.permission
+        ),
+    };
+  }
+
+  async updateProfile(
+    id: string,
+    data: {
+      name: string;
+      phone?: string;
+      department?: string;
+      jobTitle?: string;
+      avatar?: string;
+    }
+  ) {
+    const user =
+      await userRepository.findById(id);
+
+    if (!user) {
+      throw new ApiError(
+        404,
+        "User not found."
+      );
+    }
+
+    const updated =
+      await userRepository.updateProfile(
+        id,
+        data
+      );
+
+    return {
+      ...updated,
+      permissions:
+        updated.permissions.map(
+          (item) => item.permission
+        ),
+    };
   }
 
   /*
   =====================================
-  Update Profile
+  Get All Users
   =====================================
   */
 
-  async updateProfile(
-    userId: string,
-    data: UpdateProfileDto
-  ) {
-    await this.getProfile(userId);
+  async getAllUsers() {
+    const users =
+      await userRepository.findAll();
 
-    return userRepository.updateProfile(
-      userId,
-      data
-    );
+    return users.map((user) => ({
+      ...user,
+      permissions:
+        user.permissions.map(
+          (item) => item.permission
+        ),
+    }));
   }
+
+  /*
+  =====================================
+  Update Role
+  =====================================
+  */
+
+  async updateUserRole(
+    userId: string,
+    role: Role
+  ) {
+    const user =
+      await userRepository.findById(
+        userId
+      );
+
+    if (!user) {
+      throw new ApiError(
+        404,
+        "User not found."
+      );
+    }
+
+    const updated =
+      await userRepository.updateRole(
+        userId,
+        role
+      );
+
+    return {
+      ...updated,
+      permissions:
+        updated.permissions.map(
+          (item) => item.permission
+        ),
+    };
+  }
+
+  /*
+  =====================================
+  Update Permissions
+  =====================================
+  */
+
+  async updateUserPermissions(
+    userId: string,
+    permissions: Permission[]
+  ) {
+    const user =
+      await userRepository.findById(
+        userId
+      );
+
+    if (!user) {
+      throw new ApiError(
+        404,
+        "User not found."
+      );
+    }
+
+    const updated =
+      await userRepository.updatePermissions(
+        userId,
+        permissions
+      );
+
+    if (!updated) {
+      throw new ApiError(
+        404,
+        "User not found."
+      );
+    }
+
+    return {
+      ...updated,
+      permissions:
+        updated.permissions.map(
+          (item) => item.permission
+        ),
+    };
+  }
+
+  /*
+  =====================================
+  Update Active Status
+  =====================================
+  */
+
+  async updateUserStatus(
+    userId: string,
+    isActive: boolean
+  ) {
+    const user =
+      await userRepository.findById(
+        userId
+      );
+
+    if (!user) {
+      throw new ApiError(
+        404,
+        "User not found."
+      );
+    }
+
+    const updated =
+      await userRepository.updateActiveStatus(
+        userId,
+        isActive
+      );
+
+    return {
+      ...updated,
+      permissions:
+        updated.permissions.map(
+          (item) => item.permission
+        ),
+    };
+  }
+
+  // Keep your existing changePassword()
+
   /*
 =====================================
 Change Password
@@ -54,7 +212,10 @@ Change Password
 
 async changePassword(
   userId: string,
-  data: ChangePasswordDto
+  data: {
+    currentPassword: string;
+    newPassword: string;
+  }
 ) {
   const user =
     await userRepository.findWithPassword(
@@ -68,13 +229,13 @@ async changePassword(
     );
   }
 
-  const isValid =
+  const isPasswordValid =
     await bcrypt.compare(
       data.currentPassword,
       user.password
     );
 
-  if (!isValid) {
+  if (!isPasswordValid) {
     throw new ApiError(
       400,
       "Current password is incorrect."
@@ -84,18 +245,13 @@ async changePassword(
   const hashedPassword =
     await bcrypt.hash(
       data.newPassword,
-      10
+      12
     );
 
   await userRepository.updatePassword(
     userId,
     hashedPassword
   );
-
-  return {
-    message:
-      "Password updated successfully.",
-  };
 }
 }
 

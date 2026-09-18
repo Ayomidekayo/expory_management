@@ -3,12 +3,10 @@ import { queryClient } from "../lib/react-query";
 
 interface User {
   id: string;
-
   name: string;
-
   email: string;
-
   role: string;
+  permissions: string[];
 }
 
 interface AuthState {
@@ -57,7 +55,9 @@ export const useAuthStore =
       localStorage.removeItem(
         "token"
       );
- queryClient.clear();
+
+      queryClient.clear();
+
       set({
         user: null,
         token: null,
