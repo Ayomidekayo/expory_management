@@ -1,199 +1,1082 @@
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
+
 import type { PackingList } from "../types/packing-list";
 
 export function printPackingList(
   packingList: PackingList
 ) {
-  const doc = new jsPDF();
+  const doc = new jsPDF({
+    orientation: "portrait",
+    unit: "mm",
+    format: "a4",
+  });
 
-  // ==========================================
-  // Header
-  // ==========================================
+  // =========================================================
+  // COLORS
+  // =========================================================
 
-  doc.setFontSize(18);
+  const NAVY: [number, number, number] = [15, 39, 64];
+  const DARK: [number, number, number] = [31, 41, 55];
+  const GREEN: [number, number, number] = [5, 150, 105];
+  const LIGHT_GREEN: [number, number, number] = [236, 253, 245];
+  const LIGHT_GRAY: [number, number, number] = [248, 250, 252];
+  const BORDER: [number, number, number] = [226, 232, 240];
+  const MUTED: [number, number, number] = [100, 116, 139];
+  const WHITE: [number, number, number] = [255, 255, 255];
 
-  doc.text(
-    "EXPORT SERVICES",
-    105,
-    20,
-    { align: "center" }
+  // =========================================================
+  // PAGE SETTINGS
+  // =========================================================
+
+  const PAGE_WIDTH = 210;
+  const PAGE_HEIGHT = 297;
+  const MARGIN = 15;
+  const CONTENT_WIDTH =
+    PAGE_WIDTH - MARGIN * 2;
+
+  // =========================================================
+  // HELPERS
+  // =========================================================
+
+  const formatNumber = (
+    value: number | string | null | undefined
+  ) => {
+    const number = Number(value);
+
+    if (Number.isNaN(number)) {
+      return "0";
+    }
+
+    return number.toLocaleString("en-US", {
+      maximumFractionDigits: 2,
+    });
+  };
+
+  const formatDate = (
+    value: string | Date | null | undefined
+  ) => {
+    if (!value) {
+      return "-";
+    }
+
+    let year: string;
+    let month: string;
+    let day: string;
+
+    if (typeof value === "string") {
+      const match = value.match(
+        /^(\d{4})-(\d{2})-(\d{2})/
+      );
+
+      if (match) {
+        [, year, month, day] = match;
+      } else {
+        const date = new Date(value);
+
+        if (Number.isNaN(date.getTime())) {
+          return "-";
+        }
+
+        year = String(date.getFullYear());
+        month = String(
+          date.getMonth() + 1
+        ).padStart(2, "0");
+        day = String(
+          date.getDate()
+        ).padStart(2, "0");
+      }
+    } else {
+      if (Number.isNaN(value.getTime())) {
+        return "-";
+      }
+
+      year = String(value.getFullYear());
+      month = String(
+        value.getMonth() + 1
+      ).padStart(2, "0");
+      day = String(
+        value.getDate()
+      ).padStart(2, "0");
+    }
+
+    const months = [
+      "Jan",
+      "Feb",
+      "Mar",
+      "Apr",
+      "May",
+      "Jun",
+      "Jul",
+      "Aug",
+      "Sep",
+      "Oct",
+      "Nov",
+      "Dec",
+    ];
+
+    const monthIndex =
+      Number(month) - 1;
+
+    if (
+      !year ||
+      !month ||
+      !day ||
+      monthIndex < 0 ||
+      monthIndex > 11
+    ) {
+      return "-";
+    }
+
+    return `${day} ${months[monthIndex]} ${year}`;
+  };
+
+  const drawSectionTitle = (
+    title: string,
+    x: number,
+    y: number,
+    width = CONTENT_WIDTH
+  ) => {
+    doc.setFillColor(...NAVY);
+
+    doc.roundedRect(
+      x,
+      y,
+      width,
+      8,
+      1.5,
+      1.5,
+      "F"
+    );
+
+    doc.setTextColor(...WHITE);
+    doc.setFont(
+      "helvetica",
+      "bold"
+    );
+    doc.setFontSize(9);
+
+    doc.text(
+      title.toUpperCase(),
+      x + 4,
+      y + 5.3
+    );
+
+    doc.setTextColor(...DARK);
+  };
+
+  const drawLabelValue = (
+    label: string,
+    value: string,
+    x: number,
+    y: number,
+    width = 55
+  ) => {
+    doc.setFont(
+      "helvetica",
+      "normal"
+    );
+    doc.setFontSize(7.5);
+    doc.setTextColor(...MUTED);
+
+    doc.text(
+      label,
+      x,
+      y
+    );
+
+    doc.setFont(
+      "helvetica",
+      "bold"
+    );
+    doc.setFontSize(9);
+    doc.setTextColor(...DARK);
+
+    const wrapped =
+      doc.splitTextToSize(
+        value || "-",
+        width
+      );
+
+    doc.text(
+      wrapped,
+      x,
+      y + 4.5
+    );
+  };
+
+  // =========================================================
+  // HEADER
+  // =========================================================
+
+  doc.setFillColor(...NAVY);
+
+  doc.rect(
+    0,
+    0,
+    PAGE_WIDTH,
+    42,
+    "F"
   );
 
-  doc.setFontSize(15);
+  // Brand
+  doc.setTextColor(...WHITE);
+  doc.setFont(
+    "helvetica",
+    "bold"
+  );
+  doc.setFontSize(22);
+
+  doc.text(
+    "ogwKayImpex",
+    MARGIN,
+    17
+  );
+
+  doc.setFont(
+    "helvetica",
+    "normal"
+  );
+  doc.setFontSize(8.5);
+
+  doc.setTextColor(
+    220,
+    230,
+    240
+  );
+
+  doc.text(
+    "EXPORT & IMPORT MANAGEMENT",
+    MARGIN,
+    23
+  );
+
+  // Packing List title
+  doc.setTextColor(...WHITE);
+  doc.setFont(
+    "helvetica",
+    "bold"
+  );
+  doc.setFontSize(17);
 
   doc.text(
     "PACKING LIST",
-    105,
-    30,
-    { align: "center" }
+    PAGE_WIDTH - MARGIN,
+    16,
+    {
+      align: "right",
+    }
   );
 
-  doc.line(15, 35, 195, 35);
-
-  // ==========================================
-  // Basic Information
-  // ==========================================
-
-  doc.setFontSize(11);
-
-  doc.text(
-    `Packing List No: ${packingList.packingListNumber ?? "-"}`,
-    15,
-    45
+  doc.setFont(
+    "helvetica",
+    "normal"
   );
+  doc.setFontSize(8);
 
-  doc.text(
-    `Shipment No: ${packingList.shipment?.shipmentNumber ?? "-"}`,
-    15,
-    52
+  doc.setTextColor(
+    220,
+    230,
+    240
   );
 
   doc.text(
-    `Packing Date: ${
-      packingList.packingDate
-        ? new Date(packingList.packingDate).toLocaleDateString()
-        : "-"
-    }`,
-    15,
-    59
+    "Official Shipping Document",
+    PAGE_WIDTH - MARGIN,
+    22,
+    {
+      align: "right",
+    }
   );
 
+  // =========================================================
+  // PACKING LIST NUMBER / DOCUMENT TYPE
+  // =========================================================
+
+  doc.setFillColor(...LIGHT_GREEN);
+
+  doc.roundedRect(
+    MARGIN,
+    48,
+    CONTENT_WIDTH,
+    17,
+    2,
+    2,
+    "F"
+  );
+
+  doc.setTextColor(...MUTED);
+  doc.setFont(
+    "helvetica",
+    "normal"
+  );
+  doc.setFontSize(7);
+
   doc.text(
-    `Exporter: ${
-      packingList.shipment?.exporter?.name ?? "-"
-    }`,
-    15,
+    "PACKING LIST NUMBER",
+    MARGIN + 5,
+    54
+  );
+
+  doc.setTextColor(...NAVY);
+  doc.setFont(
+    "helvetica",
+    "bold"
+  );
+  doc.setFontSize(12);
+
+  doc.text(
+    packingList.packingListNumber ??
+      "-",
+    MARGIN + 5,
+    60
+  );
+
+  // Document type badge
+  doc.setFillColor(...NAVY);
+
+  doc.roundedRect(
+    PAGE_WIDTH - MARGIN - 32,
+    52,
+    27,
+    8,
+    4,
+    4,
+    "F"
+  );
+
+  doc.setTextColor(...WHITE);
+  doc.setFont(
+    "helvetica",
+    "bold"
+  );
+  doc.setFontSize(6.5);
+
+  doc.text(
+    "PACKING LIST",
+    PAGE_WIDTH - MARGIN - 18.5,
+    57.3,
+    {
+      align: "center",
+    }
+  );
+
+  // =========================================================
+  // PACKING INFORMATION
+  // =========================================================
+
+  drawSectionTitle(
+    "Packing Information",
+    MARGIN,
     72
   );
 
-  doc.text(
-    `Consignee: ${
-      packingList.shipment?.consignee?.name ?? "-"
-    }`,
-    15,
-    80
+  const infoY = 86;
+
+  drawLabelValue(
+    "Packing Date",
+    formatDate(
+      packingList.packingDate
+    ),
+    MARGIN,
+    infoY
   );
 
-  // ==========================================
-  // Items Table
-  // ==========================================
+  drawLabelValue(
+    "Shipment Number",
+    packingList.shipment
+      ?.shipmentNumber ?? "-",
+    MARGIN + 58,
+    infoY
+  );
 
-  autoTable(doc, {
-    startY: 90,
+  drawLabelValue(
+    "Total Packages",
+    formatNumber(
+      packingList.totalPackages
+    ),
+    MARGIN + 116,
+    infoY
+  );
 
-    head: [[
-      "Description",
-      "Package",
-      "Packages",
-      "Gross",
-      "Net",
-    ]],
+  drawLabelValue(
+    "Gross Weight",
+    `${formatNumber(
+      packingList.grossWeight
+    )} KG`,
+    MARGIN,
+    infoY + 17
+  );
 
-    body: (packingList.items ?? []).map((item) => [
-      item.description ?? "-",
-      item.packageType ?? "-",
-      item.packages ?? 0,
-      item.grossWeight ?? 0,
-      item.netWeight ?? 0,
-    ]),
+  drawLabelValue(
+    "Net Weight",
+    `${formatNumber(
+      packingList.netWeight
+    )} KG`,
+    MARGIN + 58,
+    infoY + 17
+  );
+
+  // =========================================================
+  // SHIPMENT INFORMATION
+  // =========================================================
+
+  drawSectionTitle(
+    "Shipment Information",
+    MARGIN,
+    126
+  );
+
+  const shipmentY = 140;
+
+  drawLabelValue(
+    "Shipment Number",
+    packingList.shipment
+      ?.shipmentNumber ?? "-",
+    MARGIN,
+    shipmentY
+  );
+
+  drawLabelValue(
+    "Exporter",
+    packingList.shipment
+      ?.exporter?.name ?? "-",
+    MARGIN + 58,
+    shipmentY
+  );
+
+  drawLabelValue(
+    "Consignee",
+    packingList.shipment
+      ?.consignee?.name ?? "-",
+    MARGIN + 116,
+    shipmentY
+  );
+
+  // =========================================================
+  // PARTIES
+  // =========================================================
+
+  drawSectionTitle(
+    "Parties",
+    MARGIN,
+    166
+  );
+
+  const partyY = 179;
+
+  const boxWidth = 87;
+  const boxGap = 6;
+
+  const partyBoxes = [
+    {
+      x: MARGIN,
+      title: "EXPORTER",
+      value:
+        packingList.shipment
+          ?.exporter?.name ?? "-",
+    },
+
+    {
+      x:
+        MARGIN +
+        boxWidth +
+        boxGap,
+      title: "CONSIGNEE",
+      value:
+        packingList.shipment
+          ?.consignee?.name ?? "-",
+    },
+  ];
+
+  partyBoxes.forEach((box) => {
+    doc.setFillColor(...LIGHT_GRAY);
+    doc.setDrawColor(...BORDER);
+
+    doc.roundedRect(
+      box.x,
+      partyY,
+      boxWidth,
+      27,
+      2,
+      2,
+      "FD"
+    );
+
+    doc.setTextColor(...GREEN);
+    doc.setFont(
+      "helvetica",
+      "bold"
+    );
+    doc.setFontSize(7);
+
+    doc.text(
+      box.title,
+      box.x + 5,
+      partyY + 7
+    );
+
+    doc.setTextColor(...DARK);
+    doc.setFont(
+      "helvetica",
+      "bold"
+    );
+    doc.setFontSize(9);
+
+    const wrapped =
+      doc.splitTextToSize(
+        box.value,
+        boxWidth - 10
+      );
+
+    doc.text(
+      wrapped,
+      box.x + 5,
+      partyY + 14
+    );
   });
 
-  const finalY =
-    (doc as jsPDF & {
-      lastAutoTable: { finalY: number };
-    }).lastAutoTable.finalY + 15;
+  // =========================================================
+  // ITEMS
+  // =========================================================
 
-  // ==========================================
-  // Summary
-  // ==========================================
+  const itemsStartY = 216;
+
+  drawSectionTitle(
+    "Packing List Items",
+    MARGIN,
+    itemsStartY
+  );
+
+  autoTable(doc, {
+    startY: itemsStartY + 11,
+
+    margin: {
+      left: MARGIN,
+      right: MARGIN,
+    },
+
+    head: [
+      [
+        "Description",
+        "Package",
+        "Packages",
+        "Gross Weight",
+        "Net Weight",
+      ],
+    ],
+
+    body: (
+      packingList.items ?? []
+    ).map((item) => [
+      item.description ?? "-",
+      item.packageType ?? "-",
+      formatNumber(item.packages),
+      formatNumber(
+        item.grossWeight
+      ),
+      formatNumber(
+        item.netWeight
+      ),
+    ]),
+
+    theme: "grid",
+
+    styles: {
+      font: "helvetica",
+      fontSize: 7.5,
+      cellPadding: 3,
+      textColor: DARK,
+      lineColor: BORDER,
+      lineWidth: 0.2,
+      valign: "middle",
+    },
+
+    headStyles: {
+      fillColor: NAVY,
+      textColor: WHITE,
+      fontStyle: "bold",
+      fontSize: 7.5,
+      halign: "center",
+      valign: "middle",
+    },
+
+    alternateRowStyles: {
+      fillColor: [
+        248,
+        250,
+        252,
+      ],
+    },
+
+    columnStyles: {
+      0: {
+        cellWidth: 65,
+        halign: "left",
+      },
+
+      1: {
+        cellWidth: 35,
+        halign: "center",
+      },
+
+      2: {
+        cellWidth: 25,
+        halign: "center",
+      },
+
+      3: {
+        cellWidth: 27,
+        halign: "right",
+      },
+
+      4: {
+        cellWidth: 28,
+        halign: "right",
+      },
+    },
+
+    didParseCell: (data) => {
+      if (
+        data.section ===
+          "body" &&
+        (
+          data.column.index ===
+            2 ||
+          data.column.index ===
+            3 ||
+          data.column.index ===
+            4
+        )
+      ) {
+        data.cell.styles.fontStyle =
+          "bold";
+      }
+    },
+  });
+
+  const lastAutoTable = (
+    doc as jsPDF & {
+      lastAutoTable?: {
+        finalY: number;
+      };
+    }
+  ).lastAutoTable;
+
+  let finalY =
+    lastAutoTable?.finalY ??
+    235;
+
+  // =========================================================
+  // SUMMARY
+  // =========================================================
+
+  if (finalY > 245) {
+    doc.addPage();
+    finalY = 20;
+  }
+
+  const summaryTop =
+    finalY + 10;
+
+  drawSectionTitle(
+    "Weight & Package Summary",
+    MARGIN,
+    summaryTop,
+    85
+  );
+
+  doc.setFillColor(...LIGHT_GRAY);
+  doc.setDrawColor(...BORDER);
+
+  doc.roundedRect(
+    MARGIN,
+    summaryTop + 10,
+    85,
+    43,
+    2,
+    2,
+    "FD"
+  );
+
+  // Total Packages
+  doc.setFont(
+    "helvetica",
+    "normal"
+  );
+  doc.setFontSize(8.5);
+  doc.setTextColor(...MUTED);
 
   doc.text(
-    `Total Packages: ${packingList.totalPackages ?? 0}`,
-    15,
-    finalY
+    "Total Packages",
+    MARGIN + 5,
+    summaryTop + 20
+  );
+
+  doc.setTextColor(...DARK);
+  doc.setFont(
+    "helvetica",
+    "bold"
   );
 
   doc.text(
-    `Gross Weight: ${packingList.grossWeight ?? 0} KG`,
-    15,
-    finalY + 8
+    formatNumber(
+      packingList.totalPackages
+    ),
+    MARGIN + 80,
+    summaryTop + 20,
+    {
+      align: "right",
+    }
+  );
+
+  // Gross Weight
+  doc.setTextColor(...MUTED);
+  doc.setFont(
+    "helvetica",
+    "normal"
   );
 
   doc.text(
-    `Net Weight: ${packingList.netWeight ?? 0} KG`,
-    15,
-    finalY + 16
+    "Gross Weight",
+    MARGIN + 5,
+    summaryTop + 30
   );
 
-  // ==========================================
-  // Marks & Numbers
-  // ==========================================
+  doc.setTextColor(...DARK);
+  doc.setFont(
+    "helvetica",
+    "bold"
+  );
 
   doc.text(
+    `${formatNumber(
+      packingList.grossWeight
+    )} KG`,
+    MARGIN + 80,
+    summaryTop + 30,
+    {
+      align: "right",
+    }
+  );
+
+  // Divider
+  doc.setDrawColor(...BORDER);
+
+  doc.line(
+    MARGIN + 5,
+    summaryTop + 34,
+    MARGIN + 80,
+    summaryTop + 34
+  );
+
+  // Net Weight
+  doc.setTextColor(...MUTED);
+  doc.setFont(
+    "helvetica",
+    "normal"
+  );
+
+  doc.text(
+    "Net Weight",
+    MARGIN + 5,
+    summaryTop + 44
+  );
+
+  doc.setTextColor(...DARK);
+  doc.setFont(
+    "helvetica",
+    "bold"
+  );
+
+  doc.text(
+    `${formatNumber(
+      packingList.netWeight
+    )} KG`,
+    MARGIN + 80,
+    summaryTop + 44,
+    {
+      align: "right",
+    }
+  );
+
+  // =========================================================
+  // MARKS & NUMBERS
+  // =========================================================
+
+  const marksTop =
+    summaryTop + 63;
+
+  if (marksTop > 245) {
+    doc.addPage();
+  }
+
+  const actualMarksTop =
+    marksTop > 245
+      ? 20
+      : marksTop;
+
+  drawSectionTitle(
     "Marks & Numbers",
-    15,
-    finalY + 32
+    MARGIN,
+    actualMarksTop,
+    CONTENT_WIDTH
   );
 
-  doc.rect(
-    15,
-    finalY + 36,
-    180,
-    22
+  const marks =
+    packingList.marksAndNumbers
+      ?.trim() || "-";
+
+  const wrappedMarks =
+    doc.splitTextToSize(
+      marks,
+      CONTENT_WIDTH - 10
+    );
+
+  const marksHeight =
+    Math.max(
+      25,
+      Math.min(
+        45,
+        wrappedMarks.length *
+          4.5 +
+          10
+      )
+    );
+
+  doc.setFillColor(...LIGHT_GRAY);
+  doc.setDrawColor(...BORDER);
+
+  doc.roundedRect(
+    MARGIN,
+    actualMarksTop + 10,
+    CONTENT_WIDTH,
+    marksHeight,
+    2,
+    2,
+    "FD"
   );
+
+  doc.setTextColor(...DARK);
+  doc.setFont(
+    "helvetica",
+    "normal"
+  );
+  doc.setFontSize(8);
 
   doc.text(
-    packingList.marksAndNumbers ?? "-",
-    20,
-    finalY + 46
+    wrappedMarks,
+    MARGIN + 5,
+    actualMarksTop + 18
   );
 
-  // ==========================================
-  // Remarks
-  // ==========================================
+  // =========================================================
+  // REMARKS
+  // =========================================================
 
-  doc.text(
+  const remarksTop =
+    actualMarksTop +
+    10 +
+    marksHeight +
+    10;
+
+  if (remarksTop > 250) {
+    doc.addPage();
+  }
+
+  const actualRemarksTop =
+    remarksTop > 250
+      ? 20
+      : remarksTop;
+
+  drawSectionTitle(
     "Remarks",
-    15,
-    finalY + 70
+    MARGIN,
+    actualRemarksTop,
+    CONTENT_WIDTH
   );
 
-  doc.rect(
-    15,
-    finalY + 74,
-    180,
-    25
+  const remarks =
+    packingList.remarks
+      ?.trim() ||
+    "No remarks provided.";
+
+  const wrappedRemarks =
+    doc.splitTextToSize(
+      remarks,
+      CONTENT_WIDTH - 10
+    );
+
+  const remarksHeight =
+    Math.max(
+      25,
+      Math.min(
+        45,
+        wrappedRemarks.length *
+          4.5 +
+          10
+      )
+    );
+
+  doc.setFillColor(...LIGHT_GRAY);
+  doc.setDrawColor(...BORDER);
+
+  doc.roundedRect(
+    MARGIN,
+    actualRemarksTop + 10,
+    CONTENT_WIDTH,
+    remarksHeight,
+    2,
+    2,
+    "FD"
   );
+
+  doc.setTextColor(...DARK);
+  doc.setFont(
+    "helvetica",
+    "normal"
+  );
+  doc.setFontSize(8);
 
   doc.text(
-    packingList.remarks ?? "-",
-    20,
-    finalY + 84
+    wrappedRemarks,
+    MARGIN + 5,
+    actualRemarksTop + 18
   );
 
-  // ==========================================
-  // Signature
-  // ==========================================
+  // =========================================================
+  // SIGNATURE
+  // =========================================================
+
+  const signatureY =
+    actualRemarksTop +
+    remarksHeight +
+    25;
+
+  if (signatureY > 270) {
+    doc.addPage();
+  }
+
+  const actualSignatureY =
+    signatureY > 270
+      ? 35
+      : signatureY;
+
+  doc.setDrawColor(...BORDER);
 
   doc.line(
     135,
-    finalY + 125,
+    actualSignatureY,
     190,
-    finalY + 125
+    actualSignatureY
   );
+
+  doc.setTextColor(...MUTED);
+  doc.setFont(
+    "helvetica",
+    "normal"
+  );
+  doc.setFontSize(7.5);
 
   doc.text(
     "Authorized Signature",
-    138,
-    finalY + 132
+    162.5,
+    actualSignatureY + 6,
+    {
+      align: "center",
+    }
   );
 
-  // ==========================================
-  // Save
-  // ==========================================
-
-  doc.save(
-    `${packingList.packingListNumber ?? "packing-list"}.pdf`
+  doc.setTextColor(...DARK);
+  doc.setFont(
+    "helvetica",
+    "bold"
   );
+  doc.setFontSize(8);
+
+  doc.text(
+    "For ogwKayImpex",
+    162.5,
+    actualSignatureY + 11,
+    {
+      align: "center",
+    }
+  );
+
+  // =========================================================
+  // FOOTER ON EVERY PAGE
+  // =========================================================
+
+  const pageCount =
+    doc.getNumberOfPages();
+
+  for (
+    let page = 1;
+    page <= pageCount;
+    page++
+  ) {
+    doc.setPage(page);
+
+    // Footer divider
+    doc.setDrawColor(...BORDER);
+
+    doc.line(
+      MARGIN,
+      PAGE_HEIGHT - 17,
+      PAGE_WIDTH - MARGIN,
+      PAGE_HEIGHT - 17
+    );
+
+    // Brand
+    doc.setTextColor(...NAVY);
+    doc.setFont(
+      "helvetica",
+      "bold"
+    );
+    doc.setFontSize(7.5);
+
+    doc.text(
+      "ogwKayImpex",
+      MARGIN,
+      PAGE_HEIGHT - 10
+    );
+
+    // Document
+    doc.setTextColor(...MUTED);
+    doc.setFont(
+      "helvetica",
+      "normal"
+    );
+
+    doc.text(
+      "Packing List",
+      PAGE_WIDTH / 2,
+      PAGE_HEIGHT - 10,
+      {
+        align: "center",
+      }
+    );
+
+    // Page number
+    doc.text(
+      `Page ${page} of ${pageCount}`,
+      PAGE_WIDTH - MARGIN,
+      PAGE_HEIGHT - 10,
+      {
+        align: "right",
+      }
+    );
+  }
+
+  // =========================================================
+  // SAVE PDF
+  // =========================================================
+
+  const fileName =
+    `${
+      packingList.packingListNumber ??
+      "packing-list"
+    }.pdf`;
+
+  doc.save(fileName);
 }
