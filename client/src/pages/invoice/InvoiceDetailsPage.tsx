@@ -28,6 +28,7 @@ import InvoicePaymentSummaryCard from "../../components/invoice/details/InvoiceP
 import InvoicePaymentHistory from "../../components/invoice/details/InvoicePaymentHistory";
 import RecordPaymentDialog from "../../components/invoice/details/RecordPaymentDialog";
 import DeletePaymentDialog from "../../components/invoice/details/DeletePaymentDialog";
+import { printInvoice } from "../../utils/printInvoice";
 
 export default function InvoiceDetailsPage() {
   const { id } = useParams();
@@ -100,24 +101,25 @@ export default function InvoiceDetailsPage() {
     <div className="space-y-6">
 
       {/* Invoice Header */}
-      <InvoiceHeader
-        invoice={invoice}
-        onPrint={() => window.print()}
-        onDownloadPdf={() => {
-          console.log("Generate PDF");
-        }}
-        onDelete={() =>
-          deleteInvoice.mutate(
-            invoice.id,
-            {
-              onSuccess() {
-                navigate("/invoices");
-              },
-            }
-          )
-        }
-      />
-
+  <InvoiceHeader
+  invoice={invoice}
+  onPrint={() => {
+    printInvoice(invoice);
+  }}
+  onDownloadPdf={() => {
+    printInvoice(invoice);
+  }}
+  onDelete={() =>
+    deleteInvoice.mutate(
+      invoice.id,
+      {
+        onSuccess() {
+          navigate("/invoices");
+        },
+      }
+    )
+  }
+/>
       {/* Invoice Overview */}
       <div className="grid gap-6 lg:grid-cols-2">
 

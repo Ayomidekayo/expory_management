@@ -28,6 +28,7 @@ import type {
   Invoice,
   InvoiceStatus,
 } from "../../../types/invoice";
+import { printInvoice } from "../../../utils/printInvoice";
 
 interface Props {
   onDelete: (
@@ -40,7 +41,7 @@ interface Props {
   ) => void;
 
   statusUpdatingId?: string;
-};
+}
 
 /*
 =====================================
@@ -327,6 +328,7 @@ export const invoiceColumns = ({
               className="w-48"
             >
 
+              {/* View Invoice */}
               <DropdownMenuItem
                 asChild
               >
@@ -340,6 +342,7 @@ export const invoiceColumns = ({
                 </Link>
               </DropdownMenuItem>
 
+              {/* Edit Invoice */}
               <DropdownMenuItem
                 asChild
               >
@@ -353,9 +356,10 @@ export const invoiceColumns = ({
                 </Link>
               </DropdownMenuItem>
 
+              {/* Print / Download Invoice PDF */}
               <DropdownMenuItem
                 onClick={() => {
-                  window.print();
+                  printInvoice(invoice);
                 }}
                 className="cursor-pointer"
               >
@@ -366,6 +370,7 @@ export const invoiceColumns = ({
 
               <DropdownMenuSeparator />
 
+              {/* Delete Invoice */}
               <DropdownMenuItem
                 onClick={() =>
                   onDelete(invoice.id)
