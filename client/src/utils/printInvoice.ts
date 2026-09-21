@@ -128,11 +128,7 @@ export function printInvoice(
     28,
   ];
 
-  const AMBER: [number, number, number] = [
-    180,
-    83,
-    9,
-  ];
+ 
 
   const PAGE_WIDTH = 210;
   const PAGE_HEIGHT = 297;
