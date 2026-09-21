@@ -1,4 +1,7 @@
-import { PERMISSIONS, type Permission } from "./permissions";
+import {
+  PERMISSIONS,
+  type Permission,
+} from "./permissions";
 
 export interface PermissionDefinition {
   key: Permission;
@@ -241,7 +244,7 @@ export const permissionGroups: PermissionGroup[] = [
     ],
   },
 
-    {
+  {
     title: "Gates",
     permissions: [
       {
@@ -249,16 +252,16 @@ export const permissionGroups: PermissionGroup[] = [
         label: "View Gates",
       },
       {
-        key: PERMISSIONS.UPLOAD_GATE,
-        label: "Upload Documents",
+        key: PERMISSIONS.CREATE_GATE,
+        label: "Create Gate Movements",
       },
       {
         key: PERMISSIONS.EDIT_GATE,
-        label: "Edit Documents",
+        label: "Edit Gate Movements",
       },
       {
         key: PERMISSIONS.DELETE_GATE,
-        label: "Delete Documents",
+        label: "Delete Gate Movements",
       },
     ],
   },
