@@ -240,4 +240,26 @@ export const permissionGroups: PermissionGroup[] = [
       },
     ],
   },
+
+    {
+    title: "Gates",
+    permissions: [
+      {
+        key: PERMISSIONS.VIEW_GATES,
+        label: "View Gates",
+      },
+      {
+        key: PERMISSIONS.UPLOAD_GATE,
+        label: "Upload Documents",
+      },
+      {
+        key: PERMISSIONS.EDIT_GATE,
+        label: "Edit Documents",
+      },
+      {
+        key: PERMISSIONS.DELETE_GATE,
+        label: "Delete Documents",
+      },
+    ],
+  },
 ];

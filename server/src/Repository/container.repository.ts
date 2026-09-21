@@ -400,37 +400,62 @@ class ContainerRepository {
   =====================================
   */
 
-  private listInclude = {
-    shipment: {
-      select: {
-        id: true,
+private listInclude = {
+  shipment: {
+    select: {
+      id: true,
+      shipmentNumber: true,
 
-        shipmentNumber: true,
+      // Shipment information
+      shipmentDate: true,
+      transportMode: true,
+      status: true,
 
-        client: {
-          select: {
-            companyName: true,
-          },
+      // Shipping details
+      bookingNumber: true,
+      shippingLine: true,
+      vesselName: true,
+      voyageNumber: true,
+
+      // Ports
+      portOfLoading: true,
+      portOfDischarge: true,
+
+      // Parties
+      exporter: {
+        select: {
+          name: true,
+        },
+      },
+
+      client: {
+        select: {
+          companyName: true,
+        },
+      },
+
+      consignee: {
+        select: {
+          name: true,
         },
       },
     },
+  },
 
-    packingList: {
-      select: {
-        id: true,
-
-        packingListNumber: true,
-      },
+  packingList: {
+    select: {
+      id: true,
+      packingListNumber: true,
     },
+  },
 
-    _count: {
-      select: {
-        documents: true,
-
-        transits: true,
-      },
+  _count: {
+    select: {
+      documents: true,
+      transits: true,
     },
-  };
+  },
+};
 
   /*
   =====================================

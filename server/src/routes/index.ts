@@ -13,7 +13,7 @@ import transitRoutes from  "./transit.routes"
 import documentRoutes from "./document.routes";
 import userRoutes from "./user.routes";
 import  invoicePaymentRoutes  from "./invoice-payment.routes"
-
+import  gateMovementRoutes   from "./gate-movement.routes"
 const router = Router();
 
 router.use("/auth", authRoutes);
@@ -47,5 +47,9 @@ router.use(
 router.use(
   "/invoice-payments",
   invoicePaymentRoutes
+);
+router.use(
+  "/gate-movements",
+  gateMovementRoutes
 );
 export default router;

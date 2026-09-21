@@ -203,6 +203,7 @@ model Container {
   shipment               Shipment             @relation(fields: [shipmentId], references: [id], onDelete: Cascade)
   documents              Document[]
   transits               Transit[]
+  gateMovements          GateMovement[]
 }
 
 model InvoiceItem {
@@ -560,6 +561,18 @@ enum InvoiceStatus {
   CANCELLED
 }
 
+enum GateType {
+  TERMINAL_GATE
+  ECOWAS_GATE
+}
+
+enum GateMovementStatus {
+  PENDING
+  CLEARED
+  CROSSED
+  CANCELLED
+}
+
 enum Permission {
   VIEW_DASHBOARD
 
@@ -619,6 +632,11 @@ enum Permission {
   DELETE_USER
 
   MANAGE_PERMISSIONS
+
+  VIEW_GATES
+  CREATE_GATE
+  EDIT_GATE
+  DELETE_GATE
 }
 
 model UserPermission {
@@ -653,4 +671,35 @@ model InvoicePayment {
 
   @@index([invoiceId])
   @@index([invoiceItemId])
+}
+
+model GateMovement {
+  id String @id @default(cuid())
+
+  containerId String?
+  container   Container? @relation(fields: [containerId], references: [id])
+
+  containerNumber String
+  yardStoreNumber String?
+
+  truckFrontPlate String
+  truckBackPlate  String
+
+  gateType GateType
+
+  status GateMovementStatus @default(PENDING)
+
+  crossedAt DateTime?
+  clearedAt DateTime?
+
+  notes String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([containerId])
+  @@index([containerNumber])
+  @@index([gateType])
+  @@index([status])
+  @@index([createdAt])
 }

@@ -93,6 +93,11 @@ export type UserPermission = $Result.DefaultSelection<Prisma.$UserPermissionPayl
  * 
  */
 export type InvoicePayment = $Result.DefaultSelection<Prisma.$InvoicePaymentPayload>
+/**
+ * Model GateMovement
+ * 
+ */
+export type GateMovement = $Result.DefaultSelection<Prisma.$GateMovementPayload>
 
 /**
  * Enums
@@ -276,6 +281,24 @@ export const InvoiceStatus: {
 export type InvoiceStatus = (typeof InvoiceStatus)[keyof typeof InvoiceStatus]
 
 
+export const GateType: {
+  TERMINAL_GATE: 'TERMINAL_GATE',
+  ECOWAS_GATE: 'ECOWAS_GATE'
+};
+
+export type GateType = (typeof GateType)[keyof typeof GateType]
+
+
+export const GateMovementStatus: {
+  PENDING: 'PENDING',
+  CLEARED: 'CLEARED',
+  CROSSED: 'CROSSED',
+  CANCELLED: 'CANCELLED'
+};
+
+export type GateMovementStatus = (typeof GateMovementStatus)[keyof typeof GateMovementStatus]
+
+
 export const Permission: {
   VIEW_DASHBOARD: 'VIEW_DASHBOARD',
   VIEW_CLIENTS: 'VIEW_CLIENTS',
@@ -322,7 +345,11 @@ export const Permission: {
   CREATE_USER: 'CREATE_USER',
   EDIT_USER: 'EDIT_USER',
   DELETE_USER: 'DELETE_USER',
-  MANAGE_PERMISSIONS: 'MANAGE_PERMISSIONS'
+  MANAGE_PERMISSIONS: 'MANAGE_PERMISSIONS',
+  VIEW_GATES: 'VIEW_GATES',
+  CREATE_GATE: 'CREATE_GATE',
+  EDIT_GATE: 'EDIT_GATE',
+  DELETE_GATE: 'DELETE_GATE'
 };
 
 export type Permission = (typeof Permission)[keyof typeof Permission]
@@ -388,6 +415,14 @@ export const PaymentTerms: typeof $Enums.PaymentTerms
 export type InvoiceStatus = $Enums.InvoiceStatus
 
 export const InvoiceStatus: typeof $Enums.InvoiceStatus
+
+export type GateType = $Enums.GateType
+
+export const GateType: typeof $Enums.GateType
+
+export type GateMovementStatus = $Enums.GateMovementStatus
+
+export const GateMovementStatus: typeof $Enums.GateMovementStatus
 
 export type Permission = $Enums.Permission
 
@@ -673,6 +708,16 @@ export class PrismaClient<
     * ```
     */
   get invoicePayment(): Prisma.InvoicePaymentDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.gateMovement`: Exposes CRUD operations for the **GateMovement** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more GateMovements
+    * const gateMovements = await prisma.gateMovement.findMany()
+    * ```
+    */
+  get gateMovement(): Prisma.GateMovementDelegate<ExtArgs, ClientOptions>;
 }
 
 export namespace Prisma {
@@ -1122,7 +1167,8 @@ export namespace Prisma {
     Client: 'Client',
     Document: 'Document',
     UserPermission: 'UserPermission',
-    InvoicePayment: 'InvoicePayment'
+    InvoicePayment: 'InvoicePayment',
+    GateMovement: 'GateMovement'
   };
 
   export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -1138,7 +1184,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "user" | "allocationDocument" | "exporter" | "consignee" | "shipment" | "invoice" | "container" | "invoiceItem" | "packingList" | "packingListItem" | "transit" | "allocation" | "client" | "document" | "userPermission" | "invoicePayment"
+      modelProps: "user" | "allocationDocument" | "exporter" | "consignee" | "shipment" | "invoice" | "container" | "invoiceItem" | "packingList" | "packingListItem" | "transit" | "allocation" | "client" | "document" | "userPermission" | "invoicePayment" | "gateMovement"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -2326,6 +2372,80 @@ export namespace Prisma {
           }
         }
       }
+      GateMovement: {
+        payload: Prisma.$GateMovementPayload<ExtArgs>
+        fields: Prisma.GateMovementFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.GateMovementFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$GateMovementPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.GateMovementFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$GateMovementPayload>
+          }
+          findFirst: {
+            args: Prisma.GateMovementFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$GateMovementPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.GateMovementFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$GateMovementPayload>
+          }
+          findMany: {
+            args: Prisma.GateMovementFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$GateMovementPayload>[]
+          }
+          create: {
+            args: Prisma.GateMovementCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$GateMovementPayload>
+          }
+          createMany: {
+            args: Prisma.GateMovementCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.GateMovementCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$GateMovementPayload>[]
+          }
+          delete: {
+            args: Prisma.GateMovementDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$GateMovementPayload>
+          }
+          update: {
+            args: Prisma.GateMovementUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$GateMovementPayload>
+          }
+          deleteMany: {
+            args: Prisma.GateMovementDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.GateMovementUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.GateMovementUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$GateMovementPayload>[]
+          }
+          upsert: {
+            args: Prisma.GateMovementUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$GateMovementPayload>
+          }
+          aggregate: {
+            args: Prisma.GateMovementAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateGateMovement>
+          }
+          groupBy: {
+            args: Prisma.GateMovementGroupByArgs<ExtArgs>
+            result: $Utils.Optional<GateMovementGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.GateMovementCountArgs<ExtArgs>
+            result: $Utils.Optional<GateMovementCountAggregateOutputType> | number
+          }
+        }
+      }
     }
   } & {
     other: {
@@ -2450,6 +2570,7 @@ export namespace Prisma {
     document?: DocumentOmit
     userPermission?: UserPermissionOmit
     invoicePayment?: InvoicePaymentOmit
+    gateMovement?: GateMovementOmit
   }
 
   /* Types for Logging */
@@ -2813,11 +2934,13 @@ export namespace Prisma {
   export type ContainerCountOutputType = {
     documents: number
     transits: number
+    gateMovements: number
   }
 
   export type ContainerCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     documents?: boolean | ContainerCountOutputTypeCountDocumentsArgs
     transits?: boolean | ContainerCountOutputTypeCountTransitsArgs
+    gateMovements?: boolean | ContainerCountOutputTypeCountGateMovementsArgs
   }
 
   // Custom InputTypes
@@ -2843,6 +2966,13 @@ export namespace Prisma {
    */
   export type ContainerCountOutputTypeCountTransitsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: TransitWhereInput
+  }
+
+  /**
+   * ContainerCountOutputType without action
+   */
+  export type ContainerCountOutputTypeCountGateMovementsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: GateMovementWhereInput
   }
 
 
@@ -11269,6 +11399,7 @@ export namespace Prisma {
     shipment?: boolean | ShipmentDefaultArgs<ExtArgs>
     documents?: boolean | Container$documentsArgs<ExtArgs>
     transits?: boolean | Container$transitsArgs<ExtArgs>
+    gateMovements?: boolean | Container$gateMovementsArgs<ExtArgs>
     _count?: boolean | ContainerCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["container"]>
 
@@ -11360,6 +11491,7 @@ export namespace Prisma {
     shipment?: boolean | ShipmentDefaultArgs<ExtArgs>
     documents?: boolean | Container$documentsArgs<ExtArgs>
     transits?: boolean | Container$transitsArgs<ExtArgs>
+    gateMovements?: boolean | Container$gateMovementsArgs<ExtArgs>
     _count?: boolean | ContainerCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type ContainerIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -11378,6 +11510,7 @@ export namespace Prisma {
       shipment: Prisma.$ShipmentPayload<ExtArgs>
       documents: Prisma.$DocumentPayload<ExtArgs>[]
       transits: Prisma.$TransitPayload<ExtArgs>[]
+      gateMovements: Prisma.$GateMovementPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -11801,6 +11934,7 @@ export namespace Prisma {
     shipment<T extends ShipmentDefaultArgs<ExtArgs> = {}>(args?: Subset<T, ShipmentDefaultArgs<ExtArgs>>): Prisma__ShipmentClient<$Result.GetResult<Prisma.$ShipmentPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     documents<T extends Container$documentsArgs<ExtArgs> = {}>(args?: Subset<T, Container$documentsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$DocumentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     transits<T extends Container$transitsArgs<ExtArgs> = {}>(args?: Subset<T, Container$transitsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TransitPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    gateMovements<T extends Container$gateMovementsArgs<ExtArgs> = {}>(args?: Subset<T, Container$gateMovementsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$GateMovementPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -12318,6 +12452,30 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: TransitScalarFieldEnum | TransitScalarFieldEnum[]
+  }
+
+  /**
+   * Container.gateMovements
+   */
+  export type Container$gateMovementsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the GateMovement
+     */
+    select?: GateMovementSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the GateMovement
+     */
+    omit?: GateMovementOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: GateMovementInclude<ExtArgs> | null
+    where?: GateMovementWhereInput
+    orderBy?: GateMovementOrderByWithRelationInput | GateMovementOrderByWithRelationInput[]
+    cursor?: GateMovementWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: GateMovementScalarFieldEnum | GateMovementScalarFieldEnum[]
   }
 
   /**
@@ -24320,6 +24478,1192 @@ export namespace Prisma {
 
 
   /**
+   * Model GateMovement
+   */
+
+  export type AggregateGateMovement = {
+    _count: GateMovementCountAggregateOutputType | null
+    _min: GateMovementMinAggregateOutputType | null
+    _max: GateMovementMaxAggregateOutputType | null
+  }
+
+  export type GateMovementMinAggregateOutputType = {
+    id: string | null
+    containerId: string | null
+    containerNumber: string | null
+    yardStoreNumber: string | null
+    truckFrontPlate: string | null
+    truckBackPlate: string | null
+    gateType: $Enums.GateType | null
+    status: $Enums.GateMovementStatus | null
+    crossedAt: Date | null
+    clearedAt: Date | null
+    notes: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type GateMovementMaxAggregateOutputType = {
+    id: string | null
+    containerId: string | null
+    containerNumber: string | null
+    yardStoreNumber: string | null
+    truckFrontPlate: string | null
+    truckBackPlate: string | null
+    gateType: $Enums.GateType | null
+    status: $Enums.GateMovementStatus | null
+    crossedAt: Date | null
+    clearedAt: Date | null
+    notes: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type GateMovementCountAggregateOutputType = {
+    id: number
+    containerId: number
+    containerNumber: number
+    yardStoreNumber: number
+    truckFrontPlate: number
+    truckBackPlate: number
+    gateType: number
+    status: number
+    crossedAt: number
+    clearedAt: number
+    notes: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type GateMovementMinAggregateInputType = {
+    id?: true
+    containerId?: true
+    containerNumber?: true
+    yardStoreNumber?: true
+    truckFrontPlate?: true
+    truckBackPlate?: true
+    gateType?: true
+    status?: true
+    crossedAt?: true
+    clearedAt?: true
+    notes?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type GateMovementMaxAggregateInputType = {
+    id?: true
+    containerId?: true
+    containerNumber?: true
+    yardStoreNumber?: true
+    truckFrontPlate?: true
+    truckBackPlate?: true
+    gateType?: true
+    status?: true
+    crossedAt?: true
+    clearedAt?: true
+    notes?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type GateMovementCountAggregateInputType = {
+    id?: true
+    containerId?: true
+    containerNumber?: true
+    yardStoreNumber?: true
+    truckFrontPlate?: true
+    truckBackPlate?: true
+    gateType?: true
+    status?: true
+    crossedAt?: true
+    clearedAt?: true
+    notes?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type GateMovementAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which GateMovement to aggregate.
+     */
+    where?: GateMovementWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of GateMovements to fetch.
+     */
+    orderBy?: GateMovementOrderByWithRelationInput | GateMovementOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: GateMovementWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` GateMovements from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` GateMovements.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned GateMovements
+    **/
+    _count?: true | GateMovementCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: GateMovementMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: GateMovementMaxAggregateInputType
+  }
+
+  export type GetGateMovementAggregateType<T extends GateMovementAggregateArgs> = {
+        [P in keyof T & keyof AggregateGateMovement]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateGateMovement[P]>
+      : GetScalarType<T[P], AggregateGateMovement[P]>
+  }
+
+
+
+
+  export type GateMovementGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: GateMovementWhereInput
+    orderBy?: GateMovementOrderByWithAggregationInput | GateMovementOrderByWithAggregationInput[]
+    by: GateMovementScalarFieldEnum[] | GateMovementScalarFieldEnum
+    having?: GateMovementScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: GateMovementCountAggregateInputType | true
+    _min?: GateMovementMinAggregateInputType
+    _max?: GateMovementMaxAggregateInputType
+  }
+
+  export type GateMovementGroupByOutputType = {
+    id: string
+    containerId: string | null
+    containerNumber: string
+    yardStoreNumber: string | null
+    truckFrontPlate: string
+    truckBackPlate: string
+    gateType: $Enums.GateType
+    status: $Enums.GateMovementStatus
+    crossedAt: Date | null
+    clearedAt: Date | null
+    notes: string | null
+    createdAt: Date
+    updatedAt: Date
+    _count: GateMovementCountAggregateOutputType | null
+    _min: GateMovementMinAggregateOutputType | null
+    _max: GateMovementMaxAggregateOutputType | null
+  }
+
+  type GetGateMovementGroupByPayload<T extends GateMovementGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<GateMovementGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof GateMovementGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], GateMovementGroupByOutputType[P]>
+            : GetScalarType<T[P], GateMovementGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type GateMovementSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    containerId?: boolean
+    containerNumber?: boolean
+    yardStoreNumber?: boolean
+    truckFrontPlate?: boolean
+    truckBackPlate?: boolean
+    gateType?: boolean
+    status?: boolean
+    crossedAt?: boolean
+    clearedAt?: boolean
+    notes?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    container?: boolean | GateMovement$containerArgs<ExtArgs>
+  }, ExtArgs["result"]["gateMovement"]>
+
+  export type GateMovementSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    containerId?: boolean
+    containerNumber?: boolean
+    yardStoreNumber?: boolean
+    truckFrontPlate?: boolean
+    truckBackPlate?: boolean
+    gateType?: boolean
+    status?: boolean
+    crossedAt?: boolean
+    clearedAt?: boolean
+    notes?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    container?: boolean | GateMovement$containerArgs<ExtArgs>
+  }, ExtArgs["result"]["gateMovement"]>
+
+  export type GateMovementSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    containerId?: boolean
+    containerNumber?: boolean
+    yardStoreNumber?: boolean
+    truckFrontPlate?: boolean
+    truckBackPlate?: boolean
+    gateType?: boolean
+    status?: boolean
+    crossedAt?: boolean
+    clearedAt?: boolean
+    notes?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    container?: boolean | GateMovement$containerArgs<ExtArgs>
+  }, ExtArgs["result"]["gateMovement"]>
+
+  export type GateMovementSelectScalar = {
+    id?: boolean
+    containerId?: boolean
+    containerNumber?: boolean
+    yardStoreNumber?: boolean
+    truckFrontPlate?: boolean
+    truckBackPlate?: boolean
+    gateType?: boolean
+    status?: boolean
+    crossedAt?: boolean
+    clearedAt?: boolean
+    notes?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type GateMovementOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "containerId" | "containerNumber" | "yardStoreNumber" | "truckFrontPlate" | "truckBackPlate" | "gateType" | "status" | "crossedAt" | "clearedAt" | "notes" | "createdAt" | "updatedAt", ExtArgs["result"]["gateMovement"]>
+  export type GateMovementInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    container?: boolean | GateMovement$containerArgs<ExtArgs>
+  }
+  export type GateMovementIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    container?: boolean | GateMovement$containerArgs<ExtArgs>
+  }
+  export type GateMovementIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    container?: boolean | GateMovement$containerArgs<ExtArgs>
+  }
+
+  export type $GateMovementPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "GateMovement"
+    objects: {
+      container: Prisma.$ContainerPayload<ExtArgs> | null
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      containerId: string | null
+      containerNumber: string
+      yardStoreNumber: string | null
+      truckFrontPlate: string
+      truckBackPlate: string
+      gateType: $Enums.GateType
+      status: $Enums.GateMovementStatus
+      crossedAt: Date | null
+      clearedAt: Date | null
+      notes: string | null
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["gateMovement"]>
+    composites: {}
+  }
+
+  type GateMovementGetPayload<S extends boolean | null | undefined | GateMovementDefaultArgs> = $Result.GetResult<Prisma.$GateMovementPayload, S>
+
+  type GateMovementCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<GateMovementFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: GateMovementCountAggregateInputType | true
+    }
+
+  export interface GateMovementDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['GateMovement'], meta: { name: 'GateMovement' } }
+    /**
+     * Find zero or one GateMovement that matches the filter.
+     * @param {GateMovementFindUniqueArgs} args - Arguments to find a GateMovement
+     * @example
+     * // Get one GateMovement
+     * const gateMovement = await prisma.gateMovement.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends GateMovementFindUniqueArgs>(args: SelectSubset<T, GateMovementFindUniqueArgs<ExtArgs>>): Prisma__GateMovementClient<$Result.GetResult<Prisma.$GateMovementPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one GateMovement that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {GateMovementFindUniqueOrThrowArgs} args - Arguments to find a GateMovement
+     * @example
+     * // Get one GateMovement
+     * const gateMovement = await prisma.gateMovement.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends GateMovementFindUniqueOrThrowArgs>(args: SelectSubset<T, GateMovementFindUniqueOrThrowArgs<ExtArgs>>): Prisma__GateMovementClient<$Result.GetResult<Prisma.$GateMovementPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first GateMovement that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {GateMovementFindFirstArgs} args - Arguments to find a GateMovement
+     * @example
+     * // Get one GateMovement
+     * const gateMovement = await prisma.gateMovement.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends GateMovementFindFirstArgs>(args?: SelectSubset<T, GateMovementFindFirstArgs<ExtArgs>>): Prisma__GateMovementClient<$Result.GetResult<Prisma.$GateMovementPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first GateMovement that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {GateMovementFindFirstOrThrowArgs} args - Arguments to find a GateMovement
+     * @example
+     * // Get one GateMovement
+     * const gateMovement = await prisma.gateMovement.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends GateMovementFindFirstOrThrowArgs>(args?: SelectSubset<T, GateMovementFindFirstOrThrowArgs<ExtArgs>>): Prisma__GateMovementClient<$Result.GetResult<Prisma.$GateMovementPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more GateMovements that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {GateMovementFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all GateMovements
+     * const gateMovements = await prisma.gateMovement.findMany()
+     * 
+     * // Get first 10 GateMovements
+     * const gateMovements = await prisma.gateMovement.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const gateMovementWithIdOnly = await prisma.gateMovement.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends GateMovementFindManyArgs>(args?: SelectSubset<T, GateMovementFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$GateMovementPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a GateMovement.
+     * @param {GateMovementCreateArgs} args - Arguments to create a GateMovement.
+     * @example
+     * // Create one GateMovement
+     * const GateMovement = await prisma.gateMovement.create({
+     *   data: {
+     *     // ... data to create a GateMovement
+     *   }
+     * })
+     * 
+     */
+    create<T extends GateMovementCreateArgs>(args: SelectSubset<T, GateMovementCreateArgs<ExtArgs>>): Prisma__GateMovementClient<$Result.GetResult<Prisma.$GateMovementPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many GateMovements.
+     * @param {GateMovementCreateManyArgs} args - Arguments to create many GateMovements.
+     * @example
+     * // Create many GateMovements
+     * const gateMovement = await prisma.gateMovement.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends GateMovementCreateManyArgs>(args?: SelectSubset<T, GateMovementCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many GateMovements and returns the data saved in the database.
+     * @param {GateMovementCreateManyAndReturnArgs} args - Arguments to create many GateMovements.
+     * @example
+     * // Create many GateMovements
+     * const gateMovement = await prisma.gateMovement.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many GateMovements and only return the `id`
+     * const gateMovementWithIdOnly = await prisma.gateMovement.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends GateMovementCreateManyAndReturnArgs>(args?: SelectSubset<T, GateMovementCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$GateMovementPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a GateMovement.
+     * @param {GateMovementDeleteArgs} args - Arguments to delete one GateMovement.
+     * @example
+     * // Delete one GateMovement
+     * const GateMovement = await prisma.gateMovement.delete({
+     *   where: {
+     *     // ... filter to delete one GateMovement
+     *   }
+     * })
+     * 
+     */
+    delete<T extends GateMovementDeleteArgs>(args: SelectSubset<T, GateMovementDeleteArgs<ExtArgs>>): Prisma__GateMovementClient<$Result.GetResult<Prisma.$GateMovementPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one GateMovement.
+     * @param {GateMovementUpdateArgs} args - Arguments to update one GateMovement.
+     * @example
+     * // Update one GateMovement
+     * const gateMovement = await prisma.gateMovement.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends GateMovementUpdateArgs>(args: SelectSubset<T, GateMovementUpdateArgs<ExtArgs>>): Prisma__GateMovementClient<$Result.GetResult<Prisma.$GateMovementPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more GateMovements.
+     * @param {GateMovementDeleteManyArgs} args - Arguments to filter GateMovements to delete.
+     * @example
+     * // Delete a few GateMovements
+     * const { count } = await prisma.gateMovement.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends GateMovementDeleteManyArgs>(args?: SelectSubset<T, GateMovementDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more GateMovements.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {GateMovementUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many GateMovements
+     * const gateMovement = await prisma.gateMovement.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends GateMovementUpdateManyArgs>(args: SelectSubset<T, GateMovementUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more GateMovements and returns the data updated in the database.
+     * @param {GateMovementUpdateManyAndReturnArgs} args - Arguments to update many GateMovements.
+     * @example
+     * // Update many GateMovements
+     * const gateMovement = await prisma.gateMovement.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more GateMovements and only return the `id`
+     * const gateMovementWithIdOnly = await prisma.gateMovement.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends GateMovementUpdateManyAndReturnArgs>(args: SelectSubset<T, GateMovementUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$GateMovementPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one GateMovement.
+     * @param {GateMovementUpsertArgs} args - Arguments to update or create a GateMovement.
+     * @example
+     * // Update or create a GateMovement
+     * const gateMovement = await prisma.gateMovement.upsert({
+     *   create: {
+     *     // ... data to create a GateMovement
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the GateMovement we want to update
+     *   }
+     * })
+     */
+    upsert<T extends GateMovementUpsertArgs>(args: SelectSubset<T, GateMovementUpsertArgs<ExtArgs>>): Prisma__GateMovementClient<$Result.GetResult<Prisma.$GateMovementPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of GateMovements.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {GateMovementCountArgs} args - Arguments to filter GateMovements to count.
+     * @example
+     * // Count the number of GateMovements
+     * const count = await prisma.gateMovement.count({
+     *   where: {
+     *     // ... the filter for the GateMovements we want to count
+     *   }
+     * })
+    **/
+    count<T extends GateMovementCountArgs>(
+      args?: Subset<T, GateMovementCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], GateMovementCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a GateMovement.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {GateMovementAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends GateMovementAggregateArgs>(args: Subset<T, GateMovementAggregateArgs>): Prisma.PrismaPromise<GetGateMovementAggregateType<T>>
+
+    /**
+     * Group by GateMovement.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {GateMovementGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends GateMovementGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: GateMovementGroupByArgs['orderBy'] }
+        : { orderBy?: GateMovementGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, GateMovementGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetGateMovementGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the GateMovement model
+   */
+  readonly fields: GateMovementFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for GateMovement.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__GateMovementClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    container<T extends GateMovement$containerArgs<ExtArgs> = {}>(args?: Subset<T, GateMovement$containerArgs<ExtArgs>>): Prisma__ContainerClient<$Result.GetResult<Prisma.$ContainerPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the GateMovement model
+   */
+  interface GateMovementFieldRefs {
+    readonly id: FieldRef<"GateMovement", 'String'>
+    readonly containerId: FieldRef<"GateMovement", 'String'>
+    readonly containerNumber: FieldRef<"GateMovement", 'String'>
+    readonly yardStoreNumber: FieldRef<"GateMovement", 'String'>
+    readonly truckFrontPlate: FieldRef<"GateMovement", 'String'>
+    readonly truckBackPlate: FieldRef<"GateMovement", 'String'>
+    readonly gateType: FieldRef<"GateMovement", 'GateType'>
+    readonly status: FieldRef<"GateMovement", 'GateMovementStatus'>
+    readonly crossedAt: FieldRef<"GateMovement", 'DateTime'>
+    readonly clearedAt: FieldRef<"GateMovement", 'DateTime'>
+    readonly notes: FieldRef<"GateMovement", 'String'>
+    readonly createdAt: FieldRef<"GateMovement", 'DateTime'>
+    readonly updatedAt: FieldRef<"GateMovement", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * GateMovement findUnique
+   */
+  export type GateMovementFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the GateMovement
+     */
+    select?: GateMovementSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the GateMovement
+     */
+    omit?: GateMovementOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: GateMovementInclude<ExtArgs> | null
+    /**
+     * Filter, which GateMovement to fetch.
+     */
+    where: GateMovementWhereUniqueInput
+  }
+
+  /**
+   * GateMovement findUniqueOrThrow
+   */
+  export type GateMovementFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the GateMovement
+     */
+    select?: GateMovementSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the GateMovement
+     */
+    omit?: GateMovementOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: GateMovementInclude<ExtArgs> | null
+    /**
+     * Filter, which GateMovement to fetch.
+     */
+    where: GateMovementWhereUniqueInput
+  }
+
+  /**
+   * GateMovement findFirst
+   */
+  export type GateMovementFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the GateMovement
+     */
+    select?: GateMovementSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the GateMovement
+     */
+    omit?: GateMovementOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: GateMovementInclude<ExtArgs> | null
+    /**
+     * Filter, which GateMovement to fetch.
+     */
+    where?: GateMovementWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of GateMovements to fetch.
+     */
+    orderBy?: GateMovementOrderByWithRelationInput | GateMovementOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for GateMovements.
+     */
+    cursor?: GateMovementWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` GateMovements from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` GateMovements.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of GateMovements.
+     */
+    distinct?: GateMovementScalarFieldEnum | GateMovementScalarFieldEnum[]
+  }
+
+  /**
+   * GateMovement findFirstOrThrow
+   */
+  export type GateMovementFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the GateMovement
+     */
+    select?: GateMovementSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the GateMovement
+     */
+    omit?: GateMovementOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: GateMovementInclude<ExtArgs> | null
+    /**
+     * Filter, which GateMovement to fetch.
+     */
+    where?: GateMovementWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of GateMovements to fetch.
+     */
+    orderBy?: GateMovementOrderByWithRelationInput | GateMovementOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for GateMovements.
+     */
+    cursor?: GateMovementWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` GateMovements from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` GateMovements.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of GateMovements.
+     */
+    distinct?: GateMovementScalarFieldEnum | GateMovementScalarFieldEnum[]
+  }
+
+  /**
+   * GateMovement findMany
+   */
+  export type GateMovementFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the GateMovement
+     */
+    select?: GateMovementSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the GateMovement
+     */
+    omit?: GateMovementOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: GateMovementInclude<ExtArgs> | null
+    /**
+     * Filter, which GateMovements to fetch.
+     */
+    where?: GateMovementWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of GateMovements to fetch.
+     */
+    orderBy?: GateMovementOrderByWithRelationInput | GateMovementOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing GateMovements.
+     */
+    cursor?: GateMovementWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` GateMovements from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` GateMovements.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of GateMovements.
+     */
+    distinct?: GateMovementScalarFieldEnum | GateMovementScalarFieldEnum[]
+  }
+
+  /**
+   * GateMovement create
+   */
+  export type GateMovementCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the GateMovement
+     */
+    select?: GateMovementSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the GateMovement
+     */
+    omit?: GateMovementOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: GateMovementInclude<ExtArgs> | null
+    /**
+     * The data needed to create a GateMovement.
+     */
+    data: XOR<GateMovementCreateInput, GateMovementUncheckedCreateInput>
+  }
+
+  /**
+   * GateMovement createMany
+   */
+  export type GateMovementCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many GateMovements.
+     */
+    data: GateMovementCreateManyInput | GateMovementCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * GateMovement createManyAndReturn
+   */
+  export type GateMovementCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the GateMovement
+     */
+    select?: GateMovementSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the GateMovement
+     */
+    omit?: GateMovementOmit<ExtArgs> | null
+    /**
+     * The data used to create many GateMovements.
+     */
+    data: GateMovementCreateManyInput | GateMovementCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: GateMovementIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * GateMovement update
+   */
+  export type GateMovementUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the GateMovement
+     */
+    select?: GateMovementSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the GateMovement
+     */
+    omit?: GateMovementOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: GateMovementInclude<ExtArgs> | null
+    /**
+     * The data needed to update a GateMovement.
+     */
+    data: XOR<GateMovementUpdateInput, GateMovementUncheckedUpdateInput>
+    /**
+     * Choose, which GateMovement to update.
+     */
+    where: GateMovementWhereUniqueInput
+  }
+
+  /**
+   * GateMovement updateMany
+   */
+  export type GateMovementUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update GateMovements.
+     */
+    data: XOR<GateMovementUpdateManyMutationInput, GateMovementUncheckedUpdateManyInput>
+    /**
+     * Filter which GateMovements to update
+     */
+    where?: GateMovementWhereInput
+    /**
+     * Limit how many GateMovements to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * GateMovement updateManyAndReturn
+   */
+  export type GateMovementUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the GateMovement
+     */
+    select?: GateMovementSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the GateMovement
+     */
+    omit?: GateMovementOmit<ExtArgs> | null
+    /**
+     * The data used to update GateMovements.
+     */
+    data: XOR<GateMovementUpdateManyMutationInput, GateMovementUncheckedUpdateManyInput>
+    /**
+     * Filter which GateMovements to update
+     */
+    where?: GateMovementWhereInput
+    /**
+     * Limit how many GateMovements to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: GateMovementIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * GateMovement upsert
+   */
+  export type GateMovementUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the GateMovement
+     */
+    select?: GateMovementSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the GateMovement
+     */
+    omit?: GateMovementOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: GateMovementInclude<ExtArgs> | null
+    /**
+     * The filter to search for the GateMovement to update in case it exists.
+     */
+    where: GateMovementWhereUniqueInput
+    /**
+     * In case the GateMovement found by the `where` argument doesn't exist, create a new GateMovement with this data.
+     */
+    create: XOR<GateMovementCreateInput, GateMovementUncheckedCreateInput>
+    /**
+     * In case the GateMovement was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<GateMovementUpdateInput, GateMovementUncheckedUpdateInput>
+  }
+
+  /**
+   * GateMovement delete
+   */
+  export type GateMovementDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the GateMovement
+     */
+    select?: GateMovementSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the GateMovement
+     */
+    omit?: GateMovementOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: GateMovementInclude<ExtArgs> | null
+    /**
+     * Filter which GateMovement to delete.
+     */
+    where: GateMovementWhereUniqueInput
+  }
+
+  /**
+   * GateMovement deleteMany
+   */
+  export type GateMovementDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which GateMovements to delete
+     */
+    where?: GateMovementWhereInput
+    /**
+     * Limit how many GateMovements to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * GateMovement.container
+   */
+  export type GateMovement$containerArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Container
+     */
+    select?: ContainerSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Container
+     */
+    omit?: ContainerOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ContainerInclude<ExtArgs> | null
+    where?: ContainerWhereInput
+  }
+
+  /**
+   * GateMovement without action
+   */
+  export type GateMovementDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the GateMovement
+     */
+    select?: GateMovementSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the GateMovement
+     */
+    omit?: GateMovementOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: GateMovementInclude<ExtArgs> | null
+  }
+
+
+  /**
    * Enums
    */
 
@@ -24699,6 +26043,25 @@ export namespace Prisma {
   export type InvoicePaymentScalarFieldEnum = (typeof InvoicePaymentScalarFieldEnum)[keyof typeof InvoicePaymentScalarFieldEnum]
 
 
+  export const GateMovementScalarFieldEnum: {
+    id: 'id',
+    containerId: 'containerId',
+    containerNumber: 'containerNumber',
+    yardStoreNumber: 'yardStoreNumber',
+    truckFrontPlate: 'truckFrontPlate',
+    truckBackPlate: 'truckBackPlate',
+    gateType: 'gateType',
+    status: 'status',
+    crossedAt: 'crossedAt',
+    clearedAt: 'clearedAt',
+    notes: 'notes',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type GateMovementScalarFieldEnum = (typeof GateMovementScalarFieldEnum)[keyof typeof GateMovementScalarFieldEnum]
+
+
   export const SortOrder: {
     asc: 'asc',
     desc: 'desc'
@@ -25012,6 +26375,34 @@ export namespace Prisma {
    * Reference to a field of type 'Permission[]'
    */
   export type ListEnumPermissionFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Permission[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'GateType'
+   */
+  export type EnumGateTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'GateType'>
+    
+
+
+  /**
+   * Reference to a field of type 'GateType[]'
+   */
+  export type ListEnumGateTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'GateType[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'GateMovementStatus'
+   */
+  export type EnumGateMovementStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'GateMovementStatus'>
+    
+
+
+  /**
+   * Reference to a field of type 'GateMovementStatus[]'
+   */
+  export type ListEnumGateMovementStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'GateMovementStatus[]'>
     
 
 
@@ -25773,6 +27164,7 @@ export namespace Prisma {
     shipment?: XOR<ShipmentScalarRelationFilter, ShipmentWhereInput>
     documents?: DocumentListRelationFilter
     transits?: TransitListRelationFilter
+    gateMovements?: GateMovementListRelationFilter
   }
 
   export type ContainerOrderByWithRelationInput = {
@@ -25803,6 +27195,7 @@ export namespace Prisma {
     shipment?: ShipmentOrderByWithRelationInput
     documents?: DocumentOrderByRelationAggregateInput
     transits?: TransitOrderByRelationAggregateInput
+    gateMovements?: GateMovementOrderByRelationAggregateInput
   }
 
   export type ContainerWhereUniqueInput = Prisma.AtLeast<{
@@ -25836,6 +27229,7 @@ export namespace Prisma {
     shipment?: XOR<ShipmentScalarRelationFilter, ShipmentWhereInput>
     documents?: DocumentListRelationFilter
     transits?: TransitListRelationFilter
+    gateMovements?: GateMovementListRelationFilter
   }, "id" | "containerNumber">
 
   export type ContainerOrderByWithAggregationInput = {
@@ -27033,6 +28427,101 @@ export namespace Prisma {
     updatedAt?: DateTimeWithAggregatesFilter<"InvoicePayment"> | Date | string
   }
 
+  export type GateMovementWhereInput = {
+    AND?: GateMovementWhereInput | GateMovementWhereInput[]
+    OR?: GateMovementWhereInput[]
+    NOT?: GateMovementWhereInput | GateMovementWhereInput[]
+    id?: StringFilter<"GateMovement"> | string
+    containerId?: StringNullableFilter<"GateMovement"> | string | null
+    containerNumber?: StringFilter<"GateMovement"> | string
+    yardStoreNumber?: StringNullableFilter<"GateMovement"> | string | null
+    truckFrontPlate?: StringFilter<"GateMovement"> | string
+    truckBackPlate?: StringFilter<"GateMovement"> | string
+    gateType?: EnumGateTypeFilter<"GateMovement"> | $Enums.GateType
+    status?: EnumGateMovementStatusFilter<"GateMovement"> | $Enums.GateMovementStatus
+    crossedAt?: DateTimeNullableFilter<"GateMovement"> | Date | string | null
+    clearedAt?: DateTimeNullableFilter<"GateMovement"> | Date | string | null
+    notes?: StringNullableFilter<"GateMovement"> | string | null
+    createdAt?: DateTimeFilter<"GateMovement"> | Date | string
+    updatedAt?: DateTimeFilter<"GateMovement"> | Date | string
+    container?: XOR<ContainerNullableScalarRelationFilter, ContainerWhereInput> | null
+  }
+
+  export type GateMovementOrderByWithRelationInput = {
+    id?: SortOrder
+    containerId?: SortOrderInput | SortOrder
+    containerNumber?: SortOrder
+    yardStoreNumber?: SortOrderInput | SortOrder
+    truckFrontPlate?: SortOrder
+    truckBackPlate?: SortOrder
+    gateType?: SortOrder
+    status?: SortOrder
+    crossedAt?: SortOrderInput | SortOrder
+    clearedAt?: SortOrderInput | SortOrder
+    notes?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    container?: ContainerOrderByWithRelationInput
+  }
+
+  export type GateMovementWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: GateMovementWhereInput | GateMovementWhereInput[]
+    OR?: GateMovementWhereInput[]
+    NOT?: GateMovementWhereInput | GateMovementWhereInput[]
+    containerId?: StringNullableFilter<"GateMovement"> | string | null
+    containerNumber?: StringFilter<"GateMovement"> | string
+    yardStoreNumber?: StringNullableFilter<"GateMovement"> | string | null
+    truckFrontPlate?: StringFilter<"GateMovement"> | string
+    truckBackPlate?: StringFilter<"GateMovement"> | string
+    gateType?: EnumGateTypeFilter<"GateMovement"> | $Enums.GateType
+    status?: EnumGateMovementStatusFilter<"GateMovement"> | $Enums.GateMovementStatus
+    crossedAt?: DateTimeNullableFilter<"GateMovement"> | Date | string | null
+    clearedAt?: DateTimeNullableFilter<"GateMovement"> | Date | string | null
+    notes?: StringNullableFilter<"GateMovement"> | string | null
+    createdAt?: DateTimeFilter<"GateMovement"> | Date | string
+    updatedAt?: DateTimeFilter<"GateMovement"> | Date | string
+    container?: XOR<ContainerNullableScalarRelationFilter, ContainerWhereInput> | null
+  }, "id">
+
+  export type GateMovementOrderByWithAggregationInput = {
+    id?: SortOrder
+    containerId?: SortOrderInput | SortOrder
+    containerNumber?: SortOrder
+    yardStoreNumber?: SortOrderInput | SortOrder
+    truckFrontPlate?: SortOrder
+    truckBackPlate?: SortOrder
+    gateType?: SortOrder
+    status?: SortOrder
+    crossedAt?: SortOrderInput | SortOrder
+    clearedAt?: SortOrderInput | SortOrder
+    notes?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: GateMovementCountOrderByAggregateInput
+    _max?: GateMovementMaxOrderByAggregateInput
+    _min?: GateMovementMinOrderByAggregateInput
+  }
+
+  export type GateMovementScalarWhereWithAggregatesInput = {
+    AND?: GateMovementScalarWhereWithAggregatesInput | GateMovementScalarWhereWithAggregatesInput[]
+    OR?: GateMovementScalarWhereWithAggregatesInput[]
+    NOT?: GateMovementScalarWhereWithAggregatesInput | GateMovementScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"GateMovement"> | string
+    containerId?: StringNullableWithAggregatesFilter<"GateMovement"> | string | null
+    containerNumber?: StringWithAggregatesFilter<"GateMovement"> | string
+    yardStoreNumber?: StringNullableWithAggregatesFilter<"GateMovement"> | string | null
+    truckFrontPlate?: StringWithAggregatesFilter<"GateMovement"> | string
+    truckBackPlate?: StringWithAggregatesFilter<"GateMovement"> | string
+    gateType?: EnumGateTypeWithAggregatesFilter<"GateMovement"> | $Enums.GateType
+    status?: EnumGateMovementStatusWithAggregatesFilter<"GateMovement"> | $Enums.GateMovementStatus
+    crossedAt?: DateTimeNullableWithAggregatesFilter<"GateMovement"> | Date | string | null
+    clearedAt?: DateTimeNullableWithAggregatesFilter<"GateMovement"> | Date | string | null
+    notes?: StringNullableWithAggregatesFilter<"GateMovement"> | string | null
+    createdAt?: DateTimeWithAggregatesFilter<"GateMovement"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"GateMovement"> | Date | string
+  }
+
   export type UserCreateInput = {
     id?: string
     name: string
@@ -27901,6 +29390,7 @@ export namespace Prisma {
     shipment: ShipmentCreateNestedOneWithoutContainersInput
     documents?: DocumentCreateNestedManyWithoutContainerInput
     transits?: TransitCreateNestedManyWithoutContainerInput
+    gateMovements?: GateMovementCreateNestedManyWithoutContainerInput
   }
 
   export type ContainerUncheckedCreateInput = {
@@ -27929,6 +29419,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     documents?: DocumentUncheckedCreateNestedManyWithoutContainerInput
     transits?: TransitUncheckedCreateNestedManyWithoutContainerInput
+    gateMovements?: GateMovementUncheckedCreateNestedManyWithoutContainerInput
   }
 
   export type ContainerUpdateInput = {
@@ -27957,6 +29448,7 @@ export namespace Prisma {
     shipment?: ShipmentUpdateOneRequiredWithoutContainersNestedInput
     documents?: DocumentUpdateManyWithoutContainerNestedInput
     transits?: TransitUpdateManyWithoutContainerNestedInput
+    gateMovements?: GateMovementUpdateManyWithoutContainerNestedInput
   }
 
   export type ContainerUncheckedUpdateInput = {
@@ -27985,6 +29477,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     documents?: DocumentUncheckedUpdateManyWithoutContainerNestedInput
     transits?: TransitUncheckedUpdateManyWithoutContainerNestedInput
+    gateMovements?: GateMovementUncheckedUpdateManyWithoutContainerNestedInput
   }
 
   export type ContainerCreateManyInput = {
@@ -29358,6 +30851,117 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type GateMovementCreateInput = {
+    id?: string
+    containerNumber: string
+    yardStoreNumber?: string | null
+    truckFrontPlate: string
+    truckBackPlate: string
+    gateType: $Enums.GateType
+    status?: $Enums.GateMovementStatus
+    crossedAt?: Date | string | null
+    clearedAt?: Date | string | null
+    notes?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    container?: ContainerCreateNestedOneWithoutGateMovementsInput
+  }
+
+  export type GateMovementUncheckedCreateInput = {
+    id?: string
+    containerId?: string | null
+    containerNumber: string
+    yardStoreNumber?: string | null
+    truckFrontPlate: string
+    truckBackPlate: string
+    gateType: $Enums.GateType
+    status?: $Enums.GateMovementStatus
+    crossedAt?: Date | string | null
+    clearedAt?: Date | string | null
+    notes?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type GateMovementUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    containerNumber?: StringFieldUpdateOperationsInput | string
+    yardStoreNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    truckFrontPlate?: StringFieldUpdateOperationsInput | string
+    truckBackPlate?: StringFieldUpdateOperationsInput | string
+    gateType?: EnumGateTypeFieldUpdateOperationsInput | $Enums.GateType
+    status?: EnumGateMovementStatusFieldUpdateOperationsInput | $Enums.GateMovementStatus
+    crossedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    clearedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    container?: ContainerUpdateOneWithoutGateMovementsNestedInput
+  }
+
+  export type GateMovementUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    containerId?: NullableStringFieldUpdateOperationsInput | string | null
+    containerNumber?: StringFieldUpdateOperationsInput | string
+    yardStoreNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    truckFrontPlate?: StringFieldUpdateOperationsInput | string
+    truckBackPlate?: StringFieldUpdateOperationsInput | string
+    gateType?: EnumGateTypeFieldUpdateOperationsInput | $Enums.GateType
+    status?: EnumGateMovementStatusFieldUpdateOperationsInput | $Enums.GateMovementStatus
+    crossedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    clearedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type GateMovementCreateManyInput = {
+    id?: string
+    containerId?: string | null
+    containerNumber: string
+    yardStoreNumber?: string | null
+    truckFrontPlate: string
+    truckBackPlate: string
+    gateType: $Enums.GateType
+    status?: $Enums.GateMovementStatus
+    crossedAt?: Date | string | null
+    clearedAt?: Date | string | null
+    notes?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type GateMovementUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    containerNumber?: StringFieldUpdateOperationsInput | string
+    yardStoreNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    truckFrontPlate?: StringFieldUpdateOperationsInput | string
+    truckBackPlate?: StringFieldUpdateOperationsInput | string
+    gateType?: EnumGateTypeFieldUpdateOperationsInput | $Enums.GateType
+    status?: EnumGateMovementStatusFieldUpdateOperationsInput | $Enums.GateMovementStatus
+    crossedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    clearedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type GateMovementUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    containerId?: NullableStringFieldUpdateOperationsInput | string | null
+    containerNumber?: StringFieldUpdateOperationsInput | string
+    yardStoreNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    truckFrontPlate?: StringFieldUpdateOperationsInput | string
+    truckBackPlate?: StringFieldUpdateOperationsInput | string
+    gateType?: EnumGateTypeFieldUpdateOperationsInput | $Enums.GateType
+    status?: EnumGateMovementStatusFieldUpdateOperationsInput | $Enums.GateMovementStatus
+    crossedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    clearedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type StringFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel>
     in?: string[] | ListStringFieldRefInput<$PrismaModel>
@@ -30224,6 +31828,16 @@ export namespace Prisma {
     in?: $Enums.Currency[] | ListEnumCurrencyFieldRefInput<$PrismaModel> | null
     notIn?: $Enums.Currency[] | ListEnumCurrencyFieldRefInput<$PrismaModel> | null
     not?: NestedEnumCurrencyNullableFilter<$PrismaModel> | $Enums.Currency | null
+  }
+
+  export type GateMovementListRelationFilter = {
+    every?: GateMovementWhereInput
+    some?: GateMovementWhereInput
+    none?: GateMovementWhereInput
+  }
+
+  export type GateMovementOrderByRelationAggregateInput = {
+    _count?: SortOrder
   }
 
   export type ContainerCountOrderByAggregateInput = {
@@ -31174,6 +32788,88 @@ export namespace Prisma {
 
   export type InvoicePaymentSumOrderByAggregateInput = {
     amount?: SortOrder
+  }
+
+  export type EnumGateTypeFilter<$PrismaModel = never> = {
+    equals?: $Enums.GateType | EnumGateTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.GateType[] | ListEnumGateTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.GateType[] | ListEnumGateTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumGateTypeFilter<$PrismaModel> | $Enums.GateType
+  }
+
+  export type EnumGateMovementStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.GateMovementStatus | EnumGateMovementStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.GateMovementStatus[] | ListEnumGateMovementStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.GateMovementStatus[] | ListEnumGateMovementStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumGateMovementStatusFilter<$PrismaModel> | $Enums.GateMovementStatus
+  }
+
+  export type GateMovementCountOrderByAggregateInput = {
+    id?: SortOrder
+    containerId?: SortOrder
+    containerNumber?: SortOrder
+    yardStoreNumber?: SortOrder
+    truckFrontPlate?: SortOrder
+    truckBackPlate?: SortOrder
+    gateType?: SortOrder
+    status?: SortOrder
+    crossedAt?: SortOrder
+    clearedAt?: SortOrder
+    notes?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type GateMovementMaxOrderByAggregateInput = {
+    id?: SortOrder
+    containerId?: SortOrder
+    containerNumber?: SortOrder
+    yardStoreNumber?: SortOrder
+    truckFrontPlate?: SortOrder
+    truckBackPlate?: SortOrder
+    gateType?: SortOrder
+    status?: SortOrder
+    crossedAt?: SortOrder
+    clearedAt?: SortOrder
+    notes?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type GateMovementMinOrderByAggregateInput = {
+    id?: SortOrder
+    containerId?: SortOrder
+    containerNumber?: SortOrder
+    yardStoreNumber?: SortOrder
+    truckFrontPlate?: SortOrder
+    truckBackPlate?: SortOrder
+    gateType?: SortOrder
+    status?: SortOrder
+    crossedAt?: SortOrder
+    clearedAt?: SortOrder
+    notes?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type EnumGateTypeWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.GateType | EnumGateTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.GateType[] | ListEnumGateTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.GateType[] | ListEnumGateTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumGateTypeWithAggregatesFilter<$PrismaModel> | $Enums.GateType
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumGateTypeFilter<$PrismaModel>
+    _max?: NestedEnumGateTypeFilter<$PrismaModel>
+  }
+
+  export type EnumGateMovementStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.GateMovementStatus | EnumGateMovementStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.GateMovementStatus[] | ListEnumGateMovementStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.GateMovementStatus[] | ListEnumGateMovementStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumGateMovementStatusWithAggregatesFilter<$PrismaModel> | $Enums.GateMovementStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumGateMovementStatusFilter<$PrismaModel>
+    _max?: NestedEnumGateMovementStatusFilter<$PrismaModel>
   }
 
   export type ShipmentCreateNestedManyWithoutCreatedByInput = {
@@ -32220,6 +33916,13 @@ export namespace Prisma {
     connect?: TransitWhereUniqueInput | TransitWhereUniqueInput[]
   }
 
+  export type GateMovementCreateNestedManyWithoutContainerInput = {
+    create?: XOR<GateMovementCreateWithoutContainerInput, GateMovementUncheckedCreateWithoutContainerInput> | GateMovementCreateWithoutContainerInput[] | GateMovementUncheckedCreateWithoutContainerInput[]
+    connectOrCreate?: GateMovementCreateOrConnectWithoutContainerInput | GateMovementCreateOrConnectWithoutContainerInput[]
+    createMany?: GateMovementCreateManyContainerInputEnvelope
+    connect?: GateMovementWhereUniqueInput | GateMovementWhereUniqueInput[]
+  }
+
   export type DocumentUncheckedCreateNestedManyWithoutContainerInput = {
     create?: XOR<DocumentCreateWithoutContainerInput, DocumentUncheckedCreateWithoutContainerInput> | DocumentCreateWithoutContainerInput[] | DocumentUncheckedCreateWithoutContainerInput[]
     connectOrCreate?: DocumentCreateOrConnectWithoutContainerInput | DocumentCreateOrConnectWithoutContainerInput[]
@@ -32232,6 +33935,13 @@ export namespace Prisma {
     connectOrCreate?: TransitCreateOrConnectWithoutContainerInput | TransitCreateOrConnectWithoutContainerInput[]
     createMany?: TransitCreateManyContainerInputEnvelope
     connect?: TransitWhereUniqueInput | TransitWhereUniqueInput[]
+  }
+
+  export type GateMovementUncheckedCreateNestedManyWithoutContainerInput = {
+    create?: XOR<GateMovementCreateWithoutContainerInput, GateMovementUncheckedCreateWithoutContainerInput> | GateMovementCreateWithoutContainerInput[] | GateMovementUncheckedCreateWithoutContainerInput[]
+    connectOrCreate?: GateMovementCreateOrConnectWithoutContainerInput | GateMovementCreateOrConnectWithoutContainerInput[]
+    createMany?: GateMovementCreateManyContainerInputEnvelope
+    connect?: GateMovementWhereUniqueInput | GateMovementWhereUniqueInput[]
   }
 
   export type EnumContainerTypeFieldUpdateOperationsInput = {
@@ -32300,6 +34010,20 @@ export namespace Prisma {
     deleteMany?: TransitScalarWhereInput | TransitScalarWhereInput[]
   }
 
+  export type GateMovementUpdateManyWithoutContainerNestedInput = {
+    create?: XOR<GateMovementCreateWithoutContainerInput, GateMovementUncheckedCreateWithoutContainerInput> | GateMovementCreateWithoutContainerInput[] | GateMovementUncheckedCreateWithoutContainerInput[]
+    connectOrCreate?: GateMovementCreateOrConnectWithoutContainerInput | GateMovementCreateOrConnectWithoutContainerInput[]
+    upsert?: GateMovementUpsertWithWhereUniqueWithoutContainerInput | GateMovementUpsertWithWhereUniqueWithoutContainerInput[]
+    createMany?: GateMovementCreateManyContainerInputEnvelope
+    set?: GateMovementWhereUniqueInput | GateMovementWhereUniqueInput[]
+    disconnect?: GateMovementWhereUniqueInput | GateMovementWhereUniqueInput[]
+    delete?: GateMovementWhereUniqueInput | GateMovementWhereUniqueInput[]
+    connect?: GateMovementWhereUniqueInput | GateMovementWhereUniqueInput[]
+    update?: GateMovementUpdateWithWhereUniqueWithoutContainerInput | GateMovementUpdateWithWhereUniqueWithoutContainerInput[]
+    updateMany?: GateMovementUpdateManyWithWhereWithoutContainerInput | GateMovementUpdateManyWithWhereWithoutContainerInput[]
+    deleteMany?: GateMovementScalarWhereInput | GateMovementScalarWhereInput[]
+  }
+
   export type DocumentUncheckedUpdateManyWithoutContainerNestedInput = {
     create?: XOR<DocumentCreateWithoutContainerInput, DocumentUncheckedCreateWithoutContainerInput> | DocumentCreateWithoutContainerInput[] | DocumentUncheckedCreateWithoutContainerInput[]
     connectOrCreate?: DocumentCreateOrConnectWithoutContainerInput | DocumentCreateOrConnectWithoutContainerInput[]
@@ -32326,6 +34050,20 @@ export namespace Prisma {
     update?: TransitUpdateWithWhereUniqueWithoutContainerInput | TransitUpdateWithWhereUniqueWithoutContainerInput[]
     updateMany?: TransitUpdateManyWithWhereWithoutContainerInput | TransitUpdateManyWithWhereWithoutContainerInput[]
     deleteMany?: TransitScalarWhereInput | TransitScalarWhereInput[]
+  }
+
+  export type GateMovementUncheckedUpdateManyWithoutContainerNestedInput = {
+    create?: XOR<GateMovementCreateWithoutContainerInput, GateMovementUncheckedCreateWithoutContainerInput> | GateMovementCreateWithoutContainerInput[] | GateMovementUncheckedCreateWithoutContainerInput[]
+    connectOrCreate?: GateMovementCreateOrConnectWithoutContainerInput | GateMovementCreateOrConnectWithoutContainerInput[]
+    upsert?: GateMovementUpsertWithWhereUniqueWithoutContainerInput | GateMovementUpsertWithWhereUniqueWithoutContainerInput[]
+    createMany?: GateMovementCreateManyContainerInputEnvelope
+    set?: GateMovementWhereUniqueInput | GateMovementWhereUniqueInput[]
+    disconnect?: GateMovementWhereUniqueInput | GateMovementWhereUniqueInput[]
+    delete?: GateMovementWhereUniqueInput | GateMovementWhereUniqueInput[]
+    connect?: GateMovementWhereUniqueInput | GateMovementWhereUniqueInput[]
+    update?: GateMovementUpdateWithWhereUniqueWithoutContainerInput | GateMovementUpdateWithWhereUniqueWithoutContainerInput[]
+    updateMany?: GateMovementUpdateManyWithWhereWithoutContainerInput | GateMovementUpdateManyWithWhereWithoutContainerInput[]
+    deleteMany?: GateMovementScalarWhereInput | GateMovementScalarWhereInput[]
   }
 
   export type InvoiceCreateNestedOneWithoutItemsInput = {
@@ -33154,6 +34892,30 @@ export namespace Prisma {
     update?: XOR<XOR<InvoiceItemUpdateToOneWithWhereWithoutPaymentsInput, InvoiceItemUpdateWithoutPaymentsInput>, InvoiceItemUncheckedUpdateWithoutPaymentsInput>
   }
 
+  export type ContainerCreateNestedOneWithoutGateMovementsInput = {
+    create?: XOR<ContainerCreateWithoutGateMovementsInput, ContainerUncheckedCreateWithoutGateMovementsInput>
+    connectOrCreate?: ContainerCreateOrConnectWithoutGateMovementsInput
+    connect?: ContainerWhereUniqueInput
+  }
+
+  export type EnumGateTypeFieldUpdateOperationsInput = {
+    set?: $Enums.GateType
+  }
+
+  export type EnumGateMovementStatusFieldUpdateOperationsInput = {
+    set?: $Enums.GateMovementStatus
+  }
+
+  export type ContainerUpdateOneWithoutGateMovementsNestedInput = {
+    create?: XOR<ContainerCreateWithoutGateMovementsInput, ContainerUncheckedCreateWithoutGateMovementsInput>
+    connectOrCreate?: ContainerCreateOrConnectWithoutGateMovementsInput
+    upsert?: ContainerUpsertWithoutGateMovementsInput
+    disconnect?: ContainerWhereInput | boolean
+    delete?: ContainerWhereInput | boolean
+    connect?: ContainerWhereUniqueInput
+    update?: XOR<XOR<ContainerUpdateToOneWithWhereWithoutGateMovementsInput, ContainerUpdateWithoutGateMovementsInput>, ContainerUncheckedUpdateWithoutGateMovementsInput>
+  }
+
   export type NestedStringFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel>
     in?: string[] | ListStringFieldRefInput<$PrismaModel>
@@ -33686,6 +35448,40 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedEnumPermissionFilter<$PrismaModel>
     _max?: NestedEnumPermissionFilter<$PrismaModel>
+  }
+
+  export type NestedEnumGateTypeFilter<$PrismaModel = never> = {
+    equals?: $Enums.GateType | EnumGateTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.GateType[] | ListEnumGateTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.GateType[] | ListEnumGateTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumGateTypeFilter<$PrismaModel> | $Enums.GateType
+  }
+
+  export type NestedEnumGateMovementStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.GateMovementStatus | EnumGateMovementStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.GateMovementStatus[] | ListEnumGateMovementStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.GateMovementStatus[] | ListEnumGateMovementStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumGateMovementStatusFilter<$PrismaModel> | $Enums.GateMovementStatus
+  }
+
+  export type NestedEnumGateTypeWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.GateType | EnumGateTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.GateType[] | ListEnumGateTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.GateType[] | ListEnumGateTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumGateTypeWithAggregatesFilter<$PrismaModel> | $Enums.GateType
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumGateTypeFilter<$PrismaModel>
+    _max?: NestedEnumGateTypeFilter<$PrismaModel>
+  }
+
+  export type NestedEnumGateMovementStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.GateMovementStatus | EnumGateMovementStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.GateMovementStatus[] | ListEnumGateMovementStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.GateMovementStatus[] | ListEnumGateMovementStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumGateMovementStatusWithAggregatesFilter<$PrismaModel> | $Enums.GateMovementStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumGateMovementStatusFilter<$PrismaModel>
+    _max?: NestedEnumGateMovementStatusFilter<$PrismaModel>
   }
 
   export type ShipmentCreateWithoutCreatedByInput = {
@@ -35355,6 +37151,7 @@ export namespace Prisma {
     packingList?: PackingListCreateNestedOneWithoutContainersInput
     documents?: DocumentCreateNestedManyWithoutContainerInput
     transits?: TransitCreateNestedManyWithoutContainerInput
+    gateMovements?: GateMovementCreateNestedManyWithoutContainerInput
   }
 
   export type ContainerUncheckedCreateWithoutShipmentInput = {
@@ -35382,6 +37179,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     documents?: DocumentUncheckedCreateNestedManyWithoutContainerInput
     transits?: TransitUncheckedCreateNestedManyWithoutContainerInput
+    gateMovements?: GateMovementUncheckedCreateNestedManyWithoutContainerInput
   }
 
   export type ContainerCreateOrConnectWithoutShipmentInput = {
@@ -36961,6 +38759,46 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type GateMovementCreateWithoutContainerInput = {
+    id?: string
+    containerNumber: string
+    yardStoreNumber?: string | null
+    truckFrontPlate: string
+    truckBackPlate: string
+    gateType: $Enums.GateType
+    status?: $Enums.GateMovementStatus
+    crossedAt?: Date | string | null
+    clearedAt?: Date | string | null
+    notes?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type GateMovementUncheckedCreateWithoutContainerInput = {
+    id?: string
+    containerNumber: string
+    yardStoreNumber?: string | null
+    truckFrontPlate: string
+    truckBackPlate: string
+    gateType: $Enums.GateType
+    status?: $Enums.GateMovementStatus
+    crossedAt?: Date | string | null
+    clearedAt?: Date | string | null
+    notes?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type GateMovementCreateOrConnectWithoutContainerInput = {
+    where: GateMovementWhereUniqueInput
+    create: XOR<GateMovementCreateWithoutContainerInput, GateMovementUncheckedCreateWithoutContainerInput>
+  }
+
+  export type GateMovementCreateManyContainerInputEnvelope = {
+    data: GateMovementCreateManyContainerInput | GateMovementCreateManyContainerInput[]
+    skipDuplicates?: boolean
+  }
+
   export type PackingListUpsertWithoutContainersInput = {
     update: XOR<PackingListUpdateWithoutContainersInput, PackingListUncheckedUpdateWithoutContainersInput>
     create: XOR<PackingListCreateWithoutContainersInput, PackingListUncheckedCreateWithoutContainersInput>
@@ -37115,6 +38953,41 @@ export namespace Prisma {
   export type TransitUpdateManyWithWhereWithoutContainerInput = {
     where: TransitScalarWhereInput
     data: XOR<TransitUpdateManyMutationInput, TransitUncheckedUpdateManyWithoutContainerInput>
+  }
+
+  export type GateMovementUpsertWithWhereUniqueWithoutContainerInput = {
+    where: GateMovementWhereUniqueInput
+    update: XOR<GateMovementUpdateWithoutContainerInput, GateMovementUncheckedUpdateWithoutContainerInput>
+    create: XOR<GateMovementCreateWithoutContainerInput, GateMovementUncheckedCreateWithoutContainerInput>
+  }
+
+  export type GateMovementUpdateWithWhereUniqueWithoutContainerInput = {
+    where: GateMovementWhereUniqueInput
+    data: XOR<GateMovementUpdateWithoutContainerInput, GateMovementUncheckedUpdateWithoutContainerInput>
+  }
+
+  export type GateMovementUpdateManyWithWhereWithoutContainerInput = {
+    where: GateMovementScalarWhereInput
+    data: XOR<GateMovementUpdateManyMutationInput, GateMovementUncheckedUpdateManyWithoutContainerInput>
+  }
+
+  export type GateMovementScalarWhereInput = {
+    AND?: GateMovementScalarWhereInput | GateMovementScalarWhereInput[]
+    OR?: GateMovementScalarWhereInput[]
+    NOT?: GateMovementScalarWhereInput | GateMovementScalarWhereInput[]
+    id?: StringFilter<"GateMovement"> | string
+    containerId?: StringNullableFilter<"GateMovement"> | string | null
+    containerNumber?: StringFilter<"GateMovement"> | string
+    yardStoreNumber?: StringNullableFilter<"GateMovement"> | string | null
+    truckFrontPlate?: StringFilter<"GateMovement"> | string
+    truckBackPlate?: StringFilter<"GateMovement"> | string
+    gateType?: EnumGateTypeFilter<"GateMovement"> | $Enums.GateType
+    status?: EnumGateMovementStatusFilter<"GateMovement"> | $Enums.GateMovementStatus
+    crossedAt?: DateTimeNullableFilter<"GateMovement"> | Date | string | null
+    clearedAt?: DateTimeNullableFilter<"GateMovement"> | Date | string | null
+    notes?: StringNullableFilter<"GateMovement"> | string | null
+    createdAt?: DateTimeFilter<"GateMovement"> | Date | string
+    updatedAt?: DateTimeFilter<"GateMovement"> | Date | string
   }
 
   export type InvoiceCreateWithoutItemsInput = {
@@ -37302,6 +39175,7 @@ export namespace Prisma {
     shipment: ShipmentCreateNestedOneWithoutContainersInput
     documents?: DocumentCreateNestedManyWithoutContainerInput
     transits?: TransitCreateNestedManyWithoutContainerInput
+    gateMovements?: GateMovementCreateNestedManyWithoutContainerInput
   }
 
   export type ContainerUncheckedCreateWithoutPackingListInput = {
@@ -37329,6 +39203,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     documents?: DocumentUncheckedCreateNestedManyWithoutContainerInput
     transits?: TransitUncheckedCreateNestedManyWithoutContainerInput
+    gateMovements?: GateMovementUncheckedCreateNestedManyWithoutContainerInput
   }
 
   export type ContainerCreateOrConnectWithoutPackingListInput = {
@@ -37808,6 +39683,7 @@ export namespace Prisma {
     packingList?: PackingListCreateNestedOneWithoutContainersInput
     shipment: ShipmentCreateNestedOneWithoutContainersInput
     documents?: DocumentCreateNestedManyWithoutContainerInput
+    gateMovements?: GateMovementCreateNestedManyWithoutContainerInput
   }
 
   export type ContainerUncheckedCreateWithoutTransitsInput = {
@@ -37835,6 +39711,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     documents?: DocumentUncheckedCreateNestedManyWithoutContainerInput
+    gateMovements?: GateMovementUncheckedCreateNestedManyWithoutContainerInput
   }
 
   export type ContainerCreateOrConnectWithoutTransitsInput = {
@@ -37967,6 +39844,7 @@ export namespace Prisma {
     packingList?: PackingListUpdateOneWithoutContainersNestedInput
     shipment?: ShipmentUpdateOneRequiredWithoutContainersNestedInput
     documents?: DocumentUpdateManyWithoutContainerNestedInput
+    gateMovements?: GateMovementUpdateManyWithoutContainerNestedInput
   }
 
   export type ContainerUncheckedUpdateWithoutTransitsInput = {
@@ -37994,6 +39872,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     documents?: DocumentUncheckedUpdateManyWithoutContainerNestedInput
+    gateMovements?: GateMovementUncheckedUpdateManyWithoutContainerNestedInput
   }
 
   export type ShipmentUpsertWithoutTransitsInput = {
@@ -39462,6 +41341,7 @@ export namespace Prisma {
     packingList?: PackingListCreateNestedOneWithoutContainersInput
     shipment: ShipmentCreateNestedOneWithoutContainersInput
     transits?: TransitCreateNestedManyWithoutContainerInput
+    gateMovements?: GateMovementCreateNestedManyWithoutContainerInput
   }
 
   export type ContainerUncheckedCreateWithoutDocumentsInput = {
@@ -39489,6 +41369,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     transits?: TransitUncheckedCreateNestedManyWithoutContainerInput
+    gateMovements?: GateMovementUncheckedCreateNestedManyWithoutContainerInput
   }
 
   export type ContainerCreateOrConnectWithoutDocumentsInput = {
@@ -40000,6 +41881,7 @@ export namespace Prisma {
     packingList?: PackingListUpdateOneWithoutContainersNestedInput
     shipment?: ShipmentUpdateOneRequiredWithoutContainersNestedInput
     transits?: TransitUpdateManyWithoutContainerNestedInput
+    gateMovements?: GateMovementUpdateManyWithoutContainerNestedInput
   }
 
   export type ContainerUncheckedUpdateWithoutDocumentsInput = {
@@ -40027,6 +41909,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     transits?: TransitUncheckedUpdateManyWithoutContainerNestedInput
+    gateMovements?: GateMovementUncheckedUpdateManyWithoutContainerNestedInput
   }
 
   export type InvoiceUpsertWithoutDocumentsInput = {
@@ -40553,6 +42436,134 @@ export namespace Prisma {
     remarks?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ContainerCreateWithoutGateMovementsInput = {
+    id?: string
+    containerNumber: string
+    sealNumber?: string | null
+    containerType: $Enums.ContainerType
+    containerSize: $Enums.ContainerSize
+    grossWeight?: Decimal | DecimalJsLike | number | string | null
+    netWeight?: Decimal | DecimalJsLike | number | string | null
+    tareWeight?: Decimal | DecimalJsLike | number | string | null
+    volume?: Decimal | DecimalJsLike | number | string | null
+    loadingLocation?: string | null
+    destination?: string | null
+    status?: $Enums.ContainerStatus
+    shippingLine?: string | null
+    bookingReference?: string | null
+    containerCondition?: string | null
+    terminalChargeStatus?: $Enums.TerminalChargeStatus
+    terminalChargeAmount?: Decimal | DecimalJsLike | number | string | null
+    terminalChargeCurrency?: $Enums.Currency | null
+    terminalChargePaidAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    packingList?: PackingListCreateNestedOneWithoutContainersInput
+    shipment: ShipmentCreateNestedOneWithoutContainersInput
+    documents?: DocumentCreateNestedManyWithoutContainerInput
+    transits?: TransitCreateNestedManyWithoutContainerInput
+  }
+
+  export type ContainerUncheckedCreateWithoutGateMovementsInput = {
+    id?: string
+    shipmentId: string
+    packingListId?: string | null
+    containerNumber: string
+    sealNumber?: string | null
+    containerType: $Enums.ContainerType
+    containerSize: $Enums.ContainerSize
+    grossWeight?: Decimal | DecimalJsLike | number | string | null
+    netWeight?: Decimal | DecimalJsLike | number | string | null
+    tareWeight?: Decimal | DecimalJsLike | number | string | null
+    volume?: Decimal | DecimalJsLike | number | string | null
+    loadingLocation?: string | null
+    destination?: string | null
+    status?: $Enums.ContainerStatus
+    shippingLine?: string | null
+    bookingReference?: string | null
+    containerCondition?: string | null
+    terminalChargeStatus?: $Enums.TerminalChargeStatus
+    terminalChargeAmount?: Decimal | DecimalJsLike | number | string | null
+    terminalChargeCurrency?: $Enums.Currency | null
+    terminalChargePaidAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    documents?: DocumentUncheckedCreateNestedManyWithoutContainerInput
+    transits?: TransitUncheckedCreateNestedManyWithoutContainerInput
+  }
+
+  export type ContainerCreateOrConnectWithoutGateMovementsInput = {
+    where: ContainerWhereUniqueInput
+    create: XOR<ContainerCreateWithoutGateMovementsInput, ContainerUncheckedCreateWithoutGateMovementsInput>
+  }
+
+  export type ContainerUpsertWithoutGateMovementsInput = {
+    update: XOR<ContainerUpdateWithoutGateMovementsInput, ContainerUncheckedUpdateWithoutGateMovementsInput>
+    create: XOR<ContainerCreateWithoutGateMovementsInput, ContainerUncheckedCreateWithoutGateMovementsInput>
+    where?: ContainerWhereInput
+  }
+
+  export type ContainerUpdateToOneWithWhereWithoutGateMovementsInput = {
+    where?: ContainerWhereInput
+    data: XOR<ContainerUpdateWithoutGateMovementsInput, ContainerUncheckedUpdateWithoutGateMovementsInput>
+  }
+
+  export type ContainerUpdateWithoutGateMovementsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    containerNumber?: StringFieldUpdateOperationsInput | string
+    sealNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    containerType?: EnumContainerTypeFieldUpdateOperationsInput | $Enums.ContainerType
+    containerSize?: EnumContainerSizeFieldUpdateOperationsInput | $Enums.ContainerSize
+    grossWeight?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    netWeight?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    tareWeight?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    volume?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    loadingLocation?: NullableStringFieldUpdateOperationsInput | string | null
+    destination?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumContainerStatusFieldUpdateOperationsInput | $Enums.ContainerStatus
+    shippingLine?: NullableStringFieldUpdateOperationsInput | string | null
+    bookingReference?: NullableStringFieldUpdateOperationsInput | string | null
+    containerCondition?: NullableStringFieldUpdateOperationsInput | string | null
+    terminalChargeStatus?: EnumTerminalChargeStatusFieldUpdateOperationsInput | $Enums.TerminalChargeStatus
+    terminalChargeAmount?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    terminalChargeCurrency?: NullableEnumCurrencyFieldUpdateOperationsInput | $Enums.Currency | null
+    terminalChargePaidAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    packingList?: PackingListUpdateOneWithoutContainersNestedInput
+    shipment?: ShipmentUpdateOneRequiredWithoutContainersNestedInput
+    documents?: DocumentUpdateManyWithoutContainerNestedInput
+    transits?: TransitUpdateManyWithoutContainerNestedInput
+  }
+
+  export type ContainerUncheckedUpdateWithoutGateMovementsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    shipmentId?: StringFieldUpdateOperationsInput | string
+    packingListId?: NullableStringFieldUpdateOperationsInput | string | null
+    containerNumber?: StringFieldUpdateOperationsInput | string
+    sealNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    containerType?: EnumContainerTypeFieldUpdateOperationsInput | $Enums.ContainerType
+    containerSize?: EnumContainerSizeFieldUpdateOperationsInput | $Enums.ContainerSize
+    grossWeight?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    netWeight?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    tareWeight?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    volume?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    loadingLocation?: NullableStringFieldUpdateOperationsInput | string | null
+    destination?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumContainerStatusFieldUpdateOperationsInput | $Enums.ContainerStatus
+    shippingLine?: NullableStringFieldUpdateOperationsInput | string | null
+    bookingReference?: NullableStringFieldUpdateOperationsInput | string | null
+    containerCondition?: NullableStringFieldUpdateOperationsInput | string | null
+    terminalChargeStatus?: EnumTerminalChargeStatusFieldUpdateOperationsInput | $Enums.TerminalChargeStatus
+    terminalChargeAmount?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    terminalChargeCurrency?: NullableEnumCurrencyFieldUpdateOperationsInput | $Enums.Currency | null
+    terminalChargePaidAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    documents?: DocumentUncheckedUpdateManyWithoutContainerNestedInput
+    transits?: TransitUncheckedUpdateManyWithoutContainerNestedInput
   }
 
   export type ShipmentCreateManyCreatedByInput = {
@@ -42335,6 +44346,7 @@ export namespace Prisma {
     packingList?: PackingListUpdateOneWithoutContainersNestedInput
     documents?: DocumentUpdateManyWithoutContainerNestedInput
     transits?: TransitUpdateManyWithoutContainerNestedInput
+    gateMovements?: GateMovementUpdateManyWithoutContainerNestedInput
   }
 
   export type ContainerUncheckedUpdateWithoutShipmentInput = {
@@ -42362,6 +44374,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     documents?: DocumentUncheckedUpdateManyWithoutContainerNestedInput
     transits?: TransitUncheckedUpdateManyWithoutContainerNestedInput
+    gateMovements?: GateMovementUncheckedUpdateManyWithoutContainerNestedInput
   }
 
   export type ContainerUncheckedUpdateManyWithoutShipmentInput = {
@@ -42835,6 +44848,21 @@ export namespace Prisma {
     updatedAt?: Date | string
   }
 
+  export type GateMovementCreateManyContainerInput = {
+    id?: string
+    containerNumber: string
+    yardStoreNumber?: string | null
+    truckFrontPlate: string
+    truckBackPlate: string
+    gateType: $Enums.GateType
+    status?: $Enums.GateMovementStatus
+    crossedAt?: Date | string | null
+    clearedAt?: Date | string | null
+    notes?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
   export type DocumentUpdateWithoutContainerInput = {
     id?: StringFieldUpdateOperationsInput | string
     type?: EnumDocumentTypeFieldUpdateOperationsInput | $Enums.DocumentType
@@ -42959,6 +44987,51 @@ export namespace Prisma {
     description?: NullableStringFieldUpdateOperationsInput | string | null
     unitPrice?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
     totalPrice?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type GateMovementUpdateWithoutContainerInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    containerNumber?: StringFieldUpdateOperationsInput | string
+    yardStoreNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    truckFrontPlate?: StringFieldUpdateOperationsInput | string
+    truckBackPlate?: StringFieldUpdateOperationsInput | string
+    gateType?: EnumGateTypeFieldUpdateOperationsInput | $Enums.GateType
+    status?: EnumGateMovementStatusFieldUpdateOperationsInput | $Enums.GateMovementStatus
+    crossedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    clearedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type GateMovementUncheckedUpdateWithoutContainerInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    containerNumber?: StringFieldUpdateOperationsInput | string
+    yardStoreNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    truckFrontPlate?: StringFieldUpdateOperationsInput | string
+    truckBackPlate?: StringFieldUpdateOperationsInput | string
+    gateType?: EnumGateTypeFieldUpdateOperationsInput | $Enums.GateType
+    status?: EnumGateMovementStatusFieldUpdateOperationsInput | $Enums.GateMovementStatus
+    crossedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    clearedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type GateMovementUncheckedUpdateManyWithoutContainerInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    containerNumber?: StringFieldUpdateOperationsInput | string
+    yardStoreNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    truckFrontPlate?: StringFieldUpdateOperationsInput | string
+    truckBackPlate?: StringFieldUpdateOperationsInput | string
+    gateType?: EnumGateTypeFieldUpdateOperationsInput | $Enums.GateType
+    status?: EnumGateMovementStatusFieldUpdateOperationsInput | $Enums.GateMovementStatus
+    crossedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    clearedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -43099,6 +45172,7 @@ export namespace Prisma {
     shipment?: ShipmentUpdateOneRequiredWithoutContainersNestedInput
     documents?: DocumentUpdateManyWithoutContainerNestedInput
     transits?: TransitUpdateManyWithoutContainerNestedInput
+    gateMovements?: GateMovementUpdateManyWithoutContainerNestedInput
   }
 
   export type ContainerUncheckedUpdateWithoutPackingListInput = {
@@ -43126,6 +45200,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     documents?: DocumentUncheckedUpdateManyWithoutContainerNestedInput
     transits?: TransitUncheckedUpdateManyWithoutContainerNestedInput
+    gateMovements?: GateMovementUncheckedUpdateManyWithoutContainerNestedInput
   }
 
   export type ContainerUncheckedUpdateManyWithoutPackingListInput = {

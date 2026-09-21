@@ -438,6 +438,22 @@ exports.Prisma.InvoicePaymentScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
+exports.Prisma.GateMovementScalarFieldEnum = {
+  id: 'id',
+  containerId: 'containerId',
+  containerNumber: 'containerNumber',
+  yardStoreNumber: 'yardStoreNumber',
+  truckFrontPlate: 'truckFrontPlate',
+  truckBackPlate: 'truckBackPlate',
+  gateType: 'gateType',
+  status: 'status',
+  crossedAt: 'crossedAt',
+  clearedAt: 'clearedAt',
+  notes: 'notes',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -631,7 +647,23 @@ exports.Permission = exports.$Enums.Permission = {
   CREATE_USER: 'CREATE_USER',
   EDIT_USER: 'EDIT_USER',
   DELETE_USER: 'DELETE_USER',
-  MANAGE_PERMISSIONS: 'MANAGE_PERMISSIONS'
+  MANAGE_PERMISSIONS: 'MANAGE_PERMISSIONS',
+  VIEW_GATES: 'VIEW_GATES',
+  CREATE_GATE: 'CREATE_GATE',
+  EDIT_GATE: 'EDIT_GATE',
+  DELETE_GATE: 'DELETE_GATE'
+};
+
+exports.GateType = exports.$Enums.GateType = {
+  TERMINAL_GATE: 'TERMINAL_GATE',
+  ECOWAS_GATE: 'ECOWAS_GATE'
+};
+
+exports.GateMovementStatus = exports.$Enums.GateMovementStatus = {
+  PENDING: 'PENDING',
+  CLEARED: 'CLEARED',
+  CROSSED: 'CROSSED',
+  CANCELLED: 'CANCELLED'
 };
 
 exports.Prisma.ModelName = {
@@ -650,7 +682,8 @@ exports.Prisma.ModelName = {
   Client: 'Client',
   Document: 'Document',
   UserPermission: 'UserPermission',
-  InvoicePayment: 'InvoicePayment'
+  InvoicePayment: 'InvoicePayment',
+  GateMovement: 'GateMovement'
 };
 
 /**

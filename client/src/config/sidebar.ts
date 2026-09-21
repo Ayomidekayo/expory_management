@@ -11,6 +11,7 @@ import {
   FolderOpen,
   Settings,
   Building2,
+  DoorOpen,
 } from "lucide-react";
 
 export interface SidebarItem {
@@ -43,7 +44,6 @@ export const sidebarItems: SidebarItem[] = [
     permission: "VIEW_CLIENTS",
     section: "Master Data",
   },
-
   {
     title: "Exporters",
     path: "/exporters",
@@ -51,7 +51,6 @@ export const sidebarItems: SidebarItem[] = [
     permission: "VIEW_EXPORTERS",
     section: "Master Data",
   },
-
   {
     title: "Consignees",
     path: "/consignees",
@@ -70,7 +69,6 @@ export const sidebarItems: SidebarItem[] = [
     permission: "VIEW_ALLOCATIONS",
     section: "Operations",
   },
-
   {
     title: "Shipments",
     path: "/shipments",
@@ -78,7 +76,6 @@ export const sidebarItems: SidebarItem[] = [
     permission: "VIEW_SHIPMENTS",
     section: "Operations",
   },
-
   {
     title: "Containers",
     path: "/containers",
@@ -86,7 +83,13 @@ export const sidebarItems: SidebarItem[] = [
     permission: "VIEW_CONTAINERS",
     section: "Operations",
   },
-
+  {
+    title: "Gates",
+    path: "/gates",
+    icon: DoorOpen,
+    permission: "VIEW_GATES",
+    section: "Operations",
+  },
   {
     title: "Transits",
     path: "/transits",
@@ -105,7 +108,6 @@ export const sidebarItems: SidebarItem[] = [
     permission: "VIEW_INVOICES",
     section: "Documentation",
   },
-
   {
     title: "Packing Lists",
     path: "/packing-lists",
@@ -113,7 +115,6 @@ export const sidebarItems: SidebarItem[] = [
     permission: "VIEW_PACKING_LISTS",
     section: "Documentation",
   },
-
   {
     title: "Documents",
     path: "/documents",
@@ -132,7 +133,6 @@ export const sidebarItems: SidebarItem[] = [
     permission: "VIEW_USERS",
     section: "Administration",
   },
-
   {
     title: "Settings",
     path: "/settings",

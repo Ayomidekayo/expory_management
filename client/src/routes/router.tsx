@@ -61,6 +61,8 @@ import EditClientPage from "../pages/client/EditClientPage";
 import { DashboardPage } from "../pages/dashboard/Dashboard";
 import ProfilePage from "../pages/settings/ProfilePage";
 import UsersPage from "../pages/user/UsersPage";
+import GatesPage from "../pages/gates/GatesPage";
+import CreateGateMovementPage from "../pages/gates/CreateGateMovementPage";
 
 export const router = createBrowserRouter([
   {
@@ -426,7 +428,26 @@ export const router = createBrowserRouter([
               </PermissionRoute>
             ),
           },
+          // ================================
+// GATES
+// ================================
 
+{
+  path: "/gates",
+  element: (
+    <PermissionRoute permission="VIEW_GATES">
+      <GatesPage />
+    </PermissionRoute>
+  ),
+},
+{
+  path: "/gates/create",
+  element: (
+    <PermissionRoute permission="CREATE_GATE">
+      <CreateGateMovementPage />
+    </PermissionRoute>
+  ),
+},
           // ================================
           // TRANSITS
           // ================================
