@@ -61,7 +61,6 @@ export function useUpdateInvoicePayment() {
   return useMutation({
     mutationFn: ({
       id,
-      invoiceId,
       data,
     }: {
       id: string;
@@ -101,7 +100,6 @@ export function useDeleteInvoicePayment() {
   return useMutation({
     mutationFn: ({
       id,
-      invoiceId,
     }: {
       id: string;
       invoiceId: string;

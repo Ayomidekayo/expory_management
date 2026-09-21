@@ -1,6 +1,5 @@
 import {
   useEffect,
-  useMemo,
   useState,
 } from "react";
 
@@ -56,9 +55,7 @@ export default function RecordPaymentDialog({
   const [notes, setNotes] =
     useState("");
 
-  const outstandingBalance = useMemo(() => {
-    return Number(invoice.totalAmount) || 0;
-  }, [invoice.totalAmount]);
+ 
 
   useEffect(() => {
     if (items.length === 0) {

@@ -12,7 +12,6 @@ import {
   getGateStatistics,
   updateGateMovement,
   updateGateMovementStatus,
-  type CreateGateMovementDto,
   type GateMovementFilters,
   type GateMovementStatus,
   type UpdateGateMovementDto,
