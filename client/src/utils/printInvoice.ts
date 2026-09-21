@@ -21,7 +21,7 @@ type InvoiceItemForPdf = {
   unit?: string | null;
   unitPrice?: number | string | null;
   total?: number | string | null;
-  remarks?: string | null;
+ 
 };
 
 type InvoicePaymentForPdf = {
@@ -1437,144 +1437,6 @@ export function printInvoice(
   }
 
   /*
-  =========================================================
-  ITEM LOGISTICS DETAILS
-  =========================================================
-  */
-
-  if (items.length > 0) {
-    itemsY += 8;
-
-    itemsY = ensureSpace(
-      40,
-      itemsY
-    );
-
-    drawSectionTitle(
-      "Item Logistics & Remarks",
-      MARGIN,
-      itemsY
-    );
-
-    itemsY += 10;
-
-    autoTable(doc, {
-      startY: itemsY,
-
-      margin: {
-        left: MARGIN,
-        right: MARGIN,
-        bottom: 25,
-      },
-
-      head: [
-        [
-          "#",
-          "Description",
-          "Packages",
-          "Gross Wt.",
-          "Net Wt.",
-          "Remarks",
-        ],
-      ],
-
-      body: items.map(
-        (item, index) => [
-          String(index + 1),
-
-          item.description ?? "-",
-
-          item.packages != null
-            ? String(
-                item.packages
-              )
-            : "-",
-
-          item.grossWeight !=
-          null
-            ? formatNumber(
-                item.grossWeight
-              )
-            : "-",
-
-          item.netWeight != null
-            ? formatNumber(
-                item.netWeight
-              )
-            : "-",
-
-          item.remarks ?? "-",
-        ]
-      ),
-
-      theme: "grid",
-
-      styles: {
-        font: "helvetica",
-        fontSize: 7,
-        cellPadding: 2.5,
-        textColor: DARK,
-        lineColor: BORDER,
-        lineWidth: 0.2,
-        valign: "middle",
-      },
-
-      headStyles: {
-        fillColor: [
-          51,
-          65,
-          85,
-        ],
-        textColor: WHITE,
-        fontStyle: "bold",
-        fontSize: 7,
-      },
-
-      alternateRowStyles: {
-        fillColor: LIGHT_GRAY,
-      },
-
-      columnStyles: {
-        0: {
-          cellWidth: 8,
-          halign: "center",
-        },
-
-        1: {
-          cellWidth: 52,
-        },
-
-        2: {
-          cellWidth: 20,
-          halign: "center",
-        },
-
-        3: {
-          cellWidth: 25,
-          halign: "right",
-        },
-
-        4: {
-          cellWidth: 25,
-          halign: "right",
-        },
-
-        5: {
-          cellWidth: 45,
-        },
-      },
-    });
-
-    itemsY =
-      (
-        doc as jsPDF & {
-          lastAutoTable?: {
-            finalY: number;
-          };
-        }
-      ).lastAutoTable
-        ?.finalY ?? itemsY + 20;
-  }
 
   /*
   =========================================================
@@ -2363,71 +2225,7 @@ export function printInvoice(
         ?.finalY ?? paymentY + 20;
   }
 
-  /*
-  =========================================================
-  REMARKS
-  =========================================================
-  */
 
-  if (data.remarks) {
-    paymentY += 10;
-
-    paymentY = ensureSpace(
-      35,
-      paymentY
-    );
-
-    drawSectionTitle(
-      "Remarks",
-      MARGIN,
-      paymentY
-    );
-
-    paymentY += 11;
-
-    doc.setFillColor(
-      ...LIGHT_GRAY
-    );
-
-    doc.setDrawColor(
-      ...BORDER
-    );
-
-    doc.roundedRect(
-      MARGIN,
-      paymentY,
-      CONTENT_WIDTH,
-      25,
-      2,
-      2,
-      "FD"
-    );
-
-    doc.setTextColor(
-      ...DARK
-    );
-
-    doc.setFont(
-      "helvetica",
-      "normal"
-    );
-
-    doc.setFontSize(8);
-
-    const remarkLines =
-      doc.splitTextToSize(
-        String(data.remarks),
-        CONTENT_WIDTH - 10
-      );
-
-    doc.text(
-      remarkLines.slice(0, 5),
-      MARGIN + 5,
-      paymentY + 8
-    );
-
-    paymentY += 32;
-  }
 
   /*
   =========================================================
