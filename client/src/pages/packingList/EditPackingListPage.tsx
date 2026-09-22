@@ -5,6 +5,7 @@ import PackingListForm from "../../components/packing-list/PackingListForm";
 
 import { usePackingList } from "../../hooks/packingList/usePackingList";
 import { useUpdatePackingList } from "../../hooks/packingList/useUpdatePackingList";
+import { toInputDate } from "../../utils/date";
 
 export default function EditPackingListPage() {
   const { id } = useParams();
@@ -22,9 +23,7 @@ export default function EditPackingListPage() {
   if (isLoading) {
     return (
       <div className="flex h-[60vh] items-center justify-center">
-
         <Loader2 className="h-8 w-8 animate-spin" />
-
       </div>
     );
   }
@@ -32,9 +31,7 @@ export default function EditPackingListPage() {
   if (!data) {
     return (
       <div className="rounded-xl border bg-white p-10 text-center">
-
         Packing List not found.
-
       </div>
     );
   }
@@ -43,30 +40,22 @@ export default function EditPackingListPage() {
     <div className="space-y-6">
 
       <div>
-
         <h1 className="text-3xl font-bold">
-
           Edit Packing List
-
         </h1>
 
         <p className="text-muted-foreground">
-
           Update packing list information.
-
         </p>
-
       </div>
 
       <PackingListForm
-
         isEditing
-
         loading={updatePackingList.isPending}
 
         defaultValues={{
-
-          shipmentId: data.shipmentId,
+          shipmentId:
+            data.shipmentId,
 
           packingDate:
             data.packingDate.slice(0, 10),
@@ -91,6 +80,10 @@ export default function EditPackingListPage() {
 
           items:
             data.items.map((item) => ({
+              // ✅ Added itemDate
+              itemDate: item.itemDate
+                ? toInputDate(item.itemDate)
+                : "",
 
               description:
                 item.description,
@@ -109,25 +102,21 @@ export default function EditPackingListPage() {
 
               remarks:
                 item.remarks ?? "",
-
             })),
-
         }}
 
-  onSubmit={(values) => {
-
-  updatePackingList.mutate(
-    {
-      id: id!,
-      payload: values,
-    },
-    {
-      onSuccess: () =>
-        navigate(`/packing-lists/${id}`),
-    }
-  );
-}}
-
+        onSubmit={(values) => {
+          updatePackingList.mutate(
+            {
+              id: id!,
+              payload: values,
+            },
+            {
+              onSuccess: () =>
+                navigate(`/packing-lists/${id}`),
+            }
+          );
+        }}
       />
 
     </div>
