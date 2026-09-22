@@ -548,112 +548,102 @@ export function printPackingList(
     itemsStartY
   );
 
-  autoTable(doc, {
-    startY: itemsStartY + 11,
+ autoTable(doc, {
+  startY: itemsStartY + 11,
 
-    margin: {
-      left: MARGIN,
-      right: MARGIN,
-    },
+  margin: {
+    left: MARGIN,
+    right: MARGIN,
+  },
 
-    head: [
-      [
-        "Description",
-        "Package",
-        "Packages",
-        "Gross Weight",
-        "Net Weight",
-      ],
+  head: [
+    [
+      "Description",
+      "Package",
+      "Packages",
+      "Net Weight",
+      "Remarks",
     ],
+  ],
 
-    body: (
-      packingList.items ?? []
-    ).map((item) => [
-      item.description ?? "-",
-      item.packageType ?? "-",
-      formatNumber(item.packages),
-      formatNumber(
-        item.grossWeight
-      ),
-      formatNumber(
-        item.netWeight
-      ),
-    ]),
+  body: (
+    packingList.items ?? []
+  ).map((item) => [
+    item.description ?? "-",
+    item.packageType ?? "-",
+    formatNumber(item.packages),
+    formatNumber(item.netWeight),
+    item.remarks ?? "-",
+  ]),
 
-    theme: "grid",
+  theme: "grid",
 
-    styles: {
-      font: "helvetica",
-      fontSize: 7.5,
-      cellPadding: 3,
-      textColor: DARK,
-      lineColor: BORDER,
-      lineWidth: 0.2,
-      valign: "middle",
+  styles: {
+    font: "helvetica",
+    fontSize: 7.5,
+    cellPadding: 3,
+    textColor: DARK,
+    lineColor: BORDER,
+    lineWidth: 0.2,
+    valign: "middle",
+  },
+
+  headStyles: {
+    fillColor: NAVY,
+    textColor: WHITE,
+    fontStyle: "bold",
+    fontSize: 7.5,
+    halign: "center",
+    valign: "middle",
+  },
+
+  alternateRowStyles: {
+    fillColor: [
+      248,
+      250,
+      252,
+    ],
+  },
+
+  columnStyles: {
+    0: {
+      cellWidth: 55,
+      halign: "left",
     },
 
-    headStyles: {
-      fillColor: NAVY,
-      textColor: WHITE,
-      fontStyle: "bold",
-      fontSize: 7.5,
+    1: {
+      cellWidth: 35,
       halign: "center",
-      valign: "middle",
     },
 
-    alternateRowStyles: {
-      fillColor: [
-        248,
-        250,
-        252,
-      ],
+    2: {
+      cellWidth: 22,
+      halign: "center",
     },
 
-    columnStyles: {
-      0: {
-        cellWidth: 65,
-        halign: "left",
-      },
-
-      1: {
-        cellWidth: 35,
-        halign: "center",
-      },
-
-      2: {
-        cellWidth: 25,
-        halign: "center",
-      },
-
-      3: {
-        cellWidth: 27,
-        halign: "right",
-      },
-
-      4: {
-        cellWidth: 28,
-        halign: "right",
-      },
+    3: {
+      cellWidth: 28,
+      halign: "right",
     },
 
-    didParseCell: (data) => {
-      if (
-        data.section ===
-          "body" &&
-        (
-          data.column.index ===
-            2 ||
-          data.column.index ===
-            3 ||
-          data.column.index ===
-            4
-        )
-      ) {
-        data.cell.styles.fontStyle =
-          "bold";
-      }
+    4: {
+      cellWidth: 45,
+      halign: "left",
     },
-  });
+  },
+
+  didParseCell: (data) => {
+    if (
+      data.section === "body" &&
+      (
+        data.column.index === 2 ||
+        data.column.index === 3
+      )
+    ) {
+      data.cell.styles.fontStyle = "bold";
+    }
+  },
+});
 
   const lastAutoTable = (
     doc as jsPDF & {
