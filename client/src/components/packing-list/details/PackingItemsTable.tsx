@@ -2,6 +2,7 @@ import {
   Package,
   Weight,
   MessageSquare,
+  CalendarDays,
 } from "lucide-react";
 
 import {
@@ -25,6 +26,21 @@ export default function PackingItemsTable({
 }: Props) {
   const items = packingList.items ?? [];
 
+  const formatDate = (date?: string) => {
+    if (!date) return "-";
+
+    const parsedDate = new Date(date);
+
+    if (Number.isNaN(parsedDate.getTime())) {
+      return date;
+    }
+
+    return parsedDate.toLocaleDateString("en-GB", {
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
+    });
+  };
 
   return (
     <div className="overflow-hidden rounded-xl border bg-white shadow-sm">
@@ -61,6 +77,10 @@ export default function PackingItemsTable({
             <TableRow className="bg-slate-50">
               <TableHead className="whitespace-nowrap">
                 #
+              </TableHead>
+
+              <TableHead className="whitespace-nowrap">
+                Item Date
               </TableHead>
 
               <TableHead className="whitespace-nowrap">
@@ -103,16 +123,22 @@ export default function PackingItemsTable({
                     </Badge>
                   </TableCell>
 
+                  {/* ITEM DATE */}
+                  <TableCell>
+                    <div className="flex items-center gap-1.5 whitespace-nowrap">
+                      <CalendarDays className="h-3.5 w-3.5 text-muted-foreground" />
+
+                      <span>
+                        {formatDate(item.itemDate)}
+                      </span>
+                    </div>
+                  </TableCell>
+
                   {/* DESCRIPTION */}
                   <TableCell className="min-w-[220px]">
                     <div className="font-medium text-slate-900">
                       {item.description}
                     </div>
-
-                    {/* Useful for debugging */}
-                    {/* <div className="text-xs text-muted-foreground">
-                      ID: {item.id}
-                    </div> */}
                   </TableCell>
 
                   {/* PACKAGE TYPE */}
@@ -170,7 +196,7 @@ export default function PackingItemsTable({
             ) : (
               <TableRow>
                 <TableCell
-                  colSpan={7}
+                  colSpan={8}
                   className="h-32 text-center text-muted-foreground"
                 >
                   No packing list items found.

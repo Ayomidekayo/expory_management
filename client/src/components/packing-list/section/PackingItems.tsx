@@ -1,4 +1,11 @@
-import { Plus, Trash2, Package, Scale3D } from "lucide-react";
+import {
+  Plus,
+  Trash2,
+  Package,
+  Scale3D,
+  CalendarDays,
+} from "lucide-react";
+
 import {
   useFieldArray,
   type UseFormReturn,
@@ -50,11 +57,18 @@ export default function PackingItems({
 
   const addItem = () => {
     append({
+      itemDate: "",
+
       description: "",
+
       packageType: "",
+
       packages: 0,
+
       grossWeight: 0,
+
       netWeight: 0,
+
       remarks: "",
     } as CreatePackingListInput["items"][number]);
   };
@@ -119,33 +133,46 @@ export default function PackingItems({
           </div>
         ) : (
           <div className="overflow-x-auto rounded-lg border border-slate-200">
-            <Table>
+            <Table className="min-w-[1250px]">
               <TableHeader>
                 <TableRow className="bg-slate-50 hover:bg-slate-50">
+
+                  {/* ITEM DATE */}
+                  <TableHead className="min-w-[160px] font-semibold text-slate-600">
+                    Item Date
+                  </TableHead>
+
+                  {/* DESCRIPTION */}
                   <TableHead className="min-w-[220px] font-semibold text-slate-600">
                     Description
                   </TableHead>
 
+                  {/* PACKAGE TYPE */}
                   <TableHead className="min-w-[150px] font-semibold text-slate-600">
                     Package Type
                   </TableHead>
 
+                  {/* PACKAGES */}
                   <TableHead className="min-w-[110px] font-semibold text-slate-600">
                     Packages
                   </TableHead>
 
+                  {/* GROSS WEIGHT */}
                   <TableHead className="min-w-[150px] font-semibold text-slate-600">
                     Gross Weight
                   </TableHead>
 
+                  {/* NET WEIGHT */}
                   <TableHead className="min-w-[150px] font-semibold text-slate-600">
                     Net Weight
                   </TableHead>
 
+                  {/* REMARKS */}
                   <TableHead className="min-w-[180px] font-semibold text-slate-600">
                     Remarks
                   </TableHead>
 
+                  {/* DELETE */}
                   <TableHead className="w-[60px]" />
                 </TableRow>
               </TableHeader>
@@ -156,7 +183,48 @@ export default function PackingItems({
                     key={field.id}
                     className="border-slate-100 hover:bg-slate-50/50"
                   >
-                    {/* Description */}
+                    {/* =========================================
+                        ITEM DATE
+                    ========================================== */}
+
+                    <TableCell className="align-top">
+                      <FormField
+                        control={form.control}
+                        name={`items.${index}.itemDate`}
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormControl>
+                              <div className="relative">
+                                <CalendarDays className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+
+                                <Input
+                                  type="date"
+                                  {...field}
+                                  value={
+                                    typeof field.value === "string"
+                                      ? field.value.slice(0, 10)
+                                      : ""
+                                  }
+                                  onChange={(e) =>
+                                    field.onChange(
+                                      e.target.value
+                                    )
+                                  }
+                                  className="h-10 border-slate-200 pl-9 focus:border-emerald-500 focus:ring-emerald-500/20"
+                                />
+                              </div>
+                            </FormControl>
+
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </TableCell>
+
+                    {/* =========================================
+                        DESCRIPTION
+                    ========================================== */}
+
                     <TableCell className="align-top">
                       <FormField
                         control={form.control}
@@ -182,7 +250,10 @@ export default function PackingItems({
                       />
                     </TableCell>
 
-                    {/* Package Type */}
+                    {/* =========================================
+                        PACKAGE TYPE
+                    ========================================== */}
+
                     <TableCell className="align-top">
                       <FormField
                         control={form.control}
@@ -208,7 +279,10 @@ export default function PackingItems({
                       />
                     </TableCell>
 
-                    {/* Packages */}
+                    {/* =========================================
+                        PACKAGES
+                    ========================================== */}
+
                     <TableCell className="align-top">
                       <FormField
                         control={form.control}
@@ -242,7 +316,10 @@ export default function PackingItems({
                       />
                     </TableCell>
 
-                    {/* Gross Weight */}
+                    {/* =========================================
+                        GROSS WEIGHT
+                    ========================================== */}
+
                     <TableCell className="align-top">
                       <FormField
                         control={form.control}
@@ -282,7 +359,10 @@ export default function PackingItems({
                       />
                     </TableCell>
 
-                    {/* Net Weight */}
+                    {/* =========================================
+                        NET WEIGHT
+                    ========================================== */}
+
                     <TableCell className="align-top">
                       <FormField
                         control={form.control}
@@ -322,7 +402,10 @@ export default function PackingItems({
                       />
                     </TableCell>
 
-                    {/* Remarks */}
+                    {/* =========================================
+                        REMARKS
+                    ========================================== */}
+
                     <TableCell className="align-top">
                       <FormField
                         control={form.control}
@@ -348,7 +431,10 @@ export default function PackingItems({
                       />
                     </TableCell>
 
-                    {/* Delete */}
+                    {/* =========================================
+                        DELETE
+                    ========================================== */}
+
                     <TableCell className="align-top">
                       <Button
                         type="button"

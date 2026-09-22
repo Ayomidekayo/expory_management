@@ -15,86 +15,235 @@ class InvoiceRepository {
   =====================================
   */
 
- async create(
-  data: CreateInvoiceDto & {
-    invoiceNumber: string;
-  }
-) {
-  const items = data.items.map((item) => ({
-    ...item,
+  async create(
+    data: CreateInvoiceDto & {
+      invoiceNumber: string;
+    }
+  ) {
+    /*
+    =====================================
+    Prepare Invoice Items
+    =====================================
+    */
 
-    total:
-      Number(item.quantity) *
-      Number(item.unitPrice),
-  }));
-
-  const subtotal = items.reduce(
-    (sum, item) =>
-      sum + Number(item.total),
-    0
-  );
-
-  const totalAmount =
-    subtotal +
-    Number(data.freight);
-
-  return prisma.invoice.create({
-    data: {
-      shipmentId:
-        data.shipmentId,
-
-      // System-generated invoice number
-      invoiceNumber:
-        data.invoiceNumber,
-
-      // Client/vendor invoice number
-      externalInvoiceNumber:
-        data.externalInvoiceNumber || null,
-
-      invoiceDate: new Date(
-        data.invoiceDate
+    const items = data.items.map((item) => ({
+      itemDate: new Date(
+        item.itemDate
       ),
 
-      currency:
-        data.currency,
+      description:
+        item.description,
 
-      exchangeRate:
-        data.exchangeRate,
+      hsCode:
+        item.hsCode || undefined,
 
-      status:
-        data.status ?? "UNPAID",
+      packageType:
+        item.packageType || undefined,
 
-      paymentTerms:
-        data.paymentTerms,
+      packages:
+        item.packages,
 
-      incoterm:
-        data.incoterm,
+      grossWeight:
+        item.grossWeight,
 
-      commercialReference:
-        data.commercialReference,
+      netWeight:
+        item.netWeight,
 
-      transportUnits:
-        data.transportUnits,
+      quantity:
+        Number(item.quantity),
 
-      freight:
-        data.freight,
+      unit:
+        item.unit || undefined,
 
-      subtotal,
+      unitPrice:
+        Number(item.unitPrice),
 
-      totalAmount,
+      total:
+        Number(item.quantity) *
+        Number(item.unitPrice),
 
       remarks:
-        data.remarks,
+        item.remarks || undefined,
+    }));
 
-      items: {
-        create: items,
-      },
-    },
+    /*
+    =====================================
+    DEBUG INVOICE ITEMS
+    =====================================
+    */
 
-    include:
-      this.detailsInclude,
-  });
-}
+    console.log(
+      "\n========================================"
+    );
+
+    console.log(
+      "INVOICE ITEMS BEFORE DATABASE"
+    );
+
+    console.log(
+      "========================================"
+    );
+
+    console.table(
+      items.map((item) => ({
+        itemDate: item.itemDate,
+        description: item.description,
+        quantity: item.quantity,
+        unitPrice: item.unitPrice,
+        total: item.total,
+      }))
+    );
+
+    console.log(
+      "========================================\n"
+    );
+
+    /*
+    =====================================
+    Calculate Subtotal
+    =====================================
+    */
+
+    const subtotal = items.reduce(
+      (sum, item) =>
+        sum + Number(item.total),
+      0
+    );
+
+    /*
+    =====================================
+    Calculate Total Amount
+    =====================================
+    */
+
+    const totalAmount =
+      subtotal +
+      Number(data.freight);
+
+    /*
+    =====================================
+    Create Invoice
+    =====================================
+    */
+
+    const invoice =
+      await prisma.invoice.create({
+        data: {
+          shipmentId:
+            data.shipmentId,
+
+          // System-generated invoice number
+          invoiceNumber:
+            data.invoiceNumber,
+
+          // Client/vendor invoice number
+          externalInvoiceNumber:
+            data.externalInvoiceNumber ||
+            null,
+
+          invoiceDate: new Date(
+            data.invoiceDate
+          ),
+
+          currency:
+            data.currency,
+
+          exchangeRate:
+            data.exchangeRate,
+
+          status:
+            data.status ?? "UNPAID",
+
+          paymentTerms:
+            data.paymentTerms,
+
+          incoterm:
+            data.incoterm,
+
+          commercialReference:
+            data.commercialReference,
+
+          transportUnits:
+            data.transportUnits,
+
+          freight:
+            data.freight,
+
+          subtotal,
+
+          totalAmount,
+
+          remarks:
+            data.remarks,
+
+          /*
+          =====================================
+          Create Invoice Items
+          =====================================
+          */
+
+          items: {
+            create: items,
+          },
+        },
+
+        include:
+          this.detailsInclude,
+      });
+
+    /*
+    =====================================
+    DEBUG SAVED ITEMS
+    =====================================
+    */
+
+    console.log(
+      "\n========================================"
+    );
+
+    console.log(
+      "INVOICE CREATED SUCCESSFULLY"
+    );
+
+    console.log(
+      "INVOICE NUMBER:",
+      invoice.invoiceNumber
+    );
+
+    console.log(
+      "SAVED INVOICE ITEMS"
+    );
+
+    console.log(
+      "========================================"
+    );
+
+    console.table(
+      invoice.items.map((item) => ({
+        id: item.id,
+
+        itemDate: item.itemDate,
+
+        description:
+          item.description,
+
+        quantity:
+          item.quantity,
+
+        unitPrice:
+          item.unitPrice,
+
+        total:
+          item.total,
+      }))
+    );
+
+    console.log(
+      "========================================\n"
+    );
+
+    return invoice;
+  }
 
   /*
   =====================================
@@ -150,9 +299,16 @@ class InvoiceRepository {
     switch (datePreset) {
       case "TODAY":
         startDate = new Date(today);
-        startDate.setHours(0, 0, 0, 0);
+
+        startDate.setHours(
+          0,
+          0,
+          0,
+          0
+        );
 
         endDate = new Date(today);
+
         endDate.setHours(
           23,
           59,
@@ -177,7 +333,9 @@ class InvoiceRepository {
           0
         );
 
-        endDate = new Date(startDate);
+        endDate = new Date(
+          startDate
+        );
 
         endDate.setDate(
           startDate.getDate() + 6
@@ -256,87 +414,88 @@ class InvoiceRepository {
         break;
     }
 
-    const where: Prisma.InvoiceWhereInput = {
-      ...(status && {
-        status,
-      }),
+    const where: Prisma.InvoiceWhereInput =
+      {
+        ...(status && {
+          status,
+        }),
 
-      ...(currency && {
-        currency,
-      }),
+        ...(currency && {
+          currency,
+        }),
 
-      ...(shipmentId && {
-        shipmentId,
-      }),
+        ...(shipmentId && {
+          shipmentId,
+        }),
 
-      ...(search && {
-        OR: [
-          {
-            invoiceNumber: {
-              contains: search,
-              mode: "insensitive",
-            },
-          },
-
-          {
-            commercialReference: {
-              contains: search,
-              mode: "insensitive",
-            },
-          },
-
-          {
-            shipment: {
-              shipmentNumber: {
+        ...(search && {
+          OR: [
+            {
+              invoiceNumber: {
                 contains: search,
                 mode: "insensitive",
               },
             },
-          },
 
-          {
-            shipment: {
-              client: {
-                companyName: {
+            {
+              commercialReference: {
+                contains: search,
+                mode: "insensitive",
+              },
+            },
+
+            {
+              shipment: {
+                shipmentNumber: {
                   contains: search,
                   mode: "insensitive",
                 },
               },
             },
+
+            {
+              shipment: {
+                client: {
+                  companyName: {
+                    contains: search,
+                    mode: "insensitive",
+                  },
+                },
+              },
+            },
+          ],
+        }),
+
+        ...((fromDate ||
+          toDate ||
+          startDate) && {
+          invoiceDate: {
+            ...(fromDate
+              ? {
+                  gte: new Date(
+                    fromDate
+                  ),
+                }
+              : startDate
+              ? {
+                  gte: startDate,
+                }
+              : {}),
+
+            ...(toDate
+              ? {
+                  lte: new Date(
+                    toDate
+                  ),
+                }
+              : endDate
+              ? {
+                  lte: endDate,
+                }
+              : {}),
           },
-        ],
-      }),
-
-      ...((fromDate ||
-        toDate ||
-        startDate) && {
-        invoiceDate: {
-          ...(fromDate
-            ? {
-                gte: new Date(
-                  fromDate
-                ),
-              }
-            : startDate
-            ? {
-                gte: startDate,
-              }
-            : {}),
-
-          ...(toDate
-            ? {
-                lte: new Date(
-                  toDate
-                ),
-              }
-            : endDate
-            ? {
-                lte: endDate,
-              }
-            : {}),
-        },
-      }),
-    };
+        }),
+      };
 
     const [data, total] =
       await Promise.all([
@@ -368,7 +527,9 @@ class InvoiceRepository {
 
       pagination: {
         page,
+
         limit,
+
         total,
 
         totalPages:
@@ -398,31 +559,26 @@ class InvoiceRepository {
 
   /*
   =====================================
-  Find By Shipment
+  Find All Invoices By Shipment
   =====================================
   */
 
-/*
-=====================================
-Find All Invoices By Shipment
-=====================================
-*/
+  async findByShipmentId(
+    shipmentId: string
+  ) {
+    return prisma.invoice.findMany({
+      where: {
+        shipmentId,
+      },
 
-async findByShipmentId(
-  shipmentId: string
-) {
-  return prisma.invoice.findMany({
-    where: {
-      shipmentId,
-    },
+      include:
+        this.detailsInclude,
 
-    include: this.detailsInclude,
-
-    orderBy: {
-      createdAt: "asc",
-    },
-  });
-}
+      orderBy: {
+        createdAt: "asc",
+      },
+    });
+  }
 
   /*
   =====================================
@@ -430,215 +586,333 @@ async findByShipmentId(
   =====================================
   */
 
- async updateStatus(
-  id: string,
-  status: InvoiceStatus
-) {
-  return prisma.invoice.update({
-    where: {
-      id,
-    },
+  async updateStatus(
+    id: string,
+    status: InvoiceStatus
+  ) {
+    return prisma.invoice.update({
+      where: {
+        id,
+      },
 
-    data: {
-      status,
-    },
+      data: {
+        status,
+      },
 
-    include: this.detailsInclude,
-  });
-}
+      include:
+        this.detailsInclude,
+    });
+  }
+
   /*
   =====================================
-  Update
+  Update Invoice
   =====================================
   */
 
-/* =====================================
-   Update Invoice
-===================================== */
+  async update(
+    id: string,
+    data: UpdateInvoiceDto
+  ) {
+    const existingInvoice =
+      await this.findById(id);
 
-async update(
-  id: string,
-  data: UpdateInvoiceDto
-) {
-  const existingInvoice =
-    await this.findById(id);
-
-  if (!existingInvoice) {
-    throw new Error(
-      "Invoice not found."
-    );
-  }
-
-  /*
-   * =====================================
-   * Prepare invoice items
-   * =====================================
-   */
-
-  let items:
-    | {
-        description: string;
-        hsCode?: string;
-        packageType?: string;
-        packages?: number;
-        grossWeight?: number;
-        netWeight?: number;
-        quantity: number;
-        unit?: string;
-        unitPrice: number;
-        total: number;
-        remarks?: string;
-      }[]
-    | undefined;
-
-  let subtotal:
-    | number
-    | undefined;
-
-  let totalAmount:
-    | number
-    | undefined;
-
-  /*
-   * Only replace invoice items when
-   * items were included in the request.
-   */
-
-  if (data.items !== undefined) {
-    items = data.items.map((item) => ({
-      description:
-        item.description,
-
-      hsCode:
-        item.hsCode || undefined,
-
-      packageType:
-        item.packageType || undefined,
-
-      packages:
-        item.packages,
-
-      grossWeight:
-        item.grossWeight,
-
-      netWeight:
-        item.netWeight,
-
-      quantity:
-        Number(item.quantity),
-
-      unit:
-        item.unit || undefined,
-
-      unitPrice:
-        Number(item.unitPrice),
-
-      total:
-        Number(item.quantity) *
-        Number(item.unitPrice),
-
-      remarks:
-        item.remarks || undefined,
-    }));
-
-    /*
-     * Calculate subtotal from ALL items.
-     */
-
-    subtotal = items.reduce(
-      (sum, item) =>
-        sum + item.total,
-      0
-    );
-
-    /*
-     * Calculate grand total.
-     */
-
-    totalAmount =
-      subtotal +
-      Number(
-        data.freight ??
-          existingInvoice.freight
+    if (!existingInvoice) {
+      throw new Error(
+        "Invoice not found."
       );
-  }
+    }
 
-  /*
-   * =====================================
-   * Update invoice
-   * =====================================
-   */
+    /*
+    =====================================
+    Prepare Invoice Items
+    =====================================
+    */
 
-  return prisma.invoice.update({
-    where: {
-      id,
-    },
+    let items:
+      | {
+          itemDate: Date;
 
-    data: {
-      invoiceDate:
-        data.invoiceDate
-          ? new Date(
-              data.invoiceDate
-            )
-          : undefined,
+          description: string;
 
-      externalInvoiceNumber:
-        data.externalInvoiceNumber !==
-        undefined
-          ? data.externalInvoiceNumber ||
-            null
-          : undefined,
+          hsCode?: string;
 
-      currency:
-        data.currency,
+          packageType?: string;
 
-      exchangeRate:
-        data.exchangeRate,
+          packages?: number;
 
-      paymentTerms:
-        data.paymentTerms,
+          grossWeight?: number;
 
-      status:
-        data.status,
+          netWeight?: number;
 
-      incoterm:
-        data.incoterm,
+          quantity: number;
 
-      commercialReference:
-        data.commercialReference,
+          unit?: string;
 
-      transportUnits:
-        data.transportUnits,
+          unitPrice: number;
 
-      freight:
-        data.freight,
+          total: number;
 
-      remarks:
-        data.remarks,
+          remarks?: string;
+        }[]
+      | undefined;
+
+    let subtotal:
+      | number
+      | undefined;
+
+    let totalAmount:
+      | number
+      | undefined;
+
+    /*
+    =====================================
+    Only replace invoice items when
+    items were included in the request.
+    =====================================
+    */
+
+    if (data.items !== undefined) {
+      items = data.items.map(
+        (item) => ({
+          itemDate: new Date(
+            item.itemDate
+          ),
+
+          description:
+            item.description,
+
+          hsCode:
+            item.hsCode || undefined,
+
+          packageType:
+            item.packageType ||
+            undefined,
+
+          packages:
+            item.packages,
+
+          grossWeight:
+            item.grossWeight,
+
+          netWeight:
+            item.netWeight,
+
+          quantity:
+            Number(item.quantity),
+
+          unit:
+            item.unit || undefined,
+
+          unitPrice:
+            Number(item.unitPrice),
+
+          total:
+            Number(item.quantity) *
+            Number(item.unitPrice),
+
+          remarks:
+            item.remarks || undefined,
+        })
+      );
 
       /*
-       * =================================
-       * Replace ALL invoice items
-       * =================================
-       */
+      =====================================
+      DEBUG UPDATED ITEMS
+      =====================================
+      */
 
-      ...(items !== undefined && {
-        subtotal,
+      console.log(
+        "\n========================================"
+      );
 
-        totalAmount,
+      console.log(
+        "UPDATED INVOICE ITEMS BEFORE DATABASE"
+      );
 
-        items: {
-          deleteMany: {},
+      console.log(
+        "========================================"
+      );
 
-          create: items,
+      console.table(
+        items.map((item) => ({
+          itemDate:
+            item.itemDate,
+
+          description:
+            item.description,
+
+          quantity:
+            item.quantity,
+
+          unitPrice:
+            item.unitPrice,
+
+          total:
+            item.total,
+        }))
+      );
+
+      console.log(
+        "========================================\n"
+      );
+
+      /*
+      =====================================
+      Calculate Subtotal
+      =====================================
+      */
+
+      subtotal = items.reduce(
+        (sum, item) =>
+          sum + item.total,
+        0
+      );
+
+      /*
+      =====================================
+      Calculate Grand Total
+      =====================================
+      */
+
+      totalAmount =
+        subtotal +
+        Number(
+          data.freight ??
+            existingInvoice.freight
+        );
+    }
+
+    /*
+    =====================================
+    Update Invoice
+    =====================================
+    */
+
+    const updatedInvoice =
+      await prisma.invoice.update({
+        where: {
+          id,
         },
-      }),
-    },
 
-    include:
-      this.detailsInclude,
-  });
-}
+        data: {
+          invoiceDate:
+            data.invoiceDate
+              ? new Date(
+                  data.invoiceDate
+                )
+              : undefined,
+
+          externalInvoiceNumber:
+            data.externalInvoiceNumber !==
+            undefined
+              ? data.externalInvoiceNumber ||
+                null
+              : undefined,
+
+          currency:
+            data.currency,
+
+          exchangeRate:
+            data.exchangeRate,
+
+          paymentTerms:
+            data.paymentTerms,
+
+          status:
+            data.status,
+
+          incoterm:
+            data.incoterm,
+
+          commercialReference:
+            data.commercialReference,
+
+          transportUnits:
+            data.transportUnits,
+
+          freight:
+            data.freight,
+
+          remarks:
+            data.remarks,
+
+          /*
+          =====================================
+          Replace ALL invoice items
+          =====================================
+          */
+
+          ...(items !== undefined && {
+            subtotal,
+
+            totalAmount,
+
+            items: {
+              deleteMany: {},
+
+              create: items,
+            },
+          }),
+        },
+
+        include:
+          this.detailsInclude,
+      });
+
+    /*
+    =====================================
+    DEBUG SAVED UPDATED ITEMS
+    =====================================
+    */
+
+    if (updatedInvoice.items) {
+      console.log(
+        "\n========================================"
+      );
+
+      console.log(
+        "INVOICE UPDATED SUCCESSFULLY"
+      );
+
+      console.log(
+        "SAVED UPDATED ITEMS"
+      );
+
+      console.log(
+        "========================================"
+      );
+
+      console.table(
+        updatedInvoice.items.map(
+          (item) => ({
+            id: item.id,
+
+            itemDate:
+              item.itemDate,
+
+            description:
+              item.description,
+
+            quantity:
+              item.quantity,
+
+            unitPrice:
+              item.unitPrice,
+
+            total:
+              item.total,
+          })
+        )
+      );
+
+      console.log(
+        "========================================\n"
+      );
+    }
+
+    return updatedInvoice;
+  }
 
   /*
   =====================================
@@ -678,6 +952,7 @@ async update(
     _count: {
       select: {
         items: true,
+
         documents: true,
       },
     },
@@ -693,8 +968,11 @@ async update(
     shipment: {
       include: {
         client: true,
+
         exporter: true,
+
         consignee: true,
+
         allocation: true,
       },
     },
@@ -706,6 +984,7 @@ async update(
     _count: {
       select: {
         items: true,
+
         documents: true,
       },
     },

@@ -12540,6 +12540,7 @@ export namespace Prisma {
     unit: string | null
     unitPrice: Decimal | null
     total: Decimal | null
+    itemDate: Date | null
     remarks: string | null
     createdAt: Date | null
     updatedAt: Date | null
@@ -12558,6 +12559,7 @@ export namespace Prisma {
     unit: string | null
     unitPrice: Decimal | null
     total: Decimal | null
+    itemDate: Date | null
     remarks: string | null
     createdAt: Date | null
     updatedAt: Date | null
@@ -12576,6 +12578,7 @@ export namespace Prisma {
     unit: number
     unitPrice: number
     total: number
+    itemDate: number
     remarks: number
     createdAt: number
     updatedAt: number
@@ -12614,6 +12617,7 @@ export namespace Prisma {
     unit?: true
     unitPrice?: true
     total?: true
+    itemDate?: true
     remarks?: true
     createdAt?: true
     updatedAt?: true
@@ -12632,6 +12636,7 @@ export namespace Prisma {
     unit?: true
     unitPrice?: true
     total?: true
+    itemDate?: true
     remarks?: true
     createdAt?: true
     updatedAt?: true
@@ -12650,6 +12655,7 @@ export namespace Prisma {
     unit?: true
     unitPrice?: true
     total?: true
+    itemDate?: true
     remarks?: true
     createdAt?: true
     updatedAt?: true
@@ -12755,6 +12761,7 @@ export namespace Prisma {
     unit: string | null
     unitPrice: Decimal
     total: Decimal
+    itemDate: Date | null
     remarks: string | null
     createdAt: Date
     updatedAt: Date
@@ -12792,6 +12799,7 @@ export namespace Prisma {
     unit?: boolean
     unitPrice?: boolean
     total?: boolean
+    itemDate?: boolean
     remarks?: boolean
     createdAt?: boolean
     updatedAt?: boolean
@@ -12813,6 +12821,7 @@ export namespace Prisma {
     unit?: boolean
     unitPrice?: boolean
     total?: boolean
+    itemDate?: boolean
     remarks?: boolean
     createdAt?: boolean
     updatedAt?: boolean
@@ -12832,6 +12841,7 @@ export namespace Prisma {
     unit?: boolean
     unitPrice?: boolean
     total?: boolean
+    itemDate?: boolean
     remarks?: boolean
     createdAt?: boolean
     updatedAt?: boolean
@@ -12851,12 +12861,13 @@ export namespace Prisma {
     unit?: boolean
     unitPrice?: boolean
     total?: boolean
+    itemDate?: boolean
     remarks?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }
 
-  export type InvoiceItemOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "invoiceId" | "description" | "hsCode" | "packageType" | "packages" | "grossWeight" | "netWeight" | "quantity" | "unit" | "unitPrice" | "total" | "remarks" | "createdAt" | "updatedAt", ExtArgs["result"]["invoiceItem"]>
+  export type InvoiceItemOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "invoiceId" | "description" | "hsCode" | "packageType" | "packages" | "grossWeight" | "netWeight" | "quantity" | "unit" | "unitPrice" | "total" | "itemDate" | "remarks" | "createdAt" | "updatedAt", ExtArgs["result"]["invoiceItem"]>
   export type InvoiceItemInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     invoice?: boolean | InvoiceDefaultArgs<ExtArgs>
     payments?: boolean | InvoiceItem$paymentsArgs<ExtArgs>
@@ -12888,6 +12899,7 @@ export namespace Prisma {
       unit: string | null
       unitPrice: Prisma.Decimal
       total: Prisma.Decimal
+      itemDate: Date | null
       remarks: string | null
       createdAt: Date
       updatedAt: Date
@@ -13328,6 +13340,7 @@ export namespace Prisma {
     readonly unit: FieldRef<"InvoiceItem", 'String'>
     readonly unitPrice: FieldRef<"InvoiceItem", 'Decimal'>
     readonly total: FieldRef<"InvoiceItem", 'Decimal'>
+    readonly itemDate: FieldRef<"InvoiceItem", 'DateTime'>
     readonly remarks: FieldRef<"InvoiceItem", 'String'>
     readonly createdAt: FieldRef<"InvoiceItem", 'DateTime'>
     readonly updatedAt: FieldRef<"InvoiceItem", 'DateTime'>
@@ -15091,6 +15104,7 @@ export namespace Prisma {
     remarks: string | null
     createdAt: Date | null
     updatedAt: Date | null
+    itemDate: Date | null
   }
 
   export type PackingListItemMaxAggregateOutputType = {
@@ -15104,6 +15118,7 @@ export namespace Prisma {
     remarks: string | null
     createdAt: Date | null
     updatedAt: Date | null
+    itemDate: Date | null
   }
 
   export type PackingListItemCountAggregateOutputType = {
@@ -15117,6 +15132,7 @@ export namespace Prisma {
     remarks: number
     createdAt: number
     updatedAt: number
+    itemDate: number
     _all: number
   }
 
@@ -15144,6 +15160,7 @@ export namespace Prisma {
     remarks?: true
     createdAt?: true
     updatedAt?: true
+    itemDate?: true
   }
 
   export type PackingListItemMaxAggregateInputType = {
@@ -15157,6 +15174,7 @@ export namespace Prisma {
     remarks?: true
     createdAt?: true
     updatedAt?: true
+    itemDate?: true
   }
 
   export type PackingListItemCountAggregateInputType = {
@@ -15170,6 +15188,7 @@ export namespace Prisma {
     remarks?: true
     createdAt?: true
     updatedAt?: true
+    itemDate?: true
     _all?: true
   }
 
@@ -15270,6 +15289,7 @@ export namespace Prisma {
     remarks: string | null
     createdAt: Date
     updatedAt: Date
+    itemDate: Date | null
     _count: PackingListItemCountAggregateOutputType | null
     _avg: PackingListItemAvgAggregateOutputType | null
     _sum: PackingListItemSumAggregateOutputType | null
@@ -15302,6 +15322,7 @@ export namespace Prisma {
     remarks?: boolean
     createdAt?: boolean
     updatedAt?: boolean
+    itemDate?: boolean
     packingList?: boolean | PackingListDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["packingListItem"]>
 
@@ -15316,6 +15337,7 @@ export namespace Prisma {
     remarks?: boolean
     createdAt?: boolean
     updatedAt?: boolean
+    itemDate?: boolean
     packingList?: boolean | PackingListDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["packingListItem"]>
 
@@ -15330,6 +15352,7 @@ export namespace Prisma {
     remarks?: boolean
     createdAt?: boolean
     updatedAt?: boolean
+    itemDate?: boolean
     packingList?: boolean | PackingListDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["packingListItem"]>
 
@@ -15344,9 +15367,10 @@ export namespace Prisma {
     remarks?: boolean
     createdAt?: boolean
     updatedAt?: boolean
+    itemDate?: boolean
   }
 
-  export type PackingListItemOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "packingListId" | "description" | "packageType" | "packages" | "grossWeight" | "netWeight" | "remarks" | "createdAt" | "updatedAt", ExtArgs["result"]["packingListItem"]>
+  export type PackingListItemOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "packingListId" | "description" | "packageType" | "packages" | "grossWeight" | "netWeight" | "remarks" | "createdAt" | "updatedAt" | "itemDate", ExtArgs["result"]["packingListItem"]>
   export type PackingListItemInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     packingList?: boolean | PackingListDefaultArgs<ExtArgs>
   }
@@ -15373,6 +15397,7 @@ export namespace Prisma {
       remarks: string | null
       createdAt: Date
       updatedAt: Date
+      itemDate: Date | null
     }, ExtArgs["result"]["packingListItem"]>
     composites: {}
   }
@@ -15807,6 +15832,7 @@ export namespace Prisma {
     readonly remarks: FieldRef<"PackingListItem", 'String'>
     readonly createdAt: FieldRef<"PackingListItem", 'DateTime'>
     readonly updatedAt: FieldRef<"PackingListItem", 'DateTime'>
+    readonly itemDate: FieldRef<"PackingListItem", 'DateTime'>
   }
     
 
@@ -25847,6 +25873,7 @@ export namespace Prisma {
     unit: 'unit',
     unitPrice: 'unitPrice',
     total: 'total',
+    itemDate: 'itemDate',
     remarks: 'remarks',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt'
@@ -25883,7 +25910,8 @@ export namespace Prisma {
     netWeight: 'netWeight',
     remarks: 'remarks',
     createdAt: 'createdAt',
-    updatedAt: 'updatedAt'
+    updatedAt: 'updatedAt',
+    itemDate: 'itemDate'
   };
 
   export type PackingListItemScalarFieldEnum = (typeof PackingListItemScalarFieldEnum)[keyof typeof PackingListItemScalarFieldEnum]
@@ -27308,6 +27336,7 @@ export namespace Prisma {
     unit?: StringNullableFilter<"InvoiceItem"> | string | null
     unitPrice?: DecimalFilter<"InvoiceItem"> | Decimal | DecimalJsLike | number | string
     total?: DecimalFilter<"InvoiceItem"> | Decimal | DecimalJsLike | number | string
+    itemDate?: DateTimeNullableFilter<"InvoiceItem"> | Date | string | null
     remarks?: StringNullableFilter<"InvoiceItem"> | string | null
     createdAt?: DateTimeFilter<"InvoiceItem"> | Date | string
     updatedAt?: DateTimeFilter<"InvoiceItem"> | Date | string
@@ -27328,6 +27357,7 @@ export namespace Prisma {
     unit?: SortOrderInput | SortOrder
     unitPrice?: SortOrder
     total?: SortOrder
+    itemDate?: SortOrderInput | SortOrder
     remarks?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -27351,6 +27381,7 @@ export namespace Prisma {
     unit?: StringNullableFilter<"InvoiceItem"> | string | null
     unitPrice?: DecimalFilter<"InvoiceItem"> | Decimal | DecimalJsLike | number | string
     total?: DecimalFilter<"InvoiceItem"> | Decimal | DecimalJsLike | number | string
+    itemDate?: DateTimeNullableFilter<"InvoiceItem"> | Date | string | null
     remarks?: StringNullableFilter<"InvoiceItem"> | string | null
     createdAt?: DateTimeFilter<"InvoiceItem"> | Date | string
     updatedAt?: DateTimeFilter<"InvoiceItem"> | Date | string
@@ -27371,6 +27402,7 @@ export namespace Prisma {
     unit?: SortOrderInput | SortOrder
     unitPrice?: SortOrder
     total?: SortOrder
+    itemDate?: SortOrderInput | SortOrder
     remarks?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -27397,6 +27429,7 @@ export namespace Prisma {
     unit?: StringNullableWithAggregatesFilter<"InvoiceItem"> | string | null
     unitPrice?: DecimalWithAggregatesFilter<"InvoiceItem"> | Decimal | DecimalJsLike | number | string
     total?: DecimalWithAggregatesFilter<"InvoiceItem"> | Decimal | DecimalJsLike | number | string
+    itemDate?: DateTimeNullableWithAggregatesFilter<"InvoiceItem"> | Date | string | null
     remarks?: StringNullableWithAggregatesFilter<"InvoiceItem"> | string | null
     createdAt?: DateTimeWithAggregatesFilter<"InvoiceItem"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"InvoiceItem"> | Date | string
@@ -27517,6 +27550,7 @@ export namespace Prisma {
     remarks?: StringNullableFilter<"PackingListItem"> | string | null
     createdAt?: DateTimeFilter<"PackingListItem"> | Date | string
     updatedAt?: DateTimeFilter<"PackingListItem"> | Date | string
+    itemDate?: DateTimeNullableFilter<"PackingListItem"> | Date | string | null
     packingList?: XOR<PackingListScalarRelationFilter, PackingListWhereInput>
   }
 
@@ -27531,6 +27565,7 @@ export namespace Prisma {
     remarks?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    itemDate?: SortOrderInput | SortOrder
     packingList?: PackingListOrderByWithRelationInput
   }
 
@@ -27548,6 +27583,7 @@ export namespace Prisma {
     remarks?: StringNullableFilter<"PackingListItem"> | string | null
     createdAt?: DateTimeFilter<"PackingListItem"> | Date | string
     updatedAt?: DateTimeFilter<"PackingListItem"> | Date | string
+    itemDate?: DateTimeNullableFilter<"PackingListItem"> | Date | string | null
     packingList?: XOR<PackingListScalarRelationFilter, PackingListWhereInput>
   }, "id">
 
@@ -27562,6 +27598,7 @@ export namespace Prisma {
     remarks?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    itemDate?: SortOrderInput | SortOrder
     _count?: PackingListItemCountOrderByAggregateInput
     _avg?: PackingListItemAvgOrderByAggregateInput
     _max?: PackingListItemMaxOrderByAggregateInput
@@ -27583,6 +27620,7 @@ export namespace Prisma {
     remarks?: StringNullableWithAggregatesFilter<"PackingListItem"> | string | null
     createdAt?: DateTimeWithAggregatesFilter<"PackingListItem"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"PackingListItem"> | Date | string
+    itemDate?: DateTimeNullableWithAggregatesFilter<"PackingListItem"> | Date | string | null
   }
 
   export type TransitWhereInput = {
@@ -29568,6 +29606,7 @@ export namespace Prisma {
     unit?: string | null
     unitPrice: Decimal | DecimalJsLike | number | string
     total: Decimal | DecimalJsLike | number | string
+    itemDate?: Date | string | null
     remarks?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -29588,6 +29627,7 @@ export namespace Prisma {
     unit?: string | null
     unitPrice: Decimal | DecimalJsLike | number | string
     total: Decimal | DecimalJsLike | number | string
+    itemDate?: Date | string | null
     remarks?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -29606,6 +29646,7 @@ export namespace Prisma {
     unit?: NullableStringFieldUpdateOperationsInput | string | null
     unitPrice?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     total?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    itemDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     remarks?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -29626,6 +29667,7 @@ export namespace Prisma {
     unit?: NullableStringFieldUpdateOperationsInput | string | null
     unitPrice?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     total?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    itemDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     remarks?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -29645,6 +29687,7 @@ export namespace Prisma {
     unit?: string | null
     unitPrice: Decimal | DecimalJsLike | number | string
     total: Decimal | DecimalJsLike | number | string
+    itemDate?: Date | string | null
     remarks?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -29662,6 +29705,7 @@ export namespace Prisma {
     unit?: NullableStringFieldUpdateOperationsInput | string | null
     unitPrice?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     total?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    itemDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     remarks?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -29680,6 +29724,7 @@ export namespace Prisma {
     unit?: NullableStringFieldUpdateOperationsInput | string | null
     unitPrice?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     total?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    itemDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     remarks?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -29811,6 +29856,7 @@ export namespace Prisma {
     remarks?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
+    itemDate?: Date | string | null
     packingList: PackingListCreateNestedOneWithoutItemsInput
   }
 
@@ -29825,6 +29871,7 @@ export namespace Prisma {
     remarks?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
+    itemDate?: Date | string | null
   }
 
   export type PackingListItemUpdateInput = {
@@ -29837,6 +29884,7 @@ export namespace Prisma {
     remarks?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    itemDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     packingList?: PackingListUpdateOneRequiredWithoutItemsNestedInput
   }
 
@@ -29851,6 +29899,7 @@ export namespace Prisma {
     remarks?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    itemDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
   export type PackingListItemCreateManyInput = {
@@ -29864,6 +29913,7 @@ export namespace Prisma {
     remarks?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
+    itemDate?: Date | string | null
   }
 
   export type PackingListItemUpdateManyMutationInput = {
@@ -29876,6 +29926,7 @@ export namespace Prisma {
     remarks?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    itemDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
   export type PackingListItemUncheckedUpdateManyInput = {
@@ -29889,6 +29940,7 @@ export namespace Prisma {
     remarks?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    itemDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
   export type TransitCreateInput = {
@@ -32002,6 +32054,7 @@ export namespace Prisma {
     unit?: SortOrder
     unitPrice?: SortOrder
     total?: SortOrder
+    itemDate?: SortOrder
     remarks?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -32029,6 +32082,7 @@ export namespace Prisma {
     unit?: SortOrder
     unitPrice?: SortOrder
     total?: SortOrder
+    itemDate?: SortOrder
     remarks?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -32047,6 +32101,7 @@ export namespace Prisma {
     unit?: SortOrder
     unitPrice?: SortOrder
     total?: SortOrder
+    itemDate?: SortOrder
     remarks?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -32144,6 +32199,7 @@ export namespace Prisma {
     remarks?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    itemDate?: SortOrder
   }
 
   export type PackingListItemAvgOrderByAggregateInput = {
@@ -32163,6 +32219,7 @@ export namespace Prisma {
     remarks?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    itemDate?: SortOrder
   }
 
   export type PackingListItemMinOrderByAggregateInput = {
@@ -32176,6 +32233,7 @@ export namespace Prisma {
     remarks?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    itemDate?: SortOrder
   }
 
   export type PackingListItemSumOrderByAggregateInput = {
@@ -38342,6 +38400,7 @@ export namespace Prisma {
     unit?: string | null
     unitPrice: Decimal | DecimalJsLike | number | string
     total: Decimal | DecimalJsLike | number | string
+    itemDate?: Date | string | null
     remarks?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -38360,6 +38419,7 @@ export namespace Prisma {
     unit?: string | null
     unitPrice: Decimal | DecimalJsLike | number | string
     total: Decimal | DecimalJsLike | number | string
+    itemDate?: Date | string | null
     remarks?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -38536,6 +38596,7 @@ export namespace Prisma {
     unit?: StringNullableFilter<"InvoiceItem"> | string | null
     unitPrice?: DecimalFilter<"InvoiceItem"> | Decimal | DecimalJsLike | number | string
     total?: DecimalFilter<"InvoiceItem"> | Decimal | DecimalJsLike | number | string
+    itemDate?: DateTimeNullableFilter<"InvoiceItem"> | Date | string | null
     remarks?: StringNullableFilter<"InvoiceItem"> | string | null
     createdAt?: DateTimeFilter<"InvoiceItem"> | Date | string
     updatedAt?: DateTimeFilter<"InvoiceItem"> | Date | string
@@ -39353,6 +39414,7 @@ export namespace Prisma {
     remarks?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
+    itemDate?: Date | string | null
   }
 
   export type PackingListItemUncheckedCreateWithoutPackingListInput = {
@@ -39365,6 +39427,7 @@ export namespace Prisma {
     remarks?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
+    itemDate?: Date | string | null
   }
 
   export type PackingListItemCreateOrConnectWithoutPackingListInput = {
@@ -39518,6 +39581,7 @@ export namespace Prisma {
     remarks?: StringNullableFilter<"PackingListItem"> | string | null
     createdAt?: DateTimeFilter<"PackingListItem"> | Date | string
     updatedAt?: DateTimeFilter<"PackingListItem"> | Date | string
+    itemDate?: DateTimeNullableFilter<"PackingListItem"> | Date | string | null
   }
 
   export type PackingListCreateWithoutItemsInput = {
@@ -42305,6 +42369,7 @@ export namespace Prisma {
     unit?: string | null
     unitPrice: Decimal | DecimalJsLike | number | string
     total: Decimal | DecimalJsLike | number | string
+    itemDate?: Date | string | null
     remarks?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -42324,6 +42389,7 @@ export namespace Prisma {
     unit?: string | null
     unitPrice: Decimal | DecimalJsLike | number | string
     total: Decimal | DecimalJsLike | number | string
+    itemDate?: Date | string | null
     remarks?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -42414,6 +42480,7 @@ export namespace Prisma {
     unit?: NullableStringFieldUpdateOperationsInput | string | null
     unitPrice?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     total?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    itemDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     remarks?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -42433,6 +42500,7 @@ export namespace Prisma {
     unit?: NullableStringFieldUpdateOperationsInput | string | null
     unitPrice?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     total?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    itemDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     remarks?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -44643,6 +44711,7 @@ export namespace Prisma {
     unit?: string | null
     unitPrice: Decimal | DecimalJsLike | number | string
     total: Decimal | DecimalJsLike | number | string
+    itemDate?: Date | string | null
     remarks?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -44765,6 +44834,7 @@ export namespace Prisma {
     unit?: NullableStringFieldUpdateOperationsInput | string | null
     unitPrice?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     total?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    itemDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     remarks?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -44783,6 +44853,7 @@ export namespace Prisma {
     unit?: NullableStringFieldUpdateOperationsInput | string | null
     unitPrice?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     total?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    itemDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     remarks?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -44801,6 +44872,7 @@ export namespace Prisma {
     unit?: NullableStringFieldUpdateOperationsInput | string | null
     unitPrice?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     total?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    itemDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     remarks?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -45145,6 +45217,7 @@ export namespace Prisma {
     remarks?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
+    itemDate?: Date | string | null
   }
 
   export type ContainerUpdateWithoutPackingListInput = {
@@ -45304,6 +45377,7 @@ export namespace Prisma {
     remarks?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    itemDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
   export type PackingListItemUncheckedUpdateWithoutPackingListInput = {
@@ -45316,6 +45390,7 @@ export namespace Prisma {
     remarks?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    itemDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
   export type PackingListItemUncheckedUpdateManyWithoutPackingListInput = {
@@ -45328,6 +45403,7 @@ export namespace Prisma {
     remarks?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    itemDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
   export type DocumentCreateManyTransitInput = {

@@ -141,6 +141,16 @@ export const createInvoiceSchema = z.object({
   items: z
     .array(
       z.object({
+        /*
+         * Item Date
+         */
+        itemDate: z
+          .string()
+          .min(
+            1,
+            "Item date is required"
+          ),
+
         description: z
           .string()
           .min(

@@ -1,6 +1,3 @@
-
-
-
 import { z } from "zod";
 
 const optionalString = z.preprocess(
@@ -16,6 +13,10 @@ const optionalNumber = z.preprocess(
 export const createInvoiceItemSchema =
   z.object({
     invoiceId: z.string().uuid(),
+
+    itemDate: z
+      .string()
+      .min(1, "Item date is required."),
 
     description: z.string().min(1),
 

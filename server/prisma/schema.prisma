@@ -219,6 +219,7 @@ model InvoiceItem {
   unit        String?
   unitPrice   Decimal  @db.Decimal(18, 2)
   total       Decimal  @db.Decimal(18, 2)
+   itemDate    DateTime?
   remarks     String?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
@@ -259,6 +260,7 @@ model PackingListItem {
   remarks       String?
   createdAt     DateTime    @default(now())
   updatedAt     DateTime    @updatedAt
+   itemDate    DateTime?
   packingList   PackingList @relation(fields: [packingListId], references: [id], onDelete: Cascade)
 }
 

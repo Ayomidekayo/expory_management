@@ -35,49 +35,51 @@ export default function PackingListForm({
   loading = false,
   onSubmit,
 }: Props) {
- const form = useForm<
-  CreatePackingListInput,
-  any,
-  CreatePackingListOutput
->({
-  resolver: zodResolver(createPackingListSchema),
+  const form = useForm<
+    CreatePackingListInput,
+    any,
+    CreatePackingListOutput
+  >({
+    resolver: zodResolver(createPackingListSchema),
 
-      defaultValues: {
-        shipmentId: "",
+    defaultValues: {
+      shipmentId: "",
 
-        packingDate: "",
+      packingDate: "",
 
-        packageType: "",
+      packageType: "",
 
-        totalPackages: 0,
+      totalPackages: 0,
 
-        grossWeight: 0,
+      grossWeight: 0,
 
-        netWeight: 0,
+      netWeight: 0,
 
-        marksAndNumbers: "",
+      marksAndNumbers: "",
 
-        remarks: "",
+      remarks: "",
 
-        items: [
-          {
-            description: "",
+      items: [
+        {
+          itemDate: "",
 
-            packageType: "",
+          description: "",
 
-            packages: 0,
+          packageType: "",
 
-            grossWeight: 0,
+          packages: 0,
 
-            netWeight: 0,
+          grossWeight: 0,
 
-            remarks: "",
-          },
-        ],
+          netWeight: 0,
 
-        ...defaultValues,
-      },
-    });
+          remarks: "",
+        },
+      ],
+
+      ...defaultValues,
+    },
+  });
 
   useEffect(() => {
     if (!defaultValues) return;
@@ -139,14 +141,12 @@ export default function PackingListForm({
 
   return (
     <Form {...form}>
-
       <form
         onSubmit={form.handleSubmit(
           onSubmit
         )}
         className="space-y-8"
       >
-
         <PackingInformation
           form={form}
         />
@@ -166,13 +166,12 @@ export default function PackingListForm({
         <Remarks
           form={form}
         />
+
         <FormActions
           loading={loading}
           isEditing={isEditing}
         />
-
       </form>
-
     </Form>
   );
 }

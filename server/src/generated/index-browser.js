@@ -269,6 +269,7 @@ exports.Prisma.InvoiceItemScalarFieldEnum = {
   unit: 'unit',
   unitPrice: 'unitPrice',
   total: 'total',
+  itemDate: 'itemDate',
   remarks: 'remarks',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
@@ -299,7 +300,8 @@ exports.Prisma.PackingListItemScalarFieldEnum = {
   netWeight: 'netWeight',
   remarks: 'remarks',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  itemDate: 'itemDate'
 };
 
 exports.Prisma.TransitScalarFieldEnum = {

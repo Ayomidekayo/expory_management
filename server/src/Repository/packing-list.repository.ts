@@ -50,7 +50,29 @@ class PackingListRepository {
           data.remarks,
 
         items: {
-          create: data.items,
+          create: data.items.map((item) => ({
+            itemDate: new Date(
+              item.itemDate
+            ),
+
+            description:
+              item.description,
+
+            packageType:
+              item.packageType,
+
+            packages:
+              item.packages,
+
+            grossWeight:
+              item.grossWeight,
+
+            netWeight:
+              item.netWeight,
+
+            remarks:
+              item.remarks,
+          })),
         },
       },
 
@@ -209,73 +231,93 @@ class PackingListRepository {
     });
   }
 
+  /*
+  =====================================
+  Update
+  =====================================
+  */
 
+  async update(
+    id: string,
+    data: UpdatePackingListDto
+  ) {
+    const {
+      items,
+      ...packingListData
+    } = data;
 
-/*
-=====================================
-Update
-=====================================
-*/
+    return prisma.packingList.update({
+      where: {
+        id,
+      },
 
-async update(
-  id: string,
-  data: UpdatePackingListDto
-) {
-  const {
-    items,
-    ...packingListData
-  } = data;
+      data: {
+        packingDate:
+          packingListData.packingDate
+            ? new Date(
+                packingListData.packingDate
+              )
+            : undefined,
 
-  return prisma.packingList.update({
-    where: {
-      id,
-    },
+        packageType:
+          packingListData.packageType,
 
-    data: {
-      packingDate:
-        packingListData.packingDate
-          ? new Date(
-              packingListData.packingDate
-            )
-          : undefined,
+        totalPackages:
+          packingListData.totalPackages,
 
-      packageType:
-        packingListData.packageType,
+        grossWeight:
+          packingListData.grossWeight,
 
-      totalPackages:
-        packingListData.totalPackages,
+        netWeight:
+          packingListData.netWeight,
 
-      grossWeight:
-        packingListData.grossWeight,
+        marksAndNumbers:
+          packingListData.marksAndNumbers,
 
-      netWeight:
-        packingListData.netWeight,
+        remarks:
+          packingListData.remarks,
 
-      marksAndNumbers:
-        packingListData.marksAndNumbers,
+        /*
+        =====================================
+        Update Packing List Items
+        =====================================
+        */
 
-      remarks:
-        packingListData.remarks,
+        ...(items !== undefined && {
+          items: {
+            deleteMany: {},
 
-      /*
-      =====================================
-      Update Packing List Items
-      =====================================
-      */
+            create: items.map((item) => ({
+              itemDate: new Date(
+                item.itemDate
+              ),
 
-      ...(items !== undefined && {
-        items: {
-          deleteMany: {},
+              description:
+                item.description,
 
-          create: items,
-        },
-      }),
-    },
+              packageType:
+                item.packageType,
 
-    include:
-      this.detailsInclude,
-  });
-}
+              packages:
+                item.packages,
+
+              grossWeight:
+                item.grossWeight,
+
+              netWeight:
+                item.netWeight,
+
+              remarks:
+                item.remarks,
+            })),
+          },
+        }),
+      },
+
+      include:
+        this.detailsInclude,
+    });
+  }
 
   /*
   =====================================
@@ -329,34 +371,35 @@ async update(
   =====================================
   */
 
-private detailsInclude = {
-  shipment: {
-    include: {
-      client: true,
-      exporter: true,
-      consignee: true,
-      allocation: true,
+  private detailsInclude = {
+    shipment: {
+      include: {
+        client: true,
+        exporter: true,
+        consignee: true,
+        allocation: true,
+      },
     },
-  },
 
-  items: {
-    orderBy: {
-      createdAt: Prisma.SortOrder.asc,
+    items: {
+      orderBy: {
+        createdAt:
+          Prisma.SortOrder.asc,
+      },
     },
-  },
 
-  documents: true,
+    documents: true,
 
-  containers: true,
+    containers: true,
 
-  _count: {
-    select: {
-      items: true,
-      documents: true,
-      containers: true,
+    _count: {
+      select: {
+        items: true,
+        documents: true,
+        containers: true,
+      },
     },
-  },
-};
+  };
 }
 
 export default new PackingListRepository();

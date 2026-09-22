@@ -29,6 +29,8 @@ export const createPackingListSchema = z.object({
 
   items: z.array(
     z.object({
+      itemDate: z.string().min(1, "Item date is required"),
+
       description: z.string().min(1, "Description is required"),
 
       packageType: optionalString,

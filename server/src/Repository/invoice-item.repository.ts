@@ -31,6 +31,8 @@ class InvoiceItemRepository {
       data: {
         invoiceId,
 
+        itemDate: data.itemDate,
+
         description: data.description,
 
         hsCode: data.hsCode,

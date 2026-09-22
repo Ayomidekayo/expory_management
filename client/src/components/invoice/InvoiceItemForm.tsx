@@ -15,13 +15,17 @@ const schema = z.object({
     .string()
     .min(1, "Description is required"),
 
+  itemDate: z
+    .string()
+    .min(1, "Item date is required"),
+
   quantity: z.coerce
     .number()
-    .positive(),
+    .positive("Quantity must be greater than 0"),
 
   unitPrice: z.coerce
     .number()
-    .positive(),
+    .positive("Unit price must be greater than 0"),
 });
 
 export type InvoiceItemInput =
@@ -58,6 +62,7 @@ export default function InvoiceItemForm({
     defaultValues: {
       invoiceId,
       description: "",
+      itemDate: "",
       quantity: 1,
       unitPrice: 0,
       ...defaultValues,
@@ -68,11 +73,16 @@ export default function InvoiceItemForm({
     form.reset({
       invoiceId,
       description: "",
+      itemDate: "",
       quantity: 1,
       unitPrice: 0,
       ...defaultValues,
     });
-  }, [defaultValues, invoiceId, form]);
+  }, [
+    defaultValues,
+    invoiceId,
+    form,
+  ]);
 
   const quantity =
     Number(form.watch("quantity")) || 0;
@@ -88,6 +98,7 @@ export default function InvoiceItemForm({
       onSubmit={form.handleSubmit(onSubmit)}
       className="space-y-5"
     >
+      {/* Description */}
       <div>
         <label className="text-sm font-medium">
           Description
@@ -103,7 +114,29 @@ export default function InvoiceItemForm({
         </p>
       </div>
 
-      <div className="grid grid-cols-2 gap-4">
+      {/* Item Date */}
+      <div>
+        <label className="text-sm font-medium">
+          Item Date
+        </label>
+
+        <Input
+          type="date"
+          {...form.register("itemDate")}
+        />
+
+        <p className="text-sm text-red-500">
+          {form.formState.errors.itemDate?.message}
+        </p>
+
+        <p className="mt-1 text-xs text-slate-500">
+          Enter the date associated with this invoice item.
+        </p>
+      </div>
+
+      {/* Quantity + Unit Price */}
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        {/* Quantity */}
         <div>
           <label className="text-sm font-medium">
             Quantity
@@ -111,10 +144,14 @@ export default function InvoiceItemForm({
 
           <Input
             type="number"
+            min="0.01"
+            step="0.01"
             value={
               form.watch("quantity") == null
                 ? ""
-                : String(form.watch("quantity"))
+                : String(
+                    form.watch("quantity")
+                  )
             }
             onChange={(e) =>
               form.setValue(
@@ -124,16 +161,21 @@ export default function InvoiceItemForm({
                   : Number(e.target.value),
                 {
                   shouldValidate: true,
+                  shouldDirty: true,
                 }
               )
             }
           />
 
           <p className="text-sm text-red-500">
-            {form.formState.errors.quantity?.message}
+            {
+              form.formState.errors
+                .quantity?.message
+            }
           </p>
         </div>
 
+        {/* Unit Price */}
         <div>
           <label className="text-sm font-medium">
             Unit Price
@@ -141,10 +183,14 @@ export default function InvoiceItemForm({
 
           <Input
             type="number"
+            min="0.01"
+            step="0.01"
             value={
               form.watch("unitPrice") == null
                 ? ""
-                : String(form.watch("unitPrice"))
+                : String(
+                    form.watch("unitPrice")
+                  )
             }
             onChange={(e) =>
               form.setValue(
@@ -154,17 +200,22 @@ export default function InvoiceItemForm({
                   : Number(e.target.value),
                 {
                   shouldValidate: true,
+                  shouldDirty: true,
                 }
               )
             }
           />
 
           <p className="text-sm text-red-500">
-            {form.formState.errors.unitPrice?.message}
+            {
+              form.formState.errors
+                .unitPrice?.message
+            }
           </p>
         </div>
       </div>
 
+      {/* Total */}
       <div>
         <label className="text-sm font-medium">
           Total
@@ -176,7 +227,9 @@ export default function InvoiceItemForm({
         />
       </div>
 
+      {/* Submit */}
       <Button
+        type="submit"
         className="w-full"
         disabled={loading}
       >
