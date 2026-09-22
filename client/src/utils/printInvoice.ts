@@ -11,6 +11,7 @@ PDF TYPES
 
 type InvoiceItemForPdf = {
   id?: string;
+  itemDate?: string | Date | null;
   description?: string | null;
   hsCode?: string | null;
   packageType?: string | null;
@@ -518,7 +519,7 @@ export function printInvoice(
       "normal"
     );
 
-    doc.setFontSize(7.5);
+    doc.setFontSize(9);
 
     doc.setTextColor(...MUTED);
 
@@ -573,7 +574,7 @@ export function printInvoice(
       "bold"
     );
 
-    doc.setFontSize(7.5);
+    doc.setFontSize(9);
 
     doc.text(
       "ogwKayImpex",
@@ -671,7 +672,7 @@ export function printInvoice(
     "normal"
   );
 
-  doc.setFontSize(8.5);
+  doc.setFontSize(10);
 
   doc.setTextColor(
     220,
@@ -712,7 +713,7 @@ export function printInvoice(
     "normal"
   );
 
-  doc.setFontSize(8);
+  doc.setFontSize(10);
 
   doc.setTextColor(
     220,
@@ -756,7 +757,7 @@ export function printInvoice(
     "normal"
   );
 
-  doc.setFontSize(7);
+  doc.setFontSize(9);
 
   doc.text(
     "INVOICE NUMBER",
@@ -804,7 +805,7 @@ export function printInvoice(
     "bold"
   );
 
-  doc.setFontSize(7);
+  doc.setFontSize(9);
 
   doc.text(
     currency,
@@ -931,7 +932,7 @@ export function printInvoice(
     "bold"
   );
 
-  doc.setFontSize(5.8);
+  doc.setFontSize(8);
 
   doc.text(
     paymentStatus.replaceAll(
@@ -1201,7 +1202,7 @@ export function printInvoice(
         "bold"
       );
 
-      doc.setFontSize(6.5);
+      doc.setFontSize(8);
 
       doc.text(
         box.title,
@@ -1218,7 +1219,7 @@ export function printInvoice(
         "bold"
       );
 
-      doc.setFontSize(8);
+      doc.setFontSize(10);
 
       const wrapped =
         doc.splitTextToSize(
@@ -1239,202 +1240,179 @@ export function printInvoice(
   INVOICE ITEMS
   =========================================================
   */
+// =========================================================
+// INVOICE ITEMS
+// =========================================================
 
-  let itemsY = 245;
+let itemsY = ensureSpace(70, partyY + 25);
 
-  drawSectionTitle(
-    "Invoice Items",
-    MARGIN,
-    itemsY
-  );
+drawSectionTitle(
+  "Invoice Items",
+  MARGIN,
+  itemsY
+);
 
-  itemsY += 10;
+autoTable(doc, {
+  startY: itemsY + 11,
 
-  /*
-  ITEMS TABLE
-  */
+  margin: {
+    left: MARGIN,
+    right: MARGIN,
+    bottom: 25,
+  },
 
-  if (items.length === 0) {
-    doc.setFillColor(
-      ...LIGHT_GRAY
-    );
+  head: [
+    [
+      "#",
+      "Item Date",
+      "Description",
+      "HS Code",
+      "Package",
+      "Qty",
+      "Unit",
+      "Unit Price",
+      "Total",
+    ],
+  ],
 
-    doc.setDrawColor(
-      ...BORDER
-    );
+  body: items.map((item, index) => [
+    String(index + 1),
 
-    doc.roundedRect(
-      MARGIN,
-      itemsY,
-      CONTENT_WIDTH,
-      28,
-      2,
-      2,
-      "FD"
-    );
+    // Item Date
+    formatDate(item.itemDate),
 
-    doc.setTextColor(
-      ...MUTED
-    );
+    // Description
+    item.description ?? "-",
 
-    doc.setFont(
-      "helvetica",
-      "normal"
-    );
+    // HS Code
+    item.hsCode ?? "-",
 
-    doc.setFontSize(8);
+    // Package
+    item.packageType ?? "-",
 
-    doc.text(
-      "No invoice items found.",
-      PAGE_WIDTH / 2,
-      itemsY + 16,
-      {
-        align: "center",
-      }
-    );
+    // Quantity
+    formatNumber(item.quantity),
 
-    itemsY += 35;
-  } else {
-    autoTable(doc, {
-      startY: itemsY,
+    // Unit
+    item.unit ?? "-",
 
-      margin: {
-        left: MARGIN,
-        right: MARGIN,
-        bottom: 25,
-      },
+    // Unit Price
+    formatMoney(item.unitPrice),
 
-      head: [
-        [
-          "#",
-          "Description",
-          "HS Code",
-          "Package",
-          "Qty",
-          "Unit",
-          "Unit Price",
-          "Total",
-        ],
-      ],
+    // Total
+    formatMoney(item.total),
+  ]),
 
-      body: items.map(
-        (item, index) => [
-          String(index + 1),
+  theme: "grid",
 
-          item.description ?? "-",
+  styles: {
+    font: "helvetica",
 
-          item.hsCode ?? "-",
+    // Increased data font size
+    fontSize: 10,
 
-          item.packageType ?? "-",
+    // Increased spacing for readability
+    cellPadding: 3,
 
-          formatNumber(
-            item.quantity
-          ),
+    textColor: DARK,
+    lineColor: BORDER,
+    lineWidth: 0.2,
 
-          item.unit ?? "-",
+    valign: "middle",
+  },
 
-          formatMoney(
-            item.unitPrice
-          ),
+  headStyles: {
+    fillColor: NAVY,
+    textColor: WHITE,
+    fontStyle: "bold",
 
-          formatMoney(
-            item.total
-          ),
-        ]
-      ),
+    // Increased header font size
+    fontSize: 10,
 
-      theme: "grid",
+    halign: "center",
+    valign: "middle",
 
-      styles: {
-        font: "helvetica",
-        fontSize: 7,
-        cellPadding: 2.5,
-        textColor: DARK,
-        lineColor: BORDER,
-        lineWidth: 0.2,
-        valign: "middle",
-      },
+    cellPadding: 3,
+  },
 
-      headStyles: {
-        fillColor: NAVY,
-        textColor: WHITE,
-        fontStyle: "bold",
-        fontSize: 7,
-        halign: "center",
-        valign: "middle",
-      },
+  alternateRowStyles: {
+    fillColor: LIGHT_GRAY,
+  },
 
-      alternateRowStyles: {
-        fillColor: LIGHT_GRAY,
-      },
+  columnStyles: {
+    // #
+    0: {
+      cellWidth: 7,
+      halign: "center",
+    },
 
-      columnStyles: {
-        0: {
-          cellWidth: 8,
-          halign: "center",
-        },
+    // Item Date
+    1: {
+      cellWidth: 21,
+      halign: "center",
+    },
 
-        1: {
-          cellWidth: 47,
-          halign: "left",
-        },
+    // Description
+    2: {
+      cellWidth: 36,
+      halign: "left",
+    },
 
-        2: {
-          cellWidth: 20,
-          halign: "center",
-        },
+    // HS Code
+    3: {
+      cellWidth: 18,
+      halign: "center",
+    },
 
-        3: {
-          cellWidth: 22,
-          halign: "center",
-        },
+    // Package
+    4: {
+      cellWidth: 19,
+      halign: "center",
+    },
 
-        4: {
-          cellWidth: 17,
-          halign: "center",
-        },
+    // Qty
+    5: {
+      cellWidth: 15,
+      halign: "center",
+    },
 
-        5: {
-          cellWidth: 17,
-          halign: "center",
-        },
+    // Unit
+    6: {
+      cellWidth: 15,
+      halign: "center",
+    },
 
-        6: {
-          cellWidth: 29,
-          halign: "right",
-        },
+    // Unit Price
+    7: {
+      cellWidth: 24,
+      halign: "right",
+    },
 
-        7: {
-          cellWidth: 30,
-          halign: "right",
-        },
-      },
+    // Total
+    8: {
+      cellWidth: 25,
+      halign: "right",
+    },
+  },
 
-      didParseCell: (
-        hookData
-      ) => {
-        if (
-          hookData.section ===
-            "body" &&
-          hookData.column.index ===
-            7
-        ) {
-          hookData.cell.styles.fontStyle =
-            "bold";
-        }
-      },
-    });
+  didParseCell: (hookData) => {
+    // Make Total column bold
+    if (
+      hookData.section === "body" &&
+      hookData.column.index === 8
+    ) {
+      hookData.cell.styles.fontStyle = "bold";
+    }
 
-    itemsY =
-      (
-        doc as jsPDF & {
-          lastAutoTable?: {
-            finalY: number;
-          };
-        }
-      ).lastAutoTable
-        ?.finalY ?? itemsY + 20;
-  }
+    // Make Item Date slightly stronger
+    if (
+      hookData.section === "body" &&
+      hookData.column.index === 1
+    ) {
+      hookData.cell.styles.fontStyle = "bold";
+    }
+  },
+});
 
   /*
 
@@ -1444,11 +1422,23 @@ export function printInvoice(
   =========================================================
   */
 
-  itemsY += 10;
+
+
+  // Position the financial summary AFTER the invoice items table.
+  // Using the table's finalY prevents the summary card from overlapping
+  // invoice rows when the item table becomes taller because of larger text.
+  const invoiceItemsTableEndY =
+    (
+      doc as jsPDF & {
+        lastAutoTable?: {
+          finalY: number;
+        };
+      }
+    ).lastAutoTable?.finalY ?? itemsY + 20;
 
   itemsY = ensureSpace(
     82,
-    itemsY
+    invoiceItemsTableEndY + 8
   );
 
   drawSectionTitle(
@@ -1503,7 +1493,7 @@ export function printInvoice(
     "bold"
   );
 
-  doc.setFontSize(8);
+  doc.setFontSize(10);
 
   doc.text(
     "PAYMENT POSITION",
@@ -1520,7 +1510,7 @@ export function printInvoice(
     "normal"
   );
 
-  doc.setFontSize(7);
+  doc.setFontSize(9);
 
   doc.text(
     `${payments.length} ${
@@ -1683,7 +1673,7 @@ export function printInvoice(
     rightWidth -
     5;
 
-  doc.setFontSize(7.5);
+  doc.setFontSize(9);
 
   /*
   SUBTOTAL
@@ -1830,7 +1820,7 @@ export function printInvoice(
     "bold"
   );
 
-  doc.setFontSize(8);
+  doc.setFontSize(10);
 
   doc.text(
     "INVOICE TOTAL",
@@ -1901,7 +1891,7 @@ export function printInvoice(
       "normal"
     );
 
-    doc.setFontSize(8);
+    doc.setFontSize(10);
 
     doc.text(
       "No payments recorded for this invoice.",
@@ -1967,7 +1957,7 @@ export function printInvoice(
 
       styles: {
         font: "helvetica",
-        fontSize: 7,
+        fontSize: 10,
         cellPadding: 2.5,
         textColor: DARK,
         lineColor: BORDER,
@@ -1979,7 +1969,7 @@ export function printInvoice(
         fillColor: NAVY,
         textColor: WHITE,
         fontStyle: "bold",
-        fontSize: 7,
+        fontSize: 10,
         halign: "center",
       },
 
@@ -1987,36 +1977,38 @@ export function printInvoice(
         fillColor: LIGHT_GRAY,
       },
 
+      // Total width = 180mm (A4 content width).
+      // Kept compact enough for the larger 10pt text.
       columnStyles: {
         0: {
-          cellWidth: 8,
+          cellWidth: 7,
           halign: "center",
         },
 
         1: {
-          cellWidth: 35,
+          cellWidth: 30,
         },
 
         2: {
-          cellWidth: 43,
+          cellWidth: 38,
         },
 
         3: {
-          cellWidth: 25,
+          cellWidth: 23,
           halign: "center",
         },
 
         4: {
-          cellWidth: 25,
+          cellWidth: 22,
           halign: "center",
         },
 
         5: {
-          cellWidth: 30,
+          cellWidth: 32,
         },
 
         6: {
-          cellWidth: 29,
+          cellWidth: 28,
           halign: "right",
         },
       },
@@ -2141,7 +2133,7 @@ export function printInvoice(
 
       styles: {
         font: "helvetica",
-        fontSize: 7,
+        fontSize: 10,
         cellPadding: 2.5,
         textColor: DARK,
         lineColor: BORDER,
@@ -2152,35 +2144,36 @@ export function printInvoice(
         fillColor: NAVY,
         textColor: WHITE,
         fontStyle: "bold",
-        fontSize: 7,
+        fontSize: 10,
       },
 
       alternateRowStyles: {
         fillColor: LIGHT_GRAY,
       },
 
+      // Total width = 180mm (A4 content width).
       columnStyles: {
         0: {
-          cellWidth: 10,
+          cellWidth: 9,
           halign: "center",
         },
 
         1: {
-          cellWidth: 78,
+          cellWidth: 72,
         },
 
         2: {
-          cellWidth: 35,
+          cellWidth: 33,
           halign: "right",
         },
 
         3: {
-          cellWidth: 32,
+          cellWidth: 33,
           halign: "right",
         },
 
         4: {
-          cellWidth: 32,
+          cellWidth: 33,
           halign: "right",
         },
       },
@@ -2275,7 +2268,7 @@ export function printInvoice(
     "normal"
   );
 
-  doc.setFontSize(7);
+  doc.setFontSize(9);
 
   doc.text(
     "Authorized Signature",

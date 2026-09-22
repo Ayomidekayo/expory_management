@@ -176,7 +176,7 @@ export function printPackingList(
       "helvetica",
       "normal"
     );
-    doc.setFontSize(7.5);
+    doc.setFontSize(9);
     doc.setTextColor(...MUTED);
 
     doc.text(
@@ -237,7 +237,7 @@ export function printPackingList(
     "helvetica",
     "normal"
   );
-  doc.setFontSize(8.5);
+  doc.setFontSize(10);
 
   doc.setTextColor(
     220,
@@ -272,7 +272,7 @@ export function printPackingList(
     "helvetica",
     "normal"
   );
-  doc.setFontSize(8);
+  doc.setFontSize(10);
 
   doc.setTextColor(
     220,
@@ -310,7 +310,7 @@ export function printPackingList(
     "helvetica",
     "normal"
   );
-  doc.setFontSize(7);
+  doc.setFontSize(9);
 
   doc.text(
     "PACKING LIST NUMBER",
@@ -350,7 +350,7 @@ export function printPackingList(
     "helvetica",
     "bold"
   );
-  doc.setFontSize(6.5);
+  doc.setFontSize(8);
 
   doc.text(
     "PACKING LIST",
@@ -508,7 +508,7 @@ export function printPackingList(
       "helvetica",
       "bold"
     );
-    doc.setFontSize(7);
+    doc.setFontSize(9);
 
     doc.text(
       box.title,
@@ -558,6 +558,7 @@ export function printPackingList(
 
   head: [
     [
+      "Item Date",
       "Description",
       "Package",
       "Packages",
@@ -569,6 +570,7 @@ export function printPackingList(
   body: (
     packingList.items ?? []
   ).map((item) => [
+    formatDate(item.itemDate),
     item.description ?? "-",
     item.packageType ?? "-",
     formatNumber(item.packages),
@@ -580,7 +582,7 @@ export function printPackingList(
 
   styles: {
     font: "helvetica",
-    fontSize: 7.5,
+    fontSize: 10,
     cellPadding: 3,
     textColor: DARK,
     lineColor: BORDER,
@@ -592,7 +594,7 @@ export function printPackingList(
     fillColor: NAVY,
     textColor: WHITE,
     fontStyle: "bold",
-    fontSize: 7.5,
+    fontSize: 10,
     halign: "center",
     valign: "middle",
   },
@@ -606,28 +608,39 @@ export function printPackingList(
   },
 
   columnStyles: {
+    // Item Date
     0: {
-      cellWidth: 55,
-      halign: "left",
-    },
-
-    1: {
-      cellWidth: 35,
-      halign: "center",
-    },
-
-    2: {
       cellWidth: 22,
       halign: "center",
     },
 
+    // Description
+    1: {
+      cellWidth: 43,
+      halign: "left",
+    },
+
+    // Package
+    2: {
+      cellWidth: 30,
+      halign: "center",
+    },
+
+    // Packages
     3: {
-      cellWidth: 28,
+      cellWidth: 20,
+      halign: "center",
+    },
+
+    // Net Weight
+    4: {
+      cellWidth: 27,
       halign: "right",
     },
 
-    4: {
-      cellWidth: 45,
+    // Remarks
+    5: {
+      cellWidth: 38,
       halign: "left",
     },
   },
@@ -636,9 +649,17 @@ export function printPackingList(
     if (
       data.section === "body" &&
       (
-        data.column.index === 2 ||
-        data.column.index === 3
+        data.column.index === 3 ||
+        data.column.index === 4
       )
+    ) {
+      data.cell.styles.fontStyle = "bold";
+    }
+
+    // Make Item Date slightly stronger
+    if (
+      data.section === "body" &&
+      data.column.index === 0
     ) {
       data.cell.styles.fontStyle = "bold";
     }
@@ -694,7 +715,7 @@ export function printPackingList(
     "helvetica",
     "normal"
   );
-  doc.setFontSize(8.5);
+  doc.setFontSize(10);
   doc.setTextColor(...MUTED);
 
   doc.text(
@@ -852,7 +873,7 @@ export function printPackingList(
     "helvetica",
     "normal"
   );
-  doc.setFontSize(8);
+  doc.setFontSize(10);
 
   doc.text(
     wrappedMarks,
@@ -926,7 +947,7 @@ export function printPackingList(
     "helvetica",
     "normal"
   );
-  doc.setFontSize(8);
+  doc.setFontSize(10);
 
   doc.text(
     wrappedRemarks,
@@ -966,7 +987,7 @@ export function printPackingList(
     "helvetica",
     "normal"
   );
-  doc.setFontSize(7.5);
+  doc.setFontSize(9);
 
   doc.text(
     "Authorized Signature",
@@ -982,7 +1003,7 @@ export function printPackingList(
     "helvetica",
     "bold"
   );
-  doc.setFontSize(8);
+  doc.setFontSize(10);
 
   doc.text(
     "For ogwKayImpex",
@@ -1023,7 +1044,7 @@ export function printPackingList(
       "helvetica",
       "bold"
     );
-    doc.setFontSize(7.5);
+    doc.setFontSize(9);
 
     doc.text(
       "ogwKayImpex",
