@@ -33,6 +33,8 @@ export type PaymentTerms =
 export interface InvoiceItem {
   id: string;
 
+  itemDate: string;
+
   invoiceId: string;
 
   description: string;
@@ -68,11 +70,17 @@ export interface InvoiceItem {
 
 export interface Document {
   id: string;
+
   fileName: string;
+
   fileUrl: string;
+
   documentType: string;
+
   fileSize?: number | null;
+
   createdAt: string;
+
   updatedAt?: string;
 }
 
@@ -159,14 +167,29 @@ export interface CreateInvoiceDto {
 
   remarks?: string;
 
-  items: Omit<
-    InvoiceItem,
-    | "id"
-    | "invoiceId"
-    | "total"
-    | "createdAt"
-    | "updatedAt"
-  >[];
+  items: Array<{
+    itemDate: string;
+
+    description: string;
+
+    hsCode?: string;
+
+    packageType?: string;
+
+    packages?: number;
+
+    grossWeight?: number;
+
+    netWeight?: number;
+
+    quantity: number;
+
+    unit?: string;
+
+    unitPrice: number;
+
+    remarks?: string;
+  }>;
 }
 
 /* ===========================================
@@ -174,6 +197,8 @@ export interface CreateInvoiceDto {
 =========================================== */
 
 export interface CreateInvoiceItemDto {
+  itemDate: string;
+
   description: string;
 
   hsCode?: string;

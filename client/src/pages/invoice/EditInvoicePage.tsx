@@ -56,18 +56,12 @@ export default function EditInvoicePage() {
 
       <InvoiceForm
         isEditing
-        loading={
-          updateInvoice.isPending
-        }
+        loading={updateInvoice.isPending}
 
         defaultValues={{
           shipmentId:
             invoice.shipmentId,
 
-          /*
-           * System-generated invoice number
-           * is not editable here.
-           */
           invoiceDate:
             toInputDate(
               invoice.invoiceDate
@@ -80,10 +74,6 @@ export default function EditInvoicePage() {
             invoice.exchangeRate ??
             undefined,
 
-          /*
-           * Client/vendor supplied
-           * invoice number.
-           */
           externalInvoiceNumber:
             invoice.externalInvoiceNumber ??
             "",
@@ -92,10 +82,6 @@ export default function EditInvoicePage() {
             invoice.paymentTerms ??
             undefined,
 
-          /*
-           * Preserve the current status.
-           * If somehow missing, default to UNPAID.
-           */
           status:
             invoice.status ??
             "UNPAID",
@@ -122,6 +108,11 @@ export default function EditInvoicePage() {
           items:
             invoice.items.map(
               (item) => ({
+                // ✅ Added itemDate
+                itemDate: item.itemDate
+                  ? toInputDate(item.itemDate)
+                  : "",
+
                 description:
                   item.description,
 
