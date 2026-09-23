@@ -36,6 +36,8 @@ class ClientController {
       });
     } catch (error) {
       next(error);
+
+      console.log(error)
     }
   }
 

@@ -1,12 +1,57 @@
 import { prisma } from "../config/prisma";
 
-export async function generateClientCode() {
+export async function generateClientCode(): Promise<string> {
   const year = new Date().getFullYear();
 
-  const count =
-    await prisma.client.count();
+  const lastClient =
+    await prisma.client.findFirst({
+      where: {
+        clientCode: {
+          startsWith: `CLI-${year}-`,
+        },
+      },
+      orderBy: {
+        clientCode: "desc",
+      },
+      select: {
+        clientCode: true,
+      },
+    });
 
-  return `CLI-${year}-${String(
-    count + 1
-  ).padStart(5, "0")}`;
+  let nextNumber = 1;
+
+  if (lastClient?.clientCode) {
+    const match =
+      lastClient.clientCode.match(
+        /^CLI-\d{4}-(\d+)$/
+      );
+
+    if (match) {
+      nextNumber =
+        Number(match[1]) + 1;
+    }
+  }
+
+  let clientCode =
+    `CLI-${year}-${String(
+      nextNumber
+    ).padStart(5, "0")}`;
+
+  // Extra protection against duplicate codes
+  while (
+    await prisma.client.findUnique({
+      where: {
+        clientCode,
+      },
+    })
+  ) {
+    nextNumber++;
+
+    clientCode =
+      `CLI-${year}-${String(
+        nextNumber
+      ).padStart(5, "0")}`;
+  }
+
+  return clientCode;
 }
