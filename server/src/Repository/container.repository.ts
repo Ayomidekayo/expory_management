@@ -1,6 +1,7 @@
 import {
   ContainerStatus,
   Prisma,
+  ShipmentStatus,
   TerminalChargeStatus,
 } from "../generated";
 
@@ -103,65 +104,155 @@ class ContainerRepository {
       sortOrder,
     } = query;
 
+    /*
+    =====================================
+    SHIPMENT VISIBILITY
+    =====================================
+
+    Normal container list:
+    hide containers belonging to
+    COMPLETED or CANCELLED shipments.
+
+    However:
+
+    1. If the user searches, archived
+       containers can be found.
+
+    2. If a specific shipmentId is supplied,
+       return that shipment's containers
+       even if the shipment is completed
+       or cancelled.
+
+    This allows the Shipment Details page
+    to retrieve all historical containers.
+    */
+
+    const shipmentVisibilityFilter: Prisma.ContainerWhereInput =
+      !search && !shipmentId
+        ? {
+            shipment: {
+              status: {
+                notIn: [
+                  ShipmentStatus.COMPLETED,
+                  ShipmentStatus.CANCELLED,
+                ],
+              },
+            },
+          }
+        : {};
+
+    /*
+    =====================================
+    SEARCH FILTER
+    =====================================
+    */
+
+    const searchFilter: Prisma.ContainerWhereInput =
+      search
+        ? {
+            OR: [
+              {
+                containerNumber: {
+                  contains: search,
+                  mode: "insensitive",
+                },
+              },
+
+              {
+                sealNumber: {
+                  contains: search,
+                  mode: "insensitive",
+                },
+              },
+
+              {
+                bookingReference: {
+                  contains: search,
+                  mode: "insensitive",
+                },
+              },
+
+              {
+                shipment: {
+                  shipmentNumber: {
+                    contains: search,
+                    mode: "insensitive",
+                  },
+                },
+              },
+            ],
+          }
+        : {};
+
+    /*
+    =====================================
+    FINAL WHERE
+    =====================================
+    */
+
     const where: Prisma.ContainerWhereInput = {
+      ...shipmentVisibilityFilter,
+
+      /*
+      Explicit shipment filter
+      */
+
       ...(shipmentId && {
         shipmentId,
       }),
+
+      /*
+      Packing list filter
+      */
 
       ...(packingListId && {
         packingListId,
       }),
 
+      /*
+      Container status
+      */
+
       ...(status && {
         status,
       }),
+
+      /*
+      Terminal charge status
+      */
 
       ...(terminalChargeStatus && {
         terminalChargeStatus,
       }),
 
+      /*
+      Container type
+      */
+
       ...(containerType && {
         containerType,
       }),
+
+      /*
+      Container size
+      */
 
       ...(containerSize && {
         containerSize,
       }),
 
-      ...(search && {
-        OR: [
-          {
-            containerNumber: {
-              contains: search,
-              mode: "insensitive",
-            },
-          },
+      /*
+      Search
+      */
 
-          {
-            sealNumber: {
-              contains: search,
-              mode: "insensitive",
-            },
-          },
-
-          {
-            bookingReference: {
-              contains: search,
-              mode: "insensitive",
-            },
-          },
-
-          {
-            shipment: {
-              shipmentNumber: {
-                contains: search,
-                mode: "insensitive",
-              },
-            },
-          },
-        ],
-      }),
+      ...searchFilter,
     };
+
+    /*
+    =====================================
+    DATABASE QUERY
+    =====================================
+    */
 
     const [data, total] = await Promise.all([
       prisma.container.findMany({
@@ -191,7 +282,9 @@ class ContainerRepository {
         limit,
         total,
 
-        totalPages: Math.ceil(total / limit),
+        totalPages: Math.ceil(
+          total / limit
+        ),
       },
     };
   }
@@ -400,62 +493,83 @@ class ContainerRepository {
   =====================================
   */
 
-private listInclude = {
-  shipment: {
-    select: {
-      id: true,
-      shipmentNumber: true,
+  private listInclude = {
+    shipment: {
+      select: {
+        id: true,
 
-      // Shipment information
-      shipmentDate: true,
-      transportMode: true,
-      status: true,
+        shipmentNumber: true,
 
-      // Shipping details
-      bookingNumber: true,
-      shippingLine: true,
-      vesselName: true,
-      voyageNumber: true,
+        /*
+        Shipment information
+        */
 
-      // Ports
-      portOfLoading: true,
-      portOfDischarge: true,
+        shipmentDate: true,
 
-      // Parties
-      exporter: {
-        select: {
-          name: true,
+        transportMode: true,
+
+        status: true,
+
+        /*
+        Shipping details
+        */
+
+        bookingNumber: true,
+
+        shippingLine: true,
+
+        vesselName: true,
+
+        voyageNumber: true,
+
+        /*
+        Ports
+        */
+
+        portOfLoading: true,
+
+        portOfDischarge: true,
+
+        /*
+        Parties
+        */
+
+        exporter: {
+          select: {
+            name: true,
+          },
         },
-      },
 
-      client: {
-        select: {
-          companyName: true,
+        client: {
+          select: {
+            companyName: true,
+          },
         },
-      },
 
-      consignee: {
-        select: {
-          name: true,
+        consignee: {
+          select: {
+            name: true,
+          },
         },
       },
     },
-  },
 
-  packingList: {
-    select: {
-      id: true,
-      packingListNumber: true,
-    },
-  },
+    packingList: {
+      select: {
+        id: true,
 
-  _count: {
-    select: {
-      documents: true,
-      transits: true,
+        packingListNumber: true,
+      },
     },
-  },
-};
+
+    _count: {
+      select: {
+        documents: true,
+
+        transits: true,
+      },
+    },
+  };
 
   /*
   =====================================

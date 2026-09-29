@@ -7,6 +7,7 @@ import consigneeRepository from "../Repository/consignee.repository";
 import {
   CreateShipmentDto,
   UpdateShipmentDto,
+  UpdateShipmentStatusDto,
 } from "../validations/shipment.validation";
 
 import { ShipmentQuery } from "../validations/shipment-query.validation";
@@ -306,6 +307,35 @@ class ShipmentService {
   async findAvailable() {
     return shipmentRepository.findAvailable();
   }
+
+  async getStatusCounts() {
+  return shipmentRepository.getStatusCounts();
+}
+/* ===========================================
+   Update Shipment Status
+=========================================== */
+
+async updateStatus(
+  id: string,
+  status: UpdateShipmentStatusDto["status"]
+) {
+  /* =========================================
+     Ensure Shipment Exists
+  ========================================= */
+
+  await this.findById(id);
+
+  /* =========================================
+     Update Status
+  ========================================= */
+
+  return shipmentRepository.update(
+    id,
+    {
+      status,
+    }
+  );
+}
 }
 
 export default new ShipmentService();

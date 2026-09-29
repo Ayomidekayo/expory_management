@@ -13,16 +13,37 @@ router.use(authenticate);
 
 /*
 =====================================
-Get All / Available
+Get All / Available / Statistics
 =====================================
 */
 
+/*
+ * Get available shipments
+ *
+ * Must come before "/:id"
+ */
 router.get(
   "/available",
   requirePermission(Permission.VIEW_SHIPMENTS),
   shipmentController.findAvailable
 );
 
+/*
+ * Get shipment status counts
+ */
+router.get(
+  "/status-counts",
+  requirePermission(Permission.VIEW_SHIPMENTS),
+  shipmentController.getStatusCounts
+);
+
+/*
+ * Get all shipments
+ *
+ * GET /shipments
+ * GET /shipments?status=COMPLETED
+ * GET /shipments?status=CANCELLED
+ */
 router.get(
   "/",
   requirePermission(Permission.VIEW_SHIPMENTS),
@@ -55,7 +76,25 @@ router.post(
 
 /*
 =====================================
-Update
+Update STATUS
+=====================================
+
+Only ADMIN should be allowed to
+change shipment status.
+
+IMPORTANT:
+This route must come before PATCH "/:id".
+*/
+
+router.patch(
+  "/:id/status",
+  requirePermission(Permission.EDIT_SHIPMENT),
+  shipmentController.updateStatus
+);
+
+/*
+=====================================
+Update Shipment
 =====================================
 */
 

@@ -33,26 +33,25 @@ export default function GatesPage() {
 
   const [status, setStatus] =
     useState<GateMovementStatus | "">("");
+const filters = {
+  ...(search.trim()
+    ? {
+        search: search.trim(),
+      }
+    : {}),
 
-  const filters = {
-    ...(search.trim()
-      ? {
-          containerNumber: search.trim(),
-        }
-      : {}),
+  ...(gateType
+    ? {
+        gateType,
+      }
+    : {}),
 
-    ...(gateType
-      ? {
-          gateType,
-        }
-      : {}),
-
-    ...(status
-      ? {
-          status,
-        }
-      : {}),
-  };
+  ...(status
+    ? {
+        status,
+      }
+    : {}),
+};
 
   /*
    * Gate movements

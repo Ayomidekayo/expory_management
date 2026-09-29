@@ -1,4 +1,8 @@
-import { createBrowserRouter, Navigate } from "react-router-dom";
+import {
+  createBrowserRouter,
+  Navigate,
+  useLocation,
+} from "react-router-dom";
 
 import LoginPage from "../pages/auth/LoginPage";
 import RegisterPage from "../pages/auth/RegisterPage";
@@ -63,6 +67,31 @@ import ProfilePage from "../pages/settings/ProfilePage";
 import UsersPage from "../pages/user/UsersPage";
 import GatesPage from "../pages/gates/GatesPage";
 import CreateGateMovementPage from "../pages/gates/CreateGateMovementPage";
+import EditGateMovementPage from "../pages/gates/EditGateMovementPage";
+import GateDetailsPage from "../pages/gates/GateDetailsPage";
+import CompletedShipmentsPage from "../pages/shipment/CompletedShipmentsPage";
+
+function LegacyInvoiceCreateRedirect() {
+  const location = useLocation();
+
+  return (
+    <Navigate
+      to={`/invoices/create${location.search}`}
+      replace
+    />
+  );
+}
+
+function LegacyPackingListCreateRedirect() {
+  const location = useLocation();
+
+  return (
+    <Navigate
+      to={`/packing-lists/create${location.search}`}
+      replace
+    />
+  );
+}
 
 export const router = createBrowserRouter([
   {
@@ -308,6 +337,14 @@ export const router = createBrowserRouter([
               </PermissionRoute>
             ),
           },
+          {
+  path: "/shipments/completed",
+  element: (
+    <PermissionRoute permission="VIEW_SHIPMENTS">
+      <CompletedShipmentsPage />
+    </PermissionRoute>
+  ),
+},
 
           // ================================
           // INVOICES
@@ -329,7 +366,14 @@ export const router = createBrowserRouter([
                 <CreateInvoicePage />
               </PermissionRoute>
             ),
-          },
+          },{
+  path: "/invoices/new",
+  element: (
+    <PermissionRoute permission="CREATE_INVOICE">
+      <LegacyInvoiceCreateRedirect />
+    </PermissionRoute>
+  ),
+},
 
           {
             path: "/invoices/:id",
@@ -367,6 +411,15 @@ export const router = createBrowserRouter([
             element: (
               <PermissionRoute permission="CREATE_PACKING_LIST">
                 <CreatePackingListPage />
+              </PermissionRoute>
+            ),
+          },
+
+          {
+            path: "/packing-lists/new",
+            element: (
+              <PermissionRoute permission="CREATE_PACKING_LIST">
+                <LegacyPackingListCreateRedirect />
               </PermissionRoute>
             ),
           },
@@ -445,6 +498,23 @@ export const router = createBrowserRouter([
   element: (
     <PermissionRoute permission="CREATE_GATE">
       <CreateGateMovementPage />
+    </PermissionRoute>
+  ),
+},
+{
+  path: "/gates/:id",
+  element: (
+    <PermissionRoute permission="VIEW_GATES">
+      <GateDetailsPage />
+    </PermissionRoute>
+  ),
+},
+
+{
+  path: "/gates/:id/edit",
+  element: (
+    <PermissionRoute permission="EDIT_GATE">
+      <EditGateMovementPage />
     </PermissionRoute>
   ),
 },

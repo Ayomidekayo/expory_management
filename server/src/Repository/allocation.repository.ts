@@ -1,4 +1,9 @@
-import { AllocationStatus, Prisma } from "../generated";
+import {
+  AllocationStatus,
+  Prisma,
+  ShipmentStatus,
+} from "../generated";
+
 import { prisma } from "../config/prisma";
 
 import {
@@ -20,7 +25,9 @@ class AllocationRepository {
     status: AllocationStatus
   ) {
     return prisma.allocation.update({
-      where: { id },
+      where: {
+        id,
+      },
 
       data: {
         status,
@@ -84,151 +91,239 @@ class AllocationRepository {
   =====================================
   */
 
-async findAll(query: AllocationQuery) {
-  const {
-    page = 1,
-    limit = 10,
-    search,
-    status,
-    priority,
-    serviceType,
-    transportMode,
-    clientId,
-    exporterId,
-    consigneeId,
-    assignedToId,
-    createdById,
-    approvedById,
-    isActive,
-    sortBy = "createdAt",
-    sortOrder = "desc",
-  } = query;
-
-  const where: Prisma.AllocationWhereInput = {
-    ...(status !== undefined && {
+  async findAll(query: AllocationQuery) {
+    const {
+      page = 1,
+      limit = 10,
+      search,
       status,
-    }),
-
-    ...(priority !== undefined && {
       priority,
-    }),
-
-    ...(serviceType !== undefined && {
       serviceType,
-    }),
-
-    ...(transportMode !== undefined && {
       transportMode,
-    }),
-
-    ...(clientId !== undefined && {
       clientId,
-    }),
-
-    ...(exporterId !== undefined && {
       exporterId,
-    }),
-
-    ...(consigneeId !== undefined && {
       consigneeId,
-    }),
-
-    ...(assignedToId !== undefined && {
       assignedToId,
-    }),
-
-    ...(createdById !== undefined && {
       createdById,
-    }),
-
-    ...(approvedById !== undefined && {
       approvedById,
-    }),
-
-    ...(isActive !== undefined && {
       isActive,
-    }),
+      sortBy = "createdAt",
+      sortOrder = "desc",
+    } = query;
 
-    ...(search !== undefined &&
-      search.trim() !== "" && {
-        OR: [
-          {
-            allocationNumber: {
-              contains: search.trim(),
-              mode: "insensitive",
-            },
-          },
+    const trimmedSearch =
+      search?.trim();
 
-          {
-            cargoDescription: {
-              contains: search.trim(),
-              mode: "insensitive",
-            },
-          },
+    /*
+    =====================================
+    SHIPMENT VISIBILITY
 
-          {
-            commodityName: {
-              contains: search.trim(),
-              mode: "insensitive",
-            },
-          },
+    Normal allocation list:
+    - Show allocations without a shipment
+    - Show allocations linked to active
+      shipments
+    - Hide allocations linked to
+      COMPLETED/CANCELLED shipments
 
-          {
-            client: {
-              companyName: {
-                contains: search.trim(),
-                mode: "insensitive",
+    Search:
+    - Allow archived allocations to
+      be found
+    =====================================
+    */
+
+    const shipmentVisibilityFilter:
+      Prisma.AllocationWhereInput =
+      !trimmedSearch
+        ? {
+            OR: [
+              {
+                shipment: null,
               },
-            },
+
+              {
+                shipment: {
+                  status: {
+                    notIn: [
+                      ShipmentStatus.COMPLETED,
+                      ShipmentStatus.CANCELLED,
+                    ],
+                  },
+                },
+              },
+            ],
+          }
+        : {};
+
+    /*
+    =====================================
+    SEARCH FILTER
+    =====================================
+    */
+
+    const searchFilter:
+      Prisma.AllocationWhereInput =
+      trimmedSearch
+        ? {
+            OR: [
+              {
+                allocationNumber: {
+                  contains:
+                    trimmedSearch,
+                  mode: "insensitive",
+                },
+              },
+
+              {
+                cargoDescription: {
+                  contains:
+                    trimmedSearch,
+                  mode: "insensitive",
+                },
+              },
+
+              {
+                commodityName: {
+                  contains:
+                    trimmedSearch,
+                  mode: "insensitive",
+                },
+              },
+
+              {
+                client: {
+                  companyName: {
+                    contains:
+                      trimmedSearch,
+                    mode: "insensitive",
+                  },
+                },
+              },
+
+              /*
+              Search by shipment number
+              */
+
+              {
+                shipment: {
+                  shipmentNumber: {
+                    contains:
+                      trimmedSearch,
+                    mode: "insensitive",
+                  },
+                },
+              },
+            ],
+          }
+        : {};
+
+    /*
+    =====================================
+    FINAL WHERE
+    =====================================
+    */
+
+    const where: Prisma.AllocationWhereInput =
+      {
+        ...shipmentVisibilityFilter,
+
+        ...(status !== undefined && {
+          status,
+        }),
+
+        ...(priority !== undefined && {
+          priority,
+        }),
+
+        ...(serviceType !== undefined && {
+          serviceType,
+        }),
+
+        ...(transportMode !== undefined && {
+          transportMode,
+        }),
+
+        ...(clientId !== undefined && {
+          clientId,
+        }),
+
+        ...(exporterId !== undefined && {
+          exporterId,
+        }),
+
+        ...(consigneeId !== undefined && {
+          consigneeId,
+        }),
+
+        ...(assignedToId !== undefined && {
+          assignedToId,
+        }),
+
+        ...(createdById !== undefined && {
+          createdById,
+        }),
+
+        ...(approvedById !== undefined && {
+          approvedById,
+        }),
+
+        ...(isActive !== undefined && {
+          isActive,
+        }),
+
+        ...searchFilter,
+      };
+
+    /*
+    =====================================
+    FETCH DATA + COUNT
+    =====================================
+    */
+
+    const [data, total] =
+      await Promise.all([
+        prisma.allocation.findMany({
+          where,
+
+          include:
+            this.listInclude,
+
+          orderBy: {
+            [sortBy]:
+              sortOrder,
           },
-        ],
-      }),
-  };
 
-  /*
-  =====================================
-  Fetch Allocations
-  =====================================
-  */
+          skip:
+            (page - 1) * limit,
 
-  const data =
-    await prisma.allocation.findMany({
-      where,
+          take: limit,
+        }),
 
-      include: this.listInclude,
+        prisma.allocation.count({
+          where,
+        }),
+      ]);
 
-      orderBy: {
-        [sortBy]: sortOrder,
+    /*
+    =====================================
+    RESPONSE
+    =====================================
+    */
+
+    return {
+      data,
+
+      pagination: {
+        page,
+        limit,
+        total,
+
+        totalPages:
+          Math.ceil(
+            total / limit
+          ),
       },
-
-      skip: (page - 1) * limit,
-
-      take: limit,
-    });
-
-  /*
-  =====================================
-  Count
-  =====================================
-  */
-
-  const total =
-    await prisma.allocation.count({
-      where,
-    });
-
-  return {
-    data,
-
-    pagination: {
-      page,
-      limit,
-      total,
-      totalPages:
-        Math.ceil(total / limit),
-    },
-  };
-}
+    };
+  }
 
   /*
   =====================================
@@ -267,14 +362,19 @@ async findAll(query: AllocationQuery) {
         pickupDate:
           data.pickupDate !== undefined
             ? data.pickupDate
-              ? new Date(data.pickupDate)
+              ? new Date(
+                  data.pickupDate
+                )
               : null
             : undefined,
 
         expectedShipmentDate:
-          data.expectedShipmentDate !== undefined
+          data.expectedShipmentDate !==
+          undefined
             ? data.expectedShipmentDate
-              ? new Date(data.expectedShipmentDate)
+              ? new Date(
+                  data.expectedShipmentDate
+                )
               : null
             : undefined,
       },
@@ -299,7 +399,7 @@ async findAll(query: AllocationQuery) {
 
   /*
   =====================================
-  Lightweight Include
+  LIGHTWEIGHT INCLUDE
   =====================================
 
   Used by findAll().
@@ -314,17 +414,30 @@ async findAll(query: AllocationQuery) {
 
   for every allocation in the list.
 
-  Those relationships can be loaded when
+  Those relationships are loaded when
   viewing a single allocation.
+  =====================================
   */
 
   private readonly listInclude =
     Prisma.validator<Prisma.AllocationInclude>()({
+      /*
+      =====================================
+      Parties
+      =====================================
+      */
+
       client: true,
 
       exporter: true,
 
       consignee: true,
+
+      /*
+      =====================================
+      Shipment
+      =====================================
+      */
 
       shipment: {
         select: {
@@ -337,8 +450,40 @@ async findAll(query: AllocationQuery) {
           status: true,
 
           transportMode: true,
+
+          bookingNumber: true,
+
+          shippingLine: true,
+
+          vesselName: true,
+
+          voyageNumber: true,
+
+          client: {
+            select: {
+              companyName: true,
+            },
+          },
+
+          exporter: {
+            select: {
+              name: true,
+            },
+          },
+
+          consignee: {
+            select: {
+              name: true,
+            },
+          },
         },
       },
+
+      /*
+      =====================================
+      Created By
+      =====================================
+      */
 
       createdBy: {
         select: {
@@ -348,6 +493,12 @@ async findAll(query: AllocationQuery) {
         },
       },
 
+      /*
+      =====================================
+      Assigned To
+      =====================================
+      */
+
       assignedTo: {
         select: {
           id: true,
@@ -356,6 +507,12 @@ async findAll(query: AllocationQuery) {
         },
       },
 
+      /*
+      =====================================
+      Approved By
+      =====================================
+      */
+
       approvedBy: {
         select: {
           id: true,
@@ -363,6 +520,12 @@ async findAll(query: AllocationQuery) {
           email: true,
         },
       },
+
+      /*
+      =====================================
+      Counts
+      =====================================
+      */
 
       _count: {
         select: {
@@ -373,7 +536,7 @@ async findAll(query: AllocationQuery) {
 
   /*
   =====================================
-  Full Include
+  FULL INCLUDE
   =====================================
 
   Used by:
@@ -383,8 +546,9 @@ async findAll(query: AllocationQuery) {
   - update()
   - updateStatus()
 
-  This gives the details page the complete
+  Gives the details page the complete
   allocation + shipment information.
+  =====================================
   */
 
   private readonly include =

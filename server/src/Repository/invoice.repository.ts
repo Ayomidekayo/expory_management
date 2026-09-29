@@ -1,4 +1,4 @@
-import { InvoiceStatus, Prisma } from "../generated";
+import { InvoiceStatus, Prisma, ShipmentStatus } from "../generated";
 import { prisma } from "../config/prisma";
 
 import {
@@ -65,38 +65,6 @@ class InvoiceRepository {
       remarks:
         item.remarks || undefined,
     }));
-
-    /*
-    =====================================
-    DEBUG INVOICE ITEMS
-    =====================================
-    */
-
-    console.log(
-      "\n========================================"
-    );
-
-    console.log(
-      "INVOICE ITEMS BEFORE DATABASE"
-    );
-
-    console.log(
-      "========================================"
-    );
-
-    console.table(
-      items.map((item) => ({
-        itemDate: item.itemDate,
-        description: item.description,
-        quantity: item.quantity,
-        unitPrice: item.unitPrice,
-        total: item.total,
-      }))
-    );
-
-    console.log(
-      "========================================\n"
-    );
 
     /*
     =====================================
@@ -190,57 +158,6 @@ class InvoiceRepository {
         include:
           this.detailsInclude,
       });
-
-    /*
-    =====================================
-    DEBUG SAVED ITEMS
-    =====================================
-    */
-
-    console.log(
-      "\n========================================"
-    );
-
-    console.log(
-      "INVOICE CREATED SUCCESSFULLY"
-    );
-
-    console.log(
-      "INVOICE NUMBER:",
-      invoice.invoiceNumber
-    );
-
-    console.log(
-      "SAVED INVOICE ITEMS"
-    );
-
-    console.log(
-      "========================================"
-    );
-
-    console.table(
-      invoice.items.map((item) => ({
-        id: item.id,
-
-        itemDate: item.itemDate,
-
-        description:
-          item.description,
-
-        quantity:
-          item.quantity,
-
-        unitPrice:
-          item.unitPrice,
-
-        total:
-          item.total,
-      }))
-    );
-
-    console.log(
-      "========================================\n"
-    );
 
     return invoice;
   }
@@ -414,88 +331,47 @@ class InvoiceRepository {
         break;
     }
 
-    const where: Prisma.InvoiceWhereInput =
-      {
-        ...(status && {
-          status,
-        }),
-
-        ...(currency && {
-          currency,
-        }),
-
-        ...(shipmentId && {
-          shipmentId,
-        }),
-
-        ...(search && {
-          OR: [
-            {
-              invoiceNumber: {
-                contains: search,
-                mode: "insensitive",
-              },
-            },
-
-            {
-              commercialReference: {
-                contains: search,
-                mode: "insensitive",
-              },
-            },
-
-            {
-              shipment: {
-                shipmentNumber: {
-                  contains: search,
-                  mode: "insensitive",
-                },
-              },
-            },
-
-            {
-              shipment: {
-                client: {
-                  companyName: {
-                    contains: search,
-                    mode: "insensitive",
-                  },
-                },
-              },
-            },
-          ],
-        }),
-
-        ...((fromDate ||
-          toDate ||
-          startDate) && {
-          invoiceDate: {
-            ...(fromDate
-              ? {
-                  gte: new Date(
-                    fromDate
-                  ),
-                }
-              : startDate
-              ? {
-                  gte: startDate,
-                }
-              : {}),
-
-            ...(toDate
-              ? {
-                  lte: new Date(
-                    toDate
-                  ),
-                }
-              : endDate
-              ? {
-                  lte: endDate,
-                }
-              : {}),
+    // Archived shipment invoices are hidden from operational lists.
+    // A search or an explicit shipmentId can retrieve them.
+    const where: Prisma.InvoiceWhereInput = {
+      ...(!search && !shipmentId && {
+        shipment: {
+          status: {
+            notIn: [ShipmentStatus.COMPLETED, ShipmentStatus.CANCELLED],
           },
-        }),
-      };
+        },
+      }),
+      ...(status && { status }),
+      ...(currency && { currency }),
+      ...(shipmentId && { shipmentId }),
+      ...((fromDate || toDate || startDate || endDate) && {
+        invoiceDate: {
+          gte: fromDate ? new Date(fromDate) : startDate,
+          lte: toDate
+            ? new Date(new Date(toDate).setHours(23, 59, 59, 999))
+            : endDate,
+        },
+      }),
+      ...(search && {
+        OR: [
+          { invoiceNumber: { contains: search, mode: "insensitive" } },
+          { externalInvoiceNumber: { contains: search, mode: "insensitive" } },
+          { commercialReference: { contains: search, mode: "insensitive" } },
+          {
+            shipment: {
+              shipmentNumber: { contains: search, mode: "insensitive" },
+            },
+          },
+          {
+            shipment: {
+              client: {
+                companyName: { contains: search, mode: "insensitive" },
+              },
+            },
+          },
+        ],
+      }),
+    };
 
     const [data, total] =
       await Promise.all([
@@ -661,11 +537,7 @@ class InvoiceRepository {
       | number
       | undefined;
 
-    let totalAmount:
-      | number
-      | undefined;
-
-    /*
+/*
     =====================================
     Only replace invoice items when
     items were included in the request.
@@ -718,47 +590,6 @@ class InvoiceRepository {
 
       /*
       =====================================
-      DEBUG UPDATED ITEMS
-      =====================================
-      */
-
-      console.log(
-        "\n========================================"
-      );
-
-      console.log(
-        "UPDATED INVOICE ITEMS BEFORE DATABASE"
-      );
-
-      console.log(
-        "========================================"
-      );
-
-      console.table(
-        items.map((item) => ({
-          itemDate:
-            item.itemDate,
-
-          description:
-            item.description,
-
-          quantity:
-            item.quantity,
-
-          unitPrice:
-            item.unitPrice,
-
-          total:
-            item.total,
-        }))
-      );
-
-      console.log(
-        "========================================\n"
-      );
-
-      /*
-      =====================================
       Calculate Subtotal
       =====================================
       */
@@ -769,18 +600,7 @@ class InvoiceRepository {
         0
       );
 
-      /*
-      =====================================
-      Calculate Grand Total
-      =====================================
-      */
 
-      totalAmount =
-        subtotal +
-        Number(
-          data.freight ??
-            existingInvoice.freight
-        );
     }
 
     /*
@@ -845,71 +665,22 @@ class InvoiceRepository {
 
           ...(items !== undefined && {
             subtotal,
-
-            totalAmount,
-
             items: {
               deleteMany: {},
-
               create: items,
             },
+          }),
+
+          ...((items !== undefined || data.freight !== undefined) && {
+            totalAmount:
+              (subtotal ?? Number(existingInvoice.subtotal)) +
+              Number(data.freight ?? existingInvoice.freight),
           }),
         },
 
         include:
           this.detailsInclude,
       });
-
-    /*
-    =====================================
-    DEBUG SAVED UPDATED ITEMS
-    =====================================
-    */
-
-    if (updatedInvoice.items) {
-      console.log(
-        "\n========================================"
-      );
-
-      console.log(
-        "INVOICE UPDATED SUCCESSFULLY"
-      );
-
-      console.log(
-        "SAVED UPDATED ITEMS"
-      );
-
-      console.log(
-        "========================================"
-      );
-
-      console.table(
-        updatedInvoice.items.map(
-          (item) => ({
-            id: item.id,
-
-            itemDate:
-              item.itemDate,
-
-            description:
-              item.description,
-
-            quantity:
-              item.quantity,
-
-            unitPrice:
-              item.unitPrice,
-
-            total:
-              item.total,
-          })
-        )
-      );
-
-      console.log(
-        "========================================\n"
-      );
-    }
 
     return updatedInvoice;
   }
@@ -940,6 +711,8 @@ class InvoiceRepository {
         id: true,
 
         shipmentNumber: true,
+
+        status: true,
 
         client: {
           select: {

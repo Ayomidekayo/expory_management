@@ -15,40 +15,59 @@ export type GateMovementStatus =
   | "CANCELLED";
 
 /* =========================================
-   RELATED CONTAINER
+   RELATED SHIPMENT
 ========================================= */
 
-export interface GateContainer {
+export interface GateMovementShipment {
   id: string;
-  containerNumber: string;
 
-  sealNumber?: string | null;
+  shipmentNumber: string;
 
-  containerType?: string;
-  containerSize?: string;
+  shipmentDate: string;
 
-  status?: string;
+  status: string;
+
+  transportMode: string;
+
+  bookingNumber?: string | null;
 
   shippingLine?: string | null;
 
-  bookingReference?: string | null;
+  vesselName?: string | null;
 
-  shipment?: {
+  voyageNumber?: string | null;
+
+  client?: {
     id: string;
-    shipmentNumber: string;
 
-    client?: {
-      companyName?: string | null;
-    } | null;
-
-    exporter?: {
-      companyName?: string | null;
-    } | null;
-
-    consignee?: {
-      companyName?: string | null;
-    } | null;
+    companyName: string;
   } | null;
+
+  exporter?: {
+    id: string;
+
+    name: string;
+  } | null;
+
+  consignee?: {
+    id: string;
+
+    name: string;
+  } | null;
+
+  allocation?: unknown;
+}
+
+/* =========================================
+   RELATED CONTAINER
+========================================= */
+
+export interface GateMovementContainer {
+  id: string;
+
+  containerNumber: string;
+
+  shipment?: GateMovementShipment | null;
 }
 
 /* =========================================
@@ -72,9 +91,9 @@ export interface GateMovement {
 
   status: GateMovementStatus;
 
-  clearedAt?: string | null;
-
   crossedAt?: string | null;
+
+  clearedAt?: string | null;
 
   notes?: string | null;
 
@@ -82,7 +101,7 @@ export interface GateMovement {
 
   updatedAt: string;
 
-  container?: GateContainer | null;
+  container?: GateMovementContainer | null;
 }
 
 /* =========================================
@@ -114,6 +133,11 @@ export interface CreateGateMovementDto {
 export interface UpdateGateMovementDto {
   containerId?: string;
 
+  /*
+   * Required by the backend.
+   * The edit page should normally keep this read-only
+   * when the gate movement is already attached to a container.
+   */
   containerNumber: string;
 
   yardStoreNumber?: string;
@@ -141,6 +165,10 @@ export interface GateMovementFilters {
   containerNumber?: string;
 
   yardStoreNumber?: string;
+
+  shipmentId?: string;
+
+  shipmentNumber?: string;
 }
 
 /* =========================================

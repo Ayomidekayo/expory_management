@@ -27,28 +27,27 @@ class PackingListService {
       return `PKL-${year}-00001`;
     }
 
-    const sequence = Number(
-      latest.packingListNumber.split("-")[2]
-    );
+    const parts = latest.packingListNumber.split("-");
+    const sequence = Number(parts[2]);
 
-    return `PKL-${year}-${String(
-      sequence + 1
-    ).padStart(5, "0")}`;
+    return `PKL-${year}-${String(sequence + 1).padStart(5, "0")}`;
   }
 
   /*
   =====================================
-  Create
+  Create Packing List
   =====================================
   */
 
-  async create(
-    data: CreatePackingListDto
-  ) {
+  async create(data: CreatePackingListDto) {
+    /*
+    =====================================
+    Ensure Shipment Exists
+    =====================================
+    */
+
     const shipment =
-      await shipmentRepository.findById(
-        data.shipmentId
-      );
+      await shipmentRepository.findById(data.shipmentId);
 
     if (!shipment) {
       throw new ApiError(
@@ -56,6 +55,12 @@ class PackingListService {
         "Shipment not found."
       );
     }
+
+    /*
+    =====================================
+    One Shipment = One Packing List
+    =====================================
+    */
 
     const existing =
       await packingListRepository.findByShipmentId(
@@ -69,8 +74,20 @@ class PackingListService {
       );
     }
 
+    /*
+    =====================================
+    Generate Packing List Number
+    =====================================
+    */
+
     const packingListNumber =
       await this.generatePackingListNumber();
+
+    /*
+    =====================================
+    Create
+    =====================================
+    */
 
     return packingListRepository.create({
       ...data,
@@ -84,12 +101,8 @@ class PackingListService {
   =====================================
   */
 
-  async findAll(
-    query: PackingListQuery
-  ) {
-    return packingListRepository.findAll(
-      query
-    );
+  async findAll(query: PackingListQuery) {
+    return packingListRepository.findAll(query);
   }
 
   /*
@@ -99,10 +112,15 @@ class PackingListService {
   */
 
   async findById(id: string) {
-    const packingList =
-      await packingListRepository.findById(
-        id
+    if (!id || id === "new" || id === "create") {
+      throw new ApiError(
+        400,
+        "Invalid packing list ID."
       );
+    }
+
+    const packingList =
+      await packingListRepository.findById(id);
 
     if (!packingList) {
       throw new ApiError(
@@ -141,9 +159,7 @@ class PackingListService {
   async delete(id: string) {
     await this.findById(id);
 
-    return packingListRepository.delete(
-      id
-    );
+    return packingListRepository.delete(id);
   }
 }
 

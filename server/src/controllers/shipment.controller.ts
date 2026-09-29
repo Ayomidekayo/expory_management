@@ -9,6 +9,7 @@ import shipmentService from "../services/shipment.service";
 import {
   createShipmentSchema,
   updateShipmentSchema,
+  updateShipmentStatusSchema,
 } from "../validations/shipment.validation";
 
 import { ShipmentQueryDto } from "../validations/shipment-query.validation";
@@ -198,6 +199,63 @@ class ShipmentController {
       next(error);
     }
   }
+
+  /* ===========================================
+   Get Shipment Status Counts
+=========================================== */
+
+async getStatusCounts(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  try {
+    const counts =
+      await shipmentService.getStatusCounts();
+
+    res.status(200).json({
+      success: true,
+      data: counts,
+    });
+  } catch (error) {
+    next(error);
+  }
+}
+/* ===========================================
+   Update Shipment Status
+=========================================== */
+
+async updateStatus(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  try {
+    const id = String(
+      req.params.id
+    );
+
+    const data =
+      updateShipmentStatusSchema.parse(
+        req.body
+      );
+
+    const shipment =
+      await shipmentService.updateStatus(
+        id,
+        data.status
+      );
+
+    res.status(200).json({
+      success: true,
+      message:
+        "Shipment status updated successfully.",
+      data: shipment,
+    });
+  } catch (error) {
+    next(error);
+  }
+}
 }
 
 export default new ShipmentController();

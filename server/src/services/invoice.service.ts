@@ -1,7 +1,6 @@
 import { InvoiceStatus } from "../generated";
 
 import invoiceRepository from "../Repository/invoice.repository";
-
 import shipmentRepository from "../Repository/shipment.repository";
 
 import { ApiError } from "../utils/ApiError";
@@ -30,13 +29,10 @@ class InvoiceService {
       return `INV-${year}-00001`;
     }
 
-    const sequence = Number(
-      latest.invoiceNumber.split("-")[2]
-    );
+    const parts = latest.invoiceNumber.split("-");
+    const sequence = Number(parts[2]);
 
-    return `INV-${year}-${String(
-      sequence + 1
-    ).padStart(5, "0")}`;
+    return `INV-${year}-${String(sequence + 1).padStart(5, "0")}`;
   }
 
   /*
@@ -45,9 +41,7 @@ class InvoiceService {
   =====================================
   */
 
-  async create(
-    data: CreateInvoiceDto
-  ) {
+  async create(data: CreateInvoiceDto) {
     /*
     =====================================
     Ensure Shipment Exists
@@ -68,11 +62,12 @@ class InvoiceService {
 
     /*
     =====================================
-    IMPORTANT:
-    DO NOT CHECK WHETHER THE SHIPMENT
-    ALREADY HAS AN INVOICE.
+    IMPORTANT
 
-    One shipment can now have MANY invoices.
+    A shipment can have multiple invoices.
+
+    DO NOT check whether the shipment
+    already has an invoice.
     =====================================
     */
 
@@ -97,12 +92,8 @@ class InvoiceService {
   =====================================
   */
 
-  async findAll(
-    query: InvoiceQuery
-  ) {
-    return invoiceRepository.findAll(
-      query
-    );
+  async findAll(query: InvoiceQuery) {
+    return invoiceRepository.findAll(query);
   }
 
   /*
@@ -112,10 +103,15 @@ class InvoiceService {
   */
 
   async findById(id: string) {
-    const invoice =
-      await invoiceRepository.findById(
-        id
+    if (!id || id === "new" || id === "create") {
+      throw new ApiError(
+        400,
+        "Invalid invoice ID."
       );
+    }
+
+    const invoice =
+      await invoiceRepository.findById(id);
 
     if (!invoice) {
       throw new ApiError(

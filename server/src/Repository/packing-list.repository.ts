@@ -1,4 +1,8 @@
-import { Prisma } from "../generated";
+import {
+  Prisma,
+  ShipmentStatus,
+} from "../generated";
+
 import { prisma } from "../config/prisma";
 
 import {
@@ -9,11 +13,9 @@ import {
 import { PackingListQuery } from "../validations/packing-list-query.validation";
 
 class PackingListRepository {
-  /*
-  =====================================
-  Create
-  =====================================
-  */
+  /* =====================================
+     Create
+  ===================================== */
 
   async create(
     data: CreatePackingListDto & {
@@ -50,29 +52,31 @@ class PackingListRepository {
           data.remarks,
 
         items: {
-          create: data.items.map((item) => ({
-            itemDate: new Date(
-              item.itemDate
-            ),
+          create: data.items.map(
+            (item) => ({
+              itemDate: new Date(
+                item.itemDate
+              ),
 
-            description:
-              item.description,
+              description:
+                item.description,
 
-            packageType:
-              item.packageType,
+              packageType:
+                item.packageType,
 
-            packages:
-              item.packages,
+              packages:
+                item.packages,
 
-            grossWeight:
-              item.grossWeight,
+              grossWeight:
+                item.grossWeight,
 
-            netWeight:
-              item.netWeight,
+              netWeight:
+                item.netWeight,
 
-            remarks:
-              item.remarks,
-          })),
+              remarks:
+                item.remarks,
+            })
+          ),
         },
       },
 
@@ -81,11 +85,9 @@ class PackingListRepository {
     });
   }
 
-  /*
-  =====================================
-  Latest Packing List
-  =====================================
-  */
+  /* =====================================
+     Latest Packing List
+  ===================================== */
 
   async findLatestPackingList() {
     return prisma.packingList.findFirst({
@@ -99,11 +101,9 @@ class PackingListRepository {
     });
   }
 
-  /*
-  =====================================
-  Find All
-  =====================================
-  */
+  /* =====================================
+     Find All
+  ===================================== */
 
   async findAll(
     query: PackingListQuery
@@ -117,43 +117,100 @@ class PackingListRepository {
       sortOrder,
     } = query;
 
-    const where: Prisma.PackingListWhereInput =
-      {
-        ...(shipmentId && {
-          shipmentId,
-        }),
+    /*
+    =====================================
+    VISIBILITY RULE
 
-        ...(search && {
-          OR: [
-            {
-              packingListNumber: {
-                contains: search,
-                mode: "insensitive",
+    Default:
+    Hide packing lists belonging to
+    completed/cancelled shipments.
+
+    Search:
+    Allow archived packing lists to
+    be found.
+
+    shipmentId:
+    Allow direct retrieval even when
+    shipment is completed/cancelled.
+    =====================================
+    */
+
+    const shipmentVisibilityFilter: Prisma.PackingListWhereInput =
+      !search && !shipmentId
+        ? {
+            shipment: {
+              status: {
+                notIn: [
+                  ShipmentStatus.COMPLETED,
+                  ShipmentStatus.CANCELLED,
+                ],
               },
             },
+          }
+        : {};
 
-            {
-              shipment: {
-                shipmentNumber: {
+    /*
+    =====================================
+    SEARCH FILTER
+    =====================================
+    */
+
+    const searchFilter: Prisma.PackingListWhereInput =
+      search
+        ? {
+            OR: [
+              {
+                packingListNumber: {
                   contains: search,
                   mode: "insensitive",
                 },
               },
-            },
 
-            {
-              shipment: {
-                client: {
-                  companyName: {
+              {
+                shipment: {
+                  shipmentNumber: {
                     contains: search,
                     mode: "insensitive",
                   },
                 },
               },
-            },
-          ],
+
+              {
+                shipment: {
+                  client: {
+                    companyName: {
+                      contains: search,
+                      mode: "insensitive",
+                    },
+                  },
+                },
+              },
+            ],
+          }
+        : {};
+
+    /*
+    =====================================
+    FINAL WHERE
+    =====================================
+    */
+
+    const where: Prisma.PackingListWhereInput =
+      {
+        ...shipmentVisibilityFilter,
+
+        ...(shipmentId && {
+          shipmentId,
         }),
+
+        ...searchFilter,
       };
+
+    /*
+    =====================================
+    FETCH DATA + TOTAL
+    =====================================
+    */
 
     const [data, total] =
       await Promise.all([
@@ -180,6 +237,12 @@ class PackingListRepository {
         }),
       ]);
 
+    /*
+    =====================================
+    RESPONSE
+    =====================================
+    */
+
     return {
       data,
 
@@ -198,11 +261,9 @@ class PackingListRepository {
     };
   }
 
-  /*
-  =====================================
-  Find By Id
-  =====================================
-  */
+  /* =====================================
+     Find By Id
+  ===================================== */
 
   async findById(id: string) {
     return prisma.packingList.findUnique({
@@ -215,11 +276,9 @@ class PackingListRepository {
     });
   }
 
-  /*
-  =====================================
-  Find By Shipment
-  =====================================
-  */
+  /* =====================================
+     Find By Shipment
+  ===================================== */
 
   async findByShipmentId(
     shipmentId: string
@@ -228,14 +287,15 @@ class PackingListRepository {
       where: {
         shipmentId,
       },
+
+      include:
+        this.detailsInclude,
     });
   }
 
-  /*
-  =====================================
-  Update
-  =====================================
-  */
+  /* =====================================
+     Update
+  ===================================== */
 
   async update(
     id: string,
@@ -287,29 +347,31 @@ class PackingListRepository {
           items: {
             deleteMany: {},
 
-            create: items.map((item) => ({
-              itemDate: new Date(
-                item.itemDate
-              ),
+            create: items.map(
+              (item) => ({
+                itemDate: new Date(
+                  item.itemDate
+                ),
 
-              description:
-                item.description,
+                description:
+                  item.description,
 
-              packageType:
-                item.packageType,
+                packageType:
+                  item.packageType,
 
-              packages:
-                item.packages,
+                packages:
+                  item.packages,
 
-              grossWeight:
-                item.grossWeight,
+                grossWeight:
+                  item.grossWeight,
 
-              netWeight:
-                item.netWeight,
+                netWeight:
+                  item.netWeight,
 
-              remarks:
-                item.remarks,
-            })),
+                remarks:
+                  item.remarks,
+              })
+            ),
           },
         }),
       },
@@ -319,11 +381,9 @@ class PackingListRepository {
     });
   }
 
-  /*
-  =====================================
-  Delete
-  =====================================
-  */
+  /* =====================================
+     Delete
+  ===================================== */
 
   async delete(id: string) {
     return prisma.packingList.delete({
@@ -333,11 +393,9 @@ class PackingListRepository {
     });
   }
 
-  /*
-  =====================================
-  LIST INCLUDE
-  =====================================
-  */
+  /* =====================================
+     LIST INCLUDE
+  ===================================== */
 
   private listInclude = {
     shipment: {
@@ -346,9 +404,29 @@ class PackingListRepository {
 
         shipmentNumber: true,
 
+        shipmentDate: true,
+
+        status: true,
+
+        transportMode: true,
+
+        bookingNumber: true,
+
         client: {
           select: {
             companyName: true,
+          },
+        },
+
+        exporter: {
+          select: {
+            name: true,
+          },
+        },
+
+        consignee: {
+          select: {
+            name: true,
           },
         },
       },
@@ -365,18 +443,19 @@ class PackingListRepository {
     },
   };
 
-  /*
-  =====================================
-  DETAILS INCLUDE
-  =====================================
-  */
+  /* =====================================
+     DETAILS INCLUDE
+  ===================================== */
 
   private detailsInclude = {
     shipment: {
       include: {
         client: true,
+
         exporter: true,
+
         consignee: true,
+
         allocation: true,
       },
     },
@@ -395,7 +474,9 @@ class PackingListRepository {
     _count: {
       select: {
         items: true,
+
         documents: true,
+
         containers: true,
       },
     },

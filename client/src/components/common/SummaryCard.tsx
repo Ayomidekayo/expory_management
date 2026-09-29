@@ -8,6 +8,7 @@ interface SummaryCardProps {
   icon: LucideIcon;
   color?: string;
   trend?: string;
+  onClick?: () => void | Promise<void>;
 }
 
 export default function SummaryCard({
@@ -17,9 +18,33 @@ export default function SummaryCard({
   icon: Icon,
   color = "bg-emerald-100 text-emerald-600",
   trend,
+  onClick,
 }: SummaryCardProps) {
+  const isClickable = Boolean(onClick);
+
   return (
-    <div className="group relative overflow-hidden rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
+    <div
+      role={isClickable ? "button" : undefined}
+      tabIndex={isClickable ? 0 : undefined}
+      onClick={onClick}
+      onKeyDown={(event) => {
+        if (!onClick) return;
+
+        if (
+          event.key === "Enter" ||
+          event.key === " "
+        ) {
+          event.preventDefault();
+          onClick();
+        }
+      }}
+      className={`group relative overflow-hidden rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition-all duration-300 ${
+        isClickable
+          ? "cursor-pointer hover:-translate-y-1 hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-slate-300"
+          : "hover:-translate-y-1 hover:shadow-xl"
+      }`}
+    >
+      {/* Decorative background */}
       <div className="absolute -right-10 -top-10 h-32 w-32 rounded-full bg-slate-100 opacity-40 transition-all group-hover:scale-110" />
 
       <div className="relative flex items-start justify-between">

@@ -67,6 +67,17 @@ export const createShipmentSchema = z.object({
     z.string().optional(),
 });
 
+
+export const updateShipmentStatusSchema =
+  z.object({
+    status: z.nativeEnum(ShipmentStatus),
+  });
+
+export type UpdateShipmentStatusDto =
+  z.infer<
+    typeof updateShipmentStatusSchema
+  >;
+
 export const updateShipmentSchema =
   createShipmentSchema.partial();
 

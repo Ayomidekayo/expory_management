@@ -1,4 +1,7 @@
-import { Prisma } from "../generated";
+import {
+  Prisma,
+  ShipmentStatus,
+} from "../generated";
 
 import { prisma } from "../config/prisma";
 
@@ -11,7 +14,7 @@ import { ShipmentQuery } from "../validations/shipment-query.validation";
 
 class ShipmentRepository {
   /* ===========================================
-     Create
+     CREATE
   =========================================== */
 
   async create(
@@ -62,7 +65,7 @@ class ShipmentRepository {
   }
 
   /* ===========================================
-     Find Latest Shipment
+     FIND LATEST SHIPMENT
   =========================================== */
 
   async findLatestShipment() {
@@ -78,7 +81,7 @@ class ShipmentRepository {
   }
 
   /* ===========================================
-     Find All
+     FIND ALL
   =========================================== */
 
   async findAll(
@@ -98,10 +101,89 @@ class ShipmentRepository {
       sortOrder,
     } = query;
 
-    const where: Prisma.ShipmentWhereInput = {
-      ...(status && {
-        status,
-      }),
+    /*
+    ===========================================
+    SHIPMENT VISIBILITY
+    ===========================================
+    */
+
+    const statusFilter:
+      Prisma.ShipmentWhereInput =
+      status
+        ? {
+            status,
+          }
+        : !search
+        ? {
+            status: {
+              notIn: [
+                ShipmentStatus.COMPLETED,
+                ShipmentStatus.CANCELLED,
+              ],
+            },
+          }
+        : {};
+
+    /*
+    ===========================================
+    SEARCH
+    ===========================================
+    */
+
+    const searchFilter:
+      Prisma.ShipmentWhereInput =
+      search
+        ? {
+            OR: [
+              {
+                shipmentNumber: {
+                  contains: search,
+                  mode: "insensitive",
+                },
+              },
+
+              {
+                bookingNumber: {
+                  contains: search,
+                  mode: "insensitive",
+                },
+              },
+
+              {
+                vesselName: {
+                  contains: search,
+                  mode: "insensitive",
+                },
+              },
+
+              {
+                shippingLine: {
+                  contains: search,
+                  mode: "insensitive",
+                },
+              },
+
+              {
+                client: {
+                  companyName: {
+                    contains: search,
+                    mode: "insensitive",
+                  },
+                },
+              },
+            ],
+          }
+        : {};
+
+    /*
+    ===========================================
+    FINAL WHERE
+    ===========================================
+    */
+
+    const where:
+      Prisma.ShipmentWhereInput = {
+      ...statusFilter,
 
       ...(transportMode && {
         transportMode,
@@ -123,62 +205,33 @@ class ShipmentRepository {
         allocationId,
       }),
 
-      ...(search && {
-        OR: [
-          {
-            shipmentNumber: {
-              contains: search,
-              mode: "insensitive",
-            },
-          },
-
-          {
-            bookingNumber: {
-              contains: search,
-              mode: "insensitive",
-            },
-          },
-
-          {
-            vesselName: {
-              contains: search,
-              mode: "insensitive",
-            },
-          },
-
-          {
-            shippingLine: {
-              contains: search,
-              mode: "insensitive",
-            },
-          },
-
-          {
-            client: {
-              companyName: {
-                contains: search,
-                mode: "insensitive",
-              },
-            },
-          },
-        ],
-      }),
+      ...searchFilter,
     };
+
+    /*
+    ===========================================
+    FETCH DATA + COUNT
+    ===========================================
+    */
 
     const [data, total] =
       await Promise.all([
         prisma.shipment.findMany({
           where,
 
-          include: this.listInclude,
+          include:
+            this.listInclude,
 
           orderBy: {
-            [sortBy]: sortOrder,
+            [sortBy]:
+              sortOrder,
           },
 
-          skip: (page - 1) * limit,
+          skip:
+            (page - 1) * limit,
 
-          take: limit,
+          take:
+            limit,
         }),
 
         prisma.shipment.count({
@@ -194,15 +247,18 @@ class ShipmentRepository {
         limit,
         total,
 
-        totalPages: Math.ceil(
-          total / limit
-        ),
+        totalPages:
+          Math.ceil(
+            total / limit
+          ),
       },
     };
   }
 
   /* ===========================================
-     Find By Id
+     FIND BY ID
+
+     Returns the COMPLETE shipment ecosystem.
   =========================================== */
 
   async findById(id: string) {
@@ -211,12 +267,13 @@ class ShipmentRepository {
         id,
       },
 
-      include: this.detailsInclude,
+      include:
+        this.detailsInclude,
     });
   }
 
   /* ===========================================
-     Find By Allocation
+     FIND BY ALLOCATION
   =========================================== */
 
   async findByAllocationId(
@@ -226,12 +283,15 @@ class ShipmentRepository {
       where: {
         allocationId,
       },
+
+      include:
+        this.detailsInclude,
     });
   }
 
   /* ===========================================
-     Find Available
-     
+     FIND AVAILABLE
+
      Available means:
      Shipment has NO invoices.
   =========================================== */
@@ -244,7 +304,8 @@ class ShipmentRepository {
         },
       },
 
-      include: this.listInclude,
+      include:
+        this.listInclude,
 
       orderBy: {
         shipmentDate: "desc",
@@ -253,7 +314,50 @@ class ShipmentRepository {
   }
 
   /* ===========================================
-     Update
+     GET STATUS COUNTS
+  =========================================== */
+
+  async getStatusCounts() {
+    const [
+      active,
+      completed,
+      cancelled,
+    ] = await Promise.all([
+      prisma.shipment.count({
+        where: {
+          status: {
+            notIn: [
+              ShipmentStatus.COMPLETED,
+              ShipmentStatus.CANCELLED,
+            ],
+          },
+        },
+      }),
+
+      prisma.shipment.count({
+        where: {
+          status:
+            ShipmentStatus.COMPLETED,
+        },
+      }),
+
+      prisma.shipment.count({
+        where: {
+          status:
+            ShipmentStatus.CANCELLED,
+        },
+      }),
+    ]);
+
+    return {
+      active,
+      completed,
+      cancelled,
+    };
+  }
+
+  /* ===========================================
+     UPDATE
   =========================================== */
 
   async update(
@@ -316,12 +420,13 @@ class ShipmentRepository {
             : undefined,
       },
 
-      include: this.detailsInclude,
+      include:
+        this.detailsInclude,
     });
   }
 
   /* ===========================================
-     Delete
+     DELETE
   =========================================== */
 
   async delete(id: string) {
@@ -333,7 +438,9 @@ class ShipmentRepository {
   }
 
   /* ===========================================
-     Shared List Include
+     LIST INCLUDE
+
+     Lightweight response for shipment table.
   =========================================== */
 
   private listInclude = {
@@ -376,43 +483,244 @@ class ShipmentRepository {
   };
 
   /* ===========================================
-     Shared Details Include
+     COMPLETE DETAILS INCLUDE
+
+     Used when viewing one shipment.
+
+     Everything related to the shipment is
+     loaded here.
   =========================================== */
 
   private detailsInclude = {
+    /*
+    ===========================================
+    CLIENT
+    ===========================================
+    */
+
     client: true,
+
+    /*
+    ===========================================
+    EXPORTER
+    ===========================================
+    */
 
     exporter: true,
 
+    /*
+    ===========================================
+    CONSIGNEE
+    ===========================================
+    */
+
     consignee: true,
 
+    /*
+    ===========================================
+    ALLOCATION
+    ===========================================
+    */
+
     allocation: {
-      select: {
-        id: true,
-        allocationNumber: true,
-        serviceType: true,
-        priority: true,
-        status: true,
+      include: {
+        client: true,
+
+        exporter: true,
+
+        consignee: true,
+
+        attachedDocuments: true,
+
+        createdBy: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+          },
+        },
+
+        assignedTo: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+          },
+        },
+
+        approvedBy: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+          },
+        },
+
+        _count: {
+          select: {
+            attachedDocuments: true,
+          },
+        },
       },
     },
 
-    /* =========================================
-       ALL INVOICES FOR THIS SHIPMENT
-    ========================================= */
+    /*
+    ===========================================
+    INVOICES
+    ===========================================
+
+    Every invoice belonging to this shipment.
+    ===========================================
+    */
 
     invoices: {
       orderBy: {
-        invoiceDate: "desc" as const,
+        invoiceDate:
+          Prisma.SortOrder.desc,
+      },
+
+      include: {
+        items: true,
+
+        documents: true,
+
+        _count: {
+          select: {
+            items: true,
+            documents: true,
+          },
+        },
       },
     },
 
-    packingList: true,
+    /*
+    ===========================================
+    PACKING LIST
+    ===========================================
 
-    containers: true,
+    Full packing list.
+    ===========================================
+    */
 
-    transits: true,
+    packingList: {
+      include: {
+        items: {
+          orderBy: {
+            createdAt:
+              Prisma.SortOrder.asc,
+          },
+        },
+
+        documents: true,
+
+        containers: true,
+
+        _count: {
+          select: {
+            items: true,
+            documents: true,
+            containers: true,
+          },
+        },
+      },
+    },
+
+    /*
+    ===========================================
+    CONTAINERS
+    ===========================================
+
+    Every container belonging to shipment.
+
+    Each container includes its gate
+    movements.
+    ===========================================
+    */
+
+    containers: {
+      orderBy: {
+        createdAt:
+          Prisma.SortOrder.desc,
+      },
+
+      include: {
+        /*
+        =====================================
+        GATE MOVEMENTS
+        =====================================
+        */
+
+        gateMovements: {
+          orderBy: {
+            createdAt:
+              Prisma.SortOrder.desc,
+          },
+        },
+
+        /*
+        =====================================
+        CONTAINER DOCUMENTS
+        =====================================
+        */
+
+        documents: true,
+
+        /*
+        =====================================
+        CONTAINER TRANSITS
+        =====================================
+        */
+
+        transits: {
+          orderBy: {
+            createdAt:
+              Prisma.SortOrder.desc,
+          },
+        },
+
+        _count: {
+          select: {
+            documents: true,
+            transits: true,
+            gateMovements: true,
+          },
+        },
+      },
+    },
+
+    /*
+    ===========================================
+    SHIPMENT TRANSITS
+    ===========================================
+    */
+
+    transits: {
+      orderBy: {
+        createdAt:
+          Prisma.SortOrder.desc,
+      },
+    },
+
+    /*
+    ===========================================
+    SHIPMENT DOCUMENTS
+    ===========================================
+
+    IMPORTANT:
+    Do not use orderBy here because your
+    generated Prisma Shipment.documents
+    relation does not accept the supplied
+    orderBy shape.
+    ===========================================
+    */
 
     documents: true,
+
+    /*
+    ===========================================
+    CREATED BY
+    ===========================================
+    */
 
     createdBy: {
       select: {
@@ -421,6 +729,12 @@ class ShipmentRepository {
         email: true,
       },
     },
+
+    /*
+    ===========================================
+    SHIPMENT COUNTS
+    ===========================================
+    */
 
     _count: {
       select: {
