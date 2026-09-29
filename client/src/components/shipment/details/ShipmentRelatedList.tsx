@@ -1,11 +1,5 @@
-import {
-  ArrowRight,
-  ChevronRight,
-  FileText,
-  Package,
-  Truck,
-  Route,
-} from "lucide-react";
+
+import { ChevronRight } from "lucide-react";
 import { Link } from "react-router-dom";
 
 interface RelatedItem {
