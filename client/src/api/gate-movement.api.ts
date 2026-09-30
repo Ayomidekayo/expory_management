@@ -169,6 +169,11 @@ export interface GateMovementFilters {
   shipmentId?: string;
 
   shipmentNumber?: string;
+
+  pagination?: {
+    page?: number;
+    limit?: number;
+  };
 }
 
 /* =========================================

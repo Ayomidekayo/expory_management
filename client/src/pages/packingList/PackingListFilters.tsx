@@ -3,67 +3,79 @@ import {
   RotateCcw,
 } from "lucide-react";
 
-import { useState } from "react";
-import { Input } from "../../components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../components/ui/select";
+import {
+  Input,
+} from "../../components/ui/input";
+
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../../components/ui/select";
+
 import { Button } from "../../components/ui/button";
 
+import type { PackingListQuery } from "../../types/packing-list";
 
-export default function PackingListFilters() {
+interface PackingListFiltersProps {
+  filters: PackingListQuery;
 
-  const [search, setSearch] =
-    useState("");
+  onChange: (
+    filters: Partial<PackingListQuery>
+  ) => void;
 
-  const [sortBy, setSortBy] =
-    useState("createdAt");
+  onReset: () => void;
+}
 
-  const [sortOrder, setSortOrder] =
-    useState("desc");
-
-  function resetFilters() {
-
-    setSearch("");
-
-    setSortBy("createdAt");
-
-    setSortOrder("desc");
-
-  }
-
+export default function PackingListFilters({
+  filters,
+  onChange,
+  onReset,
+}: PackingListFiltersProps) {
   return (
-
     <div className="rounded-xl border bg-white p-6">
 
       <div className="grid gap-4 lg:grid-cols-4">
 
-        {/* Search */}
+        {/* =========================================
+            SEARCH
+        ========================================= */}
 
         <div className="relative">
 
           <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
 
           <Input
-            value={search}
+            value={filters.search ?? ""}
             onChange={(e) =>
-              setSearch(e.target.value)
+              onChange({
+                search: e.target.value,
+              })
             }
-            placeholder="Search..."
+            placeholder="Search packing lists..."
             className="pl-9"
           />
 
         </div>
 
-        {/* Sort By */}
+        {/* =========================================
+            SORT BY
+        ========================================= */}
 
         <Select
-          value={sortBy}
-          onValueChange={setSortBy}
+          value={filters.sortBy ?? "createdAt"}
+          onValueChange={(value) => {
+            onChange({
+              sortBy:
+                value as PackingListQuery["sortBy"],
+            });
+          }}
         >
 
           <SelectTrigger>
-
-            <SelectValue/>
-
+            <SelectValue placeholder="Sort by" />
           </SelectTrigger>
 
           <SelectContent>
@@ -84,50 +96,54 @@ export default function PackingListFilters() {
 
         </Select>
 
-        {/* Sort Order */}
+        {/* =========================================
+            SORT ORDER
+        ========================================= */}
 
         <Select
-          value={sortOrder}
-          onValueChange={setSortOrder}
+          value={filters.sortOrder ?? "asc"}
+          onValueChange={(value) => {
+            onChange({
+              sortOrder:
+                value as PackingListQuery["sortOrder"],
+            });
+          }}
         >
 
           <SelectTrigger>
-
-            <SelectValue />
-
+            <SelectValue placeholder="Sort order" />
           </SelectTrigger>
 
           <SelectContent>
 
-            <SelectItem value="desc">
-              Newest First
-            </SelectItem>
-
             <SelectItem value="asc">
               Oldest First
+            </SelectItem>
+
+            <SelectItem value="desc">
+              Newest First
             </SelectItem>
 
           </SelectContent>
 
         </Select>
 
-        {/* Reset */}
+        {/* =========================================
+            RESET
+        ========================================= */}
 
         <Button
           type="button"
           variant="outline"
-          onClick={resetFilters}
+          onClick={onReset}
         >
-
           <RotateCcw className="mr-2 h-4 w-4" />
 
           Reset Filters
-
         </Button>
 
       </div>
 
     </div>
-
   );
 }

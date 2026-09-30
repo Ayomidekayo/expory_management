@@ -36,6 +36,8 @@ documents: Document[];
 
   shipments?: Shipment[];
 
+  isActive?: boolean;
+
   _count?: {
     allocations: number;
     shipments: number;

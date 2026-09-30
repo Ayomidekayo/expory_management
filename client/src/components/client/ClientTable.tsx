@@ -1,8 +1,6 @@
 import { Link } from "react-router-dom";
 import { Eye, Pencil } from "lucide-react";
 
-import { useClients } from "../../hooks/client/useClients";
-
 import {
   Table,
   TableBody,
@@ -17,46 +15,51 @@ import { Button } from "../ui/button";
 import ClientStatusBadge from "./ClientStatusBadge";
 import ClientRowActions from "./ClientRowActions";
 
-export default function ClientTable() {
-  const {
-    data,
-    isLoading,
-  } = useClients();
+import type { Client } from "../../types/client.types";
 
+interface Props {
+  clients: Client[];
+  isLoading?: boolean;
+  currentPage?: number;
+  pageLimit?: number;
+}
+
+export default function ClientTable({
+  clients,
+  isLoading = false,
+  currentPage = 1,
+  pageLimit = 10,
+}: Props) {
   if (isLoading) {
     return (
-      <div className="py-20 text-center">
+      <div className="rounded-xl border bg-background py-20 text-center">
         Loading clients...
       </div>
     );
   }
 
-  const clients = data?.data ?? [];
-
   if (!clients.length) {
     return (
       <div className="rounded-lg border p-10 text-center">
-
         <h3 className="text-lg font-semibold">
           No Clients Found
         </h3>
 
-        <p className="text-muted-foreground mt-2">
+        <p className="mt-2 text-muted-foreground">
           Start by creating your first client.
         </p>
-
       </div>
     );
   }
 
   return (
-    <div className="rounded-lg border bg-background">
-
+    <div className="overflow-x-auto rounded-xl border bg-background shadow-sm">
       <Table>
-
         <TableHeader>
-
           <TableRow>
+            <TableHead className="w-[70px]">
+              S/N
+            </TableHead>
 
             <TableHead>
               Client Code
@@ -93,97 +96,104 @@ export default function ClientTable() {
             <TableHead className="text-right">
               Actions
             </TableHead>
-
           </TableRow>
-
         </TableHeader>
 
         <TableBody>
+          {clients.map((client, index) => {
+            const serialNumber =
+              (currentPage - 1) * pageLimit +
+              index +
+              1;
 
-          {clients.map((client) => (
+            return (
+              <TableRow key={client.id}>
+                {/* S/N */}
+                <TableCell className="font-medium text-muted-foreground">
+                  {serialNumber}
+                </TableCell>
 
-            <TableRow key={client.id}>
+                {/* Client Code */}
+                <TableCell className="font-medium">
+                  {client.clientCode}
+                </TableCell>
 
-              <TableCell className="font-medium">
-                {client.clientCode}
-              </TableCell>
+                {/* Company */}
+                <TableCell>
+                  {client.companyName}
+                </TableCell>
 
-              <TableCell>
-                {client.companyName}
-              </TableCell>
+                {/* Contact */}
+                <TableCell>
+                  {client.contactPerson ?? "-"}
+                </TableCell>
 
-              <TableCell>
-                {client.contactPerson ?? "-"}
-              </TableCell>
+                {/* Country */}
+                <TableCell>
+                  {client.country ?? "-"}
+                </TableCell>
 
-              <TableCell>
-                {client.country ?? "-"}
-              </TableCell>
+                {/* Type */}
+                <TableCell>
+                  {client.clientType}
+                </TableCell>
 
-              <TableCell>
-                {client.clientType}
-              </TableCell>
-
-              <TableCell>
-
-                <ClientStatusBadge
-                  active={client.isActive}
-                />
-
-              </TableCell>
-
-              <TableCell>
-                {client._count.allocations}
-              </TableCell>
-
-              <TableCell>
-                {client._count.shipments}
-              </TableCell>
-
-              <TableCell className="text-right">
-
-                <div className="flex justify-end gap-2">
-
-                  <Button
-                    size="icon"
-                    variant="ghost"
-                    asChild
-                  >
-                    <Link
-                      to={`/clients/${client.id}`}
-                    >
-                      <Eye className="h-4 w-4" />
-                    </Link>
-                  </Button>
-
-                  <Button
-                    size="icon"
-                    variant="ghost"
-                    asChild
-                  >
-                    <Link
-                      to={`/clients/${client.id}/edit`}
-                    >
-                      <Pencil className="h-4 w-4" />
-                    </Link>
-                  </Button>
-
-                  <ClientRowActions
-                    client={client}
+                {/* Status */}
+                <TableCell>
+                  <ClientStatusBadge
+                    active={client.isActive}
                   />
+                </TableCell>
 
-                </div>
+                {/* Allocations */}
+                <TableCell>
+                  {client._count?.allocations ?? 0}
+                </TableCell>
 
-              </TableCell>
+                {/* Shipments */}
+                <TableCell>
+                  {client._count?.shipments ?? 0}
+                </TableCell>
 
-            </TableRow>
+                {/* Actions */}
+                <TableCell className="text-right">
+                  <div className="flex justify-end gap-2">
+                    <Button
+                      size="icon"
+                      variant="ghost"
+                      asChild
+                    >
+                      <Link
+                        to={`/clients/${client.id}`}
+                        title="View client"
+                      >
+                        <Eye className="h-4 w-4" />
+                      </Link>
+                    </Button>
 
-          ))}
+                    <Button
+                      size="icon"
+                      variant="ghost"
+                      asChild
+                    >
+                      <Link
+                        to={`/clients/${client.id}/edit`}
+                        title="Edit client"
+                      >
+                        <Pencil className="h-4 w-4" />
+                      </Link>
+                    </Button>
 
+                    <ClientRowActions
+                      client={client}
+                    />
+                  </div>
+                </TableCell>
+              </TableRow>
+            );
+          })}
         </TableBody>
-
       </Table>
-
     </div>
   );
 }

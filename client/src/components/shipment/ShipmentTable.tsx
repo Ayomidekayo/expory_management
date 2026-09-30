@@ -13,15 +13,31 @@ import {
 } from "../ui/table";
 
 import { Badge } from "../ui/badge";
-import { useShipments } from "../../hooks/shipments/useShipments";
+
+import type { Shipment } from "../../types/shipment.types";
+
 import ShipmentRowActions from "./ShipmentRowActions";
+
 import { formatDateOnly } from "../../utils/date";
 
-export default function ShipmentTable() {
-  const {
-    data,
-    isLoading,
-  } = useShipments();
+interface ShipmentTableProps {
+  shipments: Shipment[];
+  isLoading?: boolean;
+
+  // Pagination information
+  currentPage?: number;
+  pageLimit?: number;
+}
+
+export default function ShipmentTable({
+  shipments,
+  isLoading = false,
+  currentPage = 1,
+  pageLimit = 10,
+}: ShipmentTableProps) {
+  /* =========================================
+     LOADING
+  ========================================= */
 
   if (isLoading) {
     return (
@@ -31,7 +47,11 @@ export default function ShipmentTable() {
     );
   }
 
-  if (!data?.data.length) {
+  /* =========================================
+     EMPTY
+  ========================================= */
+
+  if (!shipments.length) {
     return (
       <div className="flex flex-col items-center rounded-xl border py-16">
 
@@ -49,6 +69,10 @@ export default function ShipmentTable() {
     );
   }
 
+  /* =========================================
+     TABLE
+  ========================================= */
+
   return (
     <div className="overflow-hidden rounded-xl border bg-white">
 
@@ -56,9 +80,19 @@ export default function ShipmentTable() {
 
         <Table>
 
+          {/* =========================================
+              HEADER
+          ========================================= */}
+
           <TableHeader>
 
             <TableRow>
+
+              {/* S/N */}
+
+              <TableHead className="w-[70px]">
+                S/N
+              </TableHead>
 
               <TableHead>
                 Shipment No.
@@ -104,66 +138,122 @@ export default function ShipmentTable() {
 
           </TableHeader>
 
+          {/* =========================================
+              BODY
+          ========================================= */}
+
           <TableBody>
 
-            {data.data.map((shipment) => (
+            {shipments.map(
+              (shipment, index) => {
 
-              <TableRow key={shipment.id}>
+                /*
+                 * Continuous serial number
+                 * across pagination.
+                 *
+                 * Page 1:
+                 * 1 - 10
+                 *
+                 * Page 2:
+                 * 11 - 20
+                 *
+                 * Page 3:
+                 * 21 - 30
+                 */
 
-                <TableCell className="font-semibold">
-                  {shipment.shipmentNumber}
-                </TableCell>
+                const serialNumber =
+                  (currentPage - 1) *
+                    pageLimit +
+                  index +
+                  1;
 
-                <TableCell>
-                  {formatDateOnly(
-                    shipment.shipmentDate
-                  )}
-                </TableCell>
+                return (
+                  <TableRow
+                    key={shipment.id}
+                    className="transition-colors hover:bg-slate-50/70"
+                  >
 
-                <TableCell>
-                  {shipment.client.companyName}
-                </TableCell>
+                    {/* S/N */}
 
-                <TableCell>
-                  {shipment.exporter.name}
-                </TableCell>
+                    <TableCell className="font-medium text-muted-foreground">
+                      {serialNumber}
+                    </TableCell>
 
-                <TableCell className="hidden lg:table-cell">
-                  {shipment.xfNumber ?? "-"}
-                </TableCell>
+                    {/* SHIPMENT NUMBER */}
 
-                <TableCell className="hidden lg:table-cell">
-                  {shipment.nxpNumber ?? "-"}
-                </TableCell>
+                    <TableCell className="font-semibold">
+                      {shipment.shipmentNumber}
+                    </TableCell>
 
-                <TableCell className="hidden xl:table-cell">
-                  {shipment.cciNumber ?? "-"}
-                </TableCell>
+                    {/* SHIPMENT DATE */}
 
-                <TableCell>
-                  <Badge variant="outline">
-                    {shipment.transportMode}
-                  </Badge>
-                </TableCell>
+                    <TableCell>
+                      {formatDateOnly(
+                        shipment.shipmentDate
+                      )}
+                    </TableCell>
 
-                <TableCell>
-                  <Badge variant="secondary">
-                    {shipment.status.replaceAll(
-                      "_",
-                      " "
-                    )}
-                  </Badge>
-                </TableCell>
+                    {/* CLIENT */}
 
-                <TableCell className="text-right">
-                  <ShipmentRowActions
-                    shipment={shipment}
-                  />
-                </TableCell>
+                    <TableCell>
+                      {shipment.client.companyName}
+                    </TableCell>
 
-              </TableRow>
+                    {/* EXPORTER */}
 
-            ))}
+                    <TableCell>
+                      {shipment.exporter.name}
+                    </TableCell>
+
+                    {/* XF NUMBER */}
+
+                    <TableCell className="hidden lg:table-cell">
+                      {shipment.xfNumber ?? "-"}
+                    </TableCell>
+
+                    {/* NXP NUMBER */}
+
+                    <TableCell className="hidden lg:table-cell">
+                      {shipment.nxpNumber ?? "-"}
+                    </TableCell>
+
+                    {/* CCI NUMBER */}
+
+                    <TableCell className="hidden xl:table-cell">
+                      {shipment.cciNumber ?? "-"}
+                    </TableCell>
+
+                    {/* TRANSPORT */}
+
+                    <TableCell>
+                      <Badge variant="outline">
+                        {shipment.transportMode}
+                      </Badge>
+                    </TableCell>
+
+                    {/* STATUS */}
+
+                    <TableCell>
+                      <Badge variant="secondary">
+                        {shipment.status.replaceAll(
+                          "_",
+                          " "
+                        )}
+                      </Badge>
+                    </TableCell>
+
+                    {/* ACTIONS */}
+
+                    <TableCell className="text-right">
+                      <ShipmentRowActions
+                        shipment={shipment}
+                      />
+                    </TableCell>
+
+                  </TableRow>
+                );
+              }
+            )}
 
           </TableBody>
 

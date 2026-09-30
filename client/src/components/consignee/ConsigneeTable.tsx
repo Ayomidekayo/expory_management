@@ -1,8 +1,6 @@
 import { Link } from "react-router-dom";
 import { Eye, Pencil } from "lucide-react";
 
-import { useConsignees } from "../../hooks/consignee/useConsignees";
-
 import {
   Table,
   TableBody,
@@ -14,28 +12,34 @@ import {
 
 import { Button } from "../ui/button";
 import ConsigneeRowActions from "./ConsigneeRowActions";
+import type { Consignee } from "../../types/consignee";
 
 
 
-export default function ConsigneeTable() {
-  const {
-    data,
-    isLoading,
-  } = useConsignees();
+interface Props {
+  consignees: Consignee[];
+  isLoading?: boolean;
+  currentPage?: number;
+  pageLimit?: number;
+}
 
+export default function ConsigneeTable({
+  consignees,
+  isLoading = false,
+  currentPage = 1,
+  pageLimit = 10,
+}: Props) {
   if (isLoading) {
     return (
-      <div className="py-20 text-center">
+      <div className="rounded-xl border bg-white py-20 text-center">
         Loading consignees...
       </div>
     );
   }
 
-  const consignees = data?.data ?? [];
-
   if (!consignees.length) {
     return (
-      <div className="rounded-lg border p-10 text-center">
+      <div className="rounded-lg border bg-white p-10 text-center">
 
         <h3 className="text-lg font-semibold">
           No Consignees Found
@@ -50,7 +54,7 @@ export default function ConsigneeTable() {
   }
 
   return (
-    <div className="rounded-xl border bg-white shadow-sm">
+    <div className="overflow-x-auto rounded-xl border bg-white shadow-sm">
 
       <Table>
 
@@ -58,17 +62,33 @@ export default function ConsigneeTable() {
 
           <TableRow>
 
-            <TableHead>Name</TableHead>
+            <TableHead className="w-[70px]">
+              S/N
+            </TableHead>
 
-            <TableHead>Contact Person</TableHead>
+            <TableHead>
+              Name
+            </TableHead>
 
-            <TableHead>Transport Mode</TableHead>
+            <TableHead>
+              Contact Person
+            </TableHead>
 
-            <TableHead>Port of Discharge</TableHead>
+            <TableHead>
+              Transport Mode
+            </TableHead>
 
-            <TableHead>Allocations</TableHead>
+            <TableHead>
+              Port of Discharge
+            </TableHead>
 
-            <TableHead>Shipments</TableHead>
+            <TableHead>
+              Allocations
+            </TableHead>
+
+            <TableHead>
+              Shipments
+            </TableHead>
 
             <TableHead className="text-right">
               Actions
@@ -80,73 +100,94 @@ export default function ConsigneeTable() {
 
         <TableBody>
 
-          {consignees.map((consignee) => (
+          {consignees.map((consignee, index) => {
 
-            <TableRow key={consignee.id}>
+            const serialNumber =
+              (currentPage - 1) * pageLimit +
+              index +
+              1;
 
-              <TableCell className="font-medium">
-                {consignee.name}
-              </TableCell>
+            return (
+              <TableRow key={consignee.id}>
 
-              <TableCell>
-                {consignee.contactPerson ?? "-"}
-              </TableCell>
+                {/* S/N */}
+                <TableCell className="font-medium text-muted-foreground">
+                  {serialNumber}
+                </TableCell>
 
-              <TableCell>
-                {consignee.transportMode}
-              </TableCell>
+                {/* Name */}
+                <TableCell className="font-medium">
+                  {consignee.name}
+                </TableCell>
 
-              <TableCell>
-                {consignee.portOfDischarge}
-              </TableCell>
+                {/* Contact Person */}
+                <TableCell>
+                  {consignee.contactPerson ?? "-"}
+                </TableCell>
 
-              <TableCell>
-          {consignee._count?.allocations ?? 0}
-              </TableCell>
+                {/* Transport Mode */}
+                <TableCell>
+                  {consignee.transportMode ?? "-"}
+                </TableCell>
 
-              <TableCell>
-                {consignee._count?.shipments ?? 0}
-              </TableCell>
+                {/* Port of Discharge */}
+                <TableCell>
+                  {consignee.portOfDischarge ?? "-"}
+                </TableCell>
 
-              <TableCell className="text-right">
+                {/* Allocations */}
+                <TableCell>
+                  {consignee._count?.allocations ?? 0}
+                </TableCell>
 
-                <div className="flex justify-end gap-2">
+                {/* Shipments */}
+                <TableCell>
+                  {consignee._count?.shipments ?? 0}
+                </TableCell>
 
-                  <Button
-                    size="icon"
-                    variant="ghost"
-                    asChild
-                  >
-                    <Link
-                      to={`/consignees/${consignee.id}`}
+                {/* Actions */}
+                <TableCell className="text-right">
+
+                  <div className="flex justify-end gap-2">
+
+                    <Button
+                      size="icon"
+                      variant="ghost"
+                      asChild
                     >
-                      <Eye className="h-4 w-4" />
-                    </Link>
-                  </Button>
+                      <Link
+                        to={`/consignees/${consignee.id}`}
+                        title="View consignee"
+                      >
+                        <Eye className="h-4 w-4" />
+                      </Link>
+                    </Button>
 
-                  <Button
-                    size="icon"
-                    variant="ghost"
-                    asChild
-                  >
-                    <Link
-                      to={`/consignees/${consignee.id}/edit`}
+                    <Button
+                      size="icon"
+                      variant="ghost"
+                      asChild
                     >
-                      <Pencil className="h-4 w-4" />
-                    </Link>
-                  </Button>
+                      <Link
+                        to={`/consignees/${consignee.id}/edit`}
+                        title="Edit consignee"
+                      >
+                        <Pencil className="h-4 w-4" />
+                      </Link>
+                    </Button>
 
-                  <ConsigneeRowActions
-                    consignee={consignee}
-                  />
+                    <ConsigneeRowActions
+                      consignee={consignee}
+                    />
 
-                </div>
+                  </div>
 
-              </TableCell>
+                </TableCell>
 
-            </TableRow>
+              </TableRow>
+            );
 
-          ))}
+          })}
 
         </TableBody>
 

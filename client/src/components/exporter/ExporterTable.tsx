@@ -1,8 +1,6 @@
 import { Link } from "react-router-dom";
 import { Eye, Pencil } from "lucide-react";
 
-import { useExporters } from "../../hooks/exporter/useExporters";
-
 import {
   Table,
   TableBody,
@@ -14,27 +12,33 @@ import {
 
 import { Button } from "../ui/button";
 import ExporterRowActions from "./ExporterRowActions";
+import type { Exporter } from "../../types/exporter.types";
 
 
-export default function ExporterTable() {
-  const {
-    data,
-    isLoading,
-  } = useExporters();
+interface Props {
+  exporters: Exporter[];
+  isLoading?: boolean;
+  currentPage?: number;
+  pageLimit?: number;
+}
 
+export default function ExporterTable({
+  exporters,
+  isLoading = false,
+  currentPage = 1,
+  pageLimit = 10,
+}: Props) {
   if (isLoading) {
     return (
-      <div className="py-20 text-center">
+      <div className="rounded-xl border bg-white py-20 text-center">
         Loading exporters...
       </div>
     );
   }
 
-  const exporters = data?.data ?? [];
-
   if (!exporters.length) {
     return (
-      <div className="rounded-lg border p-10 text-center">
+      <div className="rounded-lg border bg-white p-10 text-center">
         <h3 className="text-lg font-semibold">
           No Exporters Found
         </h3>
@@ -47,108 +51,130 @@ export default function ExporterTable() {
   }
 
   return (
-    <div className="rounded-xl border bg-white shadow-sm">
-
+    <div className="overflow-x-auto rounded-xl border bg-white shadow-sm">
       <Table>
-
         <TableHeader>
-
           <TableRow>
+            <TableHead className="w-[70px]">
+              S/N
+            </TableHead>
 
-            <TableHead>Name</TableHead>
+            <TableHead>
+              Name
+            </TableHead>
 
-            <TableHead>Contact Person</TableHead>
+            <TableHead>
+              Contact Person
+            </TableHead>
 
-            <TableHead>Email</TableHead>
+            <TableHead>
+              Email
+            </TableHead>
 
-            <TableHead>Phone</TableHead>
+            <TableHead>
+              Phone
+            </TableHead>
 
-            <TableHead>Allocations</TableHead>
+            <TableHead>
+              Allocations
+            </TableHead>
 
-            <TableHead>Shipments</TableHead>
+            <TableHead>
+              Shipments
+            </TableHead>
 
             <TableHead className="text-right">
               Actions
             </TableHead>
-
           </TableRow>
-
         </TableHeader>
 
         <TableBody>
+          {exporters.map((exporter, index) => {
+            const serialNumber =
+              (currentPage - 1) * pageLimit +
+              index +
+              1;
 
-          {exporters.map((exporter) => (
+            return (
+              <TableRow key={exporter.id}>
+                {/* S/N */}
+                <TableCell className="font-medium text-muted-foreground">
+                  {serialNumber}
+                </TableCell>
 
-            <TableRow key={exporter.id}>
+                {/* Name */}
+                <TableCell className="font-medium">
+                  {exporter.name}
+                </TableCell>
 
-              <TableCell className="font-medium">
-                {exporter.name}
-              </TableCell>
+                {/* Contact Person */}
+                <TableCell>
+                  {exporter.contactPerson ?? "-"}
+                </TableCell>
 
-              <TableCell>
-                {exporter.contactPerson ?? "-"}
-              </TableCell>
+                {/* Email */}
+                <TableCell>
+                  {exporter.email ?? "-"}
+                </TableCell>
 
-              <TableCell>
-                {exporter.email ?? "-"}
-              </TableCell>
+                {/* Phone */}
+                <TableCell>
+                  {exporter.phone ?? "-"}
+                </TableCell>
 
-              <TableCell>
-                {exporter.phone ?? "-"}
-              </TableCell>
+                {/* Allocations */}
+                <TableCell>
+                  {exporter._count.allocations}
+                </TableCell>
 
-              <TableCell>
-                {exporter._count.allocations}
-              </TableCell>
+                {/* Shipments */}
+                <TableCell>
+                  {exporter._count.shipments}
+                </TableCell>
 
-              <TableCell>
-                {exporter._count.shipments}
-              </TableCell>
-
-              <TableCell className="text-right">
-
-                <div className="flex justify-end gap-2">
-
-                  <Button
-                    size="icon"
-                    variant="ghost"
-                    asChild
-                  >
-                    <Link
-                      to={`/exporters/${exporter.id}`}
+                {/* Actions */}
+                <TableCell className="text-right">
+                  <div className="flex justify-end gap-2">
+                    {/* View */}
+                    <Button
+                      size="icon"
+                      variant="ghost"
+                      asChild
                     >
-                      <Eye className="h-4 w-4" />
-                    </Link>
-                  </Button>
+                      <Link
+                        to={`/exporters/${exporter.id}`}
+                        title="View exporter"
+                      >
+                        <Eye className="h-4 w-4" />
+                      </Link>
+                    </Button>
 
-                  <Button
-                    size="icon"
-                    variant="ghost"
-                    asChild
-                  >
-                    <Link
-                      to={`/exporters/${exporter.id}/edit`}
+                    {/* Edit */}
+                    <Button
+                      size="icon"
+                      variant="ghost"
+                      asChild
                     >
-                      <Pencil className="h-4 w-4" />
-                    </Link>
-                  </Button>
+                      <Link
+                        to={`/exporters/${exporter.id}/edit`}
+                        title="Edit exporter"
+                      >
+                        <Pencil className="h-4 w-4" />
+                      </Link>
+                    </Button>
 
-                  <ExporterRowActions
-                    exporter={exporter}
-                  />
-
-                </div>
-
-              </TableCell>
-
-            </TableRow>
-
-          ))}
-
+                    {/* More actions */}
+                    <ExporterRowActions
+                      exporter={exporter}
+                    />
+                  </div>
+                </TableCell>
+              </TableRow>
+            );
+          })}
         </TableBody>
-
       </Table>
-
     </div>
   );
 }

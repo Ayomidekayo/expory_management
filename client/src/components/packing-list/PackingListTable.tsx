@@ -22,44 +22,48 @@ import {
 import {
   Badge,
 } from "../ui/badge";
+
 import type { PackingList } from "../../types/packing-list";
-
-
 
 interface Props {
   data: PackingList[];
   loading?: boolean;
+
+  // Pagination information
+  currentPage?: number;
+  pageLimit?: number;
 }
 
 export default function PackingListTable({
   data,
   loading = false,
+  currentPage = 1,
+  pageLimit = 10,
 }: Props) {
-
-
-    console.log("TABLE DATA");
-  console.log(data);
+  /* =========================================
+     LOADING
+  ========================================= */
 
   if (loading) {
     return (
       <div className="rounded-xl border bg-white p-16 text-center">
-
         Loading packing lists...
-
       </div>
     );
   }
 
+  /* =========================================
+     EMPTY
+  ========================================= */
+
   if (data.length === 0) {
     return (
       <div className="rounded-xl border bg-white p-16">
-
         <div className="flex flex-col items-center gap-4">
 
           <Package className="h-16 w-16 text-muted-foreground" />
 
           <div>
-
             <h3 className="text-lg font-semibold">
               No Packing Lists Found
             </h3>
@@ -67,167 +71,211 @@ export default function PackingListTable({
             <p className="text-muted-foreground">
               Create your first packing list.
             </p>
-
           </div>
 
         </div>
-
       </div>
     );
   }
 
+  /* =========================================
+     TABLE
+  ========================================= */
+
   return (
+    <div className="overflow-hidden rounded-xl border bg-white shadow-sm">
 
-    <div className="rounded-xl border bg-white">
+      <div className="overflow-x-auto">
 
-      <Table>
+        <Table>
 
-        <TableHeader>
+          {/* =========================================
+              HEADER
+          ========================================= */}
 
-          <TableRow>
+          <TableHeader>
 
-            <TableHead>
-              Packing No.
-            </TableHead>
+            <TableRow>
 
-            <TableHead>
-              Shipment
-            </TableHead>
+              {/* S/N */}
 
-            <TableHead>
-              Client
-            </TableHead>
+              <TableHead className="w-[70px]">
+                S/N
+              </TableHead>
 
-            <TableHead>
-              Packages
-            </TableHead>
+              <TableHead>
+                Packing No.
+              </TableHead>
 
-            <TableHead>
-              Gross Weight
-            </TableHead>
+              <TableHead>
+                Shipment
+              </TableHead>
 
-            <TableHead>
-              Net Weight
-            </TableHead>
+              <TableHead>
+                Client
+              </TableHead>
 
-            <TableHead>
-              Date
-            </TableHead>
+              <TableHead>
+                Packages
+              </TableHead>
 
-            <TableHead className="text-right">
-              Actions
-            </TableHead>
+              <TableHead>
+                Gross Weight
+              </TableHead>
 
-          </TableRow>
+              <TableHead>
+                Net Weight
+              </TableHead>
 
-        </TableHeader>
+              <TableHead>
+                Date
+              </TableHead>
 
-        <TableBody>
-
-          {data.map((packing) => (
-
-            <TableRow key={packing.id}>
-
-              <TableCell className="font-semibold">
-
-                {packing.packingListNumber}
-
-              </TableCell>
-
-              <TableCell>
-
-                {packing.shipment.shipmentNumber}
-
-              </TableCell>
-
-              <TableCell>
-
-                {packing.shipment.client?.companyName}
-
-              </TableCell>
-
-              <TableCell>
-
-                <Badge variant="outline">
-
-                  {packing.totalPackages ?? 0}
-
-                </Badge>
-
-              </TableCell>
-
-              <TableCell>
-
-                {Number(
-                  packing.grossWeight
-                ).toLocaleString()} KG
-
-              </TableCell>
-
-              <TableCell>
-
-                {Number(
-                  packing.netWeight
-                ).toLocaleString()} KG
-
-              </TableCell>
-
-              <TableCell>
-
-                {new Date(
-                  packing.packingDate
-                ).toLocaleDateString()}
-
-              </TableCell>
-
-              <TableCell>
-
-                <div className="flex justify-end gap-2">
-
-                  <Link
-                    to={`/packing-lists/${packing.id}`}
-                  >
-
-                    <Button
-                      size="icon"
-                      variant="outline"
-                    >
-
-                      <Eye className="h-4 w-4" />
-
-                    </Button>
-
-                  </Link>
-
-                  <Link
-                    to={`/packing-lists/${packing.id}/edit`}
-                  >
-
-                    <Button
-                      size="icon"
-                      variant="outline"
-                    >
-
-                      <Pencil className="h-4 w-4" />
-
-                    </Button>
-
-                  </Link>
-
-
-                </div>
-
-              </TableCell>
+              <TableHead className="text-right">
+                Actions
+              </TableHead>
 
             </TableRow>
 
-          ))}
+          </TableHeader>
 
-        </TableBody>
+          {/* =========================================
+              BODY
+          ========================================= */}
 
-      </Table>
+          <TableBody>
+
+            {data.map((packing, index) => {
+
+              /*
+               * Continuous serial number across pages.
+               *
+               * Page 1:
+               * 1 - 10
+               *
+               * Page 2:
+               * 11 - 20
+               *
+               * Page 3:
+               * 21 - 30
+               */
+
+              const serialNumber =
+                (currentPage - 1) *
+                  pageLimit +
+                index +
+                1;
+
+              return (
+                <TableRow
+                  key={packing.id}
+                  className="transition-colors hover:bg-slate-50/70"
+                >
+
+                  {/* S/N */}
+
+                  <TableCell className="font-medium text-muted-foreground">
+                    {serialNumber}
+                  </TableCell>
+
+                  {/* PACKING NUMBER */}
+
+                  <TableCell className="font-semibold">
+                    {packing.packingListNumber}
+                  </TableCell>
+
+                  {/* SHIPMENT */}
+
+                  <TableCell>
+                    {packing.shipment.shipmentNumber}
+                  </TableCell>
+
+                  {/* CLIENT */}
+
+                  <TableCell>
+                    {packing.shipment.client?.companyName ?? "-"}
+                  </TableCell>
+
+                  {/* PACKAGES */}
+
+                  <TableCell>
+                    <Badge variant="outline">
+                      {packing.totalPackages ?? 0}
+                    </Badge>
+                  </TableCell>
+
+                  {/* GROSS WEIGHT */}
+
+                  <TableCell>
+                    {Number(
+                      packing.grossWeight
+                    ).toLocaleString()}{" "}
+                    KG
+                  </TableCell>
+
+                  {/* NET WEIGHT */}
+
+                  <TableCell>
+                    {Number(
+                      packing.netWeight
+                    ).toLocaleString()}{" "}
+                    KG
+                  </TableCell>
+
+                  {/* DATE */}
+
+                  <TableCell>
+                    {new Date(
+                      packing.packingDate
+                    ).toLocaleDateString()}
+                  </TableCell>
+
+                  {/* ACTIONS */}
+
+                  <TableCell className="text-right">
+
+                    <div className="flex justify-end gap-2">
+
+                      {/* VIEW */}
+
+                      <Link
+                        to={`/packing-lists/${packing.id}`}
+                      >
+                        <Button
+                          size="icon"
+                          variant="outline"
+                        >
+                          <Eye className="h-4 w-4" />
+                        </Button>
+                      </Link>
+
+                      {/* EDIT */}
+
+                      <Link
+                        to={`/packing-lists/${packing.id}/edit`}
+                      >
+                        <Button
+                          size="icon"
+                          variant="outline"
+                        >
+                          <Pencil className="h-4 w-4" />
+                        </Button>
+                      </Link>
+
+                    </div>
+
+                  </TableCell>
+
+                </TableRow>
+              );
+            })}
+
+          </TableBody>
+
+        </Table>
+
+      </div>
 
     </div>
-
   );
 }

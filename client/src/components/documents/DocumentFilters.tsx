@@ -143,18 +143,18 @@ export default function DocumentFilters({
 
         {/* Reset */}
 
-        <Button
-          variant="outline"
-          onClick={() =>
-            onChange({})
-          }
-        >
-
-          <X className="mr-2 h-4 w-4" />
-
-          Reset
-
-        </Button>
+       <Button
+  variant="outline"
+  onClick={() =>
+    onChange({
+      page: 1,
+      limit: 10,
+    })
+  }
+>
+  <X className="mr-2 h-4 w-4" />
+  Reset
+</Button>
 
       </div>
 

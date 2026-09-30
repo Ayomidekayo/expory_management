@@ -17,15 +17,19 @@ import { Button } from "../ui/button";
 import type { Document } from "../../types/document";
 import DeleteDocumentDialog from "./DeleteDocumentDialog";
 
-// ✅ import your helpers
-
-
 interface Props {
   data: Document[];
   loading?: boolean;
+  currentPage?: number;
+  pageLimit?: number;
 }
 
-export default function DocumentTable({ data, loading = false }: Props) {
+export default function DocumentTable({
+  data,
+  loading = false,
+  currentPage = 1,
+  pageLimit = 10,
+}: Props) {
   if (loading) {
     return (
       <div className="rounded-xl border bg-white p-16 text-center">
@@ -39,9 +43,15 @@ export default function DocumentTable({ data, loading = false }: Props) {
       <div className="rounded-xl border bg-white p-16">
         <div className="flex flex-col items-center gap-4">
           <FileText className="h-16 w-16 text-muted-foreground" />
+
           <div>
-            <h3 className="text-lg font-semibold">No Documents Found</h3>
-            <p className="text-muted-foreground">Upload your first document.</p>
+            <h3 className="text-lg font-semibold">
+              No Documents Found
+            </h3>
+
+            <p className="text-muted-foreground">
+              Upload your first document.
+            </p>
           </div>
         </div>
       </div>
@@ -53,47 +63,105 @@ export default function DocumentTable({ data, loading = false }: Props) {
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead>Document</TableHead>
-            <TableHead>Type</TableHead>
-            <TableHead>Shipment</TableHead>
-            <TableHead>File Size</TableHead>
-            <TableHead>Uploaded</TableHead>
-            <TableHead className="text-right">Actions</TableHead>
+            <TableHead className="w-[70px]">
+              S/N
+            </TableHead>
+
+            <TableHead>
+              Document
+            </TableHead>
+
+            <TableHead>
+              Type
+            </TableHead>
+
+            <TableHead>
+              Shipment
+            </TableHead>
+
+            <TableHead>
+              File Size
+            </TableHead>
+
+            <TableHead>
+              Uploaded
+            </TableHead>
+
+            <TableHead className="text-right">
+              Actions
+            </TableHead>
           </TableRow>
         </TableHeader>
 
         <TableBody>
-          {data.map((document) => (
-            <TableRow key={document.id}>
-              <TableCell className="font-medium">{document.fileName}</TableCell>
-              <TableCell>{document.type}</TableCell>
-              <TableCell>{document.shipment?.shipmentNumber ?? "-"}</TableCell>
-              <TableCell>
-                {document.fileSize
-                  ? `${(document.fileSize / 1024 / 1024).toFixed(2)} MB`
-                  : "-"}
-              </TableCell>
-              <TableCell>
-                {new Date(document.uploadedAt).toLocaleDateString()}
-              </TableCell>
-              <TableCell>
-                <div className="flex justify-end gap-2">
-                 
-                  <Button
-  size="icon"
-  variant="outline"
-  onClick={() =>
-    window.open(document.fileUrl, "_blank")
-  }
->
-  <Download className="h-4 w-4" />
-</Button>
+          {data.map((document, index) => {
+            const serialNumber =
+              (currentPage - 1) * pageLimit + index + 1;
 
-                  <DeleteDocumentDialog id={document.id} />
-                </div>
-              </TableCell>
-            </TableRow>
-          ))}
+            return (
+              <TableRow key={document.id}>
+                {/* S/N */}
+                <TableCell className="font-medium text-muted-foreground">
+                  {serialNumber}
+                </TableCell>
+
+                {/* Document */}
+                <TableCell className="font-medium">
+                  {document.fileName}
+                </TableCell>
+
+                {/* Type */}
+                <TableCell>
+                  {document.type}
+                </TableCell>
+
+                {/* Shipment */}
+                <TableCell>
+                  {document.shipment?.shipmentNumber ?? "-"}
+                </TableCell>
+
+                {/* File Size */}
+                <TableCell>
+                  {document.fileSize
+                    ? `${(
+                        document.fileSize /
+                        1024 /
+                        1024
+                      ).toFixed(2)} MB`
+                    : "-"}
+                </TableCell>
+
+                {/* Uploaded */}
+                <TableCell>
+                  {new Date(
+                    document.uploadedAt
+                  ).toLocaleDateString()}
+                </TableCell>
+
+                {/* Actions */}
+                <TableCell>
+                  <div className="flex justify-end gap-2">
+                    <Button
+                      size="icon"
+                      variant="outline"
+                      onClick={() =>
+                        window.open(
+                          document.fileUrl,
+                          "_blank"
+                        )
+                      }
+                    >
+                      <Download className="h-4 w-4" />
+                    </Button>
+
+                    <DeleteDocumentDialog
+                      id={document.id}
+                    />
+                  </div>
+                </TableCell>
+              </TableRow>
+            );
+          })}
         </TableBody>
       </Table>
     </div>

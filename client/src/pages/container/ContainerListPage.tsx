@@ -1,156 +1,227 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
-import { useDeleteContainer } from "../../hooks/container/useDeleteContainer";
+import { Loader2, Plus } from "lucide-react";
+
+import { Button } from "../../components/ui/button";
+
 import { useContainers } from "../../hooks/container/useContainers";
 
+import ContainerTable from "../../components/container/ContainerTable";
+
+import type { ContainerQuery } from "../../types/container.type";
 
 export default function ContainerListPage() {
-  const deleteMutation = useDeleteContainer();
-  const { data, isLoading } =
-    useContainers({
-      page: 1,
-      limit: 20,
-    });
+  /* =========================================
+     FILTERS / PAGINATION
+  ========================================= */
 
-  if (isLoading) {
-    return <p>Loading...</p>;
+  const [filters, setFilters] = useState<ContainerQuery>({
+    page: 1,
+    limit: 10,
+    sortBy: "createdAt",
+    sortOrder: "asc",
+  });
+
+  /* =========================================
+     GET CONTAINERS
+  ========================================= */
+
+  const {
+    data,
+    isLoading,
+    isFetching,
+    isError,
+  } = useContainers(filters);
+
+  const containers = Array.isArray(data)
+    ? data
+    : data?.data ?? [];
+
+  const pagination = Array.isArray(data)
+    ? undefined
+    : data?.pagination;
+
+  /* =========================================
+     PAGINATION DATA
+  ========================================= */
+
+  const currentPage =
+    pagination?.page ??
+    filters.page ??
+    1;
+
+  const pageLimit =
+    pagination?.limit ??
+    filters.limit ??
+    10;
+
+  const totalPages =
+    pagination?.totalPages ??
+    1;
+
+  const total =
+    pagination?.total ??
+    containers.length;
+
+  const hasPreviousPage =
+    currentPage > 1;
+
+  const hasNextPage =
+    currentPage < totalPages;
+
+  /* =========================================
+     PAGINATION HANDLERS
+  ========================================= */
+
+  function handlePrevious() {
+    if (!hasPreviousPage || isFetching) {
+      return;
+    }
+
+    setFilters((prev) => ({
+      ...prev,
+      page: Math.max(
+        (prev.page ?? 1) - 1,
+        1
+      ),
+    }));
   }
-const handleDelete = async (id: string) => {
 
-  const confirmed = window.confirm(
-    "Delete this container?"
-  );
+  function handleNext() {
+    if (!hasNextPage || isFetching) {
+      return;
+    }
 
-  if (!confirmed) return;
-
-  try {
-
-    await deleteMutation.mutateAsync(id);
-
-    alert("Container deleted successfully.");
-
-  } catch (error) {
-
-    alert("Unable to delete container.");
-
+    setFilters((prev) => ({
+      ...prev,
+      page: (prev.page ?? 1) + 1,
+    }));
   }
 
-};
   return (
     <div className="space-y-6">
 
-      <div className="flex items-center justify-between">
+      {/* =========================================
+          HEADER
+      ========================================= */}
 
-        <h1 className="text-2xl font-bold">
-          Containers
-        </h1>
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <h1 className="text-3xl font-bold">
+            Containers
+          </h1>
 
-        <Link
-          to="/containers/create"
-          className="rounded bg-blue-600 px-4 py-2 text-white"
-        >
-          Add Container
-        </Link>
+          <p className="text-muted-foreground">
+            Manage shipment containers.
+          </p>
+        </div>
 
+        <Button asChild>
+          <Link to="/containers/create">
+            <Plus className="mr-2 h-4 w-4" />
+            Add Container
+          </Link>
+        </Button>
       </div>
 
-      <table className="w-full border">
+      {/* =========================================
+          FETCHING
+      ========================================= */}
 
-        <thead>
+      {isFetching && !isLoading && (
+        <div className="flex items-center gap-2 text-sm text-muted-foreground">
+          <Loader2 className="h-4 w-4 animate-spin" />
+          Refreshing containers...
+        </div>
+      )}
 
-          <tr className="bg-gray-100">
+      {/* =========================================
+          ERROR
+      ========================================= */}
 
-            <th className="border p-2">
-              Container
-            </th>
+      {isError && (
+        <div className="rounded-xl border border-red-200 bg-red-50 p-6 text-center">
+          <h3 className="font-semibold text-red-800">
+            Unable to load containers
+          </h3>
 
-            <th className="border p-2">
-              Shipment
-            </th>
+          <p className="mt-1 text-sm text-red-600">
+            Please try again.
+          </p>
+        </div>
+      )}
 
-            <th className="border p-2">
-              Type
-            </th>
+      {/* =========================================
+          TABLE
+      ========================================= */}
 
-            <th className="border p-2">
-              Size
-            </th>
+      {!isError && (
+        <ContainerTable
+          data={containers}
+          loading={isLoading}
+          currentPage={currentPage}
+          pageLimit={pageLimit}
+        />
+      )}
 
-            <th className="border p-2">
-              Status
-            </th>
+      {/* =========================================
+          PAGINATION
+      ========================================= */}
 
-            <th className="border p-2">
-              Action
-            </th>
+      {!isLoading &&
+        !isError &&
+        containers.length > 0 && (
+          <div className="flex flex-col gap-4 rounded-xl border bg-white p-4 shadow-sm sm:flex-row sm:items-center sm:justify-between">
 
-          </tr>
+            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              <span>
+                Page{" "}
+                <strong className="text-foreground">
+                  {currentPage}
+                </strong>{" "}
+                of{" "}
+                <strong className="text-foreground">
+                  {totalPages}
+                </strong>
+              </span>
 
-        </thead>
+              <span className="text-slate-300">
+                •
+              </span>
 
-        <tbody>
+              <span>
+                {total} total
+              </span>
+            </div>
 
-         {Array.isArray(data) && data.map((container: any) => (
+            <div className="flex gap-2">
+              <Button
+                type="button"
+                variant="outline"
+                disabled={
+                  !hasPreviousPage ||
+                  isFetching
+                }
+                onClick={handlePrevious}
+              >
+                Previous
+              </Button>
 
+              <Button
+                type="button"
+                variant="outline"
+                disabled={
+                  !hasNextPage ||
+                  isFetching
+                }
+                onClick={handleNext}
+              >
+                Next
+              </Button>
+            </div>
 
-            <tr key={container.id}>
-
-              <td className="border p-2">
-                {container.containerNumber}
-              </td>
-
-              <td className="border p-2">
-                {container.shipment.shipmentNumber}
-              </td>
-
-              <td className="border p-2">
-                {container.containerType}
-              </td>
-
-              <td className="border p-2">
-                {container.containerSize}
-              </td>
-
-              <td className="border p-2">
-                {container.status}
-              </td>
-
-              <td className="border p-2">
-
-               <td className="border p-2 space-x-3">
-
-  <Link
-    to={`/containers/${container.id}`}
-    className="text-blue-600"
-  >
-    View
-  </Link>
-
-  <Link
-    to={`/containers/${container.id}/edit`}
-    className="text-green-600"
-  >
-    Edit
-  </Link>
-
-  <button
-    onClick={() => handleDelete(container.id)}
-    className="text-red-600"
-  >
-    Delete
-  </button>
-
-</td>
-
-              </td>
-
-            </tr>
-
-          ))}
-
-        </tbody>
-
-      </table>
-
+          </div>
+        )}
     </div>
   );
 }

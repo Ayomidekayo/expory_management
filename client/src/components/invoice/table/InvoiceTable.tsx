@@ -31,6 +31,10 @@ interface Props {
   ) => void;
 
   statusUpdatingId?: string;
+
+  // Pagination information
+  currentPage?: number;
+  pageLimit?: number;
 }
 
 export default function InvoiceTable({
@@ -38,6 +42,8 @@ export default function InvoiceTable({
   onDelete,
   onStatusChange,
   statusUpdatingId,
+  currentPage = 1,
+  pageLimit = 10,
 }: Props) {
   const columns = invoiceColumns({
     onDelete,
@@ -66,6 +72,24 @@ export default function InvoiceTable({
                   key={group.id}
                   className="bg-slate-50"
                 >
+                  {/* S/N */}
+
+                  <TableHead
+                    className="
+                      w-[70px]
+                      whitespace-nowrap
+                      px-4
+                      py-3
+                      text-xs
+                      font-semibold
+                      uppercase
+                      tracking-wide
+                      text-slate-500
+                    "
+                  >
+                    S/N
+                  </TableHead>
+
                   {group.headers.map(
                     (header) => (
                       <TableHead
@@ -103,39 +127,76 @@ export default function InvoiceTable({
             0 ? (
               table
                 .getRowModel()
-                .rows.map((row) => (
-                  <TableRow
-                    key={row.id}
-                    className="
-                      transition-colors
-                      hover:bg-slate-50/70
-                    "
-                  >
-                    {row
-                      .getVisibleCells()
-                      .map((cell) => (
-                        <TableCell
-                          key={cell.id}
-                          className="
-                            whitespace-nowrap
-                            px-4
-                            py-3
-                          "
-                        >
-                          {flexRender(
-                            cell.column
-                              .columnDef
-                              .cell,
-                            cell.getContext()
-                          )}
-                        </TableCell>
-                      ))}
-                  </TableRow>
-                ))
+                .rows.map((row, index) => {
+                  /*
+                   * Continuous S/N across pages.
+                   *
+                   * Page 1:
+                   * 1 - 10
+                   *
+                   * Page 2:
+                   * 11 - 20
+                   *
+                   * Page 3:
+                   * 21 - 30
+                   */
+
+                  const serialNumber =
+                    (currentPage - 1) *
+                      pageLimit +
+                    index +
+                    1;
+
+                  return (
+                    <TableRow
+                      key={row.id}
+                      className="
+                        transition-colors
+                        hover:bg-slate-50/70
+                      "
+                    >
+                      {/* S/N */}
+
+                      <TableCell
+                        className="
+                          whitespace-nowrap
+                          px-4
+                          py-3
+                          font-medium
+                          text-slate-500
+                        "
+                      >
+                        {serialNumber}
+                      </TableCell>
+
+                      {row
+                        .getVisibleCells()
+                        .map((cell) => (
+                          <TableCell
+                            key={cell.id}
+                            className="
+                              whitespace-nowrap
+                              px-4
+                              py-3
+                            "
+                          >
+                            {flexRender(
+                              cell.column
+                                .columnDef
+                                .cell,
+                              cell.getContext()
+                            )}
+                          </TableCell>
+                        ))}
+                    </TableRow>
+                  );
+                })
             ) : (
               <TableRow>
                 <TableCell
-                  colSpan={columns.length}
+                  colSpan={
+                    columns.length + 1
+                  }
                   className="
                     h-32
                     text-center

@@ -21,6 +21,9 @@ interface Props {
 
   isLoading?: boolean;
 
+  currentPage?: number;
+  pageLimit?: number;
+
   onStatusChange: (
     movement: GateMovement,
     status: GateMovementStatus
@@ -127,6 +130,8 @@ function formatDate(
 export default function GateMovementsTable({
   movements,
   isLoading,
+  currentPage = 1,
+  pageLimit = 10,
   onStatusChange,
   onDelete,
 }: Props) {
@@ -187,6 +192,12 @@ export default function GateMovementsTable({
           <thead className="border-b border-slate-200 bg-slate-50">
             <tr>
 
+              {/* S/N */}
+
+              <th className="w-[70px] px-5 py-4 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">
+                S/N
+              </th>
+
               {/* Yard / Store */}
 
               <th className="px-5 py-4 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">
@@ -238,7 +249,9 @@ export default function GateMovementsTable({
           </thead>
 
           <tbody className="divide-y divide-slate-100">
-            {movements.map((movement) => {
+            {movements.map((movement, index) => {
+              const serialNumber =
+                (currentPage - 1) * pageLimit + index + 1;
 
               /* =================================
                  RELATED SHIPMENT
@@ -255,6 +268,14 @@ export default function GateMovementsTable({
                   key={movement.id}
                   className="transition hover:bg-slate-50"
                 >
+
+                  {/* ===============================
+                      S/N
+                  =============================== */}
+
+                  <td className="px-5 py-4 text-sm font-medium text-slate-500">
+                    {serialNumber}
+                  </td>
 
                   {/* ===============================
                       YARD / STORE

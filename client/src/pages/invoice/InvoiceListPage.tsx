@@ -35,7 +35,9 @@ export default function InvoiceListPage() {
       page: 1,
       limit: 10,
       sortBy: "createdAt",
-      sortOrder: "desc",
+
+      // Earliest → Latest
+      sortOrder: "asc",
     });
 
   /* ===========================================
@@ -74,6 +76,30 @@ export default function InvoiceListPage() {
 
   const invoices =
     data?.data ?? [];
+
+  const currentPage =
+    data?.pagination?.page ??
+    filters.page ??
+    1;
+
+  const pageLimit =
+    data?.pagination?.limit ??
+    filters.limit ??
+    10;
+
+  const totalPages =
+    data?.pagination?.totalPages ??
+    1;
+
+  const total =
+    data?.pagination?.total ??
+    invoices.length;
+
+  const hasPreviousPage =
+    currentPage > 1;
+
+  const hasNextPage =
+    currentPage < totalPages;
 
   /* ===========================================
      OPEN DELETE DIALOG
@@ -264,6 +290,8 @@ export default function InvoiceListPage() {
                       .variables?.id
                   : undefined
               }
+              currentPage={currentPage}
+              pageLimit={pageLimit}
             />
 
             {/* ===========================================
@@ -272,32 +300,37 @@ export default function InvoiceListPage() {
 
             <div className="flex flex-col gap-4 rounded-xl border bg-white p-4 sm:flex-row sm:items-center sm:justify-between">
 
-              <p className="text-sm text-muted-foreground">
-                Page{" "}
+              {/* PAGE INFORMATION */}
 
-                <strong>
-                  {
-                    data?.pagination
-                      .page
-                  }
-                </strong>{" "}
+              <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                <span>
+                  Page{" "}
+                  <strong className="text-foreground">
+                    {currentPage}
+                  </strong>{" "}
+                  of{" "}
+                  <strong className="text-foreground">
+                    {totalPages}
+                  </strong>
+                </span>
 
-                of{" "}
+                <span className="text-slate-300">
+                  •
+                </span>
 
-                <strong>
-                  {
-                    data?.pagination
-                      .totalPages
-                  }
-                </strong>
-              </p>
+                <span>
+                  {total} total
+                </span>
+              </div>
+
+              {/* PAGINATION BUTTONS */}
 
               <div className="flex gap-2">
 
                 <Button
                   variant="outline"
                   disabled={
-                    filters.page === 1 ||
+                    !hasPreviousPage ||
                     isFetching
                   }
                   onClick={() =>
@@ -305,8 +338,11 @@ export default function InvoiceListPage() {
                       (prev) => ({
                         ...prev,
                         page:
-                          (prev.page ??
-                            1) - 1,
+                          Math.max(
+                            (prev.page ??
+                              1) - 1,
+                            1
+                          ),
                       })
                     )
                   }
@@ -317,11 +353,7 @@ export default function InvoiceListPage() {
                 <Button
                   variant="outline"
                   disabled={
-                    (filters.page ??
-                      1) >=
-                      (data?.pagination
-                        .totalPages ??
-                        1) ||
+                    !hasNextPage ||
                     isFetching
                   }
                   onClick={() =>
