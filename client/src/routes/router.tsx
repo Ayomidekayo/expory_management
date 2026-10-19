@@ -643,7 +643,7 @@ export const router = createBrowserRouter([
   ),
 },
 
-// Rate card details
+// Rate card details all
 {
   path: "/quotations/rate-cards/:id",
   element: (
