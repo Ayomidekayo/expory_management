@@ -72,10 +72,11 @@ import GateDetailsPage from "../pages/gates/GateDetailsPage";
 import CompletedShipmentsPage from "../pages/shipment/CompletedShipmentsPage";
 
 import RateCardsPage from "../features/pricing/pages/Rate-Card-Page"
-import CreateRateCardPage from "../features/pricing/pages/rate-card-create-page";
+
 import RateCardDetailsPage from "../features/pricing/pages/RateCardDetailsPage";
 import CreateRateCardConfigurationPage from "../features/pricing/pages/CreateRateCardConfigurationPage";
 import PublicQuotationPage from "../features/public-quotation/pages/PublicQuotationPage";
+import CreateRateCardPage from "../features/pricing/pages/rate-card-create-page";
 
 
 function LegacyInvoiceCreateRedirect() {
