@@ -81,6 +81,7 @@ import CreateRateCardPage from "../features/pricing/pages/Rate-card-create-Page"
 
 
 
+
 function LegacyInvoiceCreateRedirect() {
   const location = useLocation();
 
