@@ -62,7 +62,17 @@ export const sidebarItems: SidebarItem[] = [
   // =========================
   // OPERATIONS
   // =========================
+
+
+    {
+    title: "Quotation",
+    path: "/quotations/rate-cards",
+    icon: Truck,
+    permission: "MANAGE_RATE_CARDS",
+    section: "Operations",
+  },
   {
+
     title: "Allocations",
     path: "/allocations",
     icon: BriefcaseBusiness,

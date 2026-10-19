@@ -71,6 +71,13 @@ import EditGateMovementPage from "../pages/gates/EditGateMovementPage";
 import GateDetailsPage from "../pages/gates/GateDetailsPage";
 import CompletedShipmentsPage from "../pages/shipment/CompletedShipmentsPage";
 
+import RateCardsPage from "../features/pricing/pages/Rate-Card-Page"
+import CreateRateCardPage from "../features/pricing/pages/rate-card-create-page";
+import RateCardDetailsPage from "../features/pricing/pages/RateCardDetailsPage";
+import CreateRateCardConfigurationPage from "../features/pricing/pages/CreateRateCardConfigurationPage";
+import PublicQuotationPage from "../features/public-quotation/pages/PublicQuotationPage";
+
+
 function LegacyInvoiceCreateRedirect() {
   const location = useLocation();
 
@@ -111,7 +118,12 @@ export const router = createBrowserRouter([
   {
     path: "/register",
     element: <RegisterPage />,
-  },
+  }
+,
+{
+  path:"/get-a-quote",
+  element:<PublicQuotationPage/>
+},
 
   // ================================
   // PROTECTED ROUTES
@@ -596,6 +608,73 @@ export const router = createBrowserRouter([
     </PermissionRoute>
   ),
 },
+// ==========================================
+// QUOTATION MANAGEMENT — RATE CARDS
+// ==========================================
+
+
+
+// {
+//   path: "/rate-cards/:rateCardId/edit",
+//   element: (
+//     <PermissionRoute permission="VIEW_RATE_CARDS">
+//       <RateCardEditorPage />
+//     </PermissionRoute>
+//   ),
+// },
+{
+  path: "/quotations/rate-cards",
+  element: (
+    <PermissionRoute permission="VIEW_RATE_CARDS">
+      <RateCardsPage />
+    </PermissionRoute>
+  ),
+},
+// Create rate card
+{
+  path: "/quotations/rate-cards/new",
+  element: (
+    <PermissionRoute permission="MANAGE_RATE_CARDS">
+      <CreateRateCardPage />
+    </PermissionRoute>
+  ),
+},
+
+// Rate card details
+{
+  path: "/quotations/rate-cards/:id",
+  element: (
+    <PermissionRoute permission="VIEW_RATE_CARDS">
+      <RateCardDetailsPage />
+    </PermissionRoute>
+  ),
+},{
+  path: "/quotations/rate-cards/:rateCardId/configurations/new",
+  element: (
+    <PermissionRoute permission="MANAGE_RATE_CARDS">
+      <CreateRateCardConfigurationPage />
+    </PermissionRoute>
+  ),
+},
+
+// {
+//   path: "/quotations/rate-cards/new",
+//   element: (
+//     <PermissionRoute permission="MANAGE_RATE_CARDS">
+//       <CreateRateCardPage />
+//     </PermissionRoute>
+//   ),
+// },
+// {
+//   path: "/quotations/rate-cards/:id",
+//   element: (
+//     <PermissionRoute permission="VIEW_RATE_CARDS">
+//       <RateCardDetailsPage />
+//     </PermissionRoute>
+//   ),
+// },
+
+
 
           // ================================
           // SETTINGS
@@ -613,6 +692,8 @@ export const router = createBrowserRouter([
       },
     ],
   },
+  //quotes
+  
 
   // ================================
   // 404

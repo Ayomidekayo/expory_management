@@ -14,6 +14,19 @@ import documentRoutes from "./document.routes";
 import userRoutes from "./user.routes";
 import  invoicePaymentRoutes  from "./invoice-payment.routes"
 import  gateMovementRoutes   from "./gate-movement.routes"
+
+import weightSlabRoutes   from "../features/pricing/weight-slabs/weight-slab.routes"
+
+import rateCardConfigurationRoutes from "../features/pricing/rate-card-configuration/rate-card-configuration.routes";
+
+///new
+import rateCardPricingSectionRoutes from "../features/pricing/rate-card-pricing-section/rate-card-pricing-section.routes";
+import rateComponentRoutes   from  "../features/pricing/rate-component/rate-component.routes"
+import rateCardActivationRoutes  from "../features/pricing/rate-card-activation/rate-card-activation.routes"
+import rateCardOptionRoutes from  "../features/pricing/rate-card-option/rate-card-option.routes"
+import rateCardAirlineRoutes   from "../features/pricing/rate-card-airline/rate-card-airline.routes"
+import rateCardRoutes from "../features/pricing/rate-cards/rate-card.routes"
+import quotationRoutes   from "../features/quotation/quotation.routes"
 const router = Router();
 
 router.use("/auth", authRoutes);
@@ -52,4 +65,32 @@ router.use(
   "/gate-movements",
   gateMovementRoutes
 );
+// ==========================================
+// QUOTATION MANAGEMENT
+// ==========================================
+// Quote management
+router.use(quotationRoutes);
+
+
+// Rate card configurations
+router.use("/rate-cards",rateCardRoutes);
+router.use(rateCardConfigurationRoutes);
+router.use(rateCardOptionRoutes);
+
+// Airline configuration
+ router.use(rateCardAirlineRoutes);
+
+// Pricing sections
+router.use(rateCardPricingSectionRoutes);
+
+// Rate components
+router.use(rateComponentRoutes);
+
+// Weight slabs and slab rates
+router.use(weightSlabRoutes);
+
+// Validation, activation and archiving
+router.use(rateCardActivationRoutes);
+
+
 export default router;

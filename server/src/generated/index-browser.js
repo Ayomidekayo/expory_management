@@ -456,9 +456,286 @@ exports.Prisma.GateMovementScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
+exports.Prisma.RateCardScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  mode: 'mode',
+  direction: 'direction',
+  status: 'status',
+  currency: 'currency',
+  effectiveFrom: 'effectiveFrom',
+  effectiveTo: 'effectiveTo',
+  createdById: 'createdById',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.RateComponentScalarFieldEnum = {
+  id: 'id',
+  rateCardId: 'rateCardId',
+  name: 'name',
+  code: 'code',
+  calculationType: 'calculationType',
+  calculationBasis: 'calculationBasis',
+  unit: 'unit',
+  value: 'value',
+  percentage: 'percentage',
+  isActive: 'isActive',
+  isOptional: 'isOptional',
+  isTaxable: 'isTaxable',
+  notes: 'notes',
+  optionId: 'optionId',
+  pricingSectionId: 'pricingSectionId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  configurationId: 'configurationId'
+};
+
+exports.Prisma.RateCardNoteScalarFieldEnum = {
+  id: 'id',
+  rateCardId: 'rateCardId',
+  note: 'note',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.QuoteScalarFieldEnum = {
+  id: 'id',
+  rateCardId: 'rateCardId',
+  quoteNumber: 'quoteNumber',
+  status: 'status',
+  source: 'source',
+  customerName: 'customerName',
+  email: 'email',
+  phone: 'phone',
+  weightKg: 'weightKg',
+  goodsDescription: 'goodsDescription',
+  hsCode: 'hsCode',
+  customsValue: 'customsValue',
+  freightAmount: 'freightAmount',
+  quantity: 'quantity',
+  currency: 'currency',
+  subtotal: 'subtotal',
+  totalAmount: 'totalAmount',
+  inputSnapshot: 'inputSnapshot',
+  pricingSnapshot: 'pricingSnapshot',
+  requiresReview: 'requiresReview',
+  validUntil: 'validUntil',
+  notes: 'notes',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.WeightSlabScalarFieldEnum = {
+  id: 'id',
+  rateCardId: 'rateCardId',
+  label: 'label',
+  minWeightKg: 'minWeightKg',
+  maxWeightKg: 'maxWeightKg',
+  displayOrder: 'displayOrder',
+  optionId: 'optionId',
+  pricingSectionId: 'pricingSectionId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  configurationId: 'configurationId'
+};
+
+exports.Prisma.WeightSlabRateScalarFieldEnum = {
+  id: 'id',
+  weightSlabId: 'weightSlabId',
+  componentId: 'componentId',
+  amount: 'amount',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.QuoteItemScalarFieldEnum = {
+  id: 'id',
+  quoteId: 'quoteId',
+  exporterId: 'exporterId',
+  componentId: 'componentId',
+  componentName: 'componentName',
+  componentCode: 'componentCode',
+  calculationType: 'calculationType',
+  calculationBasis: 'calculationBasis',
+  unit: 'unit',
+  rateApplied: 'rateApplied',
+  quantity: 'quantity',
+  lineTotal: 'lineTotal',
+  isEstimate: 'isEstimate',
+  requiresReview: 'requiresReview',
+  remarks: 'remarks',
+  createdAt: 'createdAt',
+  segmentId: 'segmentId'
+};
+
+exports.Prisma.QuoteSubmissionScalarFieldEnum = {
+  id: 'id',
+  quoteId: 'quoteId',
+  exporterId: 'exporterId',
+  customerName: 'customerName',
+  email: 'email',
+  phone: 'phone',
+  status: 'status',
+  currency: 'currency',
+  subtotal: 'subtotal',
+  taxAmount: 'taxAmount',
+  totalAmount: 'totalAmount',
+  customerMessage: 'customerMessage',
+  adminMessage: 'adminMessage',
+  submittedAt: 'submittedAt',
+  reviewedAt: 'reviewedAt',
+  approvedAt: 'approvedAt',
+  completedAt: 'completedAt',
+  archivedAt: 'archivedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.QuoteSubmissionItemScalarFieldEnum = {
+  id: 'id',
+  submissionId: 'submissionId',
+  quoteItemId: 'quoteItemId',
+  componentName: 'componentName',
+  componentCode: 'componentCode',
+  quantity: 'quantity',
+  rateApplied: 'rateApplied',
+  lineTotal: 'lineTotal',
+  isSelected: 'isSelected',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.QuoteMessageScalarFieldEnum = {
+  id: 'id',
+  quoteId: 'quoteId',
+  submissionId: 'submissionId',
+  senderType: 'senderType',
+  senderUserId: 'senderUserId',
+  message: 'message',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.QuoteAttachmentScalarFieldEnum = {
+  id: 'id',
+  quoteId: 'quoteId',
+  submissionId: 'submissionId',
+  messageId: 'messageId',
+  uploadedById: 'uploadedById',
+  uploadedByType: 'uploadedByType',
+  fileName: 'fileName',
+  originalName: 'originalName',
+  fileUrl: 'fileUrl',
+  publicId: 'publicId',
+  mimeType: 'mimeType',
+  fileSize: 'fileSize',
+  remarks: 'remarks',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.QuoteNotificationScalarFieldEnum = {
+  id: 'id',
+  quoteId: 'quoteId',
+  recipientUserId: 'recipientUserId',
+  title: 'title',
+  message: 'message',
+  isRead: 'isRead',
+  readAt: 'readAt',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.QuoteAuditEventScalarFieldEnum = {
+  id: 'id',
+  quoteId: 'quoteId',
+  submissionId: 'submissionId',
+  action: 'action',
+  actorUserId: 'actorUserId',
+  actorType: 'actorType',
+  details: 'details',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.RateCardConfigurationScalarFieldEnum = {
+  id: 'id',
+  rateCardId: 'rateCardId',
+  name: 'name',
+  code: 'code',
+  currency: 'currency',
+  routeCode: 'routeCode',
+  routeLabel: 'routeLabel',
+  equipmentType: 'equipmentType',
+  airlineSelectorEnabled: 'airlineSelectorEnabled',
+  transportEnabled: 'transportEnabled',
+  nafdacEnabled: 'nafdacEnabled',
+  vatEnabled: 'vatEnabled',
+  vatPercentage: 'vatPercentage',
+  isActive: 'isActive',
+  displayOrder: 'displayOrder',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  weightEnabled: 'weightEnabled',
+  freightAmountEnabled: 'freightAmountEnabled',
+  customsValueEnabled: 'customsValueEnabled',
+  quantityEnabled: 'quantityEnabled',
+  vatCalculationBasis: 'vatCalculationBasis'
+};
+
+exports.Prisma.RateCardAirlineScalarFieldEnum = {
+  id: 'id',
+  configurationId: 'configurationId',
+  code: 'code',
+  name: 'name',
+  ratePerKg: 'ratePerKg',
+  isActive: 'isActive',
+  displayOrder: 'displayOrder',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.QuoteSegmentScalarFieldEnum = {
+  id: 'id',
+  quoteId: 'quoteId',
+  configurationId: 'configurationId',
+  name: 'name',
+  routeCode: 'routeCode',
+  currency: 'currency',
+  subtotal: 'subtotal',
+  taxAmount: 'taxAmount',
+  totalAmount: 'totalAmount',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.RateCardOptionScalarFieldEnum = {
+  id: 'id',
+  configurationId: 'configurationId',
+  code: 'code',
+  name: 'name',
+  displayOrder: 'displayOrder',
+  isActive: 'isActive',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.RateCardPricingSectionScalarFieldEnum = {
+  id: 'id',
+  configurationId: 'configurationId',
+  optionId: 'optionId',
+  code: 'code',
+  name: 'name',
+  currency: 'currency',
+  displayOrder: 'displayOrder',
+  isActive: 'isActive',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
+};
+
+exports.Prisma.NullableJsonNullValueInput = {
+  DbNull: Prisma.DbNull,
+  JsonNull: Prisma.JsonNull
 };
 
 exports.Prisma.QueryMode = {
@@ -469,6 +746,12 @@ exports.Prisma.QueryMode = {
 exports.Prisma.NullsOrder = {
   first: 'first',
   last: 'last'
+};
+
+exports.Prisma.JsonNullValueFilter = {
+  DbNull: Prisma.DbNull,
+  JsonNull: Prisma.JsonNull,
+  AnyNull: Prisma.AnyNull
 };
 exports.Role = exports.$Enums.Role = {
   ADMIN: 'ADMIN',
@@ -518,7 +801,8 @@ exports.ShipmentStatus = exports.$Enums.ShipmentStatus = {
 exports.Currency = exports.$Enums.Currency = {
   NGN: 'NGN',
   USD: 'USD',
-  EUR: 'EUR'
+  EUR: 'EUR',
+  CFA: 'CFA'
 };
 
 exports.InvoiceStatus = exports.$Enums.InvoiceStatus = {
@@ -650,6 +934,13 @@ exports.Permission = exports.$Enums.Permission = {
   EDIT_USER: 'EDIT_USER',
   DELETE_USER: 'DELETE_USER',
   MANAGE_PERMISSIONS: 'MANAGE_PERMISSIONS',
+  VIEW_RATE_CARDS: 'VIEW_RATE_CARDS',
+  MANAGE_RATE_CARDS: 'MANAGE_RATE_CARDS',
+  ACTIVATE_RATE_CARDS: 'ACTIVATE_RATE_CARDS',
+  MANAGE_QUOTE_SETTINGS: 'MANAGE_QUOTE_SETTINGS',
+  VIEW_ALL_QUOTES: 'VIEW_ALL_QUOTES',
+  REVIEW_QUOTE: 'REVIEW_QUOTE',
+  APPROVE_QUOTE: 'APPROVE_QUOTE',
   VIEW_GATES: 'VIEW_GATES',
   CREATE_GATE: 'CREATE_GATE',
   EDIT_GATE: 'EDIT_GATE',
@@ -666,6 +957,79 @@ exports.GateMovementStatus = exports.$Enums.GateMovementStatus = {
   CLEARED: 'CLEARED',
   CROSSED: 'CROSSED',
   CANCELLED: 'CANCELLED'
+};
+
+exports.QuoteMode = exports.$Enums.QuoteMode = {
+  AIR: 'AIR',
+  LAND: 'LAND',
+  SEA: 'SEA'
+};
+
+exports.QuoteDirection = exports.$Enums.QuoteDirection = {
+  IMPORT: 'IMPORT',
+  EXPORT: 'EXPORT'
+};
+
+exports.RateCardStatus = exports.$Enums.RateCardStatus = {
+  DRAFT: 'DRAFT',
+  ACTIVE: 'ACTIVE',
+  ARCHIVED: 'ARCHIVED'
+};
+
+exports.RateCalculationType = exports.$Enums.RateCalculationType = {
+  FIXED: 'FIXED',
+  WEIGHT_SLAB: 'WEIGHT_SLAB',
+  PERCENTAGE: 'PERCENTAGE',
+  PER_UNIT: 'PER_UNIT',
+  VARIABLE: 'VARIABLE'
+};
+
+exports.CalculationBasis = exports.$Enums.CalculationBasis = {
+  SUBTOTAL: 'SUBTOTAL',
+  CUSTOMS_VALUE: 'CUSTOMS_VALUE',
+  FREIGHT_AMOUNT: 'FREIGHT_AMOUNT'
+};
+
+exports.QuoteStatus = exports.$Enums.QuoteStatus = {
+  CALCULATED: 'CALCULATED',
+  PENDING_REVIEW: 'PENDING_REVIEW',
+  APPROVED: 'APPROVED',
+  SENT: 'SENT',
+  ACCEPTED: 'ACCEPTED',
+  REJECTED: 'REJECTED',
+  EXPIRED: 'EXPIRED',
+  CANCELLED: 'CANCELLED'
+};
+
+exports.QuoteSource = exports.$Enums.QuoteSource = {
+  GUEST: 'GUEST',
+  ACCOUNT: 'ACCOUNT'
+};
+
+exports.QuoteSubmissionStatus = exports.$Enums.QuoteSubmissionStatus = {
+  PENDING_REVIEW: 'PENDING_REVIEW',
+  CHANGES_REQUESTED: 'CHANGES_REQUESTED',
+  APPROVED: 'APPROVED',
+  REJECTED: 'REJECTED',
+  IN_PROGRESS: 'IN_PROGRESS',
+  COMPLETED: 'COMPLETED',
+  ARCHIVED: 'ARCHIVED'
+};
+
+exports.QuoteMessageSenderType = exports.$Enums.QuoteMessageSenderType = {
+  EXPORTER: 'EXPORTER',
+  ADMIN: 'ADMIN'
+};
+
+exports.QuoteAuditAction = exports.$Enums.QuoteAuditAction = {
+  SUBMITTED: 'SUBMITTED',
+  CHANGES_REQUESTED: 'CHANGES_REQUESTED',
+  APPROVED: 'APPROVED',
+  REJECTED: 'REJECTED',
+  WORK_STARTED: 'WORK_STARTED',
+  COMPLETED: 'COMPLETED',
+  ARCHIVED: 'ARCHIVED',
+  REOPENED: 'REOPENED'
 };
 
 exports.Prisma.ModelName = {
@@ -685,7 +1049,25 @@ exports.Prisma.ModelName = {
   Document: 'Document',
   UserPermission: 'UserPermission',
   InvoicePayment: 'InvoicePayment',
-  GateMovement: 'GateMovement'
+  GateMovement: 'GateMovement',
+  RateCard: 'RateCard',
+  RateComponent: 'RateComponent',
+  RateCardNote: 'RateCardNote',
+  Quote: 'Quote',
+  WeightSlab: 'WeightSlab',
+  WeightSlabRate: 'WeightSlabRate',
+  QuoteItem: 'QuoteItem',
+  QuoteSubmission: 'QuoteSubmission',
+  QuoteSubmissionItem: 'QuoteSubmissionItem',
+  QuoteMessage: 'QuoteMessage',
+  QuoteAttachment: 'QuoteAttachment',
+  QuoteNotification: 'QuoteNotification',
+  QuoteAuditEvent: 'QuoteAuditEvent',
+  RateCardConfiguration: 'RateCardConfiguration',
+  RateCardAirline: 'RateCardAirline',
+  QuoteSegment: 'QuoteSegment',
+  RateCardOption: 'RateCardOption',
+  RateCardPricingSection: 'RateCardPricingSection'
 };
 
 /**

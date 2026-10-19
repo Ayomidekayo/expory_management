@@ -3,53 +3,91 @@ import {
   Response,
   NextFunction,
 } from "express";
-import { JwtPayload } from "jsonwebtoken";
+
+import { JsonWebTokenError, TokenExpiredError } from "jsonwebtoken";
 
 import { verifyToken } from "../lib/jwt";
 import { prisma } from "../config/prisma";
 
-interface TokenPayload extends JwtPayload {
+interface TokenPayload {
   userId: string;
 }
 
 const authenticate = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
+  const authHeader = req.headers.authorization;
+
+  if (!authHeader?.startsWith("Bearer ")) {
+    return res.status(401).json({
+      success: false,
+      message: "Authentication required.",
+    });
+  }
+
+  const token = authHeader.slice(7).trim();
+
+  if (!token) {
+    return res.status(401).json({
+      success: false,
+      message: "Authentication token is missing.",
+    });
+  }
+
+  let payload: TokenPayload;
+
   try {
-    const authHeader =
-      req.headers.authorization;
+    payload = verifyToken(token) as TokenPayload;
 
     if (
-      !authHeader ||
-      !authHeader.startsWith("Bearer ")
+      !payload ||
+      typeof payload.userId !== "string" ||
+      !payload.userId
     ) {
       return res.status(401).json({
         success: false,
-        message: "Authentication required.",
+        message: "Invalid token payload.",
+      });
+    }
+  } catch (error) {
+    if (error instanceof TokenExpiredError) {
+      return res.status(401).json({
+        success: false,
+        message: "Access token expired. Please log in again.",
       });
     }
 
-    const token = authHeader.split(" ")[1];
-
-    const payload =
-      verifyToken(token) as TokenPayload;
-
-    const user =
-      await prisma.user.findUnique({
-        where: {
-          id: payload.userId,
-        },
-        include: {
-          permissions: true,
-        },
+    if (error instanceof JsonWebTokenError) {
+      return res.status(401).json({
+        success: false,
+        message: "Invalid access token. Please log in again.",
       });
+    }
+
+    console.error("Token verification failed:", error);
+
+    return res.status(500).json({
+      success: false,
+      message: "Unable to verify authentication.",
+    });
+  }
+
+  try {
+    const user = await prisma.user.findUnique({
+      where: {
+        id: payload.userId,
+      },
+      include: {
+        permissions: true,
+      },
+    });
 
     if (!user) {
       return res.status(401).json({
         success: false,
-        message: "User not found.",
+        message: "User associated with this token was not found.",
       });
     }
 
@@ -65,19 +103,18 @@ const authenticate = async (
       name: user.name,
       email: user.email,
       role: user.role,
-
       permissions: user.permissions.map(
-        (item) => item.permission
+        (item) => item.permission,
       ),
     };
 
-    next();
+    return next();
   } catch (error) {
-    console.error("Authentication error:", error);
+    console.error("Authentication database error:", error);
 
-    return res.status(401).json({
+    return res.status(500).json({
       success: false,
-      message: "Invalid token.",
+      message: "Unable to authenticate user.",
     });
   }
 };

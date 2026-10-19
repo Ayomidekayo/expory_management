@@ -1,0 +1,42 @@
+import { Router } from "express";
+
+import authenticate from "../../../middleware/auth.middleware";
+
+import requirePermission from "../../../middleware/permission.middleware";
+
+import {
+  listAirlines,
+  getAirlineById,
+  createAirline,
+  updateAirline,
+} from "./rate-card-airline.controller";
+
+const router = Router();
+
+router.use(authenticate);
+
+router.get(
+  "/rate-cards/:rateCardId/airlines",
+  requirePermission("VIEW_RATE_CARDS"),
+  listAirlines,
+);
+
+router.get(
+  "/rate-cards/:rateCardId/airlines/:id",
+  requirePermission("VIEW_RATE_CARDS"),
+  getAirlineById,
+);
+
+router.post(
+  "/rate-cards/:rateCardId/airlines",
+  requirePermission("MANAGE_RATE_CARDS"),
+  createAirline,
+);
+
+router.patch(
+  "/rate-cards/:rateCardId/airlines/:id",
+  requirePermission("MANAGE_RATE_CARDS"),
+  updateAirline,
+);
+
+export default router;
