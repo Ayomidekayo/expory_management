@@ -6,7 +6,6 @@ import {
 
 import {
   createRateCardConfiguration,
-  getRateCardConfiguration,
   listRateCardConfigurations,
   rateCardConfigurationApi,
   updateRateCardConfiguration,
