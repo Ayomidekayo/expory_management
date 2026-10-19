@@ -8,7 +8,6 @@ import {
   LoaderCircle,
   ShieldCheck,
   Table2,
-  X,
   XCircle,
 } from "lucide-react";
 import { useRateComponents } from "../hooks/use-rate-components";

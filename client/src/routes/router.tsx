@@ -76,7 +76,9 @@ import RateCardsPage from "../features/pricing/pages/Rate-Card-Page"
 import RateCardDetailsPage from "../features/pricing/pages/RateCardDetailsPage";
 import CreateRateCardConfigurationPage from "../features/pricing/pages/CreateRateCardConfigurationPage";
 import PublicQuotationPage from "../features/public-quotation/pages/PublicQuotationPage";
-import CreateRateCardPage from "../features/pricing/pages/rate-card-create-page";
+import CreateRateCardPage from "../features/pricing/pages/Rate-card-create-Page";
+
+
 
 
 function LegacyInvoiceCreateRedirect() {

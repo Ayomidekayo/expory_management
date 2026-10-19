@@ -12,13 +12,33 @@ api.interceptors.request.use((config) => {
 
 const unwrap = <T,>(response: { data: { data: T } }) => response.data.data;
 export const rateComponentsApi = {
-  async list(rateCardId: string, filters: { pricingSectionId?: string; optionId?: string } = {}) {
-    return unwrap<RateComponent[]>(await api.get(`/rate-cards/${rateCardId}/components`, { params: filters }));
-  },
+ async list(
+  rateCardId: string,
+  filters: {
+    configurationId?: string;
+    pricingSectionId?: string;
+    optionId?: string;
+  } = {},
+) {
+  return unwrap<RateComponent[]>(
+    await api.get(`/rate-cards/${rateCardId}/components`, {
+      params: filters,
+    }),
+  );
+},
   async create(rateCardId: string, input: RateComponentInput) {
     return unwrap<RateComponent>(await api.post(`/rate-cards/${rateCardId}/components`, input));
   },
   async update(componentId: string, input: Partial<RateComponentInput>) {
     return unwrap<RateComponent>(await api.patch(`/components/${componentId}`, input));
   },
+  
+async remove(componentId: string) {
+  const response = await api.delete(
+    `/components/${componentId}`,
+  );
+
+  return response.data.data;
+},
+
 };

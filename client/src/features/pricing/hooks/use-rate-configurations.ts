@@ -8,6 +8,7 @@ import {
   createRateCardConfiguration,
   getRateCardConfiguration,
   listRateCardConfigurations,
+  rateCardConfigurationApi,
   updateRateCardConfiguration,
 } from "../api/rate-card-configuration.api";
 
@@ -37,11 +38,19 @@ export function useRateCardConfigurations(rateCardId: string) {
   });
 }
 
-export function useRateCardConfiguration(configurationId: string) {
+export function useRateCardConfiguration(
+  rateCardId: string,
+  configurationId: string,
+) {
   return useQuery({
-    queryKey: rateCardConfigurationKeys.detail(configurationId),
-    queryFn: () => getRateCardConfiguration(configurationId),
-    enabled: Boolean(configurationId),
+    queryKey: [
+      "rate-card-configuration",
+      rateCardId,
+      configurationId,
+    ],
+    queryFn: () =>
+      rateCardConfigurationApi.getById(configurationId),
+    enabled: Boolean(rateCardId && configurationId),
   });
 }
 

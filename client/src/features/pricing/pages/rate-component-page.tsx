@@ -18,9 +18,7 @@ import {
   useRateCard,
 } from "../hooks/use-rate-cards";
 
-import {
-  useRateConfiguration,
-} from "../hooks/use-rate-configurations";
+
 
 import {
   useRateComponents,
@@ -29,11 +27,12 @@ import {
   useDeleteRateComponent,
 } from "../hooks/use-rate-components";
 
+
+import { useRateCardConfiguration } from "../hooks/use-rate-configurations";
 import type {
-  CreateRateComponentInput,
   RateComponent,
-  UpdateRateComponentInput,
-} from "../types/pricing.types";
+  RateComponentInput,
+} from "../types/rate-component.types";
 
 const formatAmount = (
   value: number | string | null | undefined,
@@ -82,7 +81,7 @@ export default function RateComponentPage() {
     isLoading: configLoading,
     isError: configError,
     refetch: refetchConfiguration,
-  } = useRateConfiguration(cardId, configId);
+  } = useRateCardConfiguration(cardId, configId);
 
   const {
     data: components,
@@ -122,34 +121,32 @@ export default function RateComponentPage() {
     setEditingComponent(null);
   }
 
-  async function handleSubmit(
-    input: CreateRateComponentInput | UpdateRateComponentInput,
-  ) {
-    setPageError("");
 
-    try {
-      if (editingComponent) {
-        await updateMutation.mutateAsync({
-          componentId: editingComponent.id,
-          input: input as UpdateRateComponentInput,
-        });
-      } else {
-        await createMutation.mutateAsync(
-          input as CreateRateComponentInput,
-        );
-      }
 
-      closeForm();
-    } catch (error) {
-      const message =
-        error instanceof Error
-          ? error.message
-          : "Unable to save the charge.";
+async function handleSubmit(input: RateComponentInput) {
+  setPageError("");
 
-      setPageError(message);
-      throw error;
+  try {
+    if (editingComponent) {
+      await updateMutation.mutateAsync({
+        id: editingComponent.id,
+        input,
+      });
+    } else {
+      await createMutation.mutateAsync(input);
     }
+
+    closeForm();
+  } catch (error) {
+    const message =
+      error instanceof Error
+        ? error.message
+        : "Unable to save the charge.";
+
+    setPageError(message);
+    throw error;
   }
+}
 
   async function handleDelete(component: RateComponent) {
     const confirmed = window.confirm(

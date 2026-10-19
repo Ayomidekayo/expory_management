@@ -1,19 +1,18 @@
 import { useEffect, useState, type FormEvent } from "react";
 import type {
   CalculationBasis,
-  CreateRateComponentInput,
   RateCalculationType,
-  RateComponent,
-  UpdateRateComponentInput,
 } from "../types/pricing.types";
+import type {
+  RateComponent,
+  RateComponentInput,
+} from "../types/rate-component.types";
 
 interface RateComponentFormProps {
   configurationId: string;
   initialData?: RateComponent;
   isSubmitting?: boolean;
-  onSubmit: (
-    data: CreateRateComponentInput | UpdateRateComponentInput,
-  ) => Promise<void> | void;
+  onSubmit: (data: RateComponentInput) => Promise<void> | void;
   onCancel: () => void;
 }
 
@@ -141,7 +140,7 @@ export default function RateComponentForm({
       return;
     }
 
-    const payload: CreateRateComponentInput = {
+const payload: RateComponentInput = {
       configurationId,
       name: name.trim(),
       code: code.trim() || undefined,

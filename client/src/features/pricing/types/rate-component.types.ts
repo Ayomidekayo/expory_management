@@ -1,5 +1,28 @@
-export type RateCalculationType = "FIXED" | "WEIGHT_SLAB" | "PERCENTAGE" | "PER_UNIT" | "VARIABLE";
-export type CalculationBasis = "SUBTOTAL" | "CUSTOMS_VALUE" | "FREIGHT_AMOUNT";
+
+export type RateCalculationType =
+  | "FIXED"
+  | "WEIGHT_SLAB"
+  | "PERCENTAGE"
+  | "PER_UNIT"
+  | "VARIABLE";
+
+export type CalculationBasis =
+  | "SUBTOTAL"
+  | "CUSTOMS_VALUE"
+  | "FREIGHT_AMOUNT"
+  | "QUANTITY"
+  | "WEIGHT"
+  | "CONTAINER"
+  | "SHIPMENT"
+  | "MANUAL";
+export type PricingSectionOption = {
+  id: string;
+  name: string;
+  code: string;
+  currency: string;
+  optionId?: string | null;
+  isActive?: boolean;
+};
 
 export interface RateComponent {
   id: string;
@@ -7,24 +30,35 @@ export interface RateComponent {
   configurationId?: string | null;
   name: string;
   code?: string | null;
+
   calculationType: RateCalculationType;
   calculationBasis?: CalculationBasis | null;
+
   unit?: string | null;
   value?: string | number | null;
   percentage?: string | number | null;
+
   isActive: boolean;
   isOptional: boolean;
   isTaxable: boolean;
   notes?: string | null;
+
   optionId?: string | null;
   pricingSectionId?: string | null;
-  option?: { id: string; name: string; code: string } | null;
-  pricingSection?: { id: string; name: string; code: string; currency: string } | null;
+
+  option?: {
+    id: string;
+    name: string;
+    code: string;
+  } | null;
+
+  pricingSection?: PricingSectionOption | null;
 }
 
 export interface RateComponentInput {
   name: string;
   code?: string;
+   configurationId: string; // Add this field
 
   calculationType: RateCalculationType;
   calculationBasis?: CalculationBasis | null;
@@ -40,13 +74,4 @@ export interface RateComponentInput {
   notes?: string | null;
   optionId?: string | null;
   pricingSectionId?: string | null;
-}
-
-export interface PricingSectionOption {
-  id: string;
-  name: string;
-  code: string;
-  currency?: string;
-  optionId?: string | null;
-  isActive: boolean;
 }
