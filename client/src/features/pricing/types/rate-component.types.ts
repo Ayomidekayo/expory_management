@@ -58,7 +58,7 @@ export interface RateComponent {
 export interface RateComponentInput {
   name: string;
   code?: string;
-   configurationId: string; // Add this field
+  configurationId: string;
 
   calculationType: RateCalculationType;
   calculationBasis?: CalculationBasis | null;
@@ -75,3 +75,8 @@ export interface RateComponentInput {
   optionId?: string | null;
   pricingSectionId?: string | null;
 }
+
+export type CreateRateComponentPayload = Omit<
+  RateComponentInput,
+  "configurationId"
+>;

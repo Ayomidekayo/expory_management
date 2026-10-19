@@ -1,5 +1,5 @@
 import axios from "axios";
-import type { RateComponent, RateComponentInput } from "../types/rate-component.types";
+import type { CreateRateComponentPayload, RateComponent, RateComponentInput } from "../types/rate-component.types";
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL ?? "http://localhost:5000/api",
@@ -26,7 +26,7 @@ export const rateComponentsApi = {
     }),
   );
 },
-  async create(rateCardId: string, input: RateComponentInput) {
+  async create(rateCardId: string, input: CreateRateComponentPayload) {
     return unwrap<RateComponent>(await api.post(`/rate-cards/${rateCardId}/components`, input));
   },
   async update(componentId: string, input: Partial<RateComponentInput>) {

@@ -17,6 +17,7 @@ import {
 import { usePricingSections } from "../hooks/use-pricing-sections";
 import type {
   CalculationBasis,
+  CreateRateComponentPayload,
   PricingSectionOption,
   RateCalculationType,
   RateComponent,
@@ -133,21 +134,28 @@ export default function RateComponentsManager({
   async function submit(e: React.FormEvent) {
     e.preventDefault();
     setMessage("");
-    const payload: RateComponentInput = {
-      ...form,
-      name: form.name.trim(),
-      code: form.code?.trim() || undefined,
-      value:
-        form.calculationType === "FIXED" || form.calculationType === "PER_UNIT"
-          ? Number(form.value ?? 0)
-          : null,
-      percentage:
-        form.calculationType === "PERCENTAGE"
-          ? Number(form.percentage ?? 0)
-          : null,
-      pricingSectionId: form.pricingSectionId || null,
-      optionId: selectedSection?.optionId ?? form.optionId ?? null,
-    };
+   const payload: CreateRateComponentPayload = {
+  name: form.name.trim(),
+  code: form.code?.trim() || undefined,
+  calculationType: form.calculationType,
+  calculationBasis: form.calculationBasis,
+  unit: form.unit,
+  value:
+    form.calculationType === "FIXED" ||
+    form.calculationType === "PER_UNIT"
+      ? Number(form.value ?? 0)
+      : null,
+  percentage:
+    form.calculationType === "PERCENTAGE"
+      ? Number(form.percentage ?? 0)
+      : null,
+  isActive: form.isActive,
+  isOptional: form.isOptional,
+  isTaxable: form.isTaxable,
+  notes: form.notes,
+  pricingSectionId: form.pricingSectionId || null,
+  optionId: selectedSection?.optionId ?? form.optionId ?? null,
+};
     try {
       if (editingId)
         await updateComponent.mutateAsync({ id: editingId, input: payload });

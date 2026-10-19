@@ -6,7 +6,10 @@ import {
 } from "@tanstack/react-query";
 
 import { rateComponentsApi } from "../api/rate-components.api";
-import type { RateComponentInput } from "../types/rate-component.types";
+import type {
+  CreateRateComponentPayload,
+  RateComponentInput,
+} from "../types/rate-component.types";
 
 export const rateComponentKeys = {
   all: ["rate-components"] as const,
@@ -37,7 +40,7 @@ export function useCreateRateComponent(rateCardId: string) {
   const client = useQueryClient();
 
   return useMutation({
-    mutationFn: (input: RateComponentInput) =>
+    mutationFn: (input: CreateRateComponentPayload) =>
       rateComponentsApi.create(rateCardId, input),
 
     onSuccess: () =>
