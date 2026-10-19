@@ -1,4 +1,4 @@
-import type { QuoteDirection, QuoteMode } from "../../../generated";
+import { QuoteDirection, QuoteMode } from "../../generated";
 
 export type CalculateQuoteInput = {
   rateCardId: string;
