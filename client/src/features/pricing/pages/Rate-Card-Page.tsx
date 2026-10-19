@@ -589,8 +589,7 @@ export default function RateCardsPage() {
 
                 <tbody className="divide-y divide-slate-100">
                   {filteredCards.map((card) => {
-                    const Icon = modeIcons[card.mode];
-
+                    
                     return (
                       <tr
                         key={card.id}

@@ -28,9 +28,10 @@ import PricingSectionsManager from "../components/PricingSectionsManager";
 import { useRateCardOptions } from "../hooks/use-rate-card-options";
 import RateComponentsManager from "../components/RateComponentsManager";
 import WeightSlabsManager from "../components/WeightSlabsManager";
-import type { PricingSectionCurrency } from "./pricing-section.types";
+
 import RateCardPricingPreview from "../components/RateCardPricingPreview";
 import RateCardAirlineManager from "../components/rate-card-airline-manager";
+import type { PricingSectionCurrency } from "../types/pricing-section.types";
 
 const modeLabels: Record<QuoteMode, string> = {
   AIR: "Air Freight",
