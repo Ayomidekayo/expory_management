@@ -22,16 +22,21 @@ export function useRateComponents(
   rateCardId: string,
   configurationId?: string,
   enabled = true,
+  activeOnly = false,
 ) {
   return useQuery({
     queryKey: [
       ...rateComponentKeys.byRateCard(rateCardId),
       configurationId,
+      activeOnly,
     ],
+
     queryFn: () =>
       rateComponentsApi.list(rateCardId, {
         configurationId,
+        activeOnly,
       }),
+
     enabled: Boolean(rateCardId) && enabled,
   });
 }
@@ -82,3 +87,6 @@ export function useDeleteRateComponent(rateCardId: string) {
       }),
   });
 }
+
+
+

@@ -4,6 +4,7 @@ import type {
   WeightSlab,
   WeightSlabFilters,
   WeightSlabInput,
+  WeightSlabMatrixInput,
 } from "../types/weight-slab.types";
 
 const api = axios.create({
@@ -43,4 +44,16 @@ export const weightSlabsApi = {
     const response = await api.put(`/weight-slabs/${weightSlabId}/rates`, input);
     return unwrap<WeightSlab>(response);
   },
+
+  async createMatrix(
+  rateCardId: string,
+  input: WeightSlabMatrixInput,
+) {
+  const response = await api.post(
+    `/rate-cards/${rateCardId}/weight-slabs/matrix`,
+    input,
+  );
+
+  return unwrap<WeightSlab>(response);
+},
 };

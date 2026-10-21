@@ -233,44 +233,53 @@ export class RateCardActivationService {
           );
         }
 
-        if (component.calculationType === RateCalculationType.WEIGHT_SLAB) {
-          const applicableSlabs = slabs.filter((slab) => {
-            if (
-              slab.optionId !== component.optionId ||
-              slab.pricingSectionId !== component.pricingSectionId
-            ) {
-              return false;
-            }
+     if (component.calculationType === RateCalculationType.WEIGHT_SLAB) {
+  const applicableSlabs = slabs.filter((slab) => {
+    // A component can only use slabs from its own configuration.
+    // Options must match so option-specific pricing remains isolated.
+    if (slab.optionId !== component.optionId) {
+      return false;
+    }
 
-            return true;
-          });
+    // A null section on a slab means that its weight ranges
+    // are shared across applicable pricing sections.
+    // A section-specific slab only applies to its own section.
+    if (
+      slab.pricingSectionId !== null &&
+      slab.pricingSectionId !== component.pricingSectionId
+    ) {
+      return false;
+    }
 
-          if (applicableSlabs.length === 0) {
-            addError(
-              "WEIGHT_SLAB_REQUIRED",
-              `Weight-based charge "${component.name}" requires an applicable weight slab.`,
-              componentInfo,
-            );
-          }
+    return true;
+  });
 
-          for (const slab of applicableSlabs) {
-            const rate = slab.rates.find(
-              (item) => item.componentId === component.id,
-            );
+  if (applicableSlabs.length === 0) {
+    addError(
+      "WEIGHT_SLAB_REQUIRED",
+      `Weight-based charge "${component.name}" requires an applicable weight slab.`,
+      componentInfo,
+    );
+  }
 
-            if (
-              !rate ||
-              !Number.isFinite(Number(rate.amount)) ||
-              Number(rate.amount) < 0
-            ) {
-              addError(
-                "MISSING_OR_INVALID_SLAB_RATE",
-                `Weight slab "${slab.label}" requires a valid rate for "${component.name}".`,
-                { ...componentInfo, weightSlabId: slab.id },
-              );
-            }
-          }
-        }
+  for (const slab of applicableSlabs) {
+    const rate = slab.rates.find(
+      (item) => item.componentId === component.id,
+    );
+
+    if (
+      !rate ||
+      !Number.isFinite(Number(rate.amount)) ||
+      Number(rate.amount) < 0
+    ) {
+      addError(
+        "MISSING_OR_INVALID_SLAB_RATE",
+        `Weight slab "${slab.label}" requires a valid rate for "${component.name}".`,
+        { ...componentInfo, weightSlabId: slab.id },
+      );
+    }
+  }
+}
       }
 
       for (const section of configuration.pricingSections) {

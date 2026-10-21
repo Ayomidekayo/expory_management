@@ -4,6 +4,7 @@ import * as repository from "./weight-slab.repository";
 
 import type {
   CreateWeightSlabInput,
+  CreateWeightSlabMatrixInput,
   UpdateWeightSlabInput,
   UpsertSlabRatesInput,
 } from "./weight-slab.schema";
@@ -237,35 +238,143 @@ async setRates(
     );
   }
 
-  for (const component of components) {
-    if (
-      (component.configurationId ?? null) !==
-      (slab.configurationId ?? null)
-    ) {
-      throw new Error("COMPONENT_CONFIGURATION_MISMATCH");
-    }
+ for (const component of components) {
+  if (
+    (component.configurationId ?? null) !==
+    (slab.configurationId ?? null)
+  ) {
+    console.error("[Weight Slab Rates] Configuration mismatch", {
+      weightSlabId,
+      componentId: component.id,
+      componentConfigurationId: component.configurationId,
+      slabConfigurationId: slab.configurationId,
+    });
 
-    if (
-      (component.optionId ?? null) !==
-      (slab.optionId ?? null)
-    ) {
-      throw new Error("COMPONENT_OPTION_MISMATCH");
-    }
-
-    if (
-      (component.pricingSectionId ?? null) !==
-      (slab.pricingSectionId ?? null)
-    ) {
-      throw new Error("COMPONENT_PRICING_SECTION_MISMATCH");
-    }
+    throw new Error("COMPONENT_CONFIGURATION_MISMATCH");
   }
+
+  if (
+    (component.optionId ?? null) !==
+    (slab.optionId ?? null)
+  ) {
+    console.error("[Weight Slab Rates] Option mismatch", {
+      weightSlabId,
+      componentId: component.id,
+      componentOptionId: component.optionId,
+      slabOptionId: slab.optionId,
+    });
+
+    throw new Error("COMPONENT_OPTION_MISMATCH");
+  }
+
+  // if (
+  //   (component.pricingSectionId ?? null) !==
+  //   (slab.pricingSectionId ?? null)
+  // ) {
+  //   console.error("[Weight Slab Rates] Pricing section mismatch", {
+  //     weightSlabId,
+  //     componentId: component.id,
+  //     componentPricingSectionId: component.pricingSectionId,
+  //     slabPricingSectionId: slab.pricingSectionId,
+  //   });
+
+  //   throw new Error("COMPONENT_PRICING_SECTION_MISMATCH");
+  // }
+}
 
   return repository.replaceSlabRates(
     weightSlabId,
     input.rates,
   );
 }
+async createMatrixRow(
+  rateCardId: string,
+  input: CreateWeightSlabMatrixInput,
+) {
+  const rateCard = await repository.findRateCard(rateCardId);
 
+  if (!rateCard) {
+    throw new Error("RATE_CARD_NOT_FOUND");
+  }
+
+  if (rateCard.status !== RateCardStatus.DRAFT) {
+    throw new Error("RATE_CARD_MUST_BE_DRAFT");
+  }
+
+  const configurationId = input.configurationId ?? null;
+  const optionId = input.optionId ?? null;
+  const pricingSectionId = input.pricingSectionId ?? null;
+  const maxWeightKg = input.maxWeightKg ?? null;
+
+  assertValidRange(input.minWeightKg, maxWeightKg);
+
+  await this.validateRelationships(
+    rateCardId,
+    configurationId,
+    optionId,
+    pricingSectionId,
+  );
+
+  const overlap = await repository.findOverlappingSlab(
+    rateCardId,
+    input.minWeightKg,
+    maxWeightKg,
+    {
+      configurationId,
+      optionId,
+      pricingSectionId,
+    },
+  );
+
+  if (overlap) {
+    throw new Error("WEIGHT_SLAB_RANGE_OVERLAP");
+  }
+
+  const componentIds = input.rates.map(
+    (rate) => rate.componentId,
+  );
+
+  if (new Set(componentIds).size !== componentIds.length) {
+    throw new Error("DUPLICATE_SLAB_RATE_COMPONENT");
+  }
+
+  const components =
+    await repository.findComponentsForSlabRates(
+      rateCardId,
+      componentIds,
+    );
+
+  if (components.length !== componentIds.length) {
+    throw new Error(
+      "INVALID_OR_INACTIVE_WEIGHT_SLAB_COMPONENT",
+    );
+  }
+
+  for (const component of components) {
+    if (
+      (component.configurationId ?? null) !== configurationId
+    ) {
+      throw new Error("COMPONENT_CONFIGURATION_MISMATCH");
+    }
+
+    if ((component.optionId ?? null) !== optionId) {
+      throw new Error("COMPONENT_OPTION_MISMATCH");
+    }
+
+  }
+
+  return repository.createWeightSlabWithRates({
+    rateCardId,
+    configurationId,
+    optionId,
+    pricingSectionId,
+    label: input.label,
+    minWeightKg: input.minWeightKg,
+    maxWeightKg,
+    displayOrder: input.displayOrder,
+    rates: input.rates,
+  });
+}
 
   private async validateRelationships(
     rateCardId: string,

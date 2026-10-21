@@ -105,3 +105,15 @@ export type UpdateWeightSlabInput = z.infer<
 export type UpsertSlabRatesInput = z.infer<
   typeof upsertSlabRatesSchema
 >;
+
+
+export const createWeightSlabMatrixSchema =
+  createWeightSlabSchema
+    .extend({
+      rates: upsertSlabRatesSchema.shape.rates,
+    })
+    .strict();
+
+export type CreateWeightSlabMatrixInput = z.infer<
+  typeof createWeightSlabMatrixSchema
+>;

@@ -27,11 +27,11 @@ import RateCardOptionsManager from "../components/RateCardOptionsManager";
 import PricingSectionsManager from "../components/PricingSectionsManager";
 import { useRateCardOptions } from "../hooks/use-rate-card-options";
 import RateComponentsManager from "../components/RateComponentsManager";
-import WeightSlabsManager from "../components/WeightSlabsManager";
 
 import RateCardPricingPreview from "../components/RateCardPricingPreview";
 import RateCardAirlineManager from "../components/rate-card-airline-manager";
 import type { PricingSectionCurrency } from "../types/pricing-section.types";
+import ConfigurationWeightSlabs from "../components/ConfigurationWeightSlabs";
 
 const modeLabels: Record<QuoteMode, string> = {
   AIR: "Air Freight",
@@ -563,7 +563,7 @@ export default function RateCardDetailsPage() {
                       Manage Pricing
                       <ChevronRight className="h-4 w-4" />
                     </button>
-                    {true && (
+                    {canConfigure && (
                       <button
                         type="button"
                         onClick={() =>
@@ -576,7 +576,7 @@ export default function RateCardDetailsPage() {
                         <Settings2 className="h-4 w-4" />
                         {optionsConfigurationId === configuration.id
                           ? "Hide Pricing Tools"
-                          : "Manage Pricing"}
+                          : "Pricing Tools"}
                       </button>
                     )}
                   </div>
@@ -619,14 +619,14 @@ export default function RateCardDetailsPage() {
                     )}
 
                     {configuration.weightEnabled && (
-                      <WeightSlabsManager
-                        rateCardId={rateCard.id}
-                        configurationId={configuration.id}
-                        configurationName={configuration.name}
-                        configurationCurrency={configuration.currency}
-                        rateCardStatus={rateCard.status}
-                      />
-                    )}
+  <ConfigurationWeightSlabs
+    rateCardId={rateCard.id}
+    configurationId={configuration.id}
+    configurationName={configuration.name}
+    configurationCurrency={configuration.currency}
+    rateCardStatus={rateCard.status}
+  />
+)}
 
                   
                   </div>

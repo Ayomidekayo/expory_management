@@ -15,6 +15,29 @@ const numeric = (v: unknown, fallback = 0) => {
   return Number.isFinite(n) ? n : fallback
 }
 
+// function getSlabRate(
+//   slabs: any[],
+//   componentId: string,
+//   weightKg: number,
+//   optionId: string | null,
+//   sectionId: string | null,
+// ) {
+//   const slab = slabs.find((s) => {
+//     const min = numeric(s.minWeightKg)
+//     const max = s.maxWeightKg == null ? Infinity : numeric(s.maxWeightKg)
+//     return (
+//       weightKg >= min &&
+//       weightKg <= max &&
+//       (s.optionId ?? null) === optionId &&
+//       (s.pricingSectionId ?? null) === sectionId
+//     )
+//   })
+//   const rate = slab?.rates?.find((r: any) => r.componentId === componentId)
+//   return rate ? { amount: numeric(rate.amount), slabLabel: slab.label } : null
+// }
+
+
+
 function getSlabRate(
   slabs: any[],
   componentId: string,
@@ -22,19 +45,119 @@ function getSlabRate(
   optionId: string | null,
   sectionId: string | null,
 ) {
-  const slab = slabs.find((s) => {
-    const min = numeric(s.minWeightKg)
-    const max = s.maxWeightKg == null ? Infinity : numeric(s.maxWeightKg)
-    return (
-      weightKg >= min &&
-      weightKg <= max &&
-      (s.optionId ?? null) === optionId &&
-      (s.pricingSectionId ?? null) === sectionId
-    )
-  })
-  const rate = slab?.rates?.find((r: any) => r.componentId === componentId)
-  return rate ? { amount: numeric(rate.amount), slabLabel: slab.label } : null
+  console.log("\n========== WEIGHT SLAB LOOKUP ==========");
+  console.log("Component ID:", componentId);
+  console.log("Weight (kg):", weightKg);
+  console.log("Requested optionId:", optionId);
+  console.log("Requested sectionId:", sectionId);
+  console.log("Number of slabs:", slabs.length);
+
+  console.log(
+    "Available slabs:",
+    JSON.stringify(
+      slabs.map((slab) => ({
+        id: slab.id,
+        label: slab.label,
+        minWeightKg: slab.minWeightKg,
+        maxWeightKg: slab.maxWeightKg,
+        optionId: slab.optionId ?? null,
+        pricingSectionId: slab.pricingSectionId ?? null,
+        rates: (slab.rates ?? []).map((rate: any) => ({
+          componentId: rate.componentId,
+          amount: rate.amount,
+        })),
+      })),
+      null,
+      2,
+    ),
+  );
+
+  const weightMatches = slabs.filter((slab) => {
+    const min = numeric(slab.minWeightKg);
+    const max =
+      slab.maxWeightKg == null
+        ? Infinity
+        : numeric(slab.maxWeightKg);
+
+    // Inclusive boundaries for debugging the existing ranges.
+    return weightKg >= min && weightKg <= max;
+  });
+
+  console.log(
+    "Slabs matching weight:",
+    weightMatches.map((slab) => ({
+      id: slab.id,
+      label: slab.label,
+      minWeightKg: slab.minWeightKg,
+      maxWeightKg: slab.maxWeightKg,
+    })),
+  );
+
+  const rateMatches = weightMatches.filter((slab) =>
+    slab.rates?.some(
+      (rate: any) => rate.componentId === componentId,
+    ),
+  );
+
+  console.log(
+    "Slabs containing this component's rate:",
+    rateMatches.map((slab) => ({
+      id: slab.id,
+      label: slab.label,
+      pricingSectionId: slab.pricingSectionId ?? null,
+      optionId: slab.optionId ?? null,
+      rates: slab.rates
+        ?.filter((rate: any) => rate.componentId === componentId)
+        .map((rate: any) => ({
+          componentId: rate.componentId,
+          amount: rate.amount,
+        })),
+    })),
+  );
+
+  const exact = rateMatches.find(
+    (slab) =>
+      (slab.optionId ?? null) === optionId &&
+      (slab.pricingSectionId ?? null) === sectionId,
+  );
+
+  const shared = rateMatches.find(
+    (slab) =>
+      slab.pricingSectionId == null &&
+      (slab.optionId ?? null) === optionId,
+  );
+
+  const slab = exact ?? shared;
+
+  if (!slab) {
+    console.error("❌ NO MATCHING WEIGHT RATE", {
+      componentId,
+      weightKg,
+      optionId,
+      sectionId,
+      weightMatchingSlabCount: weightMatches.length,
+      componentRateMatchCount: rateMatches.length,
+    });
+    console.log("========================================\n");
+    return null;
+  }
+
+  const rate = slab.rates.find(
+    (item: any) => item.componentId === componentId,
+  );
+
+  console.log("✅ MATCHED SLAB:", slab.label);
+  console.log("Matched slab ID:", slab.id);
+  console.log("Matched component ID:", rate.componentId);
+  console.log("Matched amount:", rate.amount);
+  console.log("========================================\n");
+
+  return {
+    amount: numeric(rate.amount),
+    slabLabel: slab.label,
+  };
 }
+
 
 export class QuotationService {
   async listPublicRateCards(filters: PublicRateCardFilters) {
@@ -165,26 +288,35 @@ export class QuotationService {
       } else if (component.calculationType === RateCalculationType.PER_UNIT) {
         rateApplied = numeric(component.value)
         lineTotal = rateApplied * lineQuantity
-      } else if (
-        component.calculationType === RateCalculationType.WEIGHT_SLAB
-      ) {
-        const match =
-          getSlabRate(
-            config.weightSlabs,
-            component.id,
-            weightKg,
-            component.optionId ?? null,
-            component.pricingSectionId ?? null,
-          ) ?? getSlabRate(card.weightSlabs, component.id, weightKg, null, null)
-        if (!match) {
-          requiresReview = true
-          isEstimate = true
-          remarks = `No matching saved weight rate for ${weightKg} kg; manual review required.`
-        } else {
-          rateApplied = match.amount
-          lineTotal = match.amount
-          remarks = `Weight slab: ${match.slabLabel}`
-        }
+     
+} else if (
+  component.calculationType === RateCalculationType.WEIGHT_SLAB
+) {
+  const match =
+    getSlabRate(
+      config.weightSlabs,
+      component.id,
+      weightKg,
+      component.optionId ?? null,
+      component.pricingSectionId ?? null,
+    ) ??
+    getSlabRate(
+      card.weightSlabs,
+      component.id,
+      weightKg,
+      component.optionId ?? null,
+      component.pricingSectionId ?? null,
+    );
+
+  if (!match) {
+    requiresReview = true;
+    isEstimate = true;
+    remarks = `No matching saved weight rate for ${weightKg} kg; manual review required.`;
+  } else {
+    rateApplied = match.amount;
+    lineTotal = match.amount;
+    remarks = `Weight slab: ${match.slabLabel}`;
+  }
       } else if (component.calculationType === RateCalculationType.PERCENTAGE) {
         const basis = component.calculationBasis
         if (basis === CalculationBasis.CUSTOMS_VALUE)

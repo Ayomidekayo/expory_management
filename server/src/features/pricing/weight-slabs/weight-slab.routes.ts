@@ -2,6 +2,7 @@ import { Router } from "express";
 
 import {
   createWeightSlab,
+  createWeightSlabMatrix,
   deleteWeightSlab,
   getWeightSlabById,
   listWeightSlabs,
@@ -35,6 +36,13 @@ router.post(
   "/rate-cards/:rateCardId/weight-slabs",
   requirePermission("MANAGE_RATE_CARDS"),
   createWeightSlab,
+);
+
+
+router.post(
+  "/rate-cards/:rateCardId/weight-slabs/matrix",
+  requirePermission("MANAGE_RATE_CARDS"),
+  createWeightSlabMatrix,
 );
 
 // Update weight slab details.

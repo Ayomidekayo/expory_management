@@ -46,3 +46,23 @@ export interface WeightSlabInput {
 export interface SlabRatesInput {
   rates: Array<{ componentId: string; amount: number }>;
 }
+
+
+export interface WeightSlabMatrixInput extends WeightSlabInput {
+  rates: Array<{
+    componentId: string;
+    amount: number;
+  }>;
+}
+
+export type WeightPricingSection = {
+  id: string;
+  name: string;
+  code: string;
+  currency?: string | null;
+  isActive: boolean;
+  displayOrder: number;
+  optionId?: string | null;
+  option?: { id: string; name: string; code?: string } | null;
+ configurationId?: string | null;
+};

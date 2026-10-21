@@ -127,13 +127,13 @@ export const rateCardIdParamsSchema = z.object({
 });
 
 export const componentListQuerySchema = z.object({
+  configurationId: z.string().optional(),
+  pricingSectionId: z.string().optional(),
+  optionId: z.string().optional(),
   activeOnly: z
     .enum(["true", "false"])
     .optional()
     .transform((value) => value === "true"),
-
-  pricingSectionId: z.string().trim().min(1).optional(),
-  optionId: z.string().trim().min(1).optional(),
 });
 
 export type CreateRateComponentInput = z.infer<

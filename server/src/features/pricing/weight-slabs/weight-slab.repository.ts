@@ -93,6 +93,64 @@ export async function listWeightSlabs(
 }
 
 
+
+export async function createWeightSlabWithRates(data: {
+  rateCardId: string;
+  configurationId?: string | null;
+  optionId?: string | null;
+  pricingSectionId?: string | null;
+  label: string;
+  minWeightKg: number;
+  maxWeightKg?: number | null;
+  displayOrder: number;
+  rates: Array<{
+    componentId: string;
+    amount: number;
+  }>;
+}) {
+  return prisma.$transaction(async (tx) => {
+    const slab = await tx.weightSlab.create({
+      data: {
+        rateCardId: data.rateCardId,
+        configurationId: data.configurationId ?? null,
+        optionId: data.optionId ?? null,
+        pricingSectionId: data.pricingSectionId ?? null,
+        label: data.label,
+        minWeightKg: data.minWeightKg,
+        maxWeightKg: data.maxWeightKg ?? null,
+        displayOrder: data.displayOrder,
+      },
+    });
+
+    await tx.weightSlabRate.createMany({
+      data: data.rates.map((rate) => ({
+        weightSlabId: slab.id,
+        componentId: rate.componentId,
+        amount: rate.amount,
+      })),
+    });
+
+    return tx.weightSlab.findUniqueOrThrow({
+      where: { id: slab.id },
+      include: {
+        configuration: true,
+        option: true,
+        pricingSection: true,
+        rates: {
+          include: {
+            component: true,
+          },
+          orderBy: {
+            component: {
+              name: "asc",
+            },
+          },
+        },
+      },
+    });
+  });
+}
+
 export async function findOverlappingSlab(
   rateCardId: string,
   minWeightKg: number,
@@ -214,6 +272,16 @@ export async function findComponentsForSlabRates(
       id: { in: componentIds },
       isActive: true,
       calculationType: "WEIGHT_SLAB",
+    },
+    select: {
+      id: true,
+      name: true,
+      configurationId: true,
+      optionId: true,
+      pricingSectionId: true,
+      rateCardId: true,
+      isActive: true,
+      calculationType: true,
     },
   });
 }

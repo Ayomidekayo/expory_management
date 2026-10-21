@@ -12,12 +12,13 @@ api.interceptors.request.use((config) => {
 
 const unwrap = <T,>(response: { data: { data: T } }) => response.data.data;
 export const rateComponentsApi = {
- async list(
+async list(
   rateCardId: string,
   filters: {
     configurationId?: string;
     pricingSectionId?: string;
     optionId?: string;
+    activeOnly?: boolean;
   } = {},
 ) {
   return unwrap<RateComponent[]>(
@@ -26,6 +27,7 @@ export const rateComponentsApi = {
     }),
   );
 },
+
   async create(rateCardId: string, input: CreateRateComponentPayload) {
     return unwrap<RateComponent>(await api.post(`/rate-cards/${rateCardId}/components`, input));
   },

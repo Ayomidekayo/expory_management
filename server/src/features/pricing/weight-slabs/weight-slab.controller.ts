@@ -2,6 +2,7 @@ import type { Request, Response } from "express";
 import { ZodError } from "zod";
 
 import {
+  createWeightSlabMatrixSchema,
   createWeightSlabSchema,
   listWeightSlabsQuerySchema,
   rateCardParamsSchema,
@@ -36,16 +37,22 @@ function sendError(res: Response, error: unknown) {
     RATE_CARD_MUST_BE_DRAFT: 409,
     WEIGHT_SLAB_RANGE_OVERLAP: 409,
 
+    DUPLICATE_SLAB_RATE_COMPONENT: 400,
+COMPONENT_CONFIGURATION_MISMATCH: 400,
+COMPONENT_OPTION_MISMATCH: 400,
+COMPONENT_PRICING_SECTION_MISMATCH: 400,
+OPTION_RATE_CARD_MISMATCH: 400,
+
     MAX_WEIGHT_MUST_EXCEED_MIN_WEIGHT: 400,
     CONFIGURATION_RATE_CARD_MISMATCH: 400,
     OPTION_CONFIGURATION_MISMATCH: 400,
-    OPTION_RATE_CARD_MISMATCH: 400,
+
     PRICING_SECTION_CONFIGURATION_MISMATCH: 400,
     PRICING_SECTION_OPTION_MISMATCH: 400,
     PRICING_SECTION_REQUIRES_ITS_OPTION: 400,
     PRICING_SECTION_RATE_CARD_MISMATCH: 400,
     INVALID_OR_INACTIVE_WEIGHT_SLAB_COMPONENT: 400,
-    COMPONENT_CONFIGURATION_MISMATCH: 400,
+
   };
 
   return res.status(statusMap[message] ?? 500).json({
@@ -161,11 +168,59 @@ export async function setWeightSlabRates(
     const { weightSlabId } = weightSlabParamsSchema.parse(req.params);
     const input = upsertSlabRatesSchema.parse(req.body);
 
+    console.info("[Weight Slab Rates] Request received", {
+      weightSlabId,
+      rateCount: input.rates.length,
+    });
+
     const data = await service.setRates(weightSlabId, input);
+
+    console.info("[Weight Slab Rates] Successfully saved", {
+      weightSlabId,
+      rateCount: data.rates.length,
+    });
 
     return res.status(200).json({
       success: true,
       message: "Weight slab rates saved successfully.",
+      data,
+    });
+  } catch (error: unknown) {
+    console.error("[Weight Slab Rates] Failed to save rates");
+
+    if (error instanceof Error) {
+      console.error("Error name:", error.name);
+      console.error("Error message:", error.message);
+      console.error("Error stack:", error.stack);
+    } else {
+      console.error("Unknown thrown value:", error);
+    }
+
+    return sendError(res, error);
+  }
+}
+
+
+
+export async function createWeightSlabMatrix(
+  req: Request,
+  res: Response,
+) {
+  try {
+    const { rateCardId } =
+      rateCardParamsSchema.parse(req.params);
+
+    const input =
+      createWeightSlabMatrixSchema.parse(req.body);
+
+    const data = await service.createMatrixRow(
+      rateCardId,
+      input,
+    );
+
+    return res.status(201).json({
+      success: true,
+      message: "Pricing matrix row created successfully.",
       data,
     });
   } catch (error) {

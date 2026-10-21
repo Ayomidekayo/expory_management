@@ -14,92 +14,113 @@ export class RateComponentService {
     }
   }
 
-  private async resolveConfigurationId(
-    rateCardId: string,
-    input: {
-      configurationId?: string | null;
-      optionId?: string | null;
-      pricingSectionId?: string | null;
-    },
-  ): Promise<string | null> {
-    let configurationId = input.configurationId ?? null;
+private async resolveConfigurationId(
+  rateCardId: string,
+  input: {
+    configurationId?: string | null;
+    optionId?: string | null;
+    pricingSectionId?: string | null;
+  },
+): Promise<string | null> {
+  let configurationId = input.configurationId ?? null;
 
-    if (input.pricingSectionId) {
-      const section = await repository.findPricingSection(
-        input.pricingSectionId,
-      );
+  // Validate an explicitly supplied configuration.
+  if (configurationId) {
+    const configuration =
+      await repository.findConfiguration(configurationId);
 
-      if (!section) {
-        throw new Error("PRICING_SECTION_NOT_FOUND");
-      }
-
-      if (section.configuration.rateCardId !== rateCardId) {
-        throw new Error("PRICING_SECTION_RATE_CARD_MISMATCH");
-      }
-
-      if (
-        configurationId &&
-        section.configurationId !== configurationId
-      ) {
-        throw new Error("PRICING_SECTION_CONFIGURATION_MISMATCH");
-      }
-
-      configurationId = section.configurationId;
+    if (!configuration) {
+      throw new Error("CONFIGURATION_NOT_FOUND");
     }
 
-    if (input.optionId) {
-      const option = await repository.findOption(input.optionId);
+    if (configuration.rateCardId !== rateCardId) {
+      throw new Error("CONFIGURATION_RATE_CARD_MISMATCH");
+    }
+  }
 
-      if (!option) {
-        throw new Error("RATE_CARD_OPTION_NOT_FOUND");
-      }
+  // Resolve and validate the pricing section.
+  if (input.pricingSectionId) {
+    const section = await repository.findPricingSection(
+      input.pricingSectionId,
+    );
 
-      if (option.configuration.rateCardId !== rateCardId) {
-        throw new Error("OPTION_RATE_CARD_MISMATCH");
-      }
+    if (!section) {
+      throw new Error("PRICING_SECTION_NOT_FOUND");
+    }
 
-      if (
-        configurationId &&
-        option.configurationId !== configurationId
-      ) {
-        throw new Error("OPTION_CONFIGURATION_MISMATCH");
-      }
-
-      configurationId = option.configurationId;
+    if (section.configuration.rateCardId !== rateCardId) {
+      throw new Error("PRICING_SECTION_RATE_CARD_MISMATCH");
     }
 
     if (
-      input.optionId &&
-      input.pricingSectionId
+      configurationId &&
+      section.configurationId !== configurationId
     ) {
-      const section = await repository.findPricingSection(
-        input.pricingSectionId,
+      throw new Error(
+        "PRICING_SECTION_CONFIGURATION_MISMATCH",
       );
-
-      if (section?.optionId !== input.optionId) {
-        throw new Error("PRICING_SECTION_OPTION_MISMATCH");
-      }
     }
 
-    return configurationId;
+    configurationId = section.configurationId;
   }
 
-  async list(
-    rateCardId: string,
-    filters: {
-      activeOnly?: boolean;
-      pricingSectionId?: string;
-      optionId?: string;
-    },
-  ) {
-    const rateCard = await repository.findRateCard(rateCardId);
+  // Resolve and validate the option.
+  if (input.optionId) {
+    const option = await repository.findOption(input.optionId);
 
-    if (!rateCard) {
-      throw new Error("RATE_CARD_NOT_FOUND");
+    if (!option) {
+      throw new Error("RATE_CARD_OPTION_NOT_FOUND");
     }
 
-    return repository.listComponents(rateCardId, filters);
+    if (option.configuration.rateCardId !== rateCardId) {
+      throw new Error("OPTION_RATE_CARD_MISMATCH");
+    }
+
+    if (
+      configurationId &&
+      option.configurationId !== configurationId
+    ) {
+      throw new Error("OPTION_CONFIGURATION_MISMATCH");
+    }
+
+    configurationId = option.configurationId;
   }
+
+  // An option-specific section must match the selected option.
+  if (input.optionId && input.pricingSectionId) {
+    const section = await repository.findPricingSection(
+      input.pricingSectionId,
+    );
+
+    if (!section) {
+      throw new Error("PRICING_SECTION_NOT_FOUND");
+    }
+
+    if (section.optionId !== input.optionId) {
+      throw new Error("PRICING_SECTION_OPTION_MISMATCH");
+    }
+  }
+
+  return configurationId;
+}
+
+async list(
+  rateCardId: string,
+  filters: {
+    activeOnly?: boolean;
+    configurationId?: string;
+    pricingSectionId?: string;
+    optionId?: string;
+  },
+) {
+  const rateCard = await repository.findRateCard(rateCardId);
+
+  if (!rateCard) {
+    throw new Error("RATE_CARD_NOT_FOUND");
+  }
+
+  return repository.listComponents(rateCardId, filters);
+}
 
   async getById(componentId: string) {
     const component = await repository.findComponent(componentId);

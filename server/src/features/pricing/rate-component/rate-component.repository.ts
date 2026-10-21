@@ -46,6 +46,7 @@ export async function listComponents(
   rateCardId: string,
   filters: {
     activeOnly?: boolean;
+    configurationId?: string;
     pricingSectionId?: string;
     optionId?: string;
   } = {},
@@ -53,18 +54,29 @@ export async function listComponents(
   return prisma.rateComponent.findMany({
     where: {
       rateCardId,
-      ...(filters.activeOnly ? { isActive: true } : {}),
-      ...(filters.pricingSectionId
-        ? { pricingSectionId: filters.pricingSectionId }
-        : {}),
-      ...(filters.optionId
-        ? { optionId: filters.optionId }
-        : {}),
+
+      ...(filters.activeOnly === true && {
+        isActive: true,
+      }),
+
+      ...(filters.configurationId && {
+        configurationId: filters.configurationId,
+      }),
+
+      ...(filters.pricingSectionId && {
+        pricingSectionId: filters.pricingSectionId,
+      }),
+
+      ...(filters.optionId && {
+        optionId: filters.optionId,
+      }),
     },
+
     orderBy: [
       { name: "asc" },
       { createdAt: "asc" },
     ],
+
     include: {
       configuration: true,
       option: true,
@@ -111,7 +123,9 @@ export async function findPricingSection(
   pricingSectionId: string,
 ) {
   return prisma.rateCardPricingSection.findUnique({
-    where: { id: pricingSectionId },
+    where: {
+      id: pricingSectionId,
+    },
     include: {
       configuration: {
         select: {
@@ -216,3 +230,5 @@ export async function updateComponent(
     },
   });
 }
+
+
