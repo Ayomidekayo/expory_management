@@ -28,13 +28,13 @@ const roles = [
 const quotationPermissions = [
   { key: "VIEW_ALL_QUOTES", label: "View quotations", description: "View submitted quotation requests and their summaries." },
   { key: "REVIEW_QUOTATIONS", label: "Access quotation review", description: "Open the quotation review queue and review submissions." },
-  { key: "REVIEW_QUOTE", label: "Review individual quotations", description: "Open and manage an individual quotation review." },
-  { key: "APPROVE_QUOTE", label: "Approve quotations", description: "Approve quotations after review." },
-  { key: "REQUEST_QUOTE_CHANGES", label: "Request quotation changes", description: "Ask exporters for corrections or missing information." },
-  { key: "REJECT_QUOTE", label: "Reject quotations", description: "Reject a quotation submission." },
-  { key: "COMPLETE_QUOTE", label: "Complete quotations", description: "Mark an approved quotation workflow as completed." },
-  { key: "ADD_QUOTE_MESSAGE", label: "Message exporters", description: "Send messages to exporters from quotation review." },
-  { key: "UPLOAD_QUOTE_ATTACHMENT", label: "Upload quotation documents", description: "Upload documents to a quotation submission." },
+  { key: "REVIEW_QUOTE", label: "Legacy individual-review permission", description: "Compatibility permission for existing review checks. Assign REVIEW_QUOTATIONS to show the review queue in the sidebar." },
+  { key: "APPROVE_QUOTE", label: "Approve quotations", description: "Approve quotations. Also grant View quotations unless the user has REVIEW_QUOTATIONS." },
+  { key: "REQUEST_QUOTE_CHANGES", label: "Request quotation changes", description: "Ask exporters for corrections or missing information. Also requires view access unless the user is a reviewer." },
+  { key: "REJECT_QUOTE", label: "Reject quotations", description: "Reject a quotation submission. Also requires view access unless the user is a reviewer." },
+  { key: "COMPLETE_QUOTE", label: "Complete quotations", description: "Mark an approved quotation workflow as completed. Also requires view access unless the user is a reviewer." },
+  { key: "ADD_QUOTE_MESSAGE", label: "Message exporters", description: "Send messages to exporters. Also grant View quotations unless the user has review access." },
+  { key: "UPLOAD_QUOTE_ATTACHMENT", label: "Upload quotation documents", description: "Upload documents. Also grant View quotations unless the user has review access." },
   { key: "PRINT_QUOTE", label: "Print quotations", description: "Print or export quotation documents." },
   { key: "MANAGE_QUOTE_ASSIGNMENTS", label: "Manage quotation assignments", description: "Assign quotation work to staff members." },
 ] as const;
@@ -42,6 +42,36 @@ const quotationPermissions = [
 const quotationPermissionKeys = new Set<string>(
   quotationPermissions.map((permission) => permission.key),
 );
+
+/** These permissions control rate-card and pricing configuration access.
+ * Keep the keys aligned with the generated Prisma Permission enum and API routes.
+ */
+const rateCardPermissions = [
+  {
+    key: "VIEW_RATE_CARDS",
+    label: "View rate cards and pricing",
+    description: "View rate cards, shipment configurations, pricing sections, rate components, options, weight slabs, rates, and airlines.",
+  },
+  {
+    key: "MANAGE_RATE_CARDS",
+    label: "Manage rate cards and pricing",
+    description: "Create and update rate cards, configurations, pricing sections, components, options, weight slabs, rates, and airline settings. Also grants archive/activate access on routes protected by this permission.",
+  },
+  {
+    key: "ACTIVATE_RATE_CARDS",
+    label: "Activate rate cards",
+    description: "Activate validated rate cards on endpoints protected by ACTIVATE_RATE_CARDS.",
+  },
+] as const;
+
+const rateCardPermissionKeys = new Set<string>(
+  rateCardPermissions.map((permission) => permission.key),
+);
+
+const dedicatedPermissionKeys = new Set<string>([
+  ...quotationPermissionKeys,
+  ...rateCardPermissionKeys,
+]);
 
 export default function UserManagementDialog({
   user,
@@ -72,16 +102,40 @@ export default function UserManagementDialog({
     setPermissions(user.permissions ?? []);
   }, [user]);
 
-  const togglePermission = (
-    permission: string
-  ) => {
-    setPermissions((current) =>
-      current.includes(permission)
-        ? current.filter(
-            (item) => item !== permission
-          )
-        : [...current, permission]
-    );
+  const togglePermission = (permission: string) => {
+    setPermissions((current) => {
+      const isSelected = current.includes(permission);
+
+      if (isSelected) {
+        const next = current.filter((item) => item !== permission);
+
+        // Rate-card write/activation endpoints are separate from read endpoints.
+        // Avoid leaving a staff member with a write capability but no page/read access.
+        if (permission === "VIEW_RATE_CARDS") {
+          return next.filter(
+            (item) =>
+              item !== "MANAGE_RATE_CARDS" &&
+              item !== "ACTIVATE_RATE_CARDS",
+          );
+        }
+
+        return next;
+      }
+
+      const next = [...current, permission];
+
+      // Grant view access automatically when an admin grants pricing management
+      // or activation, because those workflows also need the protected GET routes.
+      if (
+        (permission === "MANAGE_RATE_CARDS" ||
+          permission === "ACTIVATE_RATE_CARDS") &&
+        !next.includes("VIEW_RATE_CARDS")
+      ) {
+        next.push("VIEW_RATE_CARDS");
+      }
+
+      return next;
+    });
   };
 
   const selectAll = () => {
@@ -90,6 +144,7 @@ export default function UserManagementDialog({
         group.permissions.map((permission) => permission.key)
       ),
       ...quotationPermissions.map((permission) => permission.key),
+      ...rateCardPermissions.map((permission) => permission.key),
     ]));
 
     setPermissions(allPermissions);
@@ -296,9 +351,42 @@ export default function UserManagementDialog({
               </div>
             </section>
 
+            {/* Dedicated rate-card permissions: reading, managing, and activation are separate capabilities. */}
+            <section className="overflow-hidden rounded-xl border border-sky-200 bg-white">
+              <div className="border-b border-sky-100 bg-sky-50 px-4 py-3">
+                <h4 className="font-semibold text-sky-950">Rate cards & pricing management</h4>
+                <p className="mt-1 text-xs leading-5 text-sky-800">
+                  Grant pricing access separately from quotation review. For full rate-card management, grant both View rate cards and Manage rate cards because the API protects read and write operations separately.
+                </p>
+              </div>
+              <div className="grid gap-0 divide-y divide-slate-100 md:grid-cols-2 md:divide-x md:divide-y-0">
+                {rateCardPermissions.map((permission) => {
+                  const checked = permissions.includes(permission.key);
+                  return (
+                    <button
+                      key={permission.key}
+                      type="button"
+                      aria-pressed={checked}
+                      onClick={() => togglePermission(permission.key)}
+                      className={`flex min-w-0 items-start gap-3 border-b border-slate-100 px-4 py-4 text-left transition last:border-b-0 hover:bg-sky-50/60 focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-sky-500 ${checked ? "bg-sky-50/60" : "bg-white"}`}
+                    >
+                      <span className={`mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-md border ${checked ? "border-sky-600 bg-sky-600 text-white" : "border-slate-300 bg-white text-transparent"}`}>
+                        <Check size={15} aria-hidden="true" />
+                      </span>
+                      <span className="min-w-0 flex-1">
+                        <span className="block text-sm font-semibold text-slate-800">{permission.label}</span>
+                        <span className="mt-1 block text-xs leading-5 text-slate-500">{permission.description}</span>
+                        <span className="mt-1 block break-all text-[10px] font-medium uppercase tracking-wide text-slate-400">{permission.key}</span>
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+            </section>
+
             {permissionGroups.map((group) => {
               const visiblePermissions = group.permissions.filter(
-                (permission) => !quotationPermissionKeys.has(permission.key),
+                (permission) => !dedicatedPermissionKeys.has(permission.key),
               );
               if (visiblePermissions.length === 0) return null;
               return (
