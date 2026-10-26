@@ -1,0 +1,2 @@
+-- AlterEnum
+ALTER TYPE "Permission" ADD VALUE 'REVIEW_QUOTATIONS';

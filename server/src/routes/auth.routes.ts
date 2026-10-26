@@ -5,7 +5,12 @@ import authenticate from "../middleware/auth.middleware";
 const router = Router();
 
 router.post("/register", AuthController.register);
+router.post(
+  "/register/exporter",
+  AuthController.registerExporter
+);
 router.post("/login", AuthController.login);
+router.post("/login/exporter", AuthController.loginExporter);
 router.get(
   "/me",
   authenticate,

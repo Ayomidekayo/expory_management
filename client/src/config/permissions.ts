@@ -63,6 +63,10 @@ export const PERMISSIONS = {
   DELETE_USER: "DELETE_USER",
 
   MANAGE_PERMISSIONS: "MANAGE_PERMISSIONS",
+
+  // Quotation permissions
+  MANAGE_RATE_CARDS: "MANAGE_RATE_CARDS",
+  REVIEW_QUOTATIONS: "REVIEW_QUOTATIONS",
 } as const;
 
 export type Permission =

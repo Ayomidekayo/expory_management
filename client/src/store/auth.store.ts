@@ -1,66 +1,54 @@
 import { create } from "zustand";
 import { queryClient } from "../lib/react-query";
 
-interface User {
+export interface AuthUser {
   id: string;
   name: string;
   email: string;
   role: string;
+  isActive?: boolean;
   permissions: string[];
+  phone?: string | null;
 }
 
 interface AuthState {
-  user: User | null;
-
+  user: AuthUser | null;
   token: string | null;
 
-  login: (
-    user: User,
-    token: string
-  ) => void;
-
-  setUser: (
-    user: User
-  ) => void;
-
+  login: (user: AuthUser, token: string) => void;
+  setUser: (user: AuthUser) => void;
   logout: () => void;
 }
 
-export const useAuthStore =
-  create<AuthState>((set) => ({
-    user: null,
+export const useAuthStore = create<AuthState>((set) => ({
+  user: null,
 
-    token:
-      localStorage.getItem("token"),
+  token:
+    typeof window !== "undefined"
+      ? localStorage.getItem("token")
+      : null,
 
-    login(user, token) {
-      localStorage.setItem(
-        "token",
-        token
-      );
+  login(user, token) {
+    localStorage.setItem("token", token);
 
-      set({
-        user,
-        token,
-      });
-    },
+    set({
+      user,
+      token,
+    });
+  },
 
-    setUser(user) {
-      set({
-        user,
-      });
-    },
+  setUser(user) {
+    set({ user });
+  },
 
-    logout() {
-      localStorage.removeItem(
-        "token"
-      );
+  logout() {
+    localStorage.removeItem("token");
 
-      queryClient.clear();
+    queryClient.clear();
 
-      set({
-        user: null,
-        token: null,
-      });
-    },
-  }));
+    set({
+      user: null,
+      token: null,
+    });
+  },
+}));

@@ -1,5 +1,9 @@
 import api from "../../lib/axios";
 
+// ==============================
+// USER TYPES
+// ==============================
+
 export interface User {
   id: string;
   name: string;
@@ -7,22 +11,33 @@ export interface User {
   role: string;
   isActive: boolean;
   permissions: string[];
+  phone?: string | null;
 }
+
+// ==============================
+// LOGIN
+// ==============================
 
 export interface LoginDto {
   email: string;
   password: string;
 }
 
-interface LoginResponse {
+export interface AuthResponse {
   user: User;
   token: string;
 }
 
+interface LoginApiResponse {
+  success: boolean;
+  message?: string;
+  data: AuthResponse;
+}
+
 export const login = async (
   data: LoginDto
-): Promise<LoginResponse> => {
-  const response = await api.post(
+): Promise<AuthResponse> => {
+  const response = await api.post<LoginApiResponse>(
     "/auth/login",
     data
   );
@@ -30,16 +45,26 @@ export const login = async (
   return response.data.data;
 };
 
+// ==============================
+// GENERAL REGISTRATION
+// ==============================
+
 export interface RegisterDto {
   name: string;
   email: string;
   password: string;
 }
 
+interface RegisterApiResponse {
+  success: boolean;
+  message: string;
+  data: AuthResponse;
+}
+
 export const register = async (
   data: RegisterDto
-) => {
-  const response = await api.post(
+): Promise<RegisterApiResponse> => {
+  const response = await api.post<RegisterApiResponse>(
     "/auth/register",
     data
   );
@@ -47,16 +72,86 @@ export const register = async (
   return response.data;
 };
 
+// ==============================
+// EXPORTER REGISTRATION
+// ==============================
+
+export interface RegisterExporterDto {
+  name: string;
+  email: string;
+  password: string;
+  phone?: string;
+}
+
+export const registerExporter = async (
+  data: RegisterExporterDto
+): Promise<RegisterApiResponse> => {
+  const response = await api.post<RegisterApiResponse>(
+    "/auth/register/exporter",
+    data
+  );
+
+  return response.data;
+};
+export const loginExporter = async (
+  data: LoginDto
+): Promise<AuthResponse> => {
+  const response = await api.post<LoginApiResponse>(
+    "/auth/login/exporter",
+    data
+  );
+
+  return response.data.data;
+};
+// ==============================
+// CURRENT USER
+// ==============================
+
 interface CurrentUserResponse {
   success: boolean;
+  message?: string;
   data: User;
 }
 
-export async function getCurrentUser() {
-  const { data } =
-    await api.get<CurrentUserResponse>(
-      "/auth/me"
-    );
+export const getCurrentUser = async (): Promise<CurrentUserResponse> => {
+  const response = await api.get<CurrentUserResponse>(
+    "/auth/me"
+  );
 
-  return data;
+  return response.data;
+};
+
+
+
+
+///sub quotation 
+
+export interface SubmitExporterQuoteDto {
+  selectedQuoteItemIds: string[];
+  customerName?: string;
+  email?: string;
+  phone?: string;
+  customerMessage?: string;
 }
+
+export interface SubmitExporterQuoteResponse {
+  success: boolean;
+  message?: string;
+  data: {
+    id: string;
+    quoteId: string;
+    status: string;
+  };
+}
+
+export const submitExporterQuote = async (
+  quoteId: string,
+  data: SubmitExporterQuoteDto,
+): Promise<SubmitExporterQuoteResponse> => {
+  const response = await api.post<SubmitExporterQuoteResponse>(
+    `/quotations/${encodeURIComponent(quoteId)}/submissions`,
+    data,
+  );
+
+  return response.data;
+};

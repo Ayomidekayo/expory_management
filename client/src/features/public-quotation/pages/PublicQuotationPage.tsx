@@ -22,6 +22,7 @@ import type {
   QuoteDirection,
   QuoteMode,
 } from "../types/public-quotation.types";
+import { Link, useNavigate } from "react-router-dom";
 
 type LoginHandoff = {
   quoteId: string;
@@ -74,6 +75,7 @@ const primaryButtonClass =
   "inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-xl bg-emerald-700 px-5 py-3 text-sm font-bold text-white transition hover:bg-emerald-800 focus:outline-none focus:ring-4 focus:ring-emerald-500/20 disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto";
 
 export function PublicQuotationPage({ onRequireLogin }: Props) {
+  const navigate = useNavigate();
   const [mode, setMode] = useState<QuoteMode>("AIR");
   const [direction, setDirection] = useState<QuoteDirection>("IMPORT");
   const [rateCardId, setRateCardId] = useState("");
@@ -244,48 +246,78 @@ export function PublicQuotationPage({ onRequireLogin }: Props) {
     }
   }
 
-  function requestHelp() {
-    if (!quote) return;
-    if (!selectedItemIds.length) {
-      setFormError("Select at least one service you want help with.");
-      return;
-    }
-    if (!onRequireLogin) {
-      setFormError(
-        "The login/register handoff is not connected yet. Please contact the quotation team.",
-      );
-      return;
-    }
-    onRequireLogin({
-      quoteId: quote.quoteId,
-      quoteNumber: quote.quoteNumber,
-      selectedQuoteItemIds: selectedItemIds,
-      quote,
-    });
+function requestHelp() {
+  if (!quote) {
+    setFormError("Please calculate your quotation first.");
+    return;
   }
+
+  if (selectedItemIds.length === 0) {
+    setFormError("Select at least one service you want help with.");
+    return;
+  }
+
+  if (!quote.quoteId || !quote.quoteNumber) {
+    setFormError(
+      "Your quotation reference is missing. Please calculate your quote again.",
+    );
+    return;
+  }
+
+  navigate("/exporter/login", {
+    state: {
+      from: "/exporter/quotations",
+      quoteHandoff: {
+        quoteId: quote.quoteId,
+        quoteNumber: quote.quoteNumber,
+        selectedQuoteItemIds: [...selectedItemIds],
+      },
+    },
+  });
+}
 
   const errorMessage = formError;
   const hasSingleCard = cards.length === 1 && Boolean(rateCardId);
+  const selectedModeLabel = modes.find((item) => item.value === mode)?.label ?? mode;
+  const selectedShipmentOption = configuration
+    ? configuration.equipmentType || configuration.routeLabel || configuration.name || "Standard shipment"
+    : "Not selected";
+  const selectedDirectionLabel = direction === "IMPORT" ? "Import" : "Export";
 
   return (
     <main className="min-h-screen overflow-x-hidden bg-emerald-50/40 text-slate-900">
-      <header className="border-b border-emerald-100 bg-white">
-        <div className="mx-auto flex max-w-7xl items-center gap-3 px-4 py-3.5 sm:px-6 sm:py-4 lg:px-8">
-          <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-emerald-700 text-white shadow-sm shadow-emerald-900/10">
-            <PackageCheck size={21} aria-hidden="true" />
-          </span>
-          <div className="min-w-0">
-            <p className="text-sm font-extrabold tracking-tight text-emerald-950">
-              Freight quotations
-            </p>
-            <p className="text-xs text-slate-500">Clear pricing. Confident shipping.</p>
-          </div>
-          <span className="ml-auto hidden items-center gap-2 rounded-full border border-emerald-100 bg-emerald-50 px-3 py-2 text-xs font-semibold text-emerald-800 sm:flex">
-            <LockKeyhole size={14} aria-hidden="true" /> Calculate before signing in
-          </span>
-        </div>
-      </header>
+     <header className="border-b border-emerald-100 bg-white">
+  <div className="mx-auto flex max-w-7xl items-center gap-3 px-4 py-3.5 sm:px-6 sm:py-4 lg:px-8">
+    <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-emerald-700 text-white shadow-sm">
+      <PackageCheck size={21} aria-hidden="true" />
+    </span>
 
+    <div className="min-w-0">
+      <p className="text-sm font-extrabold tracking-tight text-emerald-950">
+        Freight Quotations
+      </p>
+
+      <p className="text-xs text-slate-500">
+        Clear pricing. Confident shipping.
+      </p>
+    </div>
+
+    <div className="ml-auto flex shrink-0 items-center gap-2">
+      <span className="hidden items-center gap-2 rounded-full border border-emerald-100 bg-emerald-50 px-3 py-2 text-xs font-semibold text-emerald-800 sm:flex">
+        <LockKeyhole size={14} aria-hidden="true" />
+        Calculate before signing in
+      </span>
+
+      <Link
+        to="/exporter/login"
+        className="inline-flex min-h-10 items-center justify-center gap-2 rounded-xl bg-emerald-700 px-4 py-2.5 text-sm font-bold text-white shadow-sm transition hover:bg-emerald-800 focus:outline-none focus:ring-4 focus:ring-emerald-500/20"
+      >
+        Sign In
+        <ArrowRight size={16} aria-hidden="true" />
+      </Link>
+    </div>
+  </div>
+</header>
       <section className="bg-gradient-to-br from-emerald-950 via-emerald-800 to-green-700 text-white">
         <div className="mx-auto max-w-7xl px-4 py-9 sm:px-6 sm:py-12 lg:px-8 lg:py-14">
           <span className="inline-flex rounded-full border border-white/20 bg-white/10 px-3 py-1.5 text-xs font-bold tracking-wide text-emerald-50">
@@ -557,15 +589,65 @@ export function PublicQuotationPage({ onRequireLogin }: Props) {
           )}
 
           {quote && (
-            <section id="quotation-results" className="mt-8 scroll-mt-5 overflow-hidden rounded-2xl border border-emerald-100">
-              <div className="bg-gradient-to-br from-emerald-950 to-emerald-700 p-5 text-white sm:p-7">
-                <p className="text-xs font-bold uppercase tracking-[0.16em] text-lime-300">Your quotation estimate</p>
-                <h2 className="mt-2 break-words text-2xl font-extrabold sm:text-3xl">{money(quote.totalAmount, quote.currency)}</h2>
-                <p className="mt-2 break-words text-sm text-emerald-50">Reference: <span className="font-bold text-white">{quote.quoteNumber}</span></p>
+            <section
+              id="quotation-results"
+              className="mt-8 scroll-mt-5 overflow-hidden rounded-2xl border border-emerald-100 bg-white shadow-lg shadow-emerald-950/5 sm:rounded-3xl"
+            >
+              <div className="bg-gradient-to-br from-emerald-950 via-emerald-900 to-emerald-700 p-5 text-white sm:p-7">
+                <div className="flex flex-wrap items-start justify-between gap-3">
+                  <div>
+                    <p className="text-xs font-bold uppercase tracking-[0.16em] text-lime-300">Your quotation estimate</p>
+                    <h2 className="mt-2 break-words text-3xl font-extrabold tracking-tight sm:text-4xl">
+                      {money(quote.totalAmount, quote.currency)}
+                    </h2>
+                    <p className="mt-2 break-words text-sm text-emerald-50">
+                      Reference: <span className="font-bold text-white">{quote.quoteNumber}</span>
+                    </p>
+                  </div>
+                  <span className="inline-flex shrink-0 items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3 py-2 text-xs font-bold text-white">
+                    <CheckCircle2 size={15} aria-hidden="true" />
+                    Estimate ready
+                  </span>
+                </div>
+
+                <div className="mt-6 overflow-hidden rounded-xl border border-white/20 bg-white/10">
+                  <div className="grid grid-cols-3 divide-x divide-white/15">
+                    <div className="min-w-0 px-3 py-3 sm:px-4 sm:py-3.5">
+                      <p className="text-[9px] font-extrabold uppercase leading-4 tracking-[0.12em] text-emerald-100 sm:text-[10px]">
+                        Mode of shipment
+                      </p>
+                      <p className="mt-1 break-words text-xs font-bold leading-5 text-white sm:text-sm">
+                        {selectedModeLabel}
+                      </p>
+                    </div>
+                    <div className="min-w-0 px-3 py-3 sm:px-4 sm:py-3.5">
+                      <p className="text-[9px] font-extrabold uppercase leading-4 tracking-[0.12em] text-emerald-100 sm:text-[10px]">
+                        Shipment option
+                      </p>
+                      <p className="mt-1 break-words text-xs font-bold leading-5 text-white sm:text-sm">
+                        {selectedShipmentOption}
+                      </p>
+                    </div>
+                    <div className="min-w-0 px-3 py-3 sm:px-4 sm:py-3.5">
+                      <p className="text-[9px] font-extrabold uppercase leading-4 tracking-[0.12em] text-emerald-100 sm:text-[10px]">
+                        Direction
+                      </p>
+                      <p className="mt-1 break-words text-xs font-bold leading-5 text-white sm:text-sm">
+                        {selectedDirectionLabel}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
                 {quote.requiresReview ? (
-                  <p className="mt-4 rounded-xl border border-amber-300/30 bg-amber-300/10 p-3 text-sm leading-5 text-amber-50">Some charges require manual review. The final amount may change after review.</p>
+                  <p className="mt-4 rounded-xl border border-amber-300/40 bg-amber-300/10 p-3 text-sm leading-5 text-amber-50">
+                    Some charges require manual review. The final amount may change after review.
+                  </p>
                 ) : (
-                  <p className="mt-4 flex items-center gap-2 text-sm text-lime-200"><CheckCircle2 size={17} /> Calculated from saved active rates</p>
+                  <p className="mt-4 flex items-center gap-2 text-sm text-lime-200">
+                    <CheckCircle2 size={17} aria-hidden="true" />
+                    Calculated from saved active rates
+                  </p>
                 )}
               </div>
 

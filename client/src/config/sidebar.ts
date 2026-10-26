@@ -12,6 +12,7 @@ import {
   Settings,
   Building2,
   DoorOpen,
+  PlusCircle,
 } from "lucide-react";
 
 export interface SidebarItem {
@@ -69,6 +70,13 @@ export const sidebarItems: SidebarItem[] = [
     path: "/quotations/rate-cards",
     icon: Truck,
     permission: "MANAGE_RATE_CARDS",
+    section: "Operations",
+  },
+   {
+    title: "Quotation Review",
+    path: "/quotations/review",
+    icon: Truck,
+    permission: "REVIEW_QUOTE",
     section: "Operations",
   },
   {
@@ -149,5 +157,29 @@ export const sidebarItems: SidebarItem[] = [
     icon: Settings,
     permission: "VIEW_DASHBOARD",
     section: "Administration",
+  },
+];
+
+export const exporterSidebarItems: SidebarItem[] = [
+  {
+    title: "My Dashboard",
+    path: "/exporter/quotations",
+    icon: LayoutDashboard,
+    permission: "",
+    section: "Overview",
+  },
+  {
+    title: "My Quotations",
+    path: "/exporter/quotations",
+    icon: FileText,
+    permission: "",
+    section: "Quotations",
+  },
+  {
+    title: "Get a Quote",
+    path: "/get-a-quote",
+    icon: PlusCircle,
+    permission: "",
+    section: "Quotations",
   },
 ];

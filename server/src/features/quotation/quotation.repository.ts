@@ -135,7 +135,6 @@ export async function findQuoteForSubmission(quoteId: string) {
   return prisma.quote.findUnique({ where: { id: quoteId }, include: { items: true, rateCard: true } });
 }
 
-
 export async function createSubmission(data: {
   quoteId: string;
   exporterId: string;
@@ -240,15 +239,432 @@ export async function createSubmission(data: {
       },
     });
 
-    await tx.quoteNotification.create({
-      data: {
-        quoteId: data.quoteId,
-        title: "New quotation service request",
-        message: `A customer submitted a request for ${selected.size} selected service(s).`,
+   
+    const reviewers = await tx.user.findMany({
+      where: {
+        isActive: true,
+        OR: [
+          { role: "ADMIN" },
+          {
+            permissions: {
+              some: {
+                permission: {
+                  in: [
+                    "REVIEW_QUOTE",
+                    "REVIEW_QUOTATIONS",
+                    "VIEW_ALL_QUOTES",
+                  ],
+                },
+              },
+            },
+          },
+        ],
+      },
+      select: { id: true },
+    });
+
+    if (reviewers.length > 0) {
+      await tx.quoteNotification.createMany({
+        data: reviewers.map((reviewer) => ({
+          quoteId: data.quoteId,
+          recipientUserId: reviewer.id,
+          title: "New quotation submission",
+          message: `A quotation was submitted with ${selected.size} selected service(s).`,
+        })),
+      });
+    }
+;
+
+    return submission;
+  });
+}
+
+
+
+export async function listExporterSubmissions(
+  exporterId: string,
+) {
+  return prisma.quoteSubmission.findMany({
+    where: { exporterId },
+    orderBy: { createdAt: "desc" },
+    select: {
+      id: true,
+      quoteId: true,
+      status: true,
+      customerName: true,
+      currency: true,
+      subtotal: true,
+      totalAmount: true,
+      customerMessage: true,
+      adminMessage: true,
+      submittedAt: true,
+      reviewedAt: true,
+      approvedAt: true,
+      completedAt: true,
+      createdAt: true,
+      updatedAt: true,
+      quote: {
+        select: {
+          quoteNumber: true,
+          goodsDescription: true,
+          hsCode: true,
+          weightKg: true,
+          rateCard: {
+            select: {
+              name: true,
+              mode: true,
+              direction: true,
+            },
+          },
+        },
+      },
+      items: {
+        select: {
+          id: true,
+          componentName: true,
+          componentCode: true,
+          quantity: true,
+          rateApplied: true,
+          lineTotal: true,
+          isSelected: true,
+        },
+      },
+    },
+  });
+}
+
+export async function findExporterSubmission(
+  submissionId: string,
+  exporterId: string,
+) {
+  return prisma.quoteSubmission.findFirst({
+    where: {
+      id: submissionId,
+      exporterId,
+    },
+    include: {
+      quote: {
+        select: {
+          id: true,
+          quoteNumber: true,
+          goodsDescription: true,
+          hsCode: true,
+          weightKg: true,
+          rateCard: {
+            select: {
+              name: true,
+              mode: true,
+              direction: true,
+            },
+          },
+        },
+      },
+      items: true,
+      messages: {
+        orderBy: { createdAt: "asc" },
+        include: {
+          attachments: true,
+        },
+      },
+      attachments: {
+        orderBy: { createdAt: "desc" },
+      },
+    },
+  });
+}
+
+export async function listAdminSubmissions(status?: string) {
+  const allowedStatuses = [
+    "PENDING_REVIEW",
+    "CHANGES_REQUESTED",
+    "APPROVED",
+    "REJECTED",
+    "IN_PROGRESS",
+    "COMPLETED",
+    "ARCHIVED",
+  ] as const;
+
+  if (
+    status &&
+    !allowedStatuses.includes(
+      status as (typeof allowedStatuses)[number],
+    )
+  ) {
+    throw new Error("INVALID_SUBMISSION_STATUS");
+  }
+
+  return prisma.quoteSubmission.findMany({
+    where: status
+      ? { status: status as (typeof allowedStatuses)[number] }
+      : undefined,
+    orderBy: { submittedAt: "desc" },
+    include: {
+      messages: {
+        orderBy: { createdAt: "asc" },
+        select: {
+          id: true,
+          senderType: true,
+          message: true,
+          createdAt: true,
+          attachments: {
+            select: {
+              id: true,
+              fileName: true,
+              originalName: true,
+              fileUrl: true,
+              mimeType: true,
+              fileSize: true,
+              remarks: true,
+              uploadedByType: true,
+              createdAt: true,
+            },
+          },
+        },
+      },
+      attachments: {
+        orderBy: { createdAt: "desc" },
+        select: {
+          id: true,
+          fileName: true,
+          originalName: true,
+          fileUrl: true,
+          mimeType: true,
+          fileSize: true,
+          remarks: true,
+          uploadedByType: true,
+          createdAt: true,
+        },
+      },
+    },
+  });
+}
+
+const SUBMISSION_STATUSES = [
+  "PENDING_REVIEW",
+  "CHANGES_REQUESTED",
+  "APPROVED",
+  "REJECTED",
+  "IN_PROGRESS",
+  "COMPLETED",
+  "ARCHIVED",
+] as const;
+
+type SubmissionStatus = (typeof SUBMISSION_STATUSES)[number];
+
+const AUDIT_ACTION_BY_STATUS = {
+  CHANGES_REQUESTED: "CHANGES_REQUESTED",
+  APPROVED: "APPROVED",
+  REJECTED: "REJECTED",
+  IN_PROGRESS: "WORK_STARTED",
+  COMPLETED: "COMPLETED",
+  ARCHIVED: "ARCHIVED",
+  PENDING_REVIEW: "REOPENED",
+} as const;
+
+export async function updateSubmissionStatus(data: {
+  submissionId: string;
+  status: SubmissionStatus;
+  adminId: string;
+  note?: string;
+}) {
+  return prisma.$transaction(async (tx) => {
+    const existing = await tx.quoteSubmission.findUnique({
+      where: { id: data.submissionId },
+      select: {
+        id: true,
+        quoteId: true,
+        status: true,
       },
     });
 
-    return submission;
+    if (!existing) {
+      throw new Error("SUBMISSION_NOT_FOUND");
+    }
+
+    const statusChanged = existing.status !== data.status;
+    const now = new Date();
+    const note = data.note?.trim();
+
+    const updated = await tx.quoteSubmission.update({
+      where: { id: existing.id },
+      data: {
+        status: data.status,
+        ...(note ? { adminMessage: note } : {}),
+        reviewedAt:
+          data.status === "PENDING_REVIEW"
+            ? null
+            : existing.status === "PENDING_REVIEW"
+              ? now
+              : undefined,
+        approvedAt:
+          data.status === "APPROVED"
+            ? now
+            : data.status === "PENDING_REVIEW"
+              ? null
+              : undefined,
+        completedAt:
+          data.status === "COMPLETED"
+            ? now
+            : data.status === "PENDING_REVIEW"
+              ? null
+              : undefined,
+        archivedAt:
+          data.status === "ARCHIVED"
+            ? now
+            : data.status === "PENDING_REVIEW"
+              ? null
+              : undefined,
+      },
+    });
+
+    if (statusChanged) {
+      await tx.quoteAuditEvent.create({
+        data: {
+          quoteId: existing.quoteId,
+          submissionId: existing.id,
+          action: AUDIT_ACTION_BY_STATUS[data.status],
+          actorUserId: data.adminId,
+          actorType: "ADMIN",
+          details: {
+            previousStatus: existing.status,
+            newStatus: data.status,
+            note: note ?? null,
+          },
+        },
+      });
+    }
+
+    // A status note is also a conversation message.
+    if (note) {
+      await tx.quoteMessage.create({
+        data: {
+          quoteId: existing.quoteId,
+          submissionId: existing.id,
+          senderType: "ADMIN",
+          senderUserId: data.adminId,
+          message: note,
+        },
+      });
+    }
+
+    return updated;
+  });
+}
+
+
+export async function addSubmissionMessage(data: {
+  submissionId: string;
+  adminId: string;
+  message: string;
+}) {
+  const submission = await prisma.quoteSubmission.findUnique({
+    where: { id: data.submissionId },
+    select: { id: true, quoteId: true },
+  });
+
+  if (!submission) {
+    throw new Error("SUBMISSION_NOT_FOUND");
+  }
+
+  return prisma.$transaction(async (tx) => {
+    const message = await tx.quoteMessage.create({
+      data: {
+        quoteId: submission.quoteId,
+        submissionId: submission.id,
+        senderType: "ADMIN",
+        senderUserId: data.adminId,
+        message: data.message.trim(),
+      },
+    });
+
+    await tx.quoteAuditEvent.create({
+      data: {
+        quoteId: submission.quoteId,
+        submissionId: submission.id,
+        action: "REOPENED",
+        actorUserId: data.adminId,
+        actorType: "ADMIN",
+        details: { event: "ADMIN_NOTE_ADDED" },
+      },
+    });
+
+    return message;
+  });
+}
+
+
+export async function addExporterSubmissionMessage(data: {
+  submissionId: string;
+  exporterId: string;
+  message: string;
+}) {
+  const messageText = data.message.trim();
+
+  if (!messageText || messageText.length > 5000) {
+    throw new Error("INVALID_SUBMISSION_MESSAGE");
+  }
+
+  return prisma.$transaction(async (tx) => {
+    const submission = await tx.quoteSubmission.findFirst({
+      where: {
+        id: data.submissionId,
+        exporterId: data.exporterId,
+      },
+      select: {
+        id: true,
+        quoteId: true,
+      },
+    });
+
+    if (!submission) {
+      throw new Error("SUBMISSION_NOT_FOUND");
+    }
+
+    const message = await tx.quoteMessage.create({
+      data: {
+        quoteId: submission.quoteId,
+        submissionId: submission.id,
+        senderType: "EXPORTER",
+        senderUserId: data.exporterId,
+        message: messageText,
+      },
+    });
+
+    const reviewers = await tx.user.findMany({
+      where: {
+        isActive: true,
+        OR: [
+          { role: "ADMIN" },
+          {
+            permissions: {
+              some: {
+                permission: {
+                  in: [
+                    "REVIEW_QUOTE",
+                    "REVIEW_QUOTATIONS",
+                    "VIEW_ALL_QUOTES",
+                  ],
+                },
+              },
+            },
+          },
+        ],
+      },
+      select: { id: true },
+    });
+
+    if (reviewers.length > 0) {
+      await tx.quoteNotification.createMany({
+        data: reviewers.map((reviewer) => ({
+          quoteId: submission.quoteId,
+          recipientUserId: reviewer.id,
+          title: "New exporter message",
+          message: "An exporter sent a message about a quotation.",
+        })),
+      });
+    }
+
+    return message;
   });
 }
 

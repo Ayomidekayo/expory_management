@@ -288,4 +288,153 @@ export class AuthService {
       },
     };
   }
+  /*
+=====================================
+Register Exporter
+=====================================
+*/
+
+static async registerExporter(
+  name: string,
+  email: string,
+  password: string,
+  phone?: string
+) {
+  const normalizedEmail = email
+    .trim()
+    .toLowerCase();
+
+  const normalizedName = name.trim();
+
+  const normalizedPhone = phone?.trim() || undefined;
+
+  const REGISTRATION_ERROR_MESSAGE =
+    "Unable to complete registration with the information provided. Please check your details and try again.";
+
+  const existingUser = await prisma.user.findUnique({
+    where: {
+      email: normalizedEmail,
+    },
+  });
+
+  if (existingUser) {
+    throw new ApiError(
+      400,
+      REGISTRATION_ERROR_MESSAGE
+    );
+  }
+
+  const hashedPassword = await bcrypt.hash(
+    password,
+    10
+  );
+
+  const user = await prisma.user.create({
+    data: {
+      name: normalizedName,
+      email: normalizedEmail,
+      password: hashedPassword,
+      phone: normalizedPhone,
+
+      // Never accept the public user's role.
+      role: "EXPORTER",
+    },
+
+    include: {
+      permissions: true,
+    },
+  });
+
+  const token = generateToken({
+    userId: user.id,
+    role: user.role,
+  });
+
+  const {
+    password: _password,
+    permissions,
+    ...safeUser
+  } = user;
+
+  return {
+    success: true,
+
+    message: "Exporter account created successfully.",
+
+    data: {
+      user: {
+        ...safeUser,
+
+        permissions: permissions.map(
+          (item) => item.permission
+        ),
+      },
+
+      token,
+    },
+  };
+}
+
+static async loginExporter(email: string, password: string) {
+  // 1. Validate required fields
+  if (!email || !password) {
+    throw new ApiError(400, "Email and password are required.");
+  }
+
+  // 2. Find exporter account
+  const user = await prisma.user.findUnique({
+    where: {
+      email: email.trim().toLowerCase(),
+    },
+    include: {
+      permissions: true,
+    },
+  });
+
+  // Use a generic error to avoid revealing whether an account exists.
+  if (!user) {
+    throw new ApiError(401, "Invalid email or password.");
+  }
+
+  // 3. Ensure the account belongs to an exporter
+  if (user.role !== "EXPORTER") {
+    throw new ApiError(401, "Invalid email or password.");
+  }
+
+  // 4. Check account status
+  if (!user.isActive) {
+    throw new ApiError(403, "Your account has been disabled.");
+  }
+
+  // 5. Verify password
+  const isPasswordValid = await bcrypt.compare(
+    password,
+    user.password
+  );
+
+  if (!isPasswordValid) {
+    throw new ApiError(401, "Invalid email or password.");
+  }
+
+  // 6. Generate authentication token
+
+  const token = generateToken({
+    userId: user.id,
+    role: user.role,
+  });
+
+  // 7. Return safe user data and token
+  return {
+    token,
+    user: {
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      role: user.role,
+      permissions: user.permissions.map(
+        (permission) => permission.permission
+      ),
+    },
+  };
+}
 }

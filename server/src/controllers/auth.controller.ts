@@ -1,4 +1,5 @@
 import {
+  NextFunction,
   Request,
   Response,
 } from "express";
@@ -80,4 +81,49 @@ export class AuthController {
 
     return res.status(200).json(result);
   }
+
+
+  /*
+=====================================
+Register Exporter
+=====================================
+*/
+
+static async registerExporter(
+  req: Request,
+  res: Response
+) {
+  const {
+    name,
+    email,
+    password,
+    phone,
+  } = req.body;
+
+  const result =
+    await AuthService.registerExporter(
+      name,
+      email,
+      password,
+      phone
+    );
+
+  return res.status(201).json(result);
+}
+
+static async loginExporter(req: Request, res: Response, next: NextFunction) {
+  try {
+    const { email, password } = req.body;
+
+    const result = await AuthService.loginExporter(email, password);
+
+    res.status(200).json({
+      success: true,
+      message: "Exporter login successful",
+      data: result,
+    });
+  } catch (error) {
+    next(error);
+  }
+}
 }

@@ -44,3 +44,18 @@ export type CalculatedLine = {
   requiresReview: boolean;
   remarks: string | null;
 };
+
+
+export const QUOTATION_SUBMISSION_STATUSES = [
+  "PENDING_REVIEW",
+  "CHANGES_REQUESTED",
+  "APPROVED",
+  "REJECTED",
+  "IN_PROGRESS",
+  "COMPLETED",
+  "ARCHIVED",
+] as const;
+
+export type QuotationSubmissionStatus =
+  (typeof QUOTATION_SUBMISSION_STATUSES)[number];
+

@@ -8,6 +8,8 @@ import type {
   SubmitQuoteInput,
 } from './quotation.types'
 import { CalculationBasis, RateCalculationType } from '../../generated'
+import { emitToQuotationReviewers } from '../../realtime/socket'
+import { prisma } from '../../config/prisma'
 
 const money = (n: number) => Math.round((n + Number.EPSILON) * 100) / 100
 const numeric = (v: unknown, fallback = 0) => {
@@ -535,26 +537,300 @@ pricingSnapshot: {
     }
   }
 
-  async submit(quoteId: string, exporterId: string, input: SubmitQuoteInput) {
-    const quote = await repository.findQuoteForSubmission(quoteId)
-    if (!quote) throw new Error('QUOTE_NOT_FOUND')
-    if (quote.status !== 'CALCULATED' && quote.status !== 'PENDING_REVIEW')
-      throw new Error('QUOTE_NOT_SUBMITTABLE')
-    if (!input.selectedQuoteItemIds?.length)
-      throw new Error('SELECT_AT_LEAST_ONE_SERVICE')
-    return repository.createSubmission({
-      quoteId,
-      exporterId,
-      customerName: input.customerName ?? undefined,
-      email: input.email ?? undefined,
-      phone: input.phone ?? undefined,
-      customerMessage: input.customerMessage ?? undefined,
-      selectedQuoteItemIds: input.selectedQuoteItemIds,
-      quoteItems: quote.items,
-      currency: quote.currency,
-      subtotal: quote.subtotal ?? 0,
-      taxAmount: (quote.pricingSnapshot as any)?.taxAmount ?? 0,
-      totalAmount: quote.totalAmount ?? 0,
-    })
+
+async submit(
+  quoteId: string,
+  exporterId: string,
+  input: SubmitQuoteInput
+) {
+  // Fetch the calculated quote and its items.
+  const quote = await repository.findQuoteForSubmission(quoteId);
+
+  if (!quote) {
+    throw new Error("QUOTE_NOT_FOUND");
   }
+
+  // Only calculated quotes can be submitted.
+  if (quote.status !== "CALCULATED") {
+    throw new Error("QUOTE_NOT_SUBMITTABLE");
+  }
+
+  // Create the submission using the saved quote data.
+  const submission = await repository.createSubmission({
+    quoteId: quote.id,
+    exporterId,
+    customerName: input.customerName ?? undefined,
+    email: input.email ?? undefined,
+    phone: input.phone ?? undefined,
+    customerMessage: input.customerMessage ?? undefined,
+    selectedQuoteItemIds: input.selectedQuoteItemIds,
+    quoteItems: quote.items,
+    currency: quote.currency,
+    subtotal: quote.subtotal ?? 0,
+    taxAmount: (quote.pricingSnapshot as any)?.taxAmount ?? 0,
+    totalAmount: quote.totalAmount ?? 0,
+  });
+
+  // Notify connected quotation reviewers after the database transaction.
+  emitToQuotationReviewers("quotation:submitted", {
+    submissionId: submission.id,
+    quoteId: submission.quoteId,
+    status: submission.status,
+    submittedAt: submission.submittedAt,
+  });
+
+  return submission;
 }
+
+
+  async listExporterSubmissions(exporterId: string) {
+  return repository.listExporterSubmissions(exporterId);
+}
+
+
+
+  async getExporterSubmission(
+    submissionId: string,
+    exporterId: string,
+  ) {
+    return repository.findExporterSubmission(
+      submissionId,
+      exporterId,
+    );
+  }
+
+  // Admin: list quotation submissions.
+  async listAdminSubmissions(status?: string) {
+    return listAdminSubmissions(status);
+  }
+
+  // Admin: change a submission's status.
+  async updateSubmissionStatus(data: {
+    submissionId: string;
+    status: any;
+    adminId: string;
+    note?: string;
+  }) {
+    return updateSubmissionStatus(data);
+  }
+
+  // Admin: send a message to an exporter.
+  async addSubmissionMessage(data: {
+    submissionId: string;
+    adminId: string;
+    message: string;
+  }) {
+    return addSubmissionMessage(data);
+  }
+
+  // Exporter: send a message about a submission.
+  async addExporterSubmissionMessage(data: {
+    submissionId: string;
+    exporterId: string;
+    message: string;
+  }) {
+    return addExporterSubmissionMessage(data);
+  }
+
+}
+
+export async function listAdminSubmissions(status?: string) {
+  const allowedStatuses = [
+    "PENDING_REVIEW",
+    "CHANGES_REQUESTED",
+    "APPROVED",
+    "REJECTED",
+    "IN_PROGRESS",
+    "COMPLETED",
+    "ARCHIVED",
+  ] as const;
+
+  if (
+    status &&
+    !allowedStatuses.includes(
+      status as (typeof allowedStatuses)[number],
+    )
+  ) {
+    throw new Error("INVALID_SUBMISSION_STATUS");
+  }
+
+  return prisma.quoteSubmission.findMany({
+    where: status
+      ? { status: status as (typeof allowedStatuses)[number] }
+      : undefined,
+
+    orderBy: {
+      submittedAt: "desc",
+    },
+
+    include: {
+      // Exporter/customer information
+      exporter: {
+        select: {
+          id: true,
+          name: true,
+          email: true,
+          phone: true,
+        },
+      },
+
+      // Original quotation and shipment information
+      quote: {
+        select: {
+          id: true,
+          quoteNumber: true,
+          goodsDescription: true,
+          hsCode: true,
+          weightKg: true,
+          quantity: true,
+          customsValue: true,
+          freightAmount: true,
+          currency: true,
+          requiresReview: true,
+          inputSnapshot: true,
+          pricingSnapshot: true,
+
+          rateCard: {
+            select: {
+              id: true,
+              name: true,
+              mode: true,
+              direction: true,
+
+              // Historical configuration and option details
+              configurations: {
+                select: {
+                  id: true,
+                  name: true,
+                  code: true,
+                  routeLabel: true,
+                  routeCode: true,
+                  equipmentType: true,
+
+                  options: {
+                    select: {
+                      id: true,
+                      name: true,
+                      code: true,
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+
+      // Service/pricing breakdown
+      items: {
+        select: {
+          id: true,
+          componentName: true,
+          componentCode: true,
+          quantity: true,
+          rateApplied: true,
+          lineTotal: true,
+          isSelected: true,
+        },
+      },
+
+      // Conversation history
+      messages: {
+        orderBy: {
+          createdAt: "asc",
+        },
+
+        select: {
+          id: true,
+          senderType: true,
+          message: true,
+          createdAt: true,
+
+          attachments: {
+            select: {
+              id: true,
+              fileName: true,
+              originalName: true,
+              fileUrl: true,
+              mimeType: true,
+              fileSize: true,
+              remarks: true,
+              uploadedByType: true,
+              createdAt: true,
+            },
+          },
+        },
+      },
+
+      // Files attached directly to the submission
+      attachments: {
+        orderBy: {
+          createdAt: "desc",
+        },
+
+        select: {
+          id: true,
+          fileName: true,
+          originalName: true,
+          fileUrl: true,
+          mimeType: true,
+          fileSize: true,
+          remarks: true,
+          uploadedByType: true,
+          createdAt: true,
+        },
+      },
+    },
+  });
+}
+
+
+export async function updateSubmissionStatus(data: {
+  submissionId: string;
+  status: any;
+  adminId: string;
+  note?: string;
+}) {
+  return repository.updateSubmissionStatus(data);
+}
+
+
+export async function addSubmissionMessage(data: {
+  submissionId: string;
+  adminId: string;
+  message: string;
+}) {
+  const message = await repository.addSubmissionMessage(data);
+
+  emitToQuotationReviewers("quotation:message", {
+    submissionId: data.submissionId,
+    messageId: message.id,
+    senderType: "ADMIN",
+    message: message.message,
+    createdAt: message.createdAt,
+  });
+
+  return message;
+}
+
+export async function addExporterSubmissionMessage(data: {
+  submissionId: string;
+  exporterId: string;
+  message: string;
+}) {
+  const message = await repository.addExporterSubmissionMessage(data);
+
+  emitToQuotationReviewers("quotation:message", {
+    submissionId: data.submissionId,
+    messageId: message.id,
+    senderType: "EXPORTER",
+    message: message.message,
+    createdAt: message.createdAt,
+  });
+
+  return message;
+}
+
+
+
+
