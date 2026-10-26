@@ -143,7 +143,7 @@ export default function ExporterRegisterForm() {
             description: "Welcome to OGW KAY IMPEX.",
           });
 
-          navigate("/my-account", { replace: true });
+          navigate("/exporter/quotations", { replace: true });
         },
 
         onError: (error: unknown) => {
