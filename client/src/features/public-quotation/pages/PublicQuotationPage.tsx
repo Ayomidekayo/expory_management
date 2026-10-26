@@ -264,6 +264,18 @@ function requestHelp() {
     return;
   }
 
+  // Preserve the parent-controlled login handoff when a callback is supplied.
+  // Otherwise, use the page's normal login route and pass the quote reference.
+  if (onRequireLogin) {
+    onRequireLogin({
+      quoteId: quote.quoteId,
+      quoteNumber: quote.quoteNumber,
+      selectedQuoteItemIds: [...selectedItemIds],
+      quote,
+    });
+    return;
+  }
+
   navigate("/exporter/login", {
     state: {
       from: "/exporter/quotations",
