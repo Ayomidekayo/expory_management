@@ -99,35 +99,90 @@ export async function createCalculatedQuote(data: {
     requiresReview: boolean;
     remarks: string | null;
   }>;
-
-  
 }) {
+  return prisma.$transaction(async (tx) => {
+    const created = await tx.quote.create({
+      data: {
+        rateCardId: data.rateCardId,
+        quoteNumber: data.quoteNumber,
+        source: data.source,
+        status: "CALCULATED",
+        customerName: data.customerName,
+        email: data.email,
+        phone: data.phone,
+        weightKg: data.weightKg,
+        goodsDescription: data.goodsDescription,
+        hsCode: data.hsCode,
+        customsValue: data.customsValue,
+        freightAmount: data.freightAmount,
+        quantity: data.quantity,
+        currency: data.currency,
+        subtotal: data.subtotal,
+        totalAmount: data.totalAmount,
+        requiresReview: data.requiresReview,
+        inputSnapshot: data.inputSnapshot as any,
+        pricingSnapshot: data.pricingSnapshot as any,
+        items: { create: data.items.map((item) => ({ ...item })) },
+      },
+      include: { items: true },
+    });
 
-  
-  return prisma.quote.create({
-    data: {
-      rateCardId: data.rateCardId,
-      quoteNumber: data.quoteNumber,
-      source: data.source,
-      status: "CALCULATED",
-      customerName: data.customerName,
-      email: data.email,
-      phone: data.phone,
-      weightKg: data.weightKg,
-      goodsDescription: data.goodsDescription,
-      hsCode: data.hsCode,
-      customsValue: data.customsValue,
-      freightAmount: data.freightAmount,
-      quantity: data.quantity,
-      currency: data.currency,
-      subtotal: data.subtotal,
-      totalAmount: data.totalAmount,
-      requiresReview: data.requiresReview,
-      inputSnapshot: data.inputSnapshot as any,
-      pricingSnapshot: data.pricingSnapshot as any,
-      items: { create: data.items.map((item) => ({ ...item })) },
-    },
-    include: { items: true },
+    // Persist the QuoteItem ID alongside each pricing line. This gives the
+    // submission flow an unambiguous link between a selected checkbox and the
+    // exact saved calculation metadata (including percentage basis/rate).
+    const rawSnapshot = (data.pricingSnapshot ?? {}) as Record<string, any>;
+    const snapshotLines: Array<Record<string, any>> = Array.isArray(rawSnapshot.lines)
+      ? rawSnapshot.lines
+      : [];
+    const usedItemIndexes = new Set<number>();
+    const linesWithItemIds = snapshotLines.map((line, lineIndex) => {
+      let itemIndex = -1;
+
+      if (line.componentId && !String(line.componentId).startsWith("airline:")) {
+        itemIndex = created.items.findIndex(
+          (item, index) =>
+            !usedItemIndexes.has(index) && item.componentId === line.componentId,
+        );
+      }
+
+      if (itemIndex < 0) {
+        itemIndex = created.items.findIndex(
+          (item, index) =>
+            !usedItemIndexes.has(index) &&
+            item.componentName === line.componentName &&
+            (item.componentCode ?? null) === (line.componentCode ?? null) &&
+            String(item.calculationType) === String(line.calculationType) &&
+            Number(item.quantity) === Number(line.quantity) &&
+            Number(item.lineTotal) === Number(line.lineTotal),
+        );
+      }
+
+      // The service constructs QuoteItem inputs and snapshot lines from the
+      // same `lines` array. Use the matching position only as a final fallback.
+      if (
+        itemIndex < 0 &&
+        lineIndex < created.items.length &&
+        !usedItemIndexes.has(lineIndex)
+      ) {
+        itemIndex = lineIndex;
+      }
+
+      if (itemIndex < 0) return line;
+      usedItemIndexes.add(itemIndex);
+      return { ...line, quoteItemId: created.items[itemIndex].id };
+    });
+
+    return tx.quote.update({
+      where: { id: created.id },
+      data: {
+        pricingSnapshot: {
+          ...rawSnapshot,
+          lines: linesWithItemIds,
+          selectionRecalculationVersion: 1,
+        } as any,
+      },
+      include: { items: true },
+    });
   });
 }
 
@@ -143,40 +198,38 @@ export async function createSubmission(data: {
   phone?: string;
   customerMessage?: string;
   selectedQuoteItemIds: string[];
-  quoteItems: Array<{
+  selectedQuoteItems: Array<{
     id: string;
     componentName: string;
     componentCode: string | null;
-    quantity: any;
-    rateApplied: any;
-    lineTotal: any;
+    quantity: number;
+    rateApplied: number;
+    lineTotal: number;
   }>;
   currency: string;
-  subtotal: any;
-  taxAmount: any;
-  totalAmount: any;
+  subtotal: number;
+  taxAmount: number;
+  totalAmount: number;
 }) {
   return prisma.$transaction(async (tx) => {
     const selected = new Set(data.selectedQuoteItemIds);
-    const validIds = new Set(data.quoteItems.map((item) => item.id));
+    const suppliedSelectedItems = new Map(
+      data.selectedQuoteItems.map((item) => [item.id, item] as const),
+    );
 
-    if (selected.size === 0) {
-      throw new Error("SELECT_AT_LEAST_ONE_SERVICE");
-    }
-
-    for (const id of selected) {
-      if (!validIds.has(id)) {
-        throw new Error("INVALID_SELECTED_QUOTE_ITEM");
-      }
+    if (selected.size === 0) throw new Error("SELECT_AT_LEAST_ONE_SERVICE");
+    if (
+      selected.size !== data.selectedQuoteItemIds.length ||
+      suppliedSelectedItems.size !== selected.size ||
+      [...selected].some((id) => !suppliedSelectedItems.has(id))
+    ) {
+      throw new Error("INVALID_SELECTED_QUOTE_ITEM");
     }
 
     // Atomically claim the quote. Only one submission can transition
     // this quote from CALCULATED to PENDING_REVIEW.
     const claimedQuote = await tx.quote.updateMany({
-      where: {
-        id: data.quoteId,
-        status: "CALCULATED",
-      },
+      where: { id: data.quoteId, status: "CALCULATED" },
       data: {
         source: "ACCOUNT",
         status: "PENDING_REVIEW",
@@ -186,10 +239,11 @@ export async function createSubmission(data: {
       },
     });
 
-    if (claimedQuote.count !== 1) {
-      throw new Error("QUOTE_NOT_SUBMITTABLE");
-    }
+    if (claimedQuote.count !== 1) throw new Error("QUOTE_NOT_SUBMITTABLE");
 
+    // Only selected services become request items. The full original quote
+    // remains immutable on Quote/QuoteItem for audit and comparison.
+    const selectedItems = [...selected].map((id) => suppliedSelectedItems.get(id)!);
     const submission = await tx.quoteSubmission.create({
       data: {
         quoteId: data.quoteId,
@@ -203,21 +257,17 @@ export async function createSubmission(data: {
         taxAmount: data.taxAmount,
         totalAmount: data.totalAmount,
         status: "PENDING_REVIEW",
-
-        // Preserve all available services, marking only the selected
-        // ones as requested by the exporter.
         items: {
-          create: data.quoteItems.map((item) => ({
+          create: selectedItems.map((item) => ({
             quoteItemId: item.id,
             componentName: item.componentName,
             componentCode: item.componentCode,
             quantity: item.quantity,
             rateApplied: item.rateApplied,
             lineTotal: item.lineTotal,
-            isSelected: selected.has(item.id),
+            isSelected: true,
           })),
         },
-
         auditEvents: {
           create: {
             quoteId: data.quoteId,
@@ -230,16 +280,14 @@ export async function createSubmission(data: {
               taxAmount: data.taxAmount,
               totalAmount: data.totalAmount,
               currency: data.currency,
+              selectionRecalculationVersion: 1,
             },
           },
         },
       },
-      include: {
-        items: true,
-      },
+      include: { items: true },
     });
 
-   
     const reviewers = await tx.user.findMany({
       where: {
         isActive: true,
@@ -249,11 +297,7 @@ export async function createSubmission(data: {
             permissions: {
               some: {
                 permission: {
-                  in: [
-                    "REVIEW_QUOTE",
-                    "REVIEW_QUOTATIONS",
-                    "VIEW_ALL_QUOTES",
-                  ],
+                  in: ["REVIEW_QUOTE", "REVIEW_QUOTATIONS", "VIEW_ALL_QUOTES"],
                 },
               },
             },
@@ -273,12 +317,10 @@ export async function createSubmission(data: {
         })),
       });
     }
-;
 
     return submission;
   });
 }
-
 
 
 export async function listExporterSubmissions(

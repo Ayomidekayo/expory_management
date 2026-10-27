@@ -56,6 +56,7 @@ export interface ExporterSubmission {
   completedAt: string | null;
   createdAt: string;
   updatedAt: string;
+  taxAmount: number | string | null;
 
   quote: {
     quoteNumber: string;

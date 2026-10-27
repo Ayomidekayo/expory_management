@@ -7,7 +7,9 @@ import {
   LockKeyhole,
   PackageCheck,
   Plane,
+  Plus,
   Ship,
+  Trash2,
   Truck,
 } from "lucide-react";
 import { Field, inputClass } from "../components/Field";
@@ -74,6 +76,104 @@ const money = (amount: number, currency: string) => {
 const primaryButtonClass =
   "inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-xl bg-emerald-700 px-5 py-3 text-sm font-bold text-white transition hover:bg-emerald-800 focus:outline-none focus:ring-4 focus:ring-emerald-500/20 disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto";
 
+// The backend includes these calculation fields on each calculated quote line.
+// The shared frontend CalculatedQuote type predates the selection-review payload.
+type SelectionAwareLine = CalculatedQuote["lines"][number] & {
+  calculationType?: string | null;
+  calculationBasis?: string | null;
+  percentage?: number | null;
+};
+type QuoteWithTaxRules = CalculatedQuote & {
+  vatEnabled?: boolean;
+  vatPercentage?: number;
+  vatRule?: string;
+};
+
+type SelectedTotals = {
+  subtotal: number;
+  taxAmount: number;
+  totalAmount: number;
+  vatEnabled: boolean;
+  vatPercentage: number;
+  lineAmounts: Record<string, number>;
+};
+
+const roundMoney = (amount: number) =>
+  Math.round((amount + Number.EPSILON) * 100) / 100;
+
+function calculateSelectedTotals(
+  quote: CalculatedQuote | null,
+  selectedItemIds: string[],
+): SelectedTotals {
+  if (!quote) {
+    return {
+      subtotal: 0,
+      taxAmount: 0,
+      totalAmount: 0,
+      vatEnabled: false,
+      vatPercentage: 0,
+      lineAmounts: {},
+    };
+  }
+
+  const quoteWithTaxRules = quote as QuoteWithTaxRules;
+  const selected = new Set(selectedItemIds);
+  const selectedLines = (quote.lines as SelectionAwareLine[]).filter((line) =>
+    selected.has(line.quoteItemId),
+  );
+  const isSubtotalPercentage = (line: SelectionAwareLine) =>
+    String(line.calculationType) === "PERCENTAGE" &&
+    String(line.calculationBasis) === "SUBTOTAL";
+
+  // Match backend logic: subtotal percentage charges are calculated from the
+  // selected non-subtotal-percentage lines, not the original full quote.
+  const baseSubtotal = roundMoney(
+    selectedLines
+      .filter((line) => String(line.calculationType) !== "PERCENTAGE")
+      .reduce((sum, line) => sum + (Number(line.lineTotal) || 0), 0),
+  );
+
+  const lineAmounts: Record<string, number> = {};
+  let subtotal = 0;
+  for (const line of selectedLines) {
+    let amount = Number(line.lineTotal) || 0;
+    if (
+      isSubtotalPercentage(line) &&
+      typeof line.percentage === "number" &&
+      Number.isFinite(line.percentage)
+    ) {
+      amount = roundMoney((baseSubtotal * line.percentage) / 100);
+    }
+    lineAmounts[line.quoteItemId] = amount;
+    subtotal += amount;
+  }
+
+  subtotal = roundMoney(subtotal);
+  const vatEnabled =
+    typeof quoteWithTaxRules.vatEnabled === "boolean"
+      ? quoteWithTaxRules.vatEnabled
+      : Number(quote.taxAmount) > 0;
+  const vatPercentage =
+    typeof quoteWithTaxRules.vatPercentage === "number" &&
+    Number.isFinite(quoteWithTaxRules.vatPercentage)
+      ? quoteWithTaxRules.vatPercentage
+      : Number(quote.subtotal) > 0
+        ? (Number(quote.taxAmount) / Number(quote.subtotal)) * 100
+        : 0;
+  const taxAmount = vatEnabled
+    ? roundMoney((subtotal * vatPercentage) / 100)
+    : 0;
+
+  return {
+    subtotal,
+    taxAmount,
+    totalAmount: roundMoney(subtotal + taxAmount),
+    vatEnabled,
+    vatPercentage,
+    lineAmounts,
+  };
+}
+
 export function PublicQuotationPage({ onRequireLogin }: Props) {
   const navigate = useNavigate();
   const [mode, setMode] = useState<QuoteMode>("AIR");
@@ -103,6 +203,32 @@ export function PublicQuotationPage({ onRequireLogin }: Props) {
     () => configurations.find((item) => item.id === configurationId),
     [configurations, configurationId],
   );
+  // All customer-facing options are loaded from the selected configuration's
+  // active RateCardOption rows; no transport/container choices are hard-coded.
+  const activeConfigurationOptions = configuration?.options?.filter(
+    (option) => option.isActive !== false,
+  ) ?? [];
+  const requiresSingleModeOption = mode === "LAND" || mode === "SEA";
+  const isAirFreight = mode === "AIR";
+  const weightInputRequired = isAirFreight || Boolean(configuration?.weightEnabled);
+  const missingRequiredModeOptions =
+    Boolean(configuration) && requiresSingleModeOption && activeConfigurationOptions.length === 0;
+  const modeOptionTitle =
+    mode === "LAND"
+      ? "Choose your land transport option"
+      : mode === "SEA"
+        ? "Choose your container type"
+        : "Additional air freight services";
+  const modeOptionHelp =
+    mode === "LAND"
+      ? "Select one option configured by the quotation team, such as short haul or long haul."
+      : mode === "SEA"
+        ? "Select one container option configured by the quotation team, such as 20ft or 40ft."
+        : "Select any additional services you need. Air freight chargeable weight is required below.";
+  const selectedTotals = useMemo(
+    () => calculateSelectedTotals(quote, selectedItemIds),
+    [quote, selectedItemIds],
+  );
 
   // The public page hides internal pricing IDs. Auto-select only when there is
   // exactly one active rate card for the chosen shipment mode and direction.
@@ -124,6 +250,41 @@ export function PublicQuotationPage({ onRequireLogin }: Props) {
       setSelectedItemIds([]);
     }
   }, [cards, cardsQuery.isLoading, cardsQuery.isError, rateCardId]);
+
+  // If there is exactly one active configuration, select it automatically so
+  // the mobile flow can move straight from direction to the relevant detail
+  // (air weight, land transport choice, or sea container choice).
+  useEffect(() => {
+    if (!rateCardId || configsQuery.isLoading || configsQuery.isError) return;
+
+    if (configurations.length === 1 && configurationId !== configurations[0].id) {
+      setConfigurationId(configurations[0].id);
+      setOptionIds([]);
+      setAirlineId("");
+      setQuote(null);
+      setSelectedItemIds([]);
+      setFormError("");
+      return;
+    }
+
+    if (
+      configurationId &&
+      !configurations.some((item) => item.id === configurationId)
+    ) {
+      setConfigurationId("");
+      setOptionIds([]);
+      setAirlineId("");
+      setQuote(null);
+      setSelectedItemIds([]);
+      setFormError("");
+    }
+  }, [
+    rateCardId,
+    configsQuery.isLoading,
+    configsQuery.isError,
+    configurations,
+    configurationId,
+  ]);
 
   function clearQuote() {
     setQuote(null);
@@ -154,11 +315,19 @@ export function PublicQuotationPage({ onRequireLogin }: Props) {
   }
 
   function toggleOption(id: string) {
-    setOptionIds((current) =>
-      current.includes(id)
-        ? current.filter((item) => item !== id)
-        : [...current, id],
-    );
+    if (mode === "LAND" || mode === "SEA") {
+      // Transport route/haul type and sea container type are mutually exclusive.
+      // Clicking another card replaces the prior choice; clicking the chosen
+      // card cannot leave the request without a required option.
+      setOptionIds([id]);
+    } else {
+      // Air freight add-on services are independently selectable.
+      setOptionIds((current) =>
+        current.includes(id)
+          ? current.filter((item) => item !== id)
+          : [...current, id],
+      );
+    }
     clearQuote();
   }
 
@@ -182,9 +351,34 @@ export function PublicQuotationPage({ onRequireLogin }: Props) {
       );
       return;
     }
-    if (configuration.weightEnabled && (!weightKg || Number(weightKg) <= 0)) {
-      setFormError("Enter a shipment weight greater than zero.");
+    if (weightInputRequired && (!weightKg.trim() || !Number.isFinite(Number(weightKg)) || Number(weightKg) <= 0)) {
+      setFormError(
+        isAirFreight
+          ? "Enter the chargeable air freight weight in kilograms."
+          : "Enter a shipment weight greater than zero.",
+      );
       return;
+    }
+    if (requiresSingleModeOption) {
+      if (activeConfigurationOptions.length === 0) {
+        setFormError(
+          mode === "LAND"
+            ? "No active land transport options are configured for this pricing setup. Please contact the quotation team."
+            : "No active container options are configured for this pricing setup. Please contact the quotation team.",
+        );
+        return;
+      }
+      if (
+        optionIds.length !== 1 ||
+        !activeConfigurationOptions.some((option) => option.id === optionIds[0])
+      ) {
+        setFormError(
+          mode === "LAND"
+            ? "Choose one land transport option to continue."
+            : "Choose one container type to continue.",
+        );
+        return;
+      }
     }
     if (configuration.quantityEnabled && (!quantity || Number(quantity) <= 0)) {
       setFormError("Enter a quantity greater than zero.");
@@ -208,7 +402,7 @@ export function PublicQuotationPage({ onRequireLogin }: Props) {
       configurationId: configuration.id,
       optionIds,
       ...(airlineId ? { airlineId } : {}),
-      ...(configuration.weightEnabled ? { weightKg: Number(weightKg) } : {}),
+      ...(weightInputRequired ? { weightKg: Number(weightKg) } : {}),
       ...(configuration.quantityEnabled ? { quantity: Number(quantity) } : {}),
       ...(configuration.customsValueEnabled
         ? { customsValue: Number(customsValue || 0) }
@@ -448,14 +642,24 @@ function requestHelp() {
             </div>
           )}
 
-          {hasSingleCard && configurations.length > 0 && (
+          {hasSingleCard && configurations.length > 1 && (
             <div className="mt-7 border-t border-slate-100 pt-6">
               <div className="flex items-start gap-3">
                 <span className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-emerald-100 text-sm font-extrabold text-emerald-800">2</span>
                 <div>
-                  <h3 className="text-lg font-extrabold">Choose your shipment option</h3>
+                  <h3 className="text-lg font-extrabold">
+                    {mode === "AIR"
+                      ? "Choose your air freight configuration"
+                      : mode === "LAND"
+                        ? "Choose your land transport configuration"
+                        : "Choose your sea freight configuration"}
+                  </h3>
                   <p className="mt-1 text-sm leading-5 text-slate-500">
-                    {mode === "AIR" ? "Choose the available air freight service." : mode === "LAND" ? "Choose the route or truck type for your goods." : "Choose the container or sea freight service."}
+                    {mode === "AIR"
+                      ? "Choose an active air freight pricing configuration, then enter the chargeable weight."
+                      : mode === "LAND"
+                        ? "Choose an active land transport configuration, then select one transport option."
+                        : "Choose an active sea freight configuration, then select one container type."}
                   </p>
                 </div>
               </div>
@@ -494,32 +698,97 @@ function requestHelp() {
             </div>
           )}
 
+          {hasSingleCard && configurations.length === 1 && configuration && (
+            <div className="mt-5 flex items-start gap-3 rounded-xl border border-emerald-100 bg-emerald-50/70 p-3.5 sm:p-4">
+              <span className="mt-0.5 grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-emerald-700 text-white">
+                <CheckCircle2 size={17} aria-hidden="true" />
+              </span>
+              <div className="min-w-0">
+                <p className="text-[11px] font-bold uppercase tracking-[0.12em] text-emerald-800">Active pricing configuration</p>
+                <p className="mt-1 break-words text-sm font-bold text-emerald-950">
+                  {configuration.equipmentType || configuration.routeLabel || configuration.name}
+                </p>
+                {(configuration.routeLabel || configuration.name) && (
+                  <p className="mt-1 break-words text-xs leading-5 text-emerald-900/75">
+                    {[configuration.routeLabel, configuration.name]
+                      .filter((value, index, all) => Boolean(value) && all.indexOf(value) === index)
+                      .filter((value) => value !== (configuration.equipmentType || configuration.routeLabel || configuration.name))
+                      .join(" · ")}
+                  </p>
+                )}
+              </div>
+              <span className="ml-auto shrink-0 rounded-full bg-white px-2.5 py-1 text-xs font-bold text-emerald-800 ring-1 ring-emerald-100">
+                {configuration.currency}
+              </span>
+            </div>
+          )}
+
           {configuration && (
             <div className="mt-7 border-t border-slate-100 pt-6">
               <div className="flex flex-wrap items-center justify-between gap-3">
                 <div>
-                  <p className="text-xs font-bold uppercase tracking-[0.16em] text-emerald-700">Step 3</p>
-                  <h3 className="mt-1 text-lg font-extrabold text-slate-900">Tell us about your shipment</h3>
+                  <p className="text-xs font-bold uppercase tracking-[0.16em] text-emerald-700">
+                    {configurations.length > 1 ? "Step 3" : "Step 2"}
+                  </p>
+                  <h3 className="mt-1 text-lg font-extrabold text-slate-900">
+                    {mode === "AIR"
+                      ? "Air freight details"
+                      : mode === "LAND"
+                        ? "Land transport details"
+                        : "Sea freight details"}
+                  </h3>
+                  <p className="mt-1 max-w-2xl text-sm leading-5 text-slate-500">
+                    {mode === "AIR"
+                      ? "Enter the chargeable weight. Your estimate uses the active rates configured for this air freight service."
+                      : mode === "LAND"
+                        ? "Choose one configured transport option. The available choices below are managed in your rate-card settings."
+                        : "Choose one configured container type. The available choices below are managed in your rate-card settings."}
+                  </p>
                 </div>
                 <span className="rounded-full bg-emerald-50 px-3 py-1.5 text-xs font-bold text-emerald-800">{configuration.currency}</span>
               </div>
 
-              {configuration.options?.filter((option) => option.isActive !== false).length > 0 && (
+              {activeConfigurationOptions.length > 0 && (
                 <div className="mt-5">
-                  <p className="text-sm font-bold">Additional shipment options</p>
-                  <p className="mt-1 text-xs leading-5 text-slate-500">Select all that apply.</p>
+                  <p className="text-sm font-bold">{modeOptionTitle}</p>
+                  <p className="mt-1 text-xs leading-5 text-slate-500">{modeOptionHelp}</p>
                   <div className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2">
-                    {configuration.options.filter((option) => option.isActive !== false).map((option) => {
+                    {activeConfigurationOptions.map((option) => {
                       const selected = optionIds.includes(option.id);
+                      if (requiresSingleModeOption) {
+                        return (
+                          <label
+                            key={option.id}
+                            className={`flex min-h-[64px] cursor-pointer items-center gap-3 rounded-xl border p-3.5 text-left transition focus-within:ring-4 focus-within:ring-emerald-500/15 ${selected ? "border-emerald-600 bg-emerald-50 ring-1 ring-emerald-600" : "border-slate-200 bg-white hover:border-emerald-300 hover:bg-emerald-50/40"}`}
+                          >
+                            <input
+                              type="radio"
+                              name="shipment-mode-option"
+                              value={option.id}
+                              checked={selected}
+                              onChange={() => toggleOption(option.id)}
+                              className="h-4 w-4 shrink-0 accent-emerald-700"
+                            />
+                            <span className="min-w-0 flex-1">
+                              <span className="block break-words text-sm font-bold text-slate-900">{option.name}</span>
+                              {option.code && option.code !== option.name && (
+                                <span className="mt-1 block text-xs text-slate-500">{option.code}</span>
+                              )}
+                            </span>
+                            {selected && <CheckCircle2 size={18} className="shrink-0 text-emerald-700" aria-hidden="true" />}
+                          </label>
+                        );
+                      }
+
                       return (
                         <button
                           key={option.id}
                           type="button"
                           aria-pressed={selected}
                           onClick={() => toggleOption(option.id)}
-                          className={`flex min-h-12 items-center justify-between gap-3 rounded-xl border p-3.5 text-left text-sm font-semibold transition ${selected ? "border-emerald-600 bg-emerald-50 text-emerald-900" : "border-slate-200 hover:border-emerald-300"}`}
+                          className={`flex min-h-[56px] items-center justify-between gap-3 rounded-xl border p-3.5 text-left text-sm font-semibold transition focus:outline-none focus:ring-4 focus:ring-emerald-500/15 ${selected ? "border-emerald-600 bg-emerald-50 text-emerald-900 ring-1 ring-emerald-600" : "border-slate-200 bg-white hover:border-emerald-300 hover:bg-emerald-50/40"}`}
                         >
-                          <span className="break-words">{option.name}</span>
+                          <span className="min-w-0 break-words">{option.name}</span>
                           {selected && <CheckCircle2 size={17} className="shrink-0 text-emerald-700" aria-hidden="true" />}
                         </button>
                       );
@@ -528,10 +797,32 @@ function requestHelp() {
                 </div>
               )}
 
+              {missingRequiredModeOptions && (
+                <div role="alert" className="mt-5 rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm leading-6 text-amber-950">
+                  {mode === "LAND"
+                    ? "No active land transport options have been configured for this rate-card configuration. Add options such as short haul or long haul in Rate Card Management before making this configuration available."
+                    : "No active sea freight container options have been configured for this rate-card configuration. Add options such as 20ft or 40ft in Rate Card Management before making this configuration available."}
+                </div>
+              )}
+
               <div className="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-2">
-                {configuration.weightEnabled && (
-                  <Field label="Shipment weight (kg)" hint="Enter the total chargeable weight.">
-                    <input className={inputClass} type="number" min="0.01" step="0.01" inputMode="decimal" placeholder="e.g. 125" value={weightKg} onChange={(event) => { setWeightKg(event.target.value); clearQuote(); }} />
+                {weightInputRequired && (
+                  <Field
+                    label={isAirFreight ? "Chargeable air freight weight (kg)" : "Shipment weight (kg)"}
+                    hint={isAirFreight ? "Required for air freight. Enter the total chargeable weight in kilograms." : "Enter the total chargeable weight."}
+                  >
+                    <input
+                      className={inputClass}
+                      type="number"
+                      min="0.01"
+                      step="0.01"
+                      inputMode="decimal"
+                      autoComplete="off"
+                      required
+                      placeholder={isAirFreight ? "e.g. 125 kg" : "e.g. 125"}
+                      value={weightKg}
+                      onChange={(event) => { setWeightKg(event.target.value); clearQuote(); }}
+                    />
                   </Field>
                 )}
                 {configuration.quantityEnabled && (
@@ -585,7 +876,7 @@ function requestHelp() {
 
               <div className="mt-6 flex flex-col gap-3 border-t border-slate-100 pt-5 sm:flex-row sm:items-center sm:justify-between">
                 <p className="max-w-md text-xs leading-5 text-slate-500">Your estimate uses the current saved rates. Some variable charges may need a final review.</p>
-                <button type="button" onClick={() => void calculate()} disabled={calculateMutation.isPending} className={primaryButtonClass}>
+                <button type="button" onClick={() => void calculate()} disabled={calculateMutation.isPending || missingRequiredModeOptions} className={primaryButtonClass}>
                   {calculateMutation.isPending ? <LoaderCircle size={17} className="animate-spin" /> : <ArrowRight size={17} />}
                   {calculateMutation.isPending ? "Calculating…" : "Calculate my quote"}
                 </button>
@@ -608,13 +899,18 @@ function requestHelp() {
               <div className="bg-gradient-to-br from-emerald-950 via-emerald-900 to-emerald-700 p-5 text-white sm:p-7">
                 <div className="flex flex-wrap items-start justify-between gap-3">
                   <div>
-                    <p className="text-xs font-bold uppercase tracking-[0.16em] text-lime-300">Your quotation estimate</p>
+                    <p className="text-xs font-bold uppercase tracking-[0.16em] text-lime-300">Estimate for selected services</p>
                     <h2 className="mt-2 break-words text-3xl font-extrabold tracking-tight sm:text-4xl">
-                      {money(quote.totalAmount, quote.currency)}
+                      {money(selectedTotals.totalAmount, quote.currency)}
                     </h2>
                     <p className="mt-2 break-words text-sm text-emerald-50">
                       Reference: <span className="font-bold text-white">{quote.quoteNumber}</span>
                     </p>
+                    {selectedItemIds.length !== quote.lines.length && (
+                      <p className="mt-2 break-words text-xs text-emerald-100/90">
+                        Original full-quote estimate: {money(quote.totalAmount, quote.currency)}
+                      </p>
+                    )}
                   </div>
                   <span className="inline-flex shrink-0 items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3 py-2 text-xs font-bold text-white">
                     <CheckCircle2 size={15} aria-hidden="true" />
@@ -664,37 +960,150 @@ function requestHelp() {
               </div>
 
               <div className="p-4 sm:p-6">
-                <h3 className="font-extrabold">Which services do you need help with?</h3>
-                <p className="mt-1 text-sm leading-5 text-slate-500">Choose the services you want our team to handle. This does not change your original estimate.</p>
+                <div className="flex flex-col gap-1 sm:flex-row sm:items-end sm:justify-between">
+                  <div>
+                    <h3 className="text-lg font-extrabold">Review &amp; Customize Your Quote</h3>
+                    <p className="mt-1 text-sm leading-5 text-slate-500">
+                      Include only the services you want our team to handle. Removing a service here does not delete the original quotation.
+                    </p>
+                  </div>
+                  <span className="mt-2 inline-flex w-fit rounded-full bg-emerald-50 px-3 py-1.5 text-xs font-bold text-emerald-800">
+                    {selectedItemIds.length} selected
+                  </span>
+                </div>
+
                 <div className="mt-4 space-y-3">
                   {quote.lines.map((line) => {
                     const selected = selectedItemIds.includes(line.quoteItemId);
+                    const selectionLine = line as SelectionAwareLine;
+                    const displayedAmount = selected
+                      ? selectedTotals.lineAmounts[line.quoteItemId] ?? line.lineTotal
+                      : line.lineTotal;
+
                     return (
-                      <label key={line.quoteItemId} className={`flex min-w-0 cursor-pointer items-start gap-3 rounded-xl border p-3.5 transition ${selected ? "border-emerald-500 bg-emerald-50/70" : "border-slate-200 hover:border-emerald-300"}`}>
-                        <input type="checkbox" checked={selected} onChange={() => toggleItem(line.quoteItemId)} className="mt-1 h-4 w-4 shrink-0 accent-emerald-700" />
-                        <span className="min-w-0 flex-1">
-                          <span className="block break-words text-sm font-semibold">{line.componentName}
-                            {line.isEstimate && <span className="ml-2 inline-block rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-bold uppercase text-amber-800">Estimate</span>}
-                          </span>
-                          {line.remarks && <span className="mt-1 block break-words text-xs leading-5 text-slate-500">{line.remarks}</span>}
-                          {line.quantity > 1 && line.unit && <span className="mt-1 block text-xs text-slate-500">{line.quantity} {line.unit}</span>}
-                        </span>
-                        <span className="shrink-0 text-right text-sm font-bold tabular-nums">{money(line.lineTotal, quote.currency)}</span>
-                      </label>
+                      <div
+                        key={line.quoteItemId}
+                        className={`rounded-xl border p-3.5 transition sm:p-4 ${
+                          selected
+                            ? "border-emerald-300 bg-emerald-50/60"
+                            : "border-slate-200 bg-slate-50/70"
+                        }`}
+                      >
+                        <div className="flex min-w-0 flex-col gap-3 sm:flex-row sm:items-start">
+                          <label className="flex min-w-0 flex-1 cursor-pointer items-start gap-3">
+                            <input
+                              type="checkbox"
+                              checked={selected}
+                              onChange={() => toggleItem(line.quoteItemId)}
+                              aria-label={`${selected ? "Exclude" : "Include"} ${line.componentName}`}
+                              className="mt-1 h-4 w-4 shrink-0 accent-emerald-700"
+                            />
+                            <span className="min-w-0 flex-1">
+                              <span className="flex flex-wrap items-center gap-2">
+                                <span className={`break-words text-sm font-semibold ${selected ? "text-slate-900" : "text-slate-600"}`}>
+                                  {line.componentName}
+                                </span>
+                                {line.isEstimate && (
+                                  <span className="inline-block rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-bold uppercase text-amber-800">
+                                    Estimate
+                                  </span>
+                                )}
+                                <span className={`inline-block rounded-full px-2 py-0.5 text-[10px] font-bold uppercase ${selected ? "bg-emerald-100 text-emerald-800" : "bg-slate-200 text-slate-600"}`}>
+                                  {selected ? "Included" : "Excluded"}
+                                </span>
+                              </span>
+                              {line.remarks && (
+                                <span className="mt-1 block break-words text-xs leading-5 text-slate-500">
+                                  {line.remarks}
+                                </span>
+                              )}
+                              {line.quantity > 1 && line.unit && (
+                                <span className="mt-1 block text-xs text-slate-500">
+                                  {line.quantity} {line.unit}
+                                </span>
+                              )}
+                              {selected &&
+                                String(selectionLine.calculationType) === "PERCENTAGE" &&
+                                String(selectionLine.calculationBasis) === "SUBTOTAL" &&
+                                typeof selectionLine.percentage === "number" && (
+                                  <span className="mt-1 block text-xs text-emerald-800">
+                                    Recalculated at {selectionLine.percentage}% of selected service subtotal
+                                  </span>
+                                )}
+                            </span>
+                            <span className="shrink-0 text-right">
+                              <span className={`block text-sm font-bold tabular-nums ${selected ? "text-slate-900" : "text-slate-500"}`}>
+                                {money(displayedAmount, quote.currency)}
+                              </span>
+                              {!selected && (
+                                <span className="mt-1 block text-[11px] text-slate-400">Not in request</span>
+                              )}
+                            </span>
+                          </label>
+
+                          <button
+                            type="button"
+                            onClick={() => toggleItem(line.quoteItemId)}
+                            aria-label={selected ? `Remove ${line.componentName} from request` : `Add ${line.componentName} to request`}
+                            className={`inline-flex min-h-9 shrink-0 items-center justify-center gap-2 self-end rounded-lg border px-3 py-2 text-xs font-bold transition focus:outline-none focus:ring-4 focus:ring-emerald-500/15 sm:self-start ${
+                              selected
+                                ? "border-rose-200 bg-white text-rose-700 hover:border-rose-300 hover:bg-rose-50"
+                                : "border-emerald-200 bg-white text-emerald-800 hover:border-emerald-300 hover:bg-emerald-50"
+                            }`}
+                          >
+                            {selected ? <Trash2 size={14} aria-hidden="true" /> : <Plus size={14} aria-hidden="true" />}
+                            {selected ? "Remove" : "Add back"}
+                          </button>
+                        </div>
+                      </div>
                     );
                   })}
                 </div>
 
                 <div className="mt-5 rounded-xl bg-emerald-50/70 p-4 sm:p-5">
-                  <div className="flex justify-between gap-3 text-sm text-slate-600"><span>Subtotal</span><span className="text-right font-semibold tabular-nums">{money(quote.subtotal, quote.currency)}</span></div>
-                  <div className="mt-3 flex justify-between gap-3 text-sm text-slate-600"><span>VAT / tax</span><span className="text-right font-semibold tabular-nums">{money(quote.taxAmount, quote.currency)}</span></div>
-                  <div className="mt-4 flex justify-between gap-3 border-t border-emerald-100 pt-4"><span className="font-extrabold">Estimated total</span><span className="text-right text-lg font-extrabold text-emerald-800 tabular-nums">{money(quote.totalAmount, quote.currency)}</span></div>
+                  <div className="flex justify-between gap-3 text-sm text-slate-600">
+                    <span>Selected services subtotal</span>
+                    <span className="text-right font-semibold tabular-nums">
+                      {money(selectedTotals.subtotal, quote.currency)}
+                    </span>
+                  </div>
+                  <div className="mt-3 flex justify-between gap-3 text-sm text-slate-600">
+                    <span>
+                      VAT / tax{selectedTotals.vatEnabled ? ` (${selectedTotals.vatPercentage}%)` : ""}
+                    </span>
+                    <span className="text-right font-semibold tabular-nums">
+                      {money(selectedTotals.taxAmount, quote.currency)}
+                    </span>
+                  </div>
+                  <div className="mt-4 flex justify-between gap-3 border-t border-emerald-100 pt-4">
+                    <span className="font-extrabold">Estimated total for selected services</span>
+                    <span className="text-right text-lg font-extrabold text-emerald-800 tabular-nums">
+                      {money(selectedTotals.totalAmount, quote.currency)}
+                    </span>
+                  </div>
                 </div>
 
+                {selectedItemIds.length === 0 ? (
+                  <p className="mt-4 rounded-xl border border-amber-200 bg-amber-50 p-3 text-sm leading-5 text-amber-900" role="status">
+                    Select at least one service to continue. Your original quotation remains saved.
+                  </p>
+                ) : selectedItemIds.length < quote.lines.length ? (
+                  <p className="mt-4 text-xs leading-5 text-slate-500" role="status">
+                    {quote.lines.length - selectedItemIds.length} service(s) excluded. Only the {selectedItemIds.length} selected service(s) and their recalculated total will be included in your request.
+                  </p>
+                ) : null}
+
                 <div className="mt-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                  <p className="text-xs text-slate-500">{selectedItemIds.length} of {quote.lines.length} services selected</p>
-                  <button type="button" onClick={requestHelp} className={primaryButtonClass}>
-                    Continue to request help <ArrowRight size={17} />
+                  <p className="text-xs text-slate-500">
+                    {selectedItemIds.length} of {quote.lines.length} services selected
+                  </p>
+                  <button
+                    type="button"
+                    onClick={requestHelp}
+                    disabled={selectedItemIds.length === 0}
+                    className={primaryButtonClass}
+                  >
+                    Continue with selected services <ArrowRight size={17} />
                   </button>
                 </div>
               </div>

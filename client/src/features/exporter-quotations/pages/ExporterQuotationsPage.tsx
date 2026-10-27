@@ -334,9 +334,11 @@ export default function ExporterQuotationsPage() {
                     const ModeIcon = mode?.Icon ?? PackageCheck;
 
                     return (
-                      <article
+                      <Link
                         key={item.id}
-                        className="quotation-enter group grid min-w-0 gap-4 px-4 py-5 transition-colors duration-200 hover:bg-emerald-50/35 sm:px-6 sm:py-6 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-center"
+                        to={`/exporter/quotations/${item.id}`}
+                        aria-label={`Open quotation ${item.quote.quoteNumber} details`}
+                        className="quotation-enter group group/row grid min-w-0 cursor-pointer gap-4 px-4 py-5 text-left no-underline transition-colors duration-200 hover:bg-emerald-50/35 focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-emerald-600 sm:px-6 sm:py-6 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-center"
                         style={{ animationDelay: `${Math.min(index * 55, 330)}ms` }}
                       >
                         <div className="flex min-w-0 items-start gap-3 sm:gap-4">
@@ -380,16 +382,15 @@ export default function ExporterQuotationsPage() {
                               {status.label}
                             </span>
                           </div>
-                          <Link
-                            to={`/exporter/quotations/${item.id}`}
-                            aria-label={`View details for quotation ${item.quote.quoteNumber}`}
-                            className="group/link inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-xl border border-emerald-100 bg-white px-4 py-2.5 text-sm font-bold text-emerald-900 transition duration-200 hover:border-emerald-300 hover:bg-emerald-50 hover:text-emerald-900 focus:outline-none focus-visible:ring-4 focus-visible:ring-emerald-500/20 sm:w-auto lg:ml-4"
+                          <span
+                            aria-hidden="true"
+                            className="group/cta inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-xl border border-emerald-100 bg-white px-4 py-2.5 text-sm font-bold text-emerald-900 transition duration-200 group-hover/row:border-emerald-300 group-hover/row:bg-emerald-50 sm:w-auto lg:ml-4"
                           >
                             View details
-                            <ArrowRight size={15} className="transition-transform group-hover/link:translate-x-0.5" aria-hidden="true" />
-                          </Link>
+                            <ArrowRight size={15} className="transition-transform group-hover/row:translate-x-0.5" aria-hidden="true" />
+                          </span>
                         </div>
-                      </article>
+                      </Link>
                     );
                   })}
                 </div>

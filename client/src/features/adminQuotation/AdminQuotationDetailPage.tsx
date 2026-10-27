@@ -489,26 +489,81 @@ export default function AdminQuotationDetailsPage({ readOnly = false }: AdminQuo
 
               <section className="print-break-inside-avoid">
                 <SectionHeading eyebrow="03 / Cost breakdown" title="Requested services" icon={FileText} />
-                <div className="overflow-hidden rounded-2xl border border-slate-200">
-                  <table className="w-full text-left">
-                    <thead className="bg-slate-50 text-[10px] uppercase tracking-[0.12em] text-slate-500">
-                      <tr><th scope="col" className="w-12 px-3 py-3 font-bold">S/N</th><th scope="col" className="px-4 py-3 font-bold">Service / charge</th><th scope="col" className="px-3 py-3 font-bold">Code</th><th scope="col" className="px-3 py-3 text-right font-bold">Qty</th><th scope="col" className="px-3 py-3 text-right font-bold">Unit rate</th><th scope="col" className="px-4 py-3 text-right font-bold">Amount</th></tr>
-                    </thead>
-                    <tbody className="divide-y divide-slate-100">
-                      {selectedItems.length === 0 ? (
-                        <tr><td colSpan={6} className="px-4 py-6 text-center text-sm text-slate-500">No selected service items are available for this quotation.</td></tr>
-                      ) : selectedItems.map((item, index) => (
-                        <tr key={item.id} className="align-top">
-                          <td className="px-3 py-3 text-sm font-semibold tabular-nums text-slate-500">{index + 1}</td>
-                          <td className="px-4 py-3"><p className="text-sm font-semibold text-slate-800">{item.componentName}</p></td>
-                          <td className="px-3 py-3 text-xs text-slate-500">{item.componentCode || "—"}</td>
-                          <td className="px-3 py-3 text-right text-sm text-slate-600">{item.quantity}</td>
-                          <td className="whitespace-nowrap px-3 py-3 text-right text-sm text-slate-600">{quotation.currency} {amount(item.rateApplied)}</td>
-                          <td className="whitespace-nowrap px-4 py-3 text-right text-sm font-semibold text-slate-900">{quotation.currency} {amount(item.lineTotal)}</td>
+                <div className="rounded-2xl border border-slate-200 bg-white">
+                  {/* Mobile and tablet: service cards keep every value, including Amount, visible without horizontal scrolling. */}
+                  <div className="space-y-3 p-3 sm:p-4 lg:hidden print:hidden">
+                    {selectedItems.length === 0 ? (
+                      <p className="px-2 py-6 text-center text-sm text-slate-500">
+                        No selected service items are available for this quotation.
+                      </p>
+                    ) : selectedItems.map((item, index) => (
+                      <article key={item.id} className="min-w-0 rounded-xl border border-slate-200 bg-white p-3.5 sm:p-4">
+                        <div className="flex min-w-0 items-start gap-3">
+                          <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-emerald-50 text-xs font-extrabold tabular-nums text-emerald-800">
+                            {index + 1}
+                          </span>
+                          <div className="min-w-0 flex-1">
+                            <h3 className="break-words text-sm font-bold leading-5 text-slate-900">
+                              {item.componentName}
+                            </h3>
+                            <p className="mt-1 break-all text-[11px] leading-4 text-slate-500">
+                              <span className="font-semibold text-slate-600">Code:</span> {item.componentCode || "—"}
+                            </p>
+                          </div>
+                        </div>
+
+                        <dl className="mt-4 grid min-w-0 grid-cols-2 gap-x-3 gap-y-3 border-t border-slate-100 pt-3">
+                          <div className="min-w-0">
+                            <dt className="text-[11px] font-medium text-slate-500">Quantity</dt>
+                            <dd className="mt-1 break-words text-sm font-semibold tabular-nums text-slate-800">{item.quantity}</dd>
+                          </div>
+                          <div className="min-w-0 text-right">
+                            <dt className="text-[11px] font-medium text-slate-500">Unit rate</dt>
+                            <dd className="mt-1 break-words text-sm font-semibold tabular-nums text-slate-800">
+                              <span className="block text-[10px] font-medium text-slate-500">{quotation.currency}</span>
+                              {amount(item.rateApplied)}
+                            </dd>
+                          </div>
+                          <div className="col-span-2 flex min-w-0 items-center justify-between gap-3 rounded-xl bg-emerald-50 px-3 py-3">
+                            <dt className="shrink-0 text-xs font-bold text-emerald-950">Amount</dt>
+                            <dd className="min-w-0 break-words text-right text-sm font-extrabold tabular-nums text-emerald-900">
+                              {quotation.currency} {amount(item.lineTotal)}
+                            </dd>
+                          </div>
+                        </dl>
+                      </article>
+                    ))}
+                  </div>
+
+                  {/* Desktop: retain the full itemized table. The scroll container protects narrower laptop windows. */}
+                  <div className="hidden overflow-x-auto lg:block print:block print:overflow-visible">
+                    <table className="w-full min-w-[760px] table-fixed text-left lg:min-w-0 print:min-w-0">
+                      <thead className="bg-slate-50 text-[10px] uppercase tracking-[0.12em] text-slate-500">
+                        <tr>
+                          <th scope="col" className="w-[7%] px-3 py-3 font-bold">S/N</th>
+                          <th scope="col" className="w-[25%] px-3 py-3 font-bold">Service / charge</th>
+                          <th scope="col" className="w-[19%] px-3 py-3 font-bold">Code</th>
+                          <th scope="col" className="w-[9%] px-3 py-3 text-right font-bold">Qty</th>
+                          <th scope="col" className="w-[19%] px-3 py-3 text-right font-bold">Unit rate</th>
+                          <th scope="col" className="w-[21%] px-3 py-3 text-right font-bold">Amount</th>
                         </tr>
-                      ))}
-                    </tbody>
-                  </table>
+                      </thead>
+                      <tbody className="divide-y divide-slate-100">
+                        {selectedItems.length === 0 ? (
+                          <tr><td colSpan={6} className="px-4 py-6 text-center text-sm text-slate-500">No selected service items are available for this quotation.</td></tr>
+                        ) : selectedItems.map((item, index) => (
+                          <tr key={item.id} className="align-top">
+                            <td className="break-words px-3 py-3 text-sm font-semibold tabular-nums text-slate-500">{index + 1}</td>
+                            <td className="break-words px-3 py-3 text-sm font-semibold text-slate-800">{item.componentName}</td>
+                            <td className="break-all px-3 py-3 text-xs text-slate-500">{item.componentCode || "—"}</td>
+                            <td className="break-words px-3 py-3 text-right text-sm tabular-nums text-slate-600">{item.quantity}</td>
+                            <td className="break-words px-3 py-3 text-right text-sm tabular-nums text-slate-600">{quotation.currency} {amount(item.rateApplied)}</td>
+                            <td className="break-words px-3 py-3 text-right text-sm font-bold tabular-nums text-slate-900">{quotation.currency} {amount(item.lineTotal)}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
                 </div>
                 <div className="mt-4 ml-auto max-w-sm rounded-2xl border border-emerald-100 bg-emerald-50/70 p-4 sm:p-5 print-break-inside-avoid">
                   <div className="flex justify-between gap-4 text-sm text-slate-600"><span>Subtotal</span><span>{quotation.currency} {amount(quotation.subtotal)}</span></div>

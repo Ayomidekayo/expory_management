@@ -17,6 +17,8 @@ import { useAuthStore } from "../../store/auth.store";
 
 interface Props {
   onMenuClick?: () => void;
+  /** Whether the responsive dashboard drawer is currently open. */
+  mobileMenuOpen?: boolean;
 }
 
 interface QuotationSubmittedEvent {
@@ -26,7 +28,7 @@ interface QuotationSubmittedEvent {
   submittedAt?: string;
 }
 
-export default function Topbar({ onMenuClick }: Props) {
+export default function Topbar({ onMenuClick, mobileMenuOpen = false }: Props) {
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -315,8 +317,10 @@ export default function Topbar({ onMenuClick }: Props) {
           <button
             type="button"
             onClick={onMenuClick}
-            aria-label="Open navigation menu"
-            className="rounded-xl p-2 transition hover:bg-slate-100 lg:hidden"
+            aria-controls="mobile-dashboard-navigation"
+            aria-expanded={mobileMenuOpen}
+            aria-label={mobileMenuOpen ? "Navigation menu open" : "Open navigation menu"}
+            className="rounded-xl p-2 transition hover:bg-slate-100 focus:outline-none focus-visible:ring-4 focus-visible:ring-emerald-500/20 lg:hidden"
           >
             <Menu className="h-6 w-6 text-slate-700" />
           </button>

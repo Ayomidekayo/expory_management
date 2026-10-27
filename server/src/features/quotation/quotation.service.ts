@@ -17,6 +17,15 @@ const numeric = (v: unknown, fallback = 0) => {
   return Number.isFinite(n) ? n : fallback
 }
 
+type SelectionAwareLine = CalculatedLine & {
+  /** Percentage value used to recompute subtotal-based fees after selection changes. */
+  percentage?: number | null
+}
+
+const isSubtotalPercentage = (item: { calculationType?: unknown; calculationBasis?: unknown }) =>
+  String(item.calculationType) === String(RateCalculationType.PERCENTAGE) &&
+  String(item.calculationBasis) === String(CalculationBasis.SUBTOTAL)
+
 // function getSlabRate(
 //   slabs: any[],
 //   componentId: string,
@@ -234,7 +243,10 @@ export class QuotationService {
 
     const weightKg = numeric(input.weightKg)
     const quantity = Math.max(0, numeric(input.quantity, 1))
-    if (config.weightEnabled && weightKg <= 0)
+    // Air freight always requires chargeable weight, independently of a legacy
+    // weightEnabled toggle in the selected configuration.
+    const weightRequired = config.weightEnabled || card.mode === "AIR"
+    if (weightRequired && weightKg <= 0)
       throw new Error('WEIGHT_REQUIRED')
     if (config.quantityEnabled && quantity <= 0)
       throw new Error('QUANTITY_REQUIRED')
@@ -244,9 +256,23 @@ export class QuotationService {
       throw new Error('INVALID_FREIGHT_AMOUNT')
 
     const selectedOptions = new Set(input.optionIds ?? [])
-    const validOptions = new Set(config.options.map((o: any) => o.id))
+    const activeOptions = (config.options ?? []).filter(
+      (option: any) => option.isActive !== false,
+    )
+    const validOptions = new Set(activeOptions.map((option: any) => option.id))
     for (const id of selectedOptions)
       if (!validOptions.has(id)) throw new Error('INVALID_OPTION')
+
+    // Land choices (e.g. short/long haul) and sea container types (e.g. 20ft/40ft)
+    // are exclusive variants. They must come from active RateCardOption records.
+    const requiresSingleModeOption = card.mode === "LAND" || card.mode === "SEA"
+    if (requiresSingleModeOption && activeOptions.length === 0)
+      throw new Error('SHIPMENT_OPTIONS_NOT_CONFIGURED')
+    if (requiresSingleModeOption && selectedOptions.size === 0)
+      throw new Error('SHIPMENT_OPTION_REQUIRED')
+    if (requiresSingleModeOption && selectedOptions.size !== 1)
+      throw new Error('SELECT_ONE_SHIPMENT_OPTION')
+
     if (
       input.airlineId &&
       !config.airlines.some((a: any) => a.id === input.airlineId)
@@ -261,7 +287,7 @@ export class QuotationService {
         (c: any) => !c.optionId || selectedOptions.has(c.optionId),
       ),
     ]
-    const lines: CalculatedLine[] = []
+    const lines: SelectionAwareLine[] = []
     let requiresReview = false
 
     for (const component of components) {
@@ -353,6 +379,10 @@ export class QuotationService {
         lineTotal: money(lineTotal),
         isTaxable: Boolean(component.isTaxable),
         isOptional: Boolean(component.isOptional),
+        percentage:
+          component.calculationType === RateCalculationType.PERCENTAGE
+            ? numeric(component.percentage)
+            : null,
         isEstimate,
         requiresReview: isEstimate,
         remarks,
@@ -396,6 +426,7 @@ export class QuotationService {
     lineTotal: freightTotal,
     isTaxable: false,
     isOptional: false,
+    percentage: null,
     isEstimate: false,
     requiresReview: false,
     remarks: `${airline.name}: ${ratePerKg} per kg × ${weightKg} kg`,
@@ -453,7 +484,7 @@ requiresReview ||= requiresReviewFromLines;
       rateCardId: card.id,
       quoteNumber,
       source: 'GUEST',
-      weightKg: config.weightEnabled ? weightKg : undefined,
+      weightKg: weightRequired ? weightKg : undefined,
       goodsDescription: input.goodsDescription,
       hsCode: input.hsCode,
       customsValue: config.customsValueEnabled
@@ -485,6 +516,7 @@ pricingSnapshot: {
   taxAmount,
   totalAmount,
   vatRule: "FULL_SUBTOTAL",
+  selectionRecalculationVersion: 1,
   calculatedAt: new Date().toISOString(),
 },
       items: lines
@@ -510,6 +542,12 @@ pricingSnapshot: {
         })) as any,
     })
 
+    const savedSnapshotLines: Array<Record<string, any>> = Array.isArray(
+      (quote.pricingSnapshot as any)?.lines,
+    )
+      ? (quote.pricingSnapshot as any).lines
+      : []
+
     return {
       quoteId: quote.id,
       quoteNumber: quote.quoteNumber,
@@ -525,14 +563,20 @@ pricingSnapshot: {
         name: config.name,
         currency: config.currency,
       },
-      lines: quote.items.map((item: any, index: number) => ({
-        ...lines[index],
-        quoteItemId: item.id,
+      // Return the item IDs attached to the corresponding saved snapshot line;
+      // do not depend on the database's unspecified relation ordering.
+      lines: lines.map((line, index) => ({
+        ...line,
+        quoteItemId:
+          savedSnapshotLines[index]?.quoteItemId ?? quote.items[index]?.id,
       })),
       subtotal,
       taxAmount,
       totalAmount,
       currency: config.currency,
+      vatEnabled: Boolean(config.vatEnabled),
+      vatPercentage,
+      vatRule: "FULL_SUBTOTAL",
       requiresReview,
     }
   }
@@ -541,21 +585,144 @@ pricingSnapshot: {
 async submit(
   quoteId: string,
   exporterId: string,
-  input: SubmitQuoteInput
+  input: SubmitQuoteInput,
 ) {
-  // Fetch the calculated quote and its items.
-  const quote = await repository.findQuoteForSubmission(quoteId);
+  const quote = await repository.findQuoteForSubmission(quoteId)
+  if (!quote) throw new Error("QUOTE_NOT_FOUND")
+  if (quote.status !== "CALCULATED") throw new Error("QUOTE_NOT_SUBMITTABLE")
 
-  if (!quote) {
-    throw new Error("QUOTE_NOT_FOUND");
+  const requestedIds = input?.selectedQuoteItemIds
+  if (!Array.isArray(requestedIds) || requestedIds.length === 0) {
+    throw new Error("SELECT_AT_LEAST_ONE_SERVICE")
+  }
+  if (
+    requestedIds.some((id) => typeof id !== "string" || id.trim().length === 0) ||
+    new Set(requestedIds).size !== requestedIds.length
+  ) {
+    throw new Error("INVALID_SELECTED_QUOTE_ITEM")
   }
 
-  // Only calculated quotes can be submitted.
-  if (quote.status !== "CALCULATED") {
-    throw new Error("QUOTE_NOT_SUBMITTABLE");
+  const quoteItems = quote.items as Array<any>
+  const validIds = new Set(quoteItems.map((item) => item.id))
+  if (requestedIds.some((id) => !validIds.has(id))) {
+    throw new Error("INVALID_SELECTED_QUOTE_ITEM")
   }
 
-  // Create the submission using the saved quote data.
+  const selected = new Set(requestedIds)
+  const selectedItems = quoteItems.filter((item) => selected.has(item.id))
+  const snapshot = (quote.pricingSnapshot ?? {}) as Record<string, any>
+  const snapshotLines: Array<Record<string, any>> = Array.isArray(snapshot.lines)
+    ? snapshot.lines
+    : []
+  const usedSnapshotIndexes = new Set<number>()
+
+  // Match saved pricing metadata to persisted quote items. The repository adds
+  // quoteItemId to new snapshots; signature matching supports older snapshots.
+  const selectedEntries = selectedItems.map((item) => {
+    let snapshotIndex = snapshotLines.findIndex(
+      (line, index) =>
+        !usedSnapshotIndexes.has(index) && line.quoteItemId === item.id,
+    )
+
+    if (snapshotIndex < 0 && item.componentId) {
+      snapshotIndex = snapshotLines.findIndex(
+        (line, index) =>
+          !usedSnapshotIndexes.has(index) &&
+          line.componentId === item.componentId,
+      )
+    }
+
+    if (snapshotIndex < 0) {
+      snapshotIndex = snapshotLines.findIndex((line, index) =>
+        !usedSnapshotIndexes.has(index) &&
+        String(line.componentName ?? "") === String(item.componentName ?? "") &&
+        (line.componentCode ?? null) === (item.componentCode ?? null) &&
+        String(line.calculationType) === String(item.calculationType) &&
+        numeric(line.quantity, 1) === numeric(item.quantity, 1) &&
+        numeric(line.lineTotal) === numeric(item.lineTotal),
+      )
+    }
+
+    if (snapshotIndex < 0 && quoteItems.indexOf(item) < snapshotLines.length) {
+      const fallbackIndex = quoteItems.indexOf(item)
+      if (!usedSnapshotIndexes.has(fallbackIndex)) snapshotIndex = fallbackIndex
+    }
+
+    const pricingLine = snapshotIndex >= 0 ? snapshotLines[snapshotIndex] : undefined
+    if (snapshotIndex >= 0) usedSnapshotIndexes.add(snapshotIndex)
+
+    if (
+      isSubtotalPercentage(item) &&
+      (!pricingLine || typeof pricingLine.percentage !== "number" ||
+        !Number.isFinite(pricingLine.percentage))
+    ) {
+      // Old, already-calculated quotes may not contain the percentage needed
+      // to safely recalculate a subtotal fee after services are removed.
+      throw new Error("QUOTE_SELECTION_RECALCULATION_REQUIRED")
+    }
+
+    return { item, pricingLine }
+  })
+
+  // Subtotal-based percentage charges must be recomputed from the selected
+  // non-subtotal-percentage lines, not copied from the original full quote.
+  const selectedBaseSubtotal = money(
+    selectedEntries
+      .filter(({ item }) => String(item.calculationType) !== String(RateCalculationType.PERCENTAGE))
+      .reduce((sum, { item }) => sum + numeric(item.lineTotal), 0),
+  )
+
+  const selectedQuoteItems = selectedEntries.map(({ item, pricingLine }) => {
+    let rateApplied = numeric(item.rateApplied)
+    let lineTotal = numeric(item.lineTotal)
+
+    if (isSubtotalPercentage(item)) {
+      const recalculatedAmount = money(
+        (selectedBaseSubtotal * numeric(pricingLine?.percentage)) / 100,
+      )
+      // Existing QuoteItem.rateApplied stores the calculated amount for
+      // percentage charges, so preserve that convention in the submission.
+      rateApplied = recalculatedAmount
+      lineTotal = recalculatedAmount
+    }
+
+    return {
+      id: item.id as string,
+      componentName: item.componentName as string,
+      componentCode: (item.componentCode ?? null) as string | null,
+      quantity: numeric(item.quantity, 1),
+      rateApplied,
+      lineTotal,
+    }
+  })
+
+  const subtotal = money(
+    selectedQuoteItems.reduce((sum, item) => sum + item.lineTotal, 0),
+  )
+  const originalSubtotal = numeric(snapshot.subtotal, numeric(quote.subtotal))
+  const originalTax = numeric(
+    snapshot.taxAmount,
+    numeric(snapshot.totalAmount, numeric(quote.totalAmount)) - originalSubtotal,
+  )
+  const vatEnabled =
+    typeof snapshot.vatEnabled === "boolean"
+      ? snapshot.vatEnabled
+      : originalTax > 0
+  const vatPercentage =
+    typeof snapshot.vatPercentage === "number" &&
+    Number.isFinite(snapshot.vatPercentage)
+      ? snapshot.vatPercentage
+      : originalSubtotal > 0
+        ? (originalTax / originalSubtotal) * 100
+        : 0
+
+  // The calculator's saved rule is VAT on the full applicable subtotal.
+  // Never accept prices or totals from the browser as authoritative.
+  const taxAmount = vatEnabled
+    ? money((subtotal * vatPercentage) / 100)
+    : 0
+  const totalAmount = money(subtotal + taxAmount)
+
   const submission = await repository.createSubmission({
     quoteId: quote.id,
     exporterId,
@@ -563,23 +730,22 @@ async submit(
     email: input.email ?? undefined,
     phone: input.phone ?? undefined,
     customerMessage: input.customerMessage ?? undefined,
-    selectedQuoteItemIds: input.selectedQuoteItemIds,
-    quoteItems: quote.items,
+    selectedQuoteItemIds: requestedIds,
+    selectedQuoteItems,
     currency: quote.currency,
-    subtotal: quote.subtotal ?? 0,
-    taxAmount: (quote.pricingSnapshot as any)?.taxAmount ?? 0,
-    totalAmount: quote.totalAmount ?? 0,
-  });
+    subtotal,
+    taxAmount,
+    totalAmount,
+  })
 
-  // Notify connected quotation reviewers after the database transaction.
   emitToQuotationReviewers("quotation:submitted", {
     submissionId: submission.id,
     quoteId: submission.quoteId,
     status: submission.status,
     submittedAt: submission.submittedAt,
-  });
+  })
 
-  return submission;
+  return submission
 }
 
 
@@ -830,7 +996,3 @@ export async function addExporterSubmissionMessage(data: {
 
   return message;
 }
-
-
-
-

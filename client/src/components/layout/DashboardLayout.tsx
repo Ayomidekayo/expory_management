@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState, type MouseEvent } from "react";
 import { Outlet, useLocation } from "react-router-dom";
-import { Menu, X } from "lucide-react";
+import { X } from "lucide-react";
 import Sidebar from "./Sidebar";
 import Topbar from "./Topbar";
 
@@ -96,23 +96,11 @@ export default function DashboardLayout() {
       )}
 
       <div className="flex min-h-screen min-w-0 flex-col lg:ml-72">
-        {/* The menu button lives in its own mobile row so it does not overlap
-            search, notifications, or the account controls inside the Topbar. */}
-        <div className="flex min-h-14 items-center border-b border-slate-200 bg-white px-3 sm:px-5 lg:hidden">
-          <button
-            type="button"
-            onClick={() => setMobileSidebarOpen(true)}
-            aria-controls="mobile-dashboard-navigation"
-            aria-expanded={mobileSidebarOpen}
-            aria-label="Open navigation menu"
-            className="inline-flex min-h-11 min-w-11 items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-3 text-sm font-semibold text-slate-700 shadow-sm transition hover:border-emerald-200 hover:bg-emerald-50 hover:text-emerald-900 focus:outline-none focus-visible:ring-4 focus-visible:ring-emerald-500/20"
-          >
-            <Menu size={19} aria-hidden="true" />
-            <span>Menu</span>
-          </button>
-        </div>
-
-        <Topbar />
+        {/* Keep a single mobile menu trigger in the Topbar. */}
+        <Topbar
+          onMenuClick={() => setMobileSidebarOpen(true)}
+          mobileMenuOpen={mobileSidebarOpen}
+        />
 
         <main className="min-w-0 w-full flex-1 overflow-x-clip px-3 py-4 sm:px-5 sm:py-6 md:px-6 lg:px-8 lg:py-8">
           <Outlet />

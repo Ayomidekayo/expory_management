@@ -63,8 +63,11 @@ const dateLabel = (value?: string | Date | null) => {
       }).format(date);
 };
 
-const money = (value: string | number, currency: string) => {
-  const amount = Number(value);
+const money = (
+  value: string | number | null | undefined,
+  currency: string,
+) => {
+  const numericAmount = Number(value ?? 0);
   const code = currency === "CFA" ? "XOF" : currency || "NGN";
 
   try {
@@ -72,10 +75,12 @@ const money = (value: string | number, currency: string) => {
       style: "currency",
       currency: code,
       maximumFractionDigits: 2,
-    }).format(Number.isFinite(amount) ? amount : 0);
+    }).format(Number.isFinite(numericAmount) ? numericAmount : 0);
   } catch {
     return `${code} ${
-      Number.isFinite(amount) ? amount.toLocaleString() : "0"
+      Number.isFinite(numericAmount)
+        ? numericAmount.toLocaleString("en-NG")
+        : "0"
     }`;
   }
 };
@@ -519,27 +524,141 @@ export default function ExporterQuotationDetailsPage() {
             </div>
           </div>
 
-          <div className="px-5 pb-5 sm:px-8 sm:pb-8">
-            <div className="relative overflow-hidden rounded-2xl border border-emerald-200/80 bg-gradient-to-br from-emerald-50 via-white to-teal-50 p-5 shadow-sm shadow-emerald-950/[0.03] sm:p-6">
-              <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-center">
-                <div>
-                  <p className="text-sm font-semibold text-emerald-900">
-                    Current quotation total
-                  </p>
-                  <p className="mt-2 break-words text-3xl font-bold tracking-tight text-emerald-800 sm:text-4xl">
-                    {money(data.totalAmount, data.currency)}
-                  </p>
-                  <p className="mt-2 text-xs leading-5 text-slate-600">
-                    This amount is based on your submitted quotation and may
-                    change if revisions are requested.
+          {/* Requested services and itemized pricing. Mobile uses stacked cards so
+              service names and amounts remain visible on narrow screens; wider
+              screens use a complete tabular breakdown. */}
+          <div className="px-4 pb-5 sm:px-8 sm:pb-8">
+            <section
+              aria-labelledby="requested-services-heading"
+              className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm shadow-slate-900/[0.03]"
+            >
+              <div className="flex flex-col gap-3 border-b border-slate-100 bg-slate-50/80 p-4 sm:flex-row sm:items-center sm:justify-between sm:p-5">
+                <div className="flex min-w-0 items-start gap-3">
+                  <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-emerald-100 text-emerald-800">
+                    <FileText size={19} aria-hidden="true" />
+                  </div>
+                  <div className="min-w-0">
+                    <h2 id="requested-services-heading" className="text-base font-extrabold text-slate-900 sm:text-lg">
+                      Requested services
+                    </h2>
+                    <p className="mt-1 text-xs leading-5 text-slate-500 sm:text-sm">
+                      Itemized charges included in the quotation you submitted.
+                    </p>
+                  </div>
+                </div>
+                <span className="inline-flex w-fit items-center rounded-full bg-emerald-50 px-3 py-1.5 text-xs font-bold text-emerald-800 ring-1 ring-inset ring-emerald-200">
+                  {selectedItems.length} {selectedItems.length === 1 ? "service" : "services"}
+                </span>
+              </div>
+
+              {selectedItems.length === 0 ? (
+                <div className="m-4 rounded-xl border border-dashed border-slate-200 bg-slate-50 px-4 py-8 text-center sm:m-5">
+                  <Package className="mx-auto text-slate-400" size={26} aria-hidden="true" />
+                  <p className="mt-3 text-sm font-semibold text-slate-700">No requested services are available</p>
+                  <p className="mt-1 text-xs leading-5 text-slate-500">
+                    The quotation contains no selected service items. Contact the quotation team if this appears incorrect.
                   </p>
                 </div>
+              ) : (
+                <>
+                  {/* Mobile item cards */}
+                  <div className="divide-y divide-slate-100 md:hidden print:hidden">
+                    {selectedItems.map((item, index) => (
+                      <article key={item.id} className="min-w-0 p-4 sm:p-5">
+                        <div className="flex min-w-0 items-start gap-3">
+                          <span className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-slate-100 text-xs font-extrabold tabular-nums text-slate-600">
+                            {String(index + 1).padStart(2, "0")}
+                          </span>
+                          <div className="min-w-0 flex-1">
+                            <h3 className="break-words text-sm font-bold leading-5 text-slate-900">
+                              {item.componentName || "Service charge"}
+                            </h3>
+                            <p className="mt-1 break-all text-xs text-slate-500">
+                              Code: {item.componentCode || "Not provided"}
+                            </p>
+                          </div>
+                        </div>
 
-                <div className="flex size-14 shrink-0 items-center justify-center self-start rounded-2xl border border-emerald-100 bg-white text-emerald-700 shadow-sm transition duration-300 hover:rotate-3 hover:scale-105 sm:self-center">
-                  <FileCheck2 size={27} />
+                        <div className="mt-4 grid grid-cols-2 gap-3">
+                          <div className="min-w-0 rounded-xl bg-slate-50 p-3">
+                            <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-500">Quantity</p>
+                            <p className="mt-1 break-words text-sm font-bold tabular-nums text-slate-800">
+                              {item.quantity ?? "—"}
+                            </p>
+                          </div>
+                          <div className="min-w-0 rounded-xl bg-slate-50 p-3">
+                            <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-500">Unit rate</p>
+                            <p className="mt-1 break-words text-sm font-semibold tabular-nums text-slate-800">
+                              {money(item.rateApplied, data.currency)}
+                            </p>
+                          </div>
+                        </div>
+
+                        <div className="mt-3 flex min-w-0 items-center justify-between gap-3 rounded-xl border border-emerald-100 bg-emerald-50/80 px-3.5 py-3">
+                          <span className="text-xs font-bold text-emerald-900">Line amount</span>
+                          <span className="break-words text-right text-base font-extrabold tabular-nums text-emerald-900">
+                            {money(item.lineTotal, data.currency)}
+                          </span>
+                        </div>
+                      </article>
+                    ))}
+                  </div>
+
+                  {/* Full itemized table for tablet/desktop and print */}
+                  <div className="hidden overflow-x-auto md:block print:block print:overflow-visible">
+                    <table className="w-full min-w-[680px] table-auto border-collapse text-left">
+                      <caption className="sr-only">Selected services and their quotation prices</caption>
+                      <thead className="bg-slate-50 text-[10px] uppercase tracking-[0.12em] text-slate-500">
+                        <tr>
+                          <th scope="col" className="w-14 px-4 py-3.5 font-extrabold">S/N</th>
+                          <th scope="col" className="min-w-48 px-4 py-3.5 font-extrabold">Service / charge</th>
+                          <th scope="col" className="min-w-36 px-4 py-3.5 font-extrabold">Code</th>
+                          <th scope="col" className="w-24 px-4 py-3.5 text-right font-extrabold">Qty</th>
+                          <th scope="col" className="min-w-36 px-4 py-3.5 text-right font-extrabold">Unit rate</th>
+                          <th scope="col" className="min-w-40 px-4 py-3.5 text-right font-extrabold">Amount</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-slate-100">
+                        {selectedItems.map((item, index) => (
+                          <tr key={item.id} className="align-top transition-colors hover:bg-emerald-50/30">
+                            <td className="px-4 py-4 text-sm font-semibold tabular-nums text-slate-500">{index + 1}</td>
+                            <td className="max-w-xs break-words px-4 py-4 text-sm font-bold leading-5 text-slate-800">{item.componentName || "Service charge"}</td>
+                            <td className="break-all px-4 py-4 text-xs leading-5 text-slate-500">{item.componentCode || "—"}</td>
+                            <td className="px-4 py-4 text-right text-sm tabular-nums text-slate-700">{item.quantity ?? "—"}</td>
+                            <td className="whitespace-nowrap px-4 py-4 text-right text-sm tabular-nums text-slate-700">{money(item.rateApplied, data.currency)}</td>
+                            <td className="whitespace-nowrap px-4 py-4 text-right text-sm font-extrabold tabular-nums text-slate-900">{money(item.lineTotal, data.currency)}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </>
+              )}
+
+              <div className="border-t border-emerald-100 bg-gradient-to-br from-emerald-50 via-white to-teal-50 p-4 sm:p-5">
+                <div className="ml-auto w-full max-w-md space-y-3">
+                  <div className="flex items-center justify-between gap-4 text-sm text-slate-600">
+                    <span>Subtotal</span>
+                    <span className="text-right font-semibold tabular-nums text-slate-800">{money(data.subtotal, data.currency)}</span>
+                  </div>
+                  <div className="flex items-center justify-between gap-4 text-sm text-slate-600">
+                    <span>Tax</span>
+                    <span className="text-right font-semibold tabular-nums text-slate-800">{money(data.taxAmount, data.currency)}</span>
+                  </div>
+                  <div className="border-t border-emerald-200 pt-3">
+                    <div className="flex items-start justify-between gap-4">
+                      <div className="min-w-0">
+                        <p className="text-sm font-extrabold text-slate-900">Quotation total</p>
+                        <p className="mt-1 text-[11px] leading-5 text-slate-500">Based on the saved quotation submitted for review.</p>
+                      </div>
+                      <p className="break-words text-right text-xl font-extrabold tracking-tight tabular-nums text-emerald-900 sm:text-2xl">
+                        {money(data.totalAmount, data.currency)}
+                      </p>
+                    </div>
+                  </div>
                 </div>
               </div>
-            </div>
+            </section>
           </div>
 
           {data.status === "CHANGES_REQUESTED" && (

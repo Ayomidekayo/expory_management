@@ -16,10 +16,52 @@ function getRouteParam(
 }
 function respondError(res: Response, error: unknown) {
   const message = error instanceof Error ? error.message : "INTERNAL_ERROR";
-  const badRequest = new Set(["WEIGHT_REQUIRED", "QUANTITY_REQUIRED", "INVALID_CUSTOMS_VALUE", "INVALID_FREIGHT_AMOUNT", "INVALID_OPTION", "INVALID_AIRLINE", "AIRLINE_REQUIRED", "INVALID_SELECTED_QUOTE_ITEM", "SELECT_AT_LEAST_ONE_SERVICE", "QUOTE_NOT_SUBMITTABLE"]);
-  const notFound = new Set(["ACTIVE_RATE_CARD_NOT_FOUND", "ACTIVE_CONFIGURATION_NOT_FOUND", "QUOTE_NOT_FOUND"]);
+  const badRequest = new Set([
+    "WEIGHT_REQUIRED",
+    "QUANTITY_REQUIRED",
+    "INVALID_CUSTOMS_VALUE",
+    "INVALID_FREIGHT_AMOUNT",
+    "INVALID_OPTION",
+    "INVALID_AIRLINE",
+    "AIRLINE_REQUIRED",
+    "INVALID_SELECTED_QUOTE_ITEM",
+    "SELECT_AT_LEAST_ONE_SERVICE",
+    "QUOTE_NOT_SUBMITTABLE",
+    "QUOTE_SELECTION_RECALCULATION_REQUIRED",
+    "SHIPMENT_OPTIONS_NOT_CONFIGURED",
+    "SHIPMENT_OPTION_REQUIRED",
+    "SELECT_ONE_SHIPMENT_OPTION",
+  ]);
+  const notFound = new Set([
+    "ACTIVE_RATE_CARD_NOT_FOUND",
+    "ACTIVE_CONFIGURATION_NOT_FOUND",
+    "QUOTE_NOT_FOUND",
+  ]);
+  const publicMessages: Record<string, string> = {
+    INVALID_SELECTED_QUOTE_ITEM:
+      "One or more selected services do not belong to this quotation. Recalculate the quote and try again.",
+    SELECT_AT_LEAST_ONE_SERVICE:
+      "Select at least one service before submitting your request.",
+    QUOTE_NOT_SUBMITTABLE:
+      "This quotation has already been submitted or is no longer available.",
+    QUOTE_SELECTION_RECALCULATION_REQUIRED:
+      "This quotation needs to be recalculated before it can be submitted. Please calculate a new quote.",
+    SHIPMENT_OPTIONS_NOT_CONFIGURED:
+      "No active shipment options are configured for this rate-card configuration. Please contact the quotation team.",
+    SHIPMENT_OPTION_REQUIRED:
+      "Select one shipment option before calculating this quote.",
+    SELECT_ONE_SHIPMENT_OPTION:
+      "Select exactly one shipment option for land or sea freight.",
+  };
   const status = notFound.has(message) ? 404 : badRequest.has(message) ? 400 : 500;
-  res.status(status).json({ success: false, message: status === 500 ? "Unable to process quotation." : message, code: message });
+  res.status(status).json({
+    success: false,
+    message:
+      status === 500
+        ? "Unable to process quotation."
+        : publicMessages[message] ?? message,
+    code: message,
+  });
 }
 
 export async function listPublicRateCards(
@@ -88,6 +130,28 @@ export async function submitQuote(req: Request, res: Response) {
       res.status(401).json({
         success: false,
         message: "Login is required before submitting a quotation request.",
+      });
+      return;
+    }
+
+    if (req.user?.role !== "EXPORTER") {
+      res.status(403).json({
+        success: false,
+        message: "Only exporter accounts can submit quotation requests.",
+      });
+      return;
+    }
+
+    const body = req.body as Partial<SubmitQuoteInput> | undefined;
+    if (
+      !Array.isArray(body?.selectedQuoteItemIds) ||
+      body.selectedQuoteItemIds.length === 0 ||
+      !body.selectedQuoteItemIds.every((id) => typeof id === "string" && id.trim())
+    ) {
+      res.status(400).json({
+        success: false,
+        message: "Select at least one service before submitting the request.",
+        code: "SELECT_AT_LEAST_ONE_SERVICE",
       });
       return;
     }
