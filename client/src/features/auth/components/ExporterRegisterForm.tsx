@@ -125,7 +125,7 @@ export default function ExporterRegisterForm() {
               "Your account may have been created, but automatic sign-in failed. Please sign in."
             );
 
-            navigate("/login", { replace: true });
+            navigate("/exporter/login", { replace: true });
             return;
           }
 
@@ -410,7 +410,7 @@ export default function ExporterRegisterForm() {
         <p className="text-sm text-slate-500">
           Already have an account?{" "}
           <Link
-            to="/login"
+            to="/exporter/login"
             className="font-semibold text-emerald-700 transition hover:text-emerald-900 hover:underline"
           >
             Sign in

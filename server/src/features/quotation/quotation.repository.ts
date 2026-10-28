@@ -210,6 +210,12 @@ export async function createSubmission(data: {
   subtotal: number;
   taxAmount: number;
   totalAmount: number;
+  customsChargeRequested: boolean;
+  invoiceValue?: number;
+  invoiceCurrency?: string;
+  transportChargeRequested: boolean;
+  vatEnabled: boolean;
+  vatPercentage: number;
 }) {
   return prisma.$transaction(async (tx) => {
     const selected = new Set(data.selectedQuoteItemIds);
@@ -256,9 +262,16 @@ export async function createSubmission(data: {
         subtotal: data.subtotal,
         taxAmount: data.taxAmount,
         totalAmount: data.totalAmount,
+        customsChargeRequested: data.customsChargeRequested,
+        invoiceValue: data.invoiceValue,
+        invoiceCurrency: data.invoiceCurrency,
+        transportChargeRequested: data.transportChargeRequested,
+        vatEnabled: data.vatEnabled,
+        vatPercentage: data.vatPercentage,
         status: "PENDING_REVIEW",
         items: {
           create: selectedItems.map((item) => ({
+            itemType: "SERVICE",
             quoteItemId: item.id,
             componentName: item.componentName,
             componentCode: item.componentCode,
@@ -281,6 +294,12 @@ export async function createSubmission(data: {
               totalAmount: data.totalAmount,
               currency: data.currency,
               selectionRecalculationVersion: 1,
+              customsChargeRequested: data.customsChargeRequested,
+              invoiceValue: data.invoiceValue ?? null,
+              invoiceCurrency: data.invoiceCurrency ?? null,
+              transportChargeRequested: data.transportChargeRequested,
+              vatEnabled: data.vatEnabled,
+              vatPercentage: data.vatPercentage,
             },
           },
         },
@@ -297,7 +316,7 @@ export async function createSubmission(data: {
             permissions: {
               some: {
                 permission: {
-                  in: ["REVIEW_QUOTE", "REVIEW_QUOTATIONS", "VIEW_ALL_QUOTES"],
+                  in: ["REVIEW_QUOTE", "REVIEW_QUOTATIONS", "VIEW_ALL_QUOTES", "MANAGE_QUOTE_CHARGES"],
                 },
               },
             },
@@ -313,7 +332,7 @@ export async function createSubmission(data: {
           quoteId: data.quoteId,
           recipientUserId: reviewer.id,
           title: "New quotation submission",
-          message: `A quotation was submitted with ${selected.size} selected service(s).`,
+          message: `A quotation was submitted with ${selected.size} selected service(s).${data.customsChargeRequested ? ` Customs duties/charges requested for invoice value ${data.invoiceCurrency ?? data.currency} ${Number(data.invoiceValue ?? 0).toFixed(2)}.` : ""}${data.transportChargeRequested ? " Transportation pricing requested." : ""}`,
         })),
       });
     }
@@ -322,6 +341,151 @@ export async function createSubmission(data: {
   });
 }
 
+
+const chargeMoney = (value: number) => Math.round((value + Number.EPSILON) * 100) / 100;
+
+export async function updateSubmissionCharges(data: {
+  submissionId: string;
+  adminId: string;
+  customsChargeAmount?: number | null;
+  transportChargeAmount?: number | null;
+}) {
+  if (data.customsChargeAmount === undefined && data.transportChargeAmount === undefined) {
+    throw new Error("NO_CHARGE_FIELDS_TO_UPDATE");
+  }
+  for (const value of [data.customsChargeAmount, data.transportChargeAmount]) {
+    if (value !== undefined && value !== null && (!Number.isFinite(value) || value < 0)) {
+      throw new Error("INVALID_CHARGE_AMOUNT");
+    }
+  }
+
+  return prisma.$transaction(async (tx) => {
+    const submission = await tx.quoteSubmission.findUnique({
+      where: { id: data.submissionId },
+      include: { items: true, quote: { select: { id: true } } },
+    });
+    if (!submission) throw new Error("SUBMISSION_NOT_FOUND");
+
+    if (data.customsChargeAmount !== undefined && !submission.customsChargeRequested && data.customsChargeAmount !== null) {
+      throw new Error("CUSTOMS_CHARGE_NOT_REQUESTED");
+    }
+    if (data.transportChargeAmount !== undefined && !submission.transportChargeRequested && data.transportChargeAmount !== null) {
+      throw new Error("TRANSPORT_CHARGE_NOT_REQUESTED");
+    }
+
+    const applyCharge = async (
+      itemType: "CUSTOMS_CHARGE" | "TRANSPORT_CHARGE",
+      amount: number | null | undefined,
+      componentName: string,
+      componentCode: string,
+    ) => {
+      if (amount === undefined) return;
+      const existing = await tx.quoteSubmissionItem.findFirst({
+        where: { submissionId: submission.id, itemType },
+      });
+      if (amount === null) {
+        if (existing) await tx.quoteSubmissionItem.delete({ where: { id: existing.id } });
+        return;
+      }
+      const rowData = {
+        itemType,
+        quoteItemId: null,
+        componentName,
+        componentCode,
+        quantity: 1,
+        rateApplied: chargeMoney(amount),
+        lineTotal: chargeMoney(amount),
+        isSelected: true,
+      };
+      if (existing) {
+        await tx.quoteSubmissionItem.update({ where: { id: existing.id }, data: rowData });
+      } else {
+        await tx.quoteSubmissionItem.create({ data: { submissionId: submission.id, ...rowData } });
+      }
+    };
+
+    await applyCharge("CUSTOMS_CHARGE", data.customsChargeAmount, "Customs duties and charges", "CUSTOMS_DUTY");
+    await applyCharge("TRANSPORT_CHARGE", data.transportChargeAmount, "Additional transportation charge", "TRANSPORT_CHARGE");
+
+    const items = await tx.quoteSubmissionItem.findMany({ where: { submissionId: submission.id } });
+    const subtotal = chargeMoney(items.reduce((sum, item) => sum + Number(item.lineTotal), 0));
+
+    // New submissions store an immutable copy of the VAT policy. Older
+    // submissions are migrated with 0/default values; infer their original
+    // rate from the pre-update subtotal/tax before replacing either total.
+    const previousSubtotal = Number(submission.subtotal);
+    const previousTax = Number(submission.taxAmount);
+    const storedRate = Number(submission.vatPercentage);
+    const vatPercentage = storedRate > 0
+      ? storedRate
+      : previousSubtotal > 0 && previousTax > 0
+        ? chargeMoney((previousTax / previousSubtotal) * 10000) / 100
+        : 0;
+    const vatEnabled = submission.vatEnabled || storedRate > 0 || previousTax > 0;
+    const taxAmount = vatEnabled ? chargeMoney((subtotal * vatPercentage) / 100) : 0;
+    const totalAmount = chargeMoney(subtotal + taxAmount);
+
+    const updated = await tx.quoteSubmission.update({
+      where: { id: submission.id },
+      data: { subtotal, taxAmount, totalAmount, vatEnabled, vatPercentage },
+      include: { items: true },
+    });
+
+    const changes = {
+      customsChargeAmount: data.customsChargeAmount === undefined ? "UNCHANGED" : data.customsChargeAmount,
+      transportChargeAmount: data.transportChargeAmount === undefined ? "UNCHANGED" : data.transportChargeAmount,
+      subtotal,
+      vatEnabled,
+      vatPercentage,
+      taxAmount,
+      totalAmount,
+      currency: submission.currency,
+    };
+    await tx.quoteAuditEvent.create({
+      data: {
+        quoteId: submission.quoteId,
+        submissionId: submission.id,
+        action: "CHARGES_UPDATED",
+        actorUserId: data.adminId,
+        actorType: "ADMIN",
+        details: changes as any,
+      },
+    });
+
+    const chargeLabel = (label: string, amount: number | null | undefined) => {
+      if (amount === undefined) return null;
+      return `${label}: ${amount === null ? "removed / not priced" : `${submission.currency} ${chargeMoney(amount).toFixed(2)}`}`;
+    };
+    const noteLines = [
+      chargeLabel("Customs duties and charges", data.customsChargeAmount),
+      chargeLabel("Transportation charge", data.transportChargeAmount),
+    ].filter((value): value is string => Boolean(value));
+    const summary = `Additional charges updated. ${noteLines.join("; ")}. Current subtotal: ${submission.currency} ${subtotal.toFixed(2)}; VAT${vatEnabled ? ` (${vatPercentage}%)` : ""}: ${submission.currency} ${taxAmount.toFixed(2)}; total: ${submission.currency} ${totalAmount.toFixed(2)}.`;
+
+    await tx.quoteMessage.create({
+      data: {
+        quoteId: submission.quoteId,
+        submissionId: submission.id,
+        senderType: "ADMIN",
+        senderUserId: data.adminId,
+        message: summary,
+      },
+    });
+
+    if (submission.exporterId) {
+      await tx.quoteNotification.create({
+        data: {
+          quoteId: submission.quoteId,
+          recipientUserId: submission.exporterId,
+          title: "Quotation charges updated",
+          message: `The quotation team updated the additional charges. Your current quoted total is ${submission.currency} ${totalAmount.toFixed(2)} including applicable VAT.`,
+        },
+      });
+    }
+
+    return updated;
+  });
+}
 
 export async function listExporterSubmissions(
   exporterId: string,
@@ -336,7 +500,14 @@ export async function listExporterSubmissions(
       customerName: true,
       currency: true,
       subtotal: true,
+      taxAmount: true,
       totalAmount: true,
+      customsChargeRequested: true,
+      invoiceValue: true,
+      invoiceCurrency: true,
+      transportChargeRequested: true,
+      vatEnabled: true,
+      vatPercentage: true,
       customerMessage: true,
       adminMessage: true,
       submittedAt: true,
@@ -363,6 +534,7 @@ export async function listExporterSubmissions(
       items: {
         select: {
           id: true,
+          itemType: true,
           componentName: true,
           componentCode: true,
           quantity: true,
@@ -426,21 +598,68 @@ export async function listAdminSubmissions(status?: string) {
     "ARCHIVED",
   ] as const;
 
-  if (
-    status &&
-    !allowedStatuses.includes(
-      status as (typeof allowedStatuses)[number],
-    )
-  ) {
+  if (status && !allowedStatuses.includes(status as (typeof allowedStatuses)[number])) {
     throw new Error("INVALID_SUBMISSION_STATUS");
   }
 
   return prisma.quoteSubmission.findMany({
-    where: status
-      ? { status: status as (typeof allowedStatuses)[number] }
-      : undefined,
+    where: status ? { status: status as (typeof allowedStatuses)[number] } : undefined,
     orderBy: { submittedAt: "desc" },
     include: {
+      exporter: {
+        select: { id: true, name: true, email: true, phone: true },
+      },
+      quote: {
+        select: {
+          id: true,
+          quoteNumber: true,
+          goodsDescription: true,
+          hsCode: true,
+          weightKg: true,
+          quantity: true,
+          customsValue: true,
+          freightAmount: true,
+          currency: true,
+          validUntil: true,
+          notes: true,
+          requiresReview: true,
+          inputSnapshot: true,
+          pricingSnapshot: true,
+          rateCard: {
+            select: {
+              id: true,
+              name: true,
+              mode: true,
+              direction: true,
+              configurations: {
+                select: {
+                  id: true,
+                  name: true,
+                  code: true,
+                  routeLabel: true,
+                  routeCode: true,
+                  equipmentType: true,
+                  options: { select: { id: true, name: true, code: true } },
+                },
+              },
+            },
+          },
+        },
+      },
+      items: {
+        orderBy: { createdAt: "asc" },
+        select: {
+          id: true,
+          itemType: true,
+          quoteItemId: true,
+          componentName: true,
+          componentCode: true,
+          quantity: true,
+          rateApplied: true,
+          lineTotal: true,
+          isSelected: true,
+        },
+      },
       messages: {
         orderBy: { createdAt: "asc" },
         select: {

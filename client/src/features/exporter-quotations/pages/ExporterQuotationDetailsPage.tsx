@@ -30,6 +30,7 @@ import { useMySubmission } from "../hook/use-exporter-quotations";
 import {
   sendExporterMessage,
   uploadExporterAttachment,
+  requestExporterAdditionalCharges,
   type QuotationStatus,
 } from "../api/exporter-quotations.api";
 
@@ -39,6 +40,21 @@ type ToastState = {
   title: string;
   message: string;
 } | null;
+
+type AdditionalChargeSubmissionFields = {
+  customsChargeRequested?: boolean;
+  invoiceValue?: number | string | null;
+  invoiceCurrency?: string | null;
+  transportChargeRequested?: boolean;
+};
+
+function apiErrorMessage(error: unknown, fallback: string) {
+  const candidate = error as {
+    response?: { data?: { message?: string } };
+    message?: string;
+  };
+  return candidate?.response?.data?.message || candidate?.message || fallback;
+}
 
 const statusStyles: Record<QuotationStatus, string> = {
   PENDING_REVIEW: "bg-amber-50 text-amber-800 ring-amber-200",
@@ -63,11 +79,8 @@ const dateLabel = (value?: string | Date | null) => {
       }).format(date);
 };
 
-const money = (
-  value: string | number | null | undefined,
-  currency: string,
-) => {
-  const numericAmount = Number(value ?? 0);
+const money = (value: string | number, currency: string) => {
+  const amount = Number(value);
   const code = currency === "CFA" ? "XOF" : currency || "NGN";
 
   try {
@@ -75,12 +88,10 @@ const money = (
       style: "currency",
       currency: code,
       maximumFractionDigits: 2,
-    }).format(Number.isFinite(numericAmount) ? numericAmount : 0);
+    }).format(Number.isFinite(amount) ? amount : 0);
   } catch {
     return `${code} ${
-      Number.isFinite(numericAmount)
-        ? numericAmount.toLocaleString("en-NG")
-        : "0"
+      Number.isFinite(amount) ? amount.toLocaleString() : "0"
     }`;
   }
 };
@@ -198,6 +209,10 @@ export default function ExporterQuotationDetailsPage() {
   const [file, setFile] = useState<File | null>(null);
   const [remarks, setRemarks] = useState("");
   const [toast, setToast] = useState<ToastState>(null);
+  const [invoiceValue, setInvoiceValue] = useState("");
+  const [invoiceCurrency, setInvoiceCurrency] = useState("NGN");
+  const [customsRequestEnabled, setCustomsRequestEnabled] = useState(false);
+  const [transportRequestEnabled, setTransportRequestEnabled] = useState(false);
 
   const notify = (
     type: NonNullable<ToastState>["type"],
@@ -224,6 +239,23 @@ export default function ExporterQuotationDetailsPage() {
     return () => window.clearTimeout(timer);
   }, [toast]);
 
+  useEffect(() => {
+    if (!data) return;
+    const submission = data as typeof data & AdditionalChargeSubmissionFields;
+    setInvoiceValue(submission.invoiceValue == null ? "" : String(submission.invoiceValue));
+    setInvoiceCurrency(submission.invoiceCurrency || data.currency || "NGN");
+    setCustomsRequestEnabled(Boolean(submission.customsChargeRequested || submission.invoiceValue != null));
+    setTransportRequestEnabled(Boolean(submission.transportChargeRequested));
+  }, [
+    data?.id,
+    data?.updatedAt,
+    (data as (typeof data & AdditionalChargeSubmissionFields) | undefined)?.customsChargeRequested,
+    (data as (typeof data & AdditionalChargeSubmissionFields) | undefined)?.invoiceValue,
+    (data as (typeof data & AdditionalChargeSubmissionFields) | undefined)?.invoiceCurrency,
+    (data as (typeof data & AdditionalChargeSubmissionFields) | undefined)?.transportChargeRequested,
+    data?.currency,
+  ]);
+
   const refreshDetails = async () => {
     await Promise.all([
       queryClient.invalidateQueries({
@@ -234,6 +266,51 @@ export default function ExporterQuotationDetailsPage() {
       }),
     ]);
   };
+
+  const additionalChargeRequestMutation = useMutation({
+    mutationFn: () => {
+      if (!data) throw new Error("Quotation details are not loaded.");
+      const submission = data as typeof data & AdditionalChargeSubmissionFields;
+      const wantsCustoms = customsRequestEnabled && !Boolean(submission.customsChargeRequested);
+      const wantsTransport = transportRequestEnabled && !Boolean(submission.transportChargeRequested);
+      if (!wantsCustoms && !wantsTransport) {
+        throw new Error("Choose an additional service you have not already requested.");
+      }
+
+      const payload: {
+        customsChargeRequested?: boolean;
+        invoiceValue?: number;
+        invoiceCurrency?: string;
+        transportChargeRequested?: boolean;
+      } = {};
+      if (wantsCustoms) {
+        const invoiceAmount = Number(invoiceValue);
+        if (!invoiceValue.trim() || !Number.isFinite(invoiceAmount) || invoiceAmount <= 0) {
+          throw new Error("Enter a commercial invoice value greater than zero to request customs assistance.");
+        }
+        const currencyCode = invoiceCurrency.trim().toUpperCase();
+        if (!/^[A-Z]{3}$/.test(currencyCode)) {
+          throw new Error("Enter a valid three-letter invoice currency code.");
+        }
+        payload.customsChargeRequested = true;
+        payload.invoiceValue = invoiceAmount;
+        payload.invoiceCurrency = currencyCode;
+      }
+      if (wantsTransport) payload.transportChargeRequested = true;
+      return requestExporterAdditionalCharges(id, payload);
+    },
+    onSuccess: async () => {
+      notify(
+        "success",
+        "Additional-service request sent",
+        "The quotation team has been notified. Any new charges will appear after operations confirms the prices.",
+      );
+      await refreshDetails();
+    },
+    onError: (error: unknown) => {
+      notify("error", "Request not sent", apiErrorMessage(error, "We could not send your additional-service request."));
+    },
+  });
 
   const messageMutation = useMutation({
     mutationFn: () => sendExporterMessage(id, message.trim()),
@@ -353,6 +430,10 @@ export default function ExporterQuotationDetailsPage() {
   }
 
   const quote = data.quote;
+  const chargeRequestData = data as NonNullable<typeof data> & AdditionalChargeSubmissionFields;
+  const hasNewAdditionalRequest =
+    (customsRequestEnabled && !Boolean(chargeRequestData.customsChargeRequested)) ||
+    (transportRequestEnabled && !Boolean(chargeRequestData.transportChargeRequested));
   const messages = data.messages ?? [];
   const attachments = data.attachments ?? [];
   const selectedItems = (data.items ?? []).filter(
@@ -524,142 +605,90 @@ export default function ExporterQuotationDetailsPage() {
             </div>
           </div>
 
-          {/* Requested services and itemized pricing. Mobile uses stacked cards so
-              service names and amounts remain visible on narrow screens; wider
-              screens use a complete tabular breakdown. */}
-          <div className="px-4 pb-5 sm:px-8 sm:pb-8">
-            <section
-              aria-labelledby="requested-services-heading"
-              className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm shadow-slate-900/[0.03]"
-            >
-              <div className="flex flex-col gap-3 border-b border-slate-100 bg-slate-50/80 p-4 sm:flex-row sm:items-center sm:justify-between sm:p-5">
-                <div className="flex min-w-0 items-start gap-3">
-                  <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-emerald-100 text-emerald-800">
-                    <FileText size={19} aria-hidden="true" />
-                  </div>
-                  <div className="min-w-0">
-                    <h2 id="requested-services-heading" className="text-base font-extrabold text-slate-900 sm:text-lg">
-                      Requested services
-                    </h2>
-                    <p className="mt-1 text-xs leading-5 text-slate-500 sm:text-sm">
-                      Itemized charges included in the quotation you submitted.
-                    </p>
-                  </div>
-                </div>
-                <span className="inline-flex w-fit items-center rounded-full bg-emerald-50 px-3 py-1.5 text-xs font-bold text-emerald-800 ring-1 ring-inset ring-emerald-200">
-                  {selectedItems.length} {selectedItems.length === 1 ? "service" : "services"}
-                </span>
-              </div>
-
-              {selectedItems.length === 0 ? (
-                <div className="m-4 rounded-xl border border-dashed border-slate-200 bg-slate-50 px-4 py-8 text-center sm:m-5">
-                  <Package className="mx-auto text-slate-400" size={26} aria-hidden="true" />
-                  <p className="mt-3 text-sm font-semibold text-slate-700">No requested services are available</p>
-                  <p className="mt-1 text-xs leading-5 text-slate-500">
-                    The quotation contains no selected service items. Contact the quotation team if this appears incorrect.
+          <div className="px-5 pb-5 sm:px-8 sm:pb-8">
+            <div className="relative overflow-hidden rounded-2xl border border-emerald-200/80 bg-gradient-to-br from-emerald-50 via-white to-teal-50 p-5 shadow-sm shadow-emerald-950/[0.03] sm:p-6">
+              <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-center">
+                <div>
+                  <p className="text-sm font-semibold text-emerald-900">
+                    Current quotation total
+                  </p>
+                  <p className="mt-2 break-words text-3xl font-bold tracking-tight text-emerald-800 sm:text-4xl">
+                    {money(data.totalAmount, data.currency)}
+                  </p>
+                  <p className="mt-2 text-xs leading-5 text-slate-600">
+                    This amount is based on your submitted quotation and may
+                    change if revisions are requested.
                   </p>
                 </div>
-              ) : (
-                <>
-                  {/* Mobile item cards */}
-                  <div className="divide-y divide-slate-100 md:hidden print:hidden">
-                    {selectedItems.map((item, index) => (
-                      <article key={item.id} className="min-w-0 p-4 sm:p-5">
-                        <div className="flex min-w-0 items-start gap-3">
-                          <span className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-slate-100 text-xs font-extrabold tabular-nums text-slate-600">
-                            {String(index + 1).padStart(2, "0")}
-                          </span>
-                          <div className="min-w-0 flex-1">
-                            <h3 className="break-words text-sm font-bold leading-5 text-slate-900">
-                              {item.componentName || "Service charge"}
-                            </h3>
-                            <p className="mt-1 break-all text-xs text-slate-500">
-                              Code: {item.componentCode || "Not provided"}
-                            </p>
-                          </div>
-                        </div>
 
-                        <div className="mt-4 grid grid-cols-2 gap-3">
-                          <div className="min-w-0 rounded-xl bg-slate-50 p-3">
-                            <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-500">Quantity</p>
-                            <p className="mt-1 break-words text-sm font-bold tabular-nums text-slate-800">
-                              {item.quantity ?? "—"}
-                            </p>
-                          </div>
-                          <div className="min-w-0 rounded-xl bg-slate-50 p-3">
-                            <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-500">Unit rate</p>
-                            <p className="mt-1 break-words text-sm font-semibold tabular-nums text-slate-800">
-                              {money(item.rateApplied, data.currency)}
-                            </p>
-                          </div>
-                        </div>
-
-                        <div className="mt-3 flex min-w-0 items-center justify-between gap-3 rounded-xl border border-emerald-100 bg-emerald-50/80 px-3.5 py-3">
-                          <span className="text-xs font-bold text-emerald-900">Line amount</span>
-                          <span className="break-words text-right text-base font-extrabold tabular-nums text-emerald-900">
-                            {money(item.lineTotal, data.currency)}
-                          </span>
-                        </div>
-                      </article>
-                    ))}
-                  </div>
-
-                  {/* Full itemized table for tablet/desktop and print */}
-                  <div className="hidden overflow-x-auto md:block print:block print:overflow-visible">
-                    <table className="w-full min-w-[680px] table-auto border-collapse text-left">
-                      <caption className="sr-only">Selected services and their quotation prices</caption>
-                      <thead className="bg-slate-50 text-[10px] uppercase tracking-[0.12em] text-slate-500">
-                        <tr>
-                          <th scope="col" className="w-14 px-4 py-3.5 font-extrabold">S/N</th>
-                          <th scope="col" className="min-w-48 px-4 py-3.5 font-extrabold">Service / charge</th>
-                          <th scope="col" className="min-w-36 px-4 py-3.5 font-extrabold">Code</th>
-                          <th scope="col" className="w-24 px-4 py-3.5 text-right font-extrabold">Qty</th>
-                          <th scope="col" className="min-w-36 px-4 py-3.5 text-right font-extrabold">Unit rate</th>
-                          <th scope="col" className="min-w-40 px-4 py-3.5 text-right font-extrabold">Amount</th>
-                        </tr>
-                      </thead>
-                      <tbody className="divide-y divide-slate-100">
-                        {selectedItems.map((item, index) => (
-                          <tr key={item.id} className="align-top transition-colors hover:bg-emerald-50/30">
-                            <td className="px-4 py-4 text-sm font-semibold tabular-nums text-slate-500">{index + 1}</td>
-                            <td className="max-w-xs break-words px-4 py-4 text-sm font-bold leading-5 text-slate-800">{item.componentName || "Service charge"}</td>
-                            <td className="break-all px-4 py-4 text-xs leading-5 text-slate-500">{item.componentCode || "—"}</td>
-                            <td className="px-4 py-4 text-right text-sm tabular-nums text-slate-700">{item.quantity ?? "—"}</td>
-                            <td className="whitespace-nowrap px-4 py-4 text-right text-sm tabular-nums text-slate-700">{money(item.rateApplied, data.currency)}</td>
-                            <td className="whitespace-nowrap px-4 py-4 text-right text-sm font-extrabold tabular-nums text-slate-900">{money(item.lineTotal, data.currency)}</td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                </>
-              )}
-
-              <div className="border-t border-emerald-100 bg-gradient-to-br from-emerald-50 via-white to-teal-50 p-4 sm:p-5">
-                <div className="ml-auto w-full max-w-md space-y-3">
-                  <div className="flex items-center justify-between gap-4 text-sm text-slate-600">
-                    <span>Subtotal</span>
-                    <span className="text-right font-semibold tabular-nums text-slate-800">{money(data.subtotal, data.currency)}</span>
-                  </div>
-                  <div className="flex items-center justify-between gap-4 text-sm text-slate-600">
-                    <span>Tax</span>
-                    <span className="text-right font-semibold tabular-nums text-slate-800">{money(data.taxAmount, data.currency)}</span>
-                  </div>
-                  <div className="border-t border-emerald-200 pt-3">
-                    <div className="flex items-start justify-between gap-4">
-                      <div className="min-w-0">
-                        <p className="text-sm font-extrabold text-slate-900">Quotation total</p>
-                        <p className="mt-1 text-[11px] leading-5 text-slate-500">Based on the saved quotation submitted for review.</p>
-                      </div>
-                      <p className="break-words text-right text-xl font-extrabold tracking-tight tabular-nums text-emerald-900 sm:text-2xl">
-                        {money(data.totalAmount, data.currency)}
-                      </p>
-                    </div>
-                  </div>
+                <div className="flex size-14 shrink-0 items-center justify-center self-start rounded-2xl border border-emerald-100 bg-white text-emerald-700 shadow-sm transition duration-300 hover:rotate-3 hover:scale-105 sm:self-center">
+                  <FileCheck2 size={27} />
                 </div>
               </div>
-            </section>
+            </div>
           </div>
+
+          <section className="mx-5 mb-5 rounded-2xl border border-amber-200 bg-white p-4 shadow-sm sm:mx-8 sm:mb-8 sm:p-5" aria-labelledby="additional-charge-request-heading">
+            <div className="flex items-start gap-3">
+              <span className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-amber-50 text-amber-800 ring-1 ring-amber-100">
+                <Package size={20} aria-hidden="true" />
+              </span>
+              <div className="min-w-0 flex-1">
+                <p className="text-[10px] font-extrabold uppercase tracking-[0.16em] text-amber-800">Optional follow-up</p>
+                <h2 id="additional-charge-request-heading" className="mt-1 text-base font-extrabold text-slate-950 sm:text-lg">Request additional services</h2>
+                <p className="mt-1 text-sm leading-6 text-slate-600">Did you skip customs assistance or transportation when you first requested this quote? You can request them now. Entering a commercial invoice value requests customs assessment; transportation is optional.</p>
+              </div>
+            </div>
+
+            {chargeRequestData.customsChargeRequested && chargeRequestData.transportChargeRequested ? (
+              <div className="mt-4 flex items-start gap-2 rounded-xl border border-emerald-200 bg-emerald-50 p-3.5 text-sm leading-6 text-emerald-900">
+                <CheckCircle2 size={18} className="mt-0.5 shrink-0" aria-hidden="true" />
+                <p>You have already requested customs assistance and transportation pricing. The quotation team will update your quotation after pricing the applicable charges.</p>
+              </div>
+            ) : (
+              <div className="mt-4 space-y-4">
+                <div className="rounded-xl border border-slate-200 bg-slate-50/70 p-3.5 sm:p-4">
+                  <div className="flex items-start justify-between gap-3">
+                    <div>
+                      <p className="text-sm font-bold text-slate-900">Customs assistance</p>
+                      <p className="mt-1 text-xs leading-5 text-slate-500">Provide the commercial invoice value and currency. This does not add a charge by itself.</p>
+                    </div>
+                    {chargeRequestData.customsChargeRequested && <span className="shrink-0 rounded-full bg-emerald-100 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide text-emerald-800">Requested</span>}
+                  </div>
+                  <div className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-[minmax(0,1fr)_120px]">
+                    <div>
+                      <label htmlFor="exporter-invoice-value" className="mb-1.5 block text-xs font-semibold text-slate-700">Commercial invoice value</label>
+                      <input id="exporter-invoice-value" type="number" min="0.01" step="0.01" inputMode="decimal" value={invoiceValue} onChange={(event) => { const value = event.target.value; setInvoiceValue(value); if (value.trim() && Number.isFinite(Number(value)) && Number(value) > 0) setCustomsRequestEnabled(true); }} disabled={Boolean(chargeRequestData.customsChargeRequested) || additionalChargeRequestMutation.isPending} placeholder="e.g. 80000" className="w-full min-w-0 rounded-xl border border-slate-200 bg-white px-3 py-3 text-sm outline-none transition focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 disabled:bg-slate-100 disabled:text-slate-500" />
+                    </div>
+                    <div>
+                      <label htmlFor="exporter-invoice-currency" className="mb-1.5 block text-xs font-semibold text-slate-700">Currency</label>
+                      <input id="exporter-invoice-currency" value={invoiceCurrency} maxLength={3} onChange={(event) => setInvoiceCurrency(event.target.value.toUpperCase().slice(0, 3))} disabled={Boolean(chargeRequestData.customsChargeRequested) || additionalChargeRequestMutation.isPending} placeholder="NGN" className="w-full min-w-0 rounded-xl border border-slate-200 bg-white px-3 py-3 text-sm uppercase outline-none transition focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 disabled:bg-slate-100 disabled:text-slate-500" />
+                    </div>
+                  </div>
+                  <p className={`mt-2 text-xs font-semibold ${customsRequestEnabled ? "text-emerald-700" : "text-slate-500"}`}>
+                    {chargeRequestData.customsChargeRequested ? "Customs assistance has already been requested." : customsRequestEnabled ? "Customs assistance will be included in your request." : "Enter a value to request customs assistance."}
+                  </p>
+                </div>
+
+                <label className="flex items-start gap-3 rounded-xl border border-slate-200 p-3.5 text-sm text-slate-700 sm:p-4">
+                  <input type="checkbox" checked={transportRequestEnabled} onChange={(event) => setTransportRequestEnabled(event.target.checked)} disabled={Boolean(chargeRequestData.transportChargeRequested) || additionalChargeRequestMutation.isPending} className="mt-0.5 size-4 rounded border-slate-300 text-emerald-700 focus:ring-emerald-500 disabled:opacity-60" />
+                  <span className="min-w-0">
+                    <span className="block font-bold text-slate-900">Request additional transportation pricing</span>
+                    <span className="mt-1 block text-xs leading-5 text-slate-500">The team will confirm the applicable charge and add it to your quotation.</span>
+                  </span>
+                  {chargeRequestData.transportChargeRequested && <span className="ml-auto shrink-0 rounded-full bg-emerald-100 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide text-emerald-800">Requested</span>}
+                </label>
+
+                <div className="flex flex-col gap-3 border-t border-slate-100 pt-4 sm:flex-row sm:items-center sm:justify-between">
+                  <p className="text-xs leading-5 text-slate-500">Your current quotation total will remain unchanged until operations confirms and saves a price.</p>
+                  <button type="button" onClick={() => additionalChargeRequestMutation.mutate()} disabled={additionalChargeRequestMutation.isPending || !hasNewAdditionalRequest} className="inline-flex min-h-11 w-full shrink-0 items-center justify-center gap-2 rounded-xl bg-emerald-800 px-4 py-3 text-sm font-bold text-white shadow-sm transition hover:bg-emerald-900 focus:outline-none focus:ring-4 focus:ring-emerald-500/20 disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto">
+                    {additionalChargeRequestMutation.isPending ? <LoaderCircle size={17} className="animate-spin" /> : <Send size={16} />}
+                    {additionalChargeRequestMutation.isPending ? "Sending request…" : "Send additional-service request"}
+                  </button>
+                </div>
+              </div>
+            )}
+          </section>
 
           {data.status === "CHANGES_REQUESTED" && (
             <div className="mx-5 mb-5 flex items-start gap-3 rounded-2xl border border-orange-200 bg-orange-50 p-4 sm:mx-8 sm:mb-8">

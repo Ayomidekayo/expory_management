@@ -11,6 +11,7 @@ import {
   changeSubmissionStatus,
   uploadQuotationAttachment,
   addExporterSubmissionMessage,
+  updateSubmissionCharges,
 } from "./quotation.controller";
 import authenticate from "../../middleware/auth.middleware";
 import { Permission } from "../../generated";
@@ -59,20 +60,58 @@ const statusPermissionByStatus: Record<string, Permission> = {
 };
 
 const requireStatusPermission: RequestHandler = (req, res, next) => {
+  const user = req.user;
+  if (!user) {
+    return res.status(401).json({ success: false, message: "Authentication required." });
+  }
+
+  if (user.role === "ADMIN") return next();
+
+  const granted = new Set<string>(user.permissions ?? []);
+  const isReviewer =
+    granted.has(Permission.REVIEW_QUOTE) ||
+    granted.has(Permission.REVIEW_QUOTATIONS);
+  if (isReviewer) return next();
+
   const requestedStatus =
     typeof req.body?.status === "string" ? req.body.status : "";
   const actionPermission = statusPermissionByStatus[requestedStatus];
+  const hasReadPermission = granted.has(Permission.VIEW_ALL_QUOTES);
+  const hasActionPermission = Boolean(actionPermission && granted.has(actionPermission));
 
-  // Reviewers may manage all statuses. Staff with a narrow action permission
-  // can only perform the matching action; the controller repeats this check.
-  const allowedPermissions = [
-    Permission.REVIEW_QUOTE,
-    Permission.REVIEW_QUOTATIONS,
-    ...(actionPermission ? [actionPermission] : []),
-  ];
+  // Narrow action grants require quotation read access as well, and only allow
+  // the matching status transition. The controller repeats this check.
+  if (hasReadPermission && hasActionPermission) return next();
 
-  return requireAnyPermission(...allowedPermissions)(req, res, next);
+  return res.status(403).json({
+    success: false,
+    message: "You do not have permission to perform this quotation status change.",
+  });
 };
+
+function requireReviewerOrCapability(capability: Permission): RequestHandler {
+  return (req, res, next) => {
+    const user = req.user;
+    if (!user) {
+      return res.status(401).json({ success: false, message: "Authentication required." });
+    }
+    if (user.role === "ADMIN") return next();
+
+    const granted = new Set<string>(user.permissions ?? []);
+    const isReviewer =
+      granted.has(Permission.REVIEW_QUOTE) ||
+      granted.has(Permission.REVIEW_QUOTATIONS);
+    const hasBaseReadAndCapability =
+      granted.has(Permission.VIEW_ALL_QUOTES) && granted.has(capability);
+
+    if (isReviewer || hasBaseReadAndCapability) return next();
+
+    return res.status(403).json({
+      success: false,
+      message: "You do not have permission to perform this quotation action.",
+    });
+  };
+}
 
 // ---------------------------------------------------------------------------
 // Public quotation calculator — intentionally unauthenticated.
@@ -114,6 +153,7 @@ router.get(
     Permission.VIEW_ALL_QUOTES,
     Permission.REVIEW_QUOTATIONS,
     Permission.REVIEW_QUOTE,
+    Permission.MANAGE_QUOTE_CHARGES,
   ),
   listAdminSubmissions,
 );
@@ -125,25 +165,25 @@ router.patch(
   changeSubmissionStatus,
 );
 
+// Only admins and staff granted MANAGE_QUOTE_CHARGES can add operations-priced charges.
+router.patch(
+  "/admin/quotations/submissions/:submissionId/charges",
+  authenticate,
+  requireAnyPermission(Permission.MANAGE_QUOTE_CHARGES),
+  updateSubmissionCharges,
+);
+
 router.post(
   "/admin/quotations/submissions/:submissionId/messages",
   authenticate,
-  requireAnyPermission(
-    Permission.REVIEW_QUOTATIONS,
-    Permission.REVIEW_QUOTE,
-    Permission.ADD_QUOTE_MESSAGE,
-  ),
+  requireReviewerOrCapability(Permission.ADD_QUOTE_MESSAGE),
   addAdminSubmissionMessage,
 );
 
 router.post(
   "/admin/quotations/submissions/:submissionId/attachments",
   authenticate,
-  requireAnyPermission(
-    Permission.REVIEW_QUOTATIONS,
-    Permission.REVIEW_QUOTE,
-    Permission.UPLOAD_QUOTE_ATTACHMENT,
-  ),
+  requireReviewerOrCapability(Permission.UPLOAD_QUOTE_ATTACHMENT),
   quotationUpload.single("file"),
   uploadQuotationAttachment,
 );

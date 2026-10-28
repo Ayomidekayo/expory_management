@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, type KeyboardEvent } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import {
@@ -404,10 +404,26 @@ export default function AdminQuotationsPage({ view = "review" }: AdminQuotations
                       const selectedCount = items.filter((service) => service.isSelected).length;
                       const shipment = getShipmentContext(item);
                       return (
-                        <tr key={item.id} className="group transition hover:bg-emerald-50/30">
+                      <tr
+  key={item.id}
+  tabIndex={0}
+  aria-label={`Open quotation ${getQuoteNumber(item)}`}
+  onClick={() => openDetails(item)}
+  onKeyDown={(event: KeyboardEvent<HTMLTableRowElement>) => {
+    if (event.target !== event.currentTarget) return;
+
+    if (event.key === "Enter" || event.key === " ") {
+      event.preventDefault();
+      openDetails(item);
+    }
+  }}
+  className="group cursor-pointer transition hover:bg-emerald-50/50 focus:outline-none focus-visible:bg-emerald-50 focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-emerald-600"
+>
                           <td className="px-5 py-4 text-sm font-semibold tabular-nums text-slate-500">
                             {startIndex + index + 1}
                           </td>
+
+                         
                           <td className="px-6 py-4">
                             <p className="font-bold text-slate-900">{getQuoteNumber(item)}</p>
                             <p className="mt-1 max-w-56 truncate text-xs text-slate-500">{item.quote?.goodsDescription || "Goods not specified"}</p>

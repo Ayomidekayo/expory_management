@@ -28,6 +28,14 @@ function respondError(res: Response, error: unknown) {
     "SELECT_AT_LEAST_ONE_SERVICE",
     "QUOTE_NOT_SUBMITTABLE",
     "QUOTE_SELECTION_RECALCULATION_REQUIRED",
+    "INVALID_ADDITIONAL_CHARGE_REQUEST",
+    "INVOICE_VALUE_REQUIRED",
+    "INVALID_INVOICE_CURRENCY",
+    "INVALID_CUSTOMER_MESSAGE",
+    "INVALID_CHARGE_AMOUNT",
+    "CUSTOMS_CHARGE_NOT_REQUESTED",
+    "TRANSPORT_CHARGE_NOT_REQUESTED",
+    "NO_CHARGE_FIELDS_TO_UPDATE",
     "SHIPMENT_OPTIONS_NOT_CONFIGURED",
     "SHIPMENT_OPTION_REQUIRED",
     "SELECT_ONE_SHIPMENT_OPTION",
@@ -36,6 +44,7 @@ function respondError(res: Response, error: unknown) {
     "ACTIVE_RATE_CARD_NOT_FOUND",
     "ACTIVE_CONFIGURATION_NOT_FOUND",
     "QUOTE_NOT_FOUND",
+    "SUBMISSION_NOT_FOUND",
   ]);
   const publicMessages: Record<string, string> = {
     INVALID_SELECTED_QUOTE_ITEM:
@@ -46,6 +55,22 @@ function respondError(res: Response, error: unknown) {
       "This quotation has already been submitted or is no longer available.",
     QUOTE_SELECTION_RECALCULATION_REQUIRED:
       "This quotation needs to be recalculated before it can be submitted. Please calculate a new quote.",
+    INVALID_ADDITIONAL_CHARGE_REQUEST:
+      "Choose valid yes/no options for the additional services.",
+    INVOICE_VALUE_REQUIRED:
+      "Enter a commercial invoice value greater than zero when requesting customs assistance.",
+    INVALID_INVOICE_CURRENCY:
+      "Enter a valid three-letter invoice currency code.",
+    INVALID_CUSTOMER_MESSAGE:
+      "Additional information cannot exceed 5,000 characters.",
+    INVALID_CHARGE_AMOUNT:
+      "Charge amounts must be valid numbers greater than or equal to zero.",
+    CUSTOMS_CHARGE_NOT_REQUESTED:
+      "The exporter did not request customs assistance on this submission.",
+    TRANSPORT_CHARGE_NOT_REQUESTED:
+      "The exporter did not request transportation pricing on this submission.",
+    NO_CHARGE_FIELDS_TO_UPDATE:
+      "Provide at least one additional charge to update.",
     SHIPMENT_OPTIONS_NOT_CONFIGURED:
       "No active shipment options are configured for this rate-card configuration. Please contact the quotation team.",
     SHIPMENT_OPTION_REQUIRED:
@@ -179,6 +204,72 @@ export async function submitQuote(req: Request, res: Response) {
 }
 
 
+export async function updateSubmissionCharges(req: Request, res: Response) {
+  const user = req.user;
+  if (!user) {
+    return res.status(401).json({ success: false, message: "Authentication required." });
+  }
+
+  const canManageCharges = user.role === "ADMIN" ||
+    user.permissions?.includes(Permission.MANAGE_QUOTE_CHARGES);
+  if (!canManageCharges) {
+    return res.status(403).json({ success: false, message: "You do not have permission to manage quotation charges." });
+  }
+
+  const submissionId = getRouteParam(req.params.submissionId);
+  if (!submissionId) {
+    return res.status(400).json({ success: false, message: "A valid submission ID is required." });
+  }
+
+  const body: Record<string, unknown> = req.body ?? {};
+  type ParsedAmount =
+    | { kind: "absent" }
+    | { kind: "invalid" }
+    | { kind: "value"; value: number | null };
+  const parseOptionalAmount = (key: "customsChargeAmount" | "transportChargeAmount"): ParsedAmount => {
+    if (!Object.prototype.hasOwnProperty.call(body, key)) return { kind: "absent" };
+    if (body[key] === null || body[key] === "") return { kind: "value", value: null };
+    if (typeof body[key] !== "number" && typeof body[key] !== "string") return { kind: "invalid" };
+    if (typeof body[key] === "string" && !body[key].trim()) return { kind: "value", value: null };
+    const value = Number(body[key]);
+    if (!Number.isFinite(value) || value < 0) return { kind: "invalid" };
+    return { kind: "value", value };
+  };
+
+  const customs = parseOptionalAmount("customsChargeAmount");
+  const transport = parseOptionalAmount("transportChargeAmount");
+  if (customs.kind === "invalid" || transport.kind === "invalid") {
+    return res.status(400).json({ success: false, message: "Charge amounts must be valid numbers greater than or equal to zero.", code: "INVALID_CHARGE_AMOUNT" });
+  }
+  if (customs.kind === "absent" && transport.kind === "absent") {
+    return res.status(400).json({ success: false, message: "Provide at least one additional charge to update.", code: "NO_CHARGE_FIELDS_TO_UPDATE" });
+  }
+
+  try {
+    const data = await service.updateSubmissionCharges({
+      submissionId,
+      adminId: user.id,
+      ...(customs.kind === "value" ? { customsChargeAmount: customs.value } : {}),
+      ...(transport.kind === "value" ? { transportChargeAmount: transport.value } : {}),
+    });
+    return res.status(200).json({ success: true, message: "Additional charges saved and VAT recalculated.", data });
+  } catch (error) {
+    const message = error instanceof Error ? error.message : "INTERNAL_ERROR";
+    if (message === "SUBMISSION_NOT_FOUND") {
+      return res.status(404).json({ success: false, message: "Quotation submission not found.", code: message });
+    }
+    if (["CUSTOMS_CHARGE_NOT_REQUESTED", "TRANSPORT_CHARGE_NOT_REQUESTED", "INVALID_CHARGE_AMOUNT", "NO_CHARGE_FIELDS_TO_UPDATE"].includes(message)) {
+      return res.status(400).json({ success: false, message: {
+        CUSTOMS_CHARGE_NOT_REQUESTED: "The exporter did not request customs assistance on this submission.",
+        TRANSPORT_CHARGE_NOT_REQUESTED: "The exporter did not request transportation pricing on this submission.",
+        INVALID_CHARGE_AMOUNT: "Charge amounts must be valid numbers greater than or equal to zero.",
+        NO_CHARGE_FIELDS_TO_UPDATE: "Provide at least one additional charge to update.",
+      }[message], code: message });
+    }
+    return respondError(res, error);
+  }
+}
+
 export async function listMySubmissions(
   req: Request,
   res: Response,
@@ -288,7 +379,8 @@ export async function listAdminSubmissions(
       user.role === "ADMIN" ||
       permissions.includes(Permission.VIEW_ALL_QUOTES) ||
       permissions.includes(Permission.REVIEW_QUOTATIONS) ||
-      permissions.includes(Permission.REVIEW_QUOTE);
+      permissions.includes(Permission.REVIEW_QUOTE) ||
+      permissions.includes(Permission.MANAGE_QUOTE_CHARGES);
 
     if (!canViewAllQuotes) {
       return res.status(403).json({

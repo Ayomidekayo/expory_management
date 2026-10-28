@@ -4,22 +4,34 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   AlertCircle,
   ArrowLeft,
+  ArrowLeftRight,
+  Box,
   CheckCircle2,
+  CircleDollarSign,
+  Compass,
   ChevronRight,
   Clock3,
   Download,
   FileText,
+  History,
   LoaderCircle,
   Mail,
+  MapPin,
   MessageSquare,
   PackageCheck,
+  Plane,
   Printer,
+  Receipt,
   Send,
   ShieldCheck,
+  Ship,
+  Truck,
   UploadCloud,
   UserRound,
 } from "lucide-react";
-import { getAdminQuotations, sendAdminQuotationMessage, updateAdminQuotationStatus, uploadAdminQuotationAttachment, type AdminQuotation, type AdminQuotationAttachment, type QuotationStatus } from "./api/admin-quotations.api";
+import { getAdminQuotations, sendAdminQuotationMessage, updateAdminQuotationStatus, updateAdminQuotationCharges, uploadAdminQuotationAttachment, type AdminQuotation, type AdminQuotationAttachment, type QuotationStatus } from "./api/admin-quotations.api";
+import { useAuthStore } from "../../store/auth.store";
+
 
 
 const STATUS_OPTIONS: Array<{ label: string; value: QuotationStatus}> = [
@@ -98,7 +110,7 @@ function SectionHeading({
   icon?: typeof FileText;
 }) {
   return (
-    <div className="mb-4 flex items-start gap-3">
+    <div className="section-heading mb-4 flex items-start gap-3">
       {Icon && <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-emerald-50 text-emerald-800 print-hidden"><Icon size={19} /></span>}
       <div>
         {eyebrow && <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-emerald-800">{eyebrow}</p>}
@@ -113,6 +125,33 @@ function DetailField({ label, value }: { label: string; value: ReactNode }) {
     <div className="min-w-0">
       <dt className="text-xs font-medium text-slate-500">{label}</dt>
       <dd className="mt-1 break-words text-sm font-semibold leading-6 text-slate-800">{value || "—"}</dd>
+    </div>
+  );
+}
+
+function ShipmentFact({
+  icon: Icon,
+  label,
+  value,
+  hint,
+}: {
+  icon: typeof FileText;
+  label: string;
+  value: ReactNode;
+  hint?: string;
+}) {
+  return (
+    <div className="shipment-fact group min-w-0 rounded-2xl border border-slate-200 bg-white p-4 transition-colors hover:border-emerald-200 hover:bg-emerald-50/30 sm:p-5 print-break-inside-avoid">
+      <div className="flex min-w-0 items-start gap-3">
+        <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-emerald-50 text-emerald-800 ring-1 ring-emerald-100 transition-colors group-hover:bg-emerald-100 print-hidden">
+          <Icon size={18} strokeWidth={1.9} />
+        </span>
+        <div className="min-w-0 flex-1">
+          <dt className="text-[11px] font-semibold uppercase tracking-[0.12em] text-slate-500">{label}</dt>
+          <dd className="mt-1.5 break-words text-sm font-bold leading-5 text-slate-900 sm:text-[15px]">{value || "Not specified"}</dd>
+          {hint && <p className="mt-1.5 text-xs leading-5 text-slate-500">{hint}</p>}
+        </div>
+      </div>
     </div>
   );
 }
@@ -143,6 +182,13 @@ function humanize(value: string | null | undefined) {
     .replaceAll("-", " ")
     .toLocaleLowerCase()
     .replace(/\b\w/g, (character) => character.toLocaleUpperCase());
+}
+
+function quotationItemKind(item: { itemType?: string | null }) {
+  const type = String(item.itemType ?? "SERVICE").trim().toUpperCase();
+  if (type === "CUSTOMS_CHARGE") return "Customs charge";
+  if (type === "TRANSPORT_CHARGE") return "Transportation charge";
+  return "Requested service";
 }
 
 function getShipmentContext(quotation: AdminQuotation) {
@@ -217,6 +263,18 @@ export default function AdminQuotationDetailsPage({ readOnly = false }: AdminQuo
   const [file, setFile] = useState<File | null>(null);
   const [remarks, setRemarks] = useState("");
   const [feedback, setFeedback] = useState<{ type: "success" | "error"; text: string } | null>(null);
+  const [customsChargeAmount, setCustomsChargeAmount] = useState("");
+  const [transportChargeAmount, setTransportChargeAmount] = useState("");
+  // Authorized staff can record a request even if the exporter did not select
+  // additional assistance during the public quote flow. Entering an invoice
+  // value enables the customs request; transport is an explicit opt-in.
+  const [customsRequestEnabled, setCustomsRequestEnabled] = useState(false);
+  const [transportRequestEnabled, setTransportRequestEnabled] = useState(false);
+  const [invoiceAssessmentValue, setInvoiceAssessmentValue] = useState("");
+  const [invoiceAssessmentCurrency, setInvoiceAssessmentCurrency] = useState("NGN");
+  const { user } = useAuthStore();
+  const userPermissions = (user as (typeof user & { permissions?: string[] }) | null)?.permissions ?? [];
+  const canManageCharges = user?.role === "ADMIN" || userPermissions.includes("MANAGE_QUOTE_CHARGES");
 
   const {
     data: quotations = [],
@@ -235,6 +293,18 @@ export default function AdminQuotationDetailsPage({ readOnly = false }: AdminQuo
   useEffect(() => {
     if (quotation) setNextStatus(quotation.status);
   }, [quotation?.id, quotation?.status]);
+
+  useEffect(() => {
+    if (!quotation) return;
+    const customs = quotation.items?.find((item) => item.itemType === "CUSTOMS_CHARGE");
+    const transport = quotation.items?.find((item) => item.itemType === "TRANSPORT_CHARGE");
+    setCustomsChargeAmount(customs ? String(customs.lineTotal) : "");
+    setTransportChargeAmount(transport ? String(transport.lineTotal) : "");
+    setCustomsRequestEnabled(Boolean(quotation.customsChargeRequested || quotation.invoiceValue != null));
+    setTransportRequestEnabled(Boolean(quotation.transportChargeRequested));
+    setInvoiceAssessmentValue(quotation.invoiceValue == null ? "" : String(quotation.invoiceValue));
+    setInvoiceAssessmentCurrency(quotation.invoiceCurrency || quotation.currency || "NGN");
+  }, [quotation?.id, quotation?.updatedAt, quotation?.items, quotation?.customsChargeRequested, quotation?.transportChargeRequested, quotation?.invoiceValue, quotation?.invoiceCurrency, quotation?.currency]);
 
   const refreshQuotations = async () => {
     await queryClient.invalidateQueries({ queryKey: ["admin", "quotation-submissions"] });
@@ -276,7 +346,67 @@ export default function AdminQuotationDetailsPage({ readOnly = false }: AdminQuo
     onError: (mutationError) => setFeedback({ type: "error", text: getErrorMessage(mutationError, "Could not upload the document.") }),
   });
 
-  const busy = statusMutation.isPending || messageMutation.isPending || uploadMutation.isPending;
+  const chargesMutation = useMutation({
+    mutationFn: () => {
+      if (!quotation) throw new Error("Quotation is not loaded.");
+      const payload: {
+        customsChargeRequested?: boolean;
+        transportChargeRequested?: boolean;
+        invoiceValue?: number;
+        invoiceCurrency?: string;
+        customsChargeAmount?: number;
+        transportChargeAmount?: number;
+      } = {};
+
+      // Request flags are additive: staff can enable a request, but this form
+      // never silently withdraws an existing request.
+      if (customsRequestEnabled && !quotation.customsChargeRequested) {
+        payload.customsChargeRequested = true;
+      }
+      if (transportRequestEnabled && !quotation.transportChargeRequested) {
+        payload.transportChargeRequested = true;
+      }
+
+      // An invoice value is the trigger for customs assistance. Validate and
+      // send it whenever the customs request is active, even before a price exists.
+      if (customsRequestEnabled) {
+        const invoiceNumber = Number(invoiceAssessmentValue);
+        if (!invoiceAssessmentValue.trim() || !Number.isFinite(invoiceNumber) || invoiceNumber <= 0) {
+          throw new Error("Enter a commercial invoice value greater than zero to request customs assistance.");
+        }
+        const currencyCode = invoiceAssessmentCurrency.trim().toUpperCase();
+        if (!/^[A-Z]{3}$/.test(currencyCode)) {
+          throw new Error("Enter a valid three-letter invoice currency code.");
+        }
+        payload.invoiceValue = invoiceNumber;
+        payload.invoiceCurrency = currencyCode;
+      }
+
+      // Blank price fields mean "not changing the price", not zero and not delete.
+      if (customsRequestEnabled && customsChargeAmount.trim()) {
+        payload.customsChargeAmount = Number(customsChargeAmount);
+      }
+      if (transportRequestEnabled && transportChargeAmount.trim()) {
+        payload.transportChargeAmount = Number(transportChargeAmount);
+      }
+      if (Object.keys(payload).length === 0) {
+        throw new Error("Enter an invoice value, enable an additional request, or provide a charge amount.");
+      }
+      for (const [label, value] of [["Customs", payload.customsChargeAmount], ["Transportation", payload.transportChargeAmount]] as const) {
+        if (value !== undefined && value !== null && (!Number.isFinite(value) || value < 0)) {
+          throw new Error(`${label} charge must be a valid amount greater than or equal to zero.`);
+        }
+      }
+      return updateAdminQuotationCharges(quotation.id, payload);
+    },
+    onSuccess: async () => {
+      setFeedback({ type: "success", text: "Additional-service requests and charges saved. The quotation totals and VAT have been recalculated where a price was provided." });
+      await refreshQuotations();
+    },
+    onError: (mutationError) => setFeedback({ type: "error", text: getErrorMessage(mutationError, "Could not save additional charges.") }),
+  });
+
+  const busy = statusMutation.isPending || messageMutation.isPending || uploadMutation.isPending || chargesMutation.isPending;
   const selectedItems = useMemo(() => (quotation?.items ?? []).filter((item) => item.isSelected), [quotation?.items]);
   const allAttachments = useMemo(() => {
     const attached = quotation?.attachments ?? [];
@@ -322,36 +452,147 @@ export default function AdminQuotationDetailsPage({ readOnly = false }: AdminQuo
   const shipment = getShipmentContext(quotation);
   const messages = quotation.messages ?? [];
 
+  // The SERVICE rows are the exporter-selected baseline. Operations add customs
+  // and transport as separate item types, so the original amount can be safely
+  // reconstructed without relying on a mutable submission total.
+  const quotationWithVat = quotation as AdminQuotation & {
+    vatEnabled?: boolean;
+    vatPercentage?: number | string | null;
+  };
+  const allSubmissionItems = quotation.items ?? [];
+  const originalServiceItems = allSubmissionItems.filter(
+    (item) => String((item as typeof item & { itemType?: string }).itemType ?? "SERVICE").toUpperCase() === "SERVICE",
+  );
+  const pricedAdditionalItems = allSubmissionItems.filter((item) => {
+    const itemType = String((item as typeof item & { itemType?: string }).itemType ?? "").toUpperCase();
+    return itemType === "CUSTOMS_CHARGE" || itemType === "TRANSPORT_CHARGE";
+  });
+  const customsChargeItem = pricedAdditionalItems.find(
+    (item) => String((item as typeof item & { itemType?: string }).itemType ?? "").toUpperCase() === "CUSTOMS_CHARGE",
+  );
+  const transportChargeItem = pricedAdditionalItems.find(
+    (item) => String((item as typeof item & { itemType?: string }).itemType ?? "").toUpperCase() === "TRANSPORT_CHARGE",
+  );
+  const fallbackServiceSubtotal = Math.round((originalServiceItems.reduce((sum, item) => sum + (Number(item.lineTotal) || 0), 0) + Number.EPSILON) * 100) / 100;
+  const additionalChargesSubtotal = Math.round((pricedAdditionalItems.reduce((sum, item) => sum + (Number(item.lineTotal) || 0), 0) + Number.EPSILON) * 100) / 100;
+  const currentSubtotal = Number(quotation.subtotal) || 0;
+  const currentTax = Number(quotation.taxAmount) || 0;
+  const currentTotal = Number(quotation.totalAmount) || 0;
+
+  type OriginalPriceSnapshot = {
+    subtotal?: number | string | null;
+    taxAmount?: number | string | null;
+    totalAmount?: number | string | null;
+    vatEnabled?: boolean;
+    vatPercentage?: number | string | null;
+  };
+  const originalQuote = quotation.quote as (NonNullable<AdminQuotation["quote"]> & {
+    subtotal?: number | string | null;
+    taxAmount?: number | string | null;
+    totalAmount?: number | string | null;
+    pricingSnapshot?: unknown;
+  }) | null | undefined;
+  const originalSnapshot = originalQuote?.pricingSnapshot && typeof originalQuote.pricingSnapshot === "object"
+    ? originalQuote.pricingSnapshot as OriginalPriceSnapshot
+    : {};
+  const readMoney = (value: unknown): number | null => {
+    if (value === null || value === undefined || value === "") return null;
+    const parsed = Number(value);
+    return Number.isFinite(parsed) ? parsed : null;
+  };
+  const snapshotSubtotal = readMoney(originalSnapshot.subtotal) ?? readMoney(originalQuote?.subtotal);
+  const snapshotTax = readMoney(originalSnapshot.taxAmount) ?? readMoney(originalQuote?.taxAmount);
+  const snapshotTotal = readMoney(originalSnapshot.totalAmount) ?? readMoney(originalQuote?.totalAmount);
+
+  const storedVatPercentage = Number(quotationWithVat.vatPercentage ?? originalSnapshot.vatPercentage);
+  const vatPercentage = Number.isFinite(storedVatPercentage) && storedVatPercentage >= 0
+    ? storedVatPercentage
+    : currentSubtotal > 0
+      ? (currentTax / currentSubtotal) * 100
+      : 0;
+  const vatEnabled = typeof quotationWithVat.vatEnabled === "boolean"
+    ? quotationWithVat.vatEnabled
+    : typeof originalSnapshot.vatEnabled === "boolean"
+      ? originalSnapshot.vatEnabled
+      : currentTax > 0;
+
+  // Preserve the pre-submission quote exactly where its immutable pricing
+  // snapshot is available. Fall back to the selected SERVICE rows for older data.
+  const originalServiceSubtotal = snapshotSubtotal ?? fallbackServiceSubtotal;
+  const originalServiceTax = snapshotTax ?? (vatEnabled
+    ? Math.round((originalServiceSubtotal * vatPercentage / 100 + Number.EPSILON) * 100) / 100
+    : 0);
+  const originalServiceTotal = snapshotTotal ?? Math.round((originalServiceSubtotal + originalServiceTax + Number.EPSILON) * 100) / 100;
+  const totalChangeAfterCharges = Math.round((currentTotal - originalServiceTotal + Number.EPSILON) * 100) / 100;
+  const hasAdditionalChargeRequest = Boolean(quotation.customsChargeRequested || quotation.transportChargeRequested || pricedAdditionalItems.length > 0);
+
   return (
-    <main className="min-h-screen bg-[#f4f7f6] px-3 py-5 sm:px-6 sm:py-8 lg:px-8 quotation-detail-page">
+    <main className="min-h-screen bg-slate-50 px-3 py-4 sm:px-5 sm:py-6 lg:px-8 lg:py-8 quotation-detail-page">
       <style>{`
-        @page { size: A4; margin: 13mm; }
+        @page { size: A4; margin: 12mm 13mm 15mm; }
         @media print {
           html, body, #root { background: #fff !important; margin: 0 !important; padding: 0 !important; }
           body * { visibility: hidden !important; }
           .quotation-print-document, .quotation-print-document * { visibility: visible !important; }
-          .quotation-print-document { position: absolute !important; left: 0 !important; top: 0 !important; width: 100% !important; max-width: none !important; margin: 0 !important; padding: 0 !important; border: 0 !important; box-shadow: none !important; background: #fff !important; }
-          .print-hidden, .print-internal-only { display: none !important; }
-          .quotation-print-document { color: #0f172a !important; font-size: 10pt !important; }
-          .quotation-print-document header { background: #fff !important; color: #0f172a !important; border-bottom: 2px solid #047857 !important; }
-          .quotation-print-document header p { color: #475569 !important; }
-          .quotation-print-document header h1 { color: #0f172a !important; }
-          .quotation-print-document .space-y-7 > :not([hidden]) ~ :not([hidden]) { margin-top: 16px !important; }
-          .print-break-inside-avoid { break-inside: avoid; page-break-inside: avoid; }
+          .quotation-print-document { position: absolute !important; left: 0 !important; top: 0 !important; width: 100% !important; max-width: none !important; margin: 0 !important; padding: 0 !important; overflow: visible !important; border: 0 !important; border-radius: 0 !important; box-shadow: none !important; background: #fff !important; color: #1f2937 !important; font-size: 9pt !important; line-height: 1.35 !important; }
+          .quotation-screen-header, .print-hidden, .print-internal-only { display: none !important; }
+          .quotation-print-header { display: flex !important; align-items: flex-start !important; justify-content: space-between !important; gap: 16px !important; margin: 0 0 12px !important; padding: 0 0 10px !important; border-bottom: 2.5px solid #047857 !important; break-inside: avoid !important; page-break-inside: avoid !important; }
+          .quotation-print-header p { margin-top: 0 !important; margin-bottom: 0 !important; }
+          .quotation-print-brand { color: #0f2740 !important; font-size: 16pt !important; font-weight: 800 !important; letter-spacing: 1.1px !important; line-height: 1.1 !important; }
+          .quotation-print-subbrand { margin-top: 4px !important; color: #047857 !important; font-size: 7.5pt !important; font-weight: 800 !important; letter-spacing: 1px !important; }
+          .quotation-print-reference { min-width: 150px !important; max-width: 45% !important; text-align: right !important; }
+          .quotation-print-reference .quotation-ref-value { overflow-wrap: anywhere !important; color: #0f2740 !important; font-size: 12pt !important; font-weight: 800 !important; }
+          .quotation-print-reference .quotation-ref-label { color: #64748b !important; font-size: 7pt !important; font-weight: 700 !important; letter-spacing: .5px !important; text-transform: uppercase !important; }
+          .quotation-print-document h1, .quotation-print-document h2, .quotation-print-document h3 { color: #0f2740 !important; }
+          .quotation-print-document h2 { font-size: 11pt !important; }
+          .quotation-print-document .space-y-7 > :not([hidden]) ~ :not([hidden]) { margin-top: 12px !important; }
+          .quotation-print-document .quotation-document-body { padding: 0 !important; }
+          .print-break-inside-avoid { break-inside: avoid !important; page-break-inside: avoid !important; }
           a { color: #0f172a !important; text-decoration: none !important; }
-          table { width: 100% !important; border-collapse: collapse !important; }
-          th, td { border-bottom: 1px solid #dbe3e8 !important; padding: 8px !important; }
-          .quotation-shipment-summary { border: 1px solid #cbd5e1 !important; break-inside: avoid !important; page-break-inside: avoid !important; }
-          .quotation-shipment-summary table { width: 100% !important; table-layout: fixed !important; }
-          .quotation-shipment-summary thead th { background: #0f2740 !important; color: #ffffff !important; font-weight: 800 !important; font-size: 9pt !important; text-transform: uppercase !important; letter-spacing: 0.5px !important; padding: 10px 8px !important; border: 1px solid #334155 !important; }
-          .quotation-shipment-summary tbody td { background: #ecfdf5 !important; color: #0f2740 !important; font-weight: 800 !important; padding: 12px 8px !important; border: 1px solid #d1fae5 !important; vertical-align: top !important; overflow-wrap: anywhere !important; }
-          .quotation-shipment-summary tbody td span { overflow-wrap: anywhere !important; }
-          .quotation-print-document section { box-shadow: none !important; }
+          .quotation-shipment-summary { margin: 0 0 11px !important; overflow: visible !important; border: 1px solid #cbd5e1 !important; border-radius: 2px !important; break-inside: avoid !important; page-break-inside: avoid !important; }
+          .quotation-shipment-summary > div:first-child { padding: 8px 10px !important; border-bottom: 1px solid #cbd5e1 !important; background: #f8fafc !important; }
+          .quotation-shipment-summary dl { display: grid !important; grid-template-columns: repeat(3, minmax(0, 1fr)) !important; gap: 0 !important; padding: 0 !important; }
+          .quotation-shipment-summary .shipment-fact { border: 0 !important; border-right: 1px solid #e2e8f0 !important; border-bottom: 1px solid #e2e8f0 !important; border-radius: 0 !important; background: #fff !important; padding: 8px !important; }
+          .quotation-shipment-summary .shipment-fact dd { font-size: 8pt !important; }
+          .quotation-document-section { margin-top: 10px !important; }
+          .quotation-document-section > div > dl { gap: 8px !important; }
+          .quotation-document-section dl { font-size: 8pt !important; }
+          .quotation-document-section dt { font-size: 7pt !important; }
+          .quotation-document-section dd { font-size: 8.2pt !important; line-height: 1.25 !important; }
+          .quotation-document-section .section-heading { margin-bottom: 6px !important; }
+          .quotation-item-table { width: 100% !important; min-width: 0 !important; table-layout: fixed !important; border-collapse: collapse !important; }
+          .quotation-item-table thead { display: table-header-group !important; }
+          .quotation-item-table tfoot { display: table-row-group !important; }
+          .quotation-item-table tr { break-inside: avoid !important; page-break-inside: avoid !important; }
+          .quotation-item-table th { background: #0f2740 !important; color: #fff !important; border: 1px solid #334155 !important; padding: 7px 6px !important; font-size: 7pt !important; font-weight: 800 !important; text-transform: uppercase !important; letter-spacing: .35px !important; }
+          .quotation-item-table td { border: 1px solid #dbe3e8 !important; padding: 7px 6px !important; color: #1f2937 !important; font-size: 8pt !important; vertical-align: top !important; overflow-wrap: anywhere !important; }
+          .quotation-item-table tbody tr:nth-child(even) td { background: #f8fafc !important; }
+          .quotation-item-table .charge-kind { display: block !important; margin-top: 3px !important; color: #64748b !important; font-size: 6.5pt !important; font-weight: 700 !important; text-transform: uppercase !important; }
+          .quotation-item-table .pending-pricing-row td { background: #fffbeb !important; color: #92400e !important; font-style: italic !important; }
+          .quotation-total-card { width: 100% !important; max-width: 78mm !important; margin-left: auto !important; padding: 10px !important; border: 1px solid #cbd5e1 !important; border-radius: 2px !important; background: #f8fafc !important; }
+          .quotation-total-card .quotation-total-value { color: #047857 !important; font-size: 15pt !important; }
+          .quotation-before-after { margin-top: 10px !important; border: 1px solid #cbd5e1 !important; border-radius: 2px !important; box-shadow: none !important; break-inside: avoid !important; page-break-inside: avoid !important; }
+          .quotation-before-after > div:first-child { padding: 8px 10px !important; background: #f8fafc !important; }
+          .quotation-before-after-cards { display: none !important; }
+          .quotation-before-after-print-table { display: block !important; padding: 0 !important; }
+          .quotation-before-after-print-table table { width: 100% !important; border-collapse: collapse !important; }
+          .quotation-before-after-print-table thead { display: table-header-group !important; }
+          .quotation-before-after-print-table th { padding: 6px 8px !important; background: #0f2740 !important; color: #fff !important; border: 1px solid #334155 !important; text-align: left !important; font-size: 7pt !important; text-transform: uppercase !important; }
+          .quotation-before-after-print-table td { padding: 6px 8px !important; border: 1px solid #dbe3e8 !important; color: #1f2937 !important; font-size: 8pt !important; vertical-align: top !important; }
+          .quotation-before-after-print-table td:last-child { text-align: right !important; font-weight: 700 !important; font-variant-numeric: tabular-nums !important; }
+          .quotation-before-after-print-table .summary-total td { background: #ecfdf5 !important; color: #064e3b !important; font-weight: 800 !important; }
+          .quotation-before-after-print-table .summary-note td { background: #fffbeb !important; color: #92400e !important; text-align: left !important; font-size: 7pt !important; font-weight: 500 !important; }
+          .quotation-before-after > div:last-child { padding: 7px 10px !important; }
+          .quotation-before-after > div:last-child p { font-size: 7pt !important; }
+          .quotation-screen-operations-instructions { display: none !important; }
+          .print-only-row { display: table-row !important; }
+          .quotation-print-footer { margin-top: 12px !important; padding-top: 8px !important; border-top: 1px solid #cbd5e1 !important; }
+          .quotation-print-footer p { font-size: 7pt !important; }
           * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
         }
       `}</style>
 
-      <div className="mx-auto max-w-6xl space-y-5">
+      <div className="mx-auto w-full max-w-[1440px] space-y-5 sm:space-y-6">
         <div className="print-hidden flex flex-wrap items-center justify-between gap-3">
           <button type="button" onClick={() => navigate(backTo)} className="inline-flex items-center gap-2 rounded-xl px-1 py-2 text-sm font-semibold text-slate-600 transition hover:text-emerald-800"><ArrowLeft size={17} /> Back to quotations</button>
           <div className="flex flex-wrap gap-2">
@@ -360,9 +601,31 @@ export default function AdminQuotationDetailsPage({ readOnly = false }: AdminQuo
           </div>
         </div>
 
-        <div className={`grid items-start gap-6 ${readOnly ? "lg:grid-cols-1" : "lg:grid-cols-[minmax(0,1fr)_330px]"}`}>
+        <div className={`grid min-w-0 items-start gap-5 xl:gap-7 ${readOnly ? "xl:grid-cols-1" : "xl:grid-cols-[minmax(0,1fr)_340px]"}`}>
           <article className="quotation-print-document min-w-0 overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm shadow-slate-200/60 print-break-inside-avoid">
-            <header className="relative overflow-hidden bg-gradient-to-br from-emerald-950 via-emerald-900 to-emerald-800 p-6 text-white sm:p-8">
+            <div className="quotation-print-header hidden items-start justify-between gap-6 text-slate-900 print:flex">
+              <div className="min-w-0">
+                <p className="quotation-print-brand">OGW KAY IMPEX</p>
+                <p className="quotation-print-subbrand">EXPORT &amp; IMPORT MANAGEMENT</p>
+                {(DOCUMENT_ISSUER.address || DOCUMENT_ISSUER.email || DOCUMENT_ISSUER.phone || DOCUMENT_ISSUER.website) && (
+                  <div className="mt-2 space-y-0.5 text-[8px] leading-4 text-slate-600">
+                    {DOCUMENT_ISSUER.address && <p>{DOCUMENT_ISSUER.address}</p>}
+                    {[DOCUMENT_ISSUER.phone, DOCUMENT_ISSUER.email, DOCUMENT_ISSUER.website].filter(Boolean).length > 0 && (
+                      <p>{[DOCUMENT_ISSUER.phone, DOCUMENT_ISSUER.email, DOCUMENT_ISSUER.website].filter(Boolean).join(" · ")}</p>
+                    )}
+                  </div>
+                )}
+              </div>
+              <div className="quotation-print-reference shrink-0">
+                <p className="text-[10px] font-extrabold uppercase tracking-[0.16em] text-emerald-800">Official quotation</p>
+                <p className="quotation-ref-label mt-2">Quotation reference</p>
+                <p className="quotation-ref-value mt-1">{quoteReference}</p>
+                <p className="quotation-ref-label mt-2">Date issued</p>
+                <p className="mt-1 text-[9px] font-semibold text-slate-800">{formatDate(quotation.submittedAt || quotation.createdAt)}</p>
+                <p className="mt-1 text-[8px] font-semibold text-slate-600">Status: {prettyStatus(quotation.status)}</p>
+              </div>
+            </div>
+            <header className="quotation-screen-header relative overflow-hidden bg-gradient-to-br from-emerald-950 via-emerald-900 to-emerald-800 p-6 text-white sm:p-8">
               <div className="absolute -right-16 -top-24 h-64 w-64 rounded-full border border-white/10" />
               <div className="absolute -right-3 -top-12 h-44 w-44 rounded-full border border-white/10" />
               <div className="relative flex flex-col justify-between gap-6 sm:flex-row sm:items-start">
@@ -396,62 +659,70 @@ export default function AdminQuotationDetailsPage({ readOnly = false }: AdminQuo
               </div>
             </header>
 
-            {/* Prominent shipment summary — included in the printable quotation */}
-            <div className="quotation-shipment-summary overflow-hidden border-x border-b border-slate-200 bg-white print-break-inside-avoid">
-              <table className="w-full table-fixed border-collapse text-left">
-                <thead>
-                  <tr className="bg-[#0F2740]">
-                    <th scope="col" className="w-[25%] border-r border-white/20 px-3 py-3 text-[10px] font-extrabold uppercase tracking-[0.12em] text-white sm:px-5 sm:text-xs">
-                      Mode
-                    </th>
-                    <th scope="col" className="w-[50%] border-r border-white/20 px-3 py-3 text-[10px] font-extrabold uppercase tracking-[0.12em] text-white sm:px-5 sm:text-xs">
-                      Shipment option
-                    </th>
-                    <th scope="col" className="w-[25%] px-3 py-3 text-[10px] font-extrabold uppercase tracking-[0.12em] text-white sm:px-5 sm:text-xs">
-                      Direction
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr className="bg-emerald-50">
-                    <td className="border-r border-t border-emerald-100 px-3 py-4 align-top sm:px-5">
-                      <span className="block break-words text-sm font-extrabold text-[#0F2740] sm:text-base">
-                        {shipment.mode || "Not specified"}
-                      </span>
-                      <span className="mt-1 block text-[10px] font-medium text-slate-500 sm:text-xs">
-                        Transport mode
-                      </span>
-                    </td>
-                    <td className="border-r border-t border-emerald-100 px-3 py-4 align-top sm:px-5">
-                      <span className="block break-words text-sm font-extrabold leading-5 text-[#0F2740] sm:text-base sm:leading-6">
-                        {shipment.shipmentOption || "Not specified"}
-                      </span>
-                      {shipment.route !== "Not specified" && (
-                        <span className="mt-1 block break-words text-[10px] font-medium text-slate-500 sm:text-xs">
-                          Route: {shipment.route}
-                        </span>
-                      )}
-                      {shipment.equipment !== "Not specified" && (
-                        <span className="mt-1 block break-words text-[10px] font-medium text-slate-500 sm:text-xs">
-                          Equipment: {shipment.equipment}
-                        </span>
-                      )}
-                    </td>
-                    <td className="border-t border-emerald-100 px-3 py-4 align-top sm:px-5">
-                      <span className="inline-flex max-w-full break-words rounded-lg border border-emerald-200 bg-white px-2 py-1.5 text-xs font-extrabold uppercase leading-4 text-emerald-800 sm:px-3 sm:text-sm">
-                        {shipment.direction || "Not specified"}
-                      </span>
-                      <span className="mt-2 block text-[10px] font-medium text-slate-500 sm:text-xs">
-                        Shipment direction
-                      </span>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
+            {/* Responsive shipment overview: icon-led facts on mobile, tablet and desktop. */}
+            <section className="quotation-shipment-summary overflow-hidden border-x border-b border-slate-200 bg-white print-break-inside-avoid" aria-label="Shipment overview">
+              <div className="flex flex-col gap-4 border-b border-slate-200 bg-slate-50/90 px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-6">
+                <div className="flex min-w-0 items-center gap-3">
+                  <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-emerald-800 text-white shadow-sm print-hidden">
+                    {rateCard?.mode?.toUpperCase() === "AIR" ? <Plane size={21} /> : rateCard?.mode?.toUpperCase() === "SEA" ? <Ship size={21} /> : <Truck size={21} />}
+                  </span>
+                  <div className="min-w-0">
+                    <p className="text-[10px] font-extrabold uppercase tracking-[0.18em] text-emerald-800">Shipment overview</p>
+                    <h2 className="mt-1 break-words text-base font-extrabold tracking-tight text-slate-950 sm:text-lg">{shipment.shipmentOption || "Shipment details"}</h2>
+                    <p className="mt-1 text-xs leading-5 text-slate-500">A quick summary of the shipment selected for this quotation.</p>
+                  </div>
+                </div>
+                <div className="flex flex-wrap gap-2 sm:justify-end">
+                  <span className="inline-flex items-center gap-1.5 rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1.5 text-xs font-bold text-emerald-900">
+                    <ArrowLeftRight size={13} /> {shipment.direction || "Direction not specified"}
+                  </span>
+                  <span className="inline-flex items-center gap-1.5 rounded-full border border-slate-200 bg-white px-3 py-1.5 text-xs font-bold text-slate-700">
+                    <PackageCheck size={13} /> {shipment.mode || "Mode not specified"}
+                  </span>
+                </div>
+              </div>
+              <dl className="grid grid-cols-1 gap-3 bg-white p-3 sm:grid-cols-2 sm:p-4 xl:grid-cols-3">
+                <ShipmentFact
+                  icon={rateCard?.mode?.toUpperCase() === "AIR" ? Plane : rateCard?.mode?.toUpperCase() === "SEA" ? Ship : Truck}
+                  label="Transport mode"
+                  value={shipment.mode}
+                  hint="Air, land or sea freight"
+                />
+                <ShipmentFact
+                  icon={PackageCheck}
+                  label="Shipment option"
+                  value={shipment.shipmentOption}
+                  hint="Selected route, haul type or container option"
+                />
+                <ShipmentFact
+                  icon={MapPin}
+                  label="Route / lane"
+                  value={shipment.route}
+                  hint="Configured route for this rate card"
+                />
+                <ShipmentFact
+                  icon={Box}
+                  label="Equipment type"
+                  value={shipment.equipment}
+                  hint="Container or handling equipment, where applicable"
+                />
+                <ShipmentFact
+                  icon={Compass}
+                  label="Rate configuration"
+                  value={shipment.configuration}
+                  hint={rateCard?.name ? `Rate card: ${rateCard.name}` : "Pricing configuration used for this quote"}
+                />
+                <ShipmentFact
+                  icon={ArrowLeftRight}
+                  label="Shipment direction"
+                  value={shipment.direction}
+                  hint="Import or export"
+                />
+              </dl>
+            </section>
 
-            <div className="space-y-7 p-5 sm:p-8">
-              <section className="print-break-inside-avoid">
+            <div className="quotation-document-body space-y-7 p-4 sm:p-6 lg:p-8">
+              <section className="quotation-document-section print-break-inside-avoid">
                 <SectionHeading eyebrow="01 / Customer" title="Exporter information" icon={UserRound} />
                 <dl className="grid gap-5 rounded-2xl border border-slate-200 bg-slate-50/70 p-4 sm:grid-cols-2 sm:p-5">
                   <DetailField label="Exporter / company name" value={exporter?.name || quotation.customerName || "Not provided"} />
@@ -461,22 +732,22 @@ export default function AdminQuotationDetailsPage({ readOnly = false }: AdminQuo
                 </dl>
               </section>
 
-              <section className="print-break-inside-avoid">
+              <section className="quotation-document-section print-break-inside-avoid">
                 <SectionHeading eyebrow="02 / Shipment" title="Shipment and rate details" icon={PackageCheck} />
-                <dl className="grid gap-5 rounded-2xl border border-slate-200 p-4 sm:grid-cols-2 sm:p-5">
-                  <DetailField label="Goods description" value={quote?.goodsDescription || "Not provided"} />
-                  <DetailField label="HS code" value={quote?.hsCode || "Not provided"} />
-                  <DetailField label="Gross weight" value={quote?.weightKg != null ? `${quote.weightKg} kg` : "Not provided"} />
-                  <DetailField label="Quantity" value={quote?.quantity != null ? String(quote.quantity) : "Not provided"} />
-                  {quote?.customsValue != null && <DetailField label="Declared customs value" value={`${quotation.currency || "NGN"} ${amount(quote.customsValue)}`} />}
-                  {quote?.freightAmount != null && <DetailField label="Freight value supplied" value={`${quotation.currency || "NGN"} ${amount(quote.freightAmount)}`} />}
-                  <DetailField label="Rate card" value={rateCard?.name || "Rate card details unavailable"} />
-                  {quote?.validUntil && <DetailField label="Quotation valid until" value={formatDate(quote.validUntil)} />}
-                  <DetailField label="Route / lane" value={shipment.route} />
-                  <DetailField label="Equipment type" value={shipment.equipment} />
-                  <DetailField label="Configuration" value={shipment.configuration} />
-                  <DetailField label="Manual review required" value={quote?.requiresReview ? "Yes — review needed" : quote ? "No" : "Unknown"} />
-                  <DetailField label="Currency" value={quotation.currency || "NGN"} />
+                <dl className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3">
+                  <div className="rounded-xl border border-slate-200 bg-slate-50/70 p-3.5 sm:p-4"><DetailField label="Goods description" value={quote?.goodsDescription || "Not provided"} /></div>
+                  <div className="rounded-xl border border-slate-200 bg-slate-50/70 p-3.5 sm:p-4"><DetailField label="HS code" value={quote?.hsCode || "Not provided"} /></div>
+                  <div className="rounded-xl border border-slate-200 bg-slate-50/70 p-3.5 sm:p-4"><DetailField label="Gross weight" value={quote?.weightKg != null ? `${quote.weightKg} kg` : "Not provided"} /></div>
+                  <div className="rounded-xl border border-slate-200 bg-slate-50/70 p-3.5 sm:p-4"><DetailField label="Quantity" value={quote?.quantity != null ? String(quote.quantity) : "Not provided"} /></div>
+                  {quote?.customsValue != null && <div className="rounded-xl border border-slate-200 bg-slate-50/70 p-3.5 sm:p-4"><DetailField label="Declared customs value" value={`${quotation.currency || "NGN"} ${amount(quote.customsValue)}`} /></div>}
+                  {quote?.freightAmount != null && <div className="rounded-xl border border-slate-200 bg-slate-50/70 p-3.5 sm:p-4"><DetailField label="Freight value supplied" value={`${quotation.currency || "NGN"} ${amount(quote.freightAmount)}`} /></div>}
+                  <div className="rounded-xl border border-slate-200 bg-slate-50/70 p-3.5 sm:p-4"><DetailField label="Rate card" value={rateCard?.name || "Rate card details unavailable"} /></div>
+                  {quote?.validUntil && <div className="rounded-xl border border-slate-200 bg-slate-50/70 p-3.5 sm:p-4"><DetailField label="Quotation valid until" value={formatDate(quote.validUntil)} /></div>}
+                  <div className="rounded-xl border border-slate-200 bg-slate-50/70 p-3.5 sm:p-4"><DetailField label="Route / lane" value={shipment.route} /></div>
+                  <div className="rounded-xl border border-slate-200 bg-slate-50/70 p-3.5 sm:p-4"><DetailField label="Equipment type" value={shipment.equipment} /></div>
+                  <div className="rounded-xl border border-slate-200 bg-slate-50/70 p-3.5 sm:p-4"><DetailField label="Configuration" value={shipment.configuration} /></div>
+                  <div className="rounded-xl border border-slate-200 bg-slate-50/70 p-3.5 sm:p-4"><DetailField label="Manual review required" value={quote?.requiresReview ? "Yes — review needed" : quote ? "No" : "Unknown"} /></div>
+                  <div className="rounded-xl border border-slate-200 bg-slate-50/70 p-3.5 sm:p-4"><DetailField label="Currency" value={quotation.currency || "NGN"} /></div>
                 </dl>
               </section>
 
@@ -487,11 +758,39 @@ export default function AdminQuotationDetailsPage({ readOnly = false }: AdminQuo
                 </section>
               )}
 
-              <section className="print-break-inside-avoid">
-                <SectionHeading eyebrow="03 / Cost breakdown" title="Requested services" icon={FileText} />
+              {(quotation.customsChargeRequested || quotation.transportChargeRequested || quotation.invoiceValue != null) && (
+                <section className="print-break-inside-avoid rounded-2xl border border-amber-200 bg-amber-50/60 p-4 sm:p-5">
+                  <SectionHeading eyebrow="03 / Operations requests" title="Additional charges requested" icon={PackageCheck} />
+                  <dl className="grid gap-4 sm:grid-cols-2">
+                    <DetailField
+                      label="Customs duties and charges"
+                      value={!quotation.customsChargeRequested
+                        ? "Not requested"
+                        : customsChargeItem
+                          ? `Requested · Priced at ${quotation.currency} ${amount(customsChargeItem.lineTotal)}`
+                          : "Requested · Awaiting operations pricing"}
+                    />
+                    {quotation.customsChargeRequested && quotation.invoiceValue != null && (
+                      <DetailField label="Commercial invoice value" value={`${quotation.invoiceCurrency || quotation.currency} ${amount(quotation.invoiceValue)}`} />
+                    )}
+                    <DetailField
+                      label="Transportation pricing"
+                      value={!quotation.transportChargeRequested
+                        ? "Not requested"
+                        : transportChargeItem
+                          ? `Requested · Priced at ${quotation.currency} ${amount(transportChargeItem.lineTotal)}`
+                          : "Requested · Awaiting operations pricing"}
+                    />
+                  </dl>
+                  <p className="quotation-screen-operations-instructions mt-3 text-xs leading-5 text-slate-600">Enter only the charges requested by the exporter. Saving them updates the same itemized quotation and recalculates VAT using the saved VAT policy.</p>
+                </section>
+              )}
+
+              <section className="quotation-document-section print-break-inside-avoid">
+                <SectionHeading eyebrow="04 / Cost breakdown" title="Requested services and additional charges" icon={FileText} />
                 <div className="rounded-2xl border border-slate-200 bg-white">
                   {/* Mobile and tablet: service cards keep every value, including Amount, visible without horizontal scrolling. */}
-                  <div className="space-y-3 p-3 sm:p-4 lg:hidden print:hidden">
+                  <div className="space-y-3 p-3 sm:p-4 xl:hidden print:hidden">
                     {selectedItems.length === 0 ? (
                       <p className="px-2 py-6 text-center text-sm text-slate-500">
                         No selected service items are available for this quotation.
@@ -536,13 +835,13 @@ export default function AdminQuotationDetailsPage({ readOnly = false }: AdminQuo
                   </div>
 
                   {/* Desktop: retain the full itemized table. The scroll container protects narrower laptop windows. */}
-                  <div className="hidden overflow-x-auto lg:block print:block print:overflow-visible">
-                    <table className="w-full min-w-[760px] table-fixed text-left lg:min-w-0 print:min-w-0">
+                  <div className="hidden overflow-x-auto xl:block print:block print:overflow-visible">
+                    <table className="quotation-item-table w-full min-w-[760px] table-fixed text-left xl:min-w-0 print:min-w-0">
                       <thead className="bg-slate-50 text-[10px] uppercase tracking-[0.12em] text-slate-500">
                         <tr>
                           <th scope="col" className="w-[7%] px-3 py-3 font-bold">S/N</th>
                           <th scope="col" className="w-[25%] px-3 py-3 font-bold">Service / charge</th>
-                          <th scope="col" className="w-[19%] px-3 py-3 font-bold">Code</th>
+                          <th scope="col" className="w-[19%] px-3 py-3 font-bold">Code / type</th>
                           <th scope="col" className="w-[9%] px-3 py-3 text-right font-bold">Qty</th>
                           <th scope="col" className="w-[19%] px-3 py-3 text-right font-bold">Unit rate</th>
                           <th scope="col" className="w-[21%] px-3 py-3 text-right font-bold">Amount</th>
@@ -555,23 +854,107 @@ export default function AdminQuotationDetailsPage({ readOnly = false }: AdminQuo
                           <tr key={item.id} className="align-top">
                             <td className="break-words px-3 py-3 text-sm font-semibold tabular-nums text-slate-500">{index + 1}</td>
                             <td className="break-words px-3 py-3 text-sm font-semibold text-slate-800">{item.componentName}</td>
-                            <td className="break-all px-3 py-3 text-xs text-slate-500">{item.componentCode || "—"}</td>
+                            <td className="break-all px-3 py-3 text-xs text-slate-500">
+                              <span className="block font-semibold text-slate-700">{item.componentCode || "—"}</span>
+                              <span className="charge-kind mt-1 block text-[10px] font-semibold uppercase tracking-wide text-slate-400">{quotationItemKind(item as typeof item & { itemType?: string })}</span>
+                            </td>
                             <td className="break-words px-3 py-3 text-right text-sm tabular-nums text-slate-600">{item.quantity}</td>
                             <td className="break-words px-3 py-3 text-right text-sm tabular-nums text-slate-600">{quotation.currency} {amount(item.rateApplied)}</td>
                             <td className="break-words px-3 py-3 text-right text-sm font-bold tabular-nums text-slate-900">{quotation.currency} {amount(item.lineTotal)}</td>
                           </tr>
                         ))}
+                        {quotation.customsChargeRequested && !customsChargeItem && (
+                          <tr className="hidden print:table-row print-only-row pending-pricing-row">
+                            <td className="px-3 py-3 text-sm">—</td>
+                            <td className="px-3 py-3 text-sm font-semibold">Customs duties and charges</td>
+                            <td className="px-3 py-3 text-xs">Requested by exporter</td>
+                            <td className="px-3 py-3 text-right">—</td>
+                            <td className="px-3 py-3 text-right">—</td>
+                            <td className="px-3 py-3 text-right font-bold">Awaiting pricing</td>
+                          </tr>
+                        )}
+                        {quotation.transportChargeRequested && !transportChargeItem && (
+                          <tr className="hidden print:table-row print-only-row pending-pricing-row">
+                            <td className="px-3 py-3 text-sm">—</td>
+                            <td className="px-3 py-3 text-sm font-semibold">Additional transportation charge</td>
+                            <td className="px-3 py-3 text-xs">Requested by exporter</td>
+                            <td className="px-3 py-3 text-right">—</td>
+                            <td className="px-3 py-3 text-right">—</td>
+                            <td className="px-3 py-3 text-right font-bold">Awaiting pricing</td>
+                          </tr>
+                        )}
                       </tbody>
                     </table>
                   </div>
                 </div>
-                <div className="mt-4 ml-auto max-w-sm rounded-2xl border border-emerald-100 bg-emerald-50/70 p-4 sm:p-5 print-break-inside-avoid">
+                <div className="quotation-total-card mt-4 ml-auto max-w-sm rounded-2xl border border-emerald-100 bg-emerald-50/70 p-4 sm:p-5 print-break-inside-avoid">
                   <div className="flex justify-between gap-4 text-sm text-slate-600"><span>Subtotal</span><span>{quotation.currency} {amount(quotation.subtotal)}</span></div>
                   <div className="mt-2 flex justify-between gap-4 text-sm text-slate-600"><span>Tax</span><span>{quotation.currency} {amount(quotation.taxAmount)}</span></div>
                   <div className="my-4 border-t border-emerald-200" />
-                  <div className="flex items-end justify-between gap-4"><span className="text-sm font-bold text-slate-800">Quotation total</span><span className="text-xl font-extrabold tracking-tight text-emerald-900">{quotation.currency} {amount(quotation.totalAmount)}</span></div>
+                  <div className="flex items-end justify-between gap-4"><span className="text-sm font-bold text-slate-800">Quotation total</span><span className="quotation-total-value text-xl font-extrabold tracking-tight text-emerald-900">{quotation.currency} {amount(quotation.totalAmount)}</span></div>
                   <p className="mt-3 text-[10px] leading-5 text-slate-500">This amount reflects the saved quotation calculation and is not necessarily the final approved charge.</p>
                 </div>
+                {hasAdditionalChargeRequest && (
+                  <section className="quotation-before-after mt-5 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm print-break-inside-avoid" aria-labelledby="quotation-before-after-heading">
+                    <div className="flex items-start gap-3 border-b border-slate-200 bg-slate-50 px-4 py-4 sm:px-5">
+                      <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white text-slate-700 ring-1 ring-slate-200 print-hidden"><History size={19} /></span>
+                      <div className="min-w-0">
+                        <p className="text-[10px] font-extrabold uppercase tracking-[0.16em] text-emerald-800">Price history</p>
+                        <h3 id="quotation-before-after-heading" className="mt-1 text-base font-extrabold text-slate-950 sm:text-lg">Before and after additional charges</h3>
+                        <p className="mt-1 text-xs leading-5 text-slate-600">The original figure is read from the saved quote calculation and stays unchanged. The current figure reflects the submitted services plus any additional charges priced by operations.</p>
+                      </div>
+                    </div>
+                    <div className="quotation-before-after-cards grid gap-3 p-3 sm:grid-cols-2 sm:p-4">
+                      <div className="min-w-0 rounded-xl border border-slate-200 bg-slate-50/70 p-4 sm:p-5">
+                        <div className="flex items-center gap-2 text-slate-600"><Receipt size={17} /><p className="text-xs font-extrabold uppercase tracking-[0.12em]">Original estimate</p></div>
+                        <p className="mt-3 text-xs text-slate-500">Before additional charges</p>
+                        <p className="mt-1 break-words text-2xl font-extrabold tracking-tight text-slate-900 sm:text-3xl">{quotation.currency} {amount(originalServiceTotal)}</p>
+                        <dl className="mt-4 space-y-2.5 border-t border-slate-200 pt-3">
+                          <div className="flex items-start justify-between gap-3 text-sm"><dt className="text-slate-600">Original quote subtotal</dt><dd className="text-right font-semibold tabular-nums text-slate-800">{quotation.currency} {amount(originalServiceSubtotal)}</dd></div>
+                          <div className="flex items-start justify-between gap-3 text-sm"><dt className="text-slate-600">VAT{vatEnabled ? ` (${amount(vatPercentage)}%)` : ""}</dt><dd className="text-right font-semibold tabular-nums text-slate-800">{quotation.currency} {amount(originalServiceTax)}</dd></div>
+                          <div className="flex items-start justify-between gap-3 text-sm"><dt className="text-slate-600">Extra charges</dt><dd className="text-right font-semibold tabular-nums text-slate-800">{quotation.currency} 0.00</dd></div>
+                        </dl>
+                        <p className="mt-3 text-xs leading-5 text-slate-500">Uses the immutable original quote calculation where available; older records fall back to submitted service rows.</p>
+                      </div>
+                      <div className="min-w-0 rounded-xl border border-emerald-200 bg-emerald-50/50 p-4 sm:p-5">
+                        <div className="flex items-center gap-2 text-emerald-800"><CircleDollarSign size={17} /><p className="text-xs font-extrabold uppercase tracking-[0.12em]">Current quotation</p></div>
+                        <p className="mt-3 text-xs text-slate-600">After operations pricing</p>
+                        <p className="mt-1 break-words text-2xl font-extrabold tracking-tight text-emerald-950 sm:text-3xl">{quotation.currency} {amount(currentTotal)}</p>
+                        <dl className="mt-4 space-y-2.5 border-t border-emerald-200 pt-3">
+                          <div className="flex items-start justify-between gap-3 text-sm"><dt className="text-slate-600">Updated subtotal</dt><dd className="text-right font-semibold tabular-nums text-slate-900">{quotation.currency} {amount(currentSubtotal)}</dd></div>
+                          <div className="flex items-start justify-between gap-3 text-sm"><dt className="text-slate-600">VAT{vatEnabled ? ` (${amount(vatPercentage)}%)` : ""}</dt><dd className="text-right font-semibold tabular-nums text-slate-900">{quotation.currency} {amount(currentTax)}</dd></div>
+                          <div className="flex items-start justify-between gap-3 text-sm"><dt className="text-slate-600">Additional charges priced</dt><dd className="text-right font-semibold tabular-nums text-slate-900">{quotation.currency} {amount(additionalChargesSubtotal)}</dd></div>
+                        </dl>
+                        <div className="mt-4 flex items-start justify-between gap-3 rounded-lg border border-emerald-200 bg-white/80 px-3 py-3">
+                          <div className="min-w-0"><p className="text-xs font-bold text-slate-700">Change from original</p><p className="mt-1 text-[11px] leading-4 text-slate-500">Including VAT effect</p></div>
+                          <p className={`break-words text-right text-sm font-extrabold tabular-nums ${totalChangeAfterCharges > 0 ? "text-emerald-800" : totalChangeAfterCharges < 0 ? "text-rose-700" : "text-slate-800"}`}>{totalChangeAfterCharges > 0 ? "+" : totalChangeAfterCharges < 0 ? "−" : ""}{quotation.currency} {amount(Math.abs(totalChangeAfterCharges))}</p>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="quotation-before-after-print-table hidden print:block">
+                      <table aria-label="Original and current quotation comparison">
+                        <thead>
+                          <tr><th scope="col">Price component</th><th scope="col">Before additional charges</th><th scope="col">Current quotation</th></tr>
+                        </thead>
+                        <tbody>
+                          <tr><td>Original quote subtotal</td><td>{quotation.currency} {amount(originalServiceSubtotal)}</td><td>{quotation.currency} {amount(currentSubtotal)}</td></tr>
+                          <tr><td>VAT{vatEnabled ? ` (${amount(vatPercentage)}%)` : " (not applicable)"}</td><td>{quotation.currency} {amount(originalServiceTax)}</td><td>{quotation.currency} {amount(currentTax)}</td></tr>
+                          <tr><td>Customs duties and charges</td><td>Not included</td><td>{!quotation.customsChargeRequested ? "Not requested" : customsChargeItem ? `${quotation.currency} ${amount(customsChargeItem.lineTotal)}` : "Requested — awaiting pricing"}</td></tr>
+                          <tr><td>Additional transportation</td><td>Not included</td><td>{!quotation.transportChargeRequested ? "Not requested" : transportChargeItem ? `${quotation.currency} ${amount(transportChargeItem.lineTotal)}` : "Requested — awaiting pricing"}</td></tr>
+                          <tr className="summary-total"><td>Quotation total</td><td>{quotation.currency} {amount(originalServiceTotal)}</td><td>{quotation.currency} {amount(currentTotal)}</td></tr>
+                          <tr><td>Change from original (including VAT)</td><td>—</td><td>{totalChangeAfterCharges > 0 ? "+" : totalChangeAfterCharges < 0 ? "−" : ""}{quotation.currency} {amount(Math.abs(totalChangeAfterCharges))}</td></tr>
+                          {((quotation.customsChargeRequested && !customsChargeItem) || (quotation.transportChargeRequested && !transportChargeItem)) && (
+                            <tr className="summary-note"><td colSpan={3}>One or more requested additional charges have not yet been priced. They are not included in the current saved quotation total.</td></tr>
+                          )}
+                        </tbody>
+                      </table>
+                    </div>
+                    <div className="flex items-start gap-2 border-t border-slate-200 px-4 py-3 sm:px-5">
+                      <ShieldCheck size={15} className="mt-0.5 shrink-0 text-emerald-700 print-hidden" />
+                      <p className="text-xs leading-5 text-slate-600">{pricedAdditionalItems.length > 0 ? "The before figure uses the original quote pricing snapshot, preserving the price shown before additional charges were added." : "Additional charges have been requested but no priced customs or transport line has been saved yet. The current total will change after operations saves a charge."}</p>
+                    </div>
+                  </section>
+                )}
                 {DOCUMENT_TERMS.trim() && (
                   <div className="mt-5 rounded-xl border border-slate-200 p-4 print-break-inside-avoid">
                     <h3 className="text-xs font-extrabold uppercase tracking-[0.14em] text-slate-700">Quotation terms and notes</h3>
@@ -621,16 +1004,103 @@ export default function AdminQuotationDetailsPage({ readOnly = false }: AdminQuo
               </section>
 
               <footer className="border-t border-slate-200 pt-5 print-break-inside-avoid">
-                <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-end">
-                  <div><p className="text-xs font-bold uppercase tracking-[0.14em] text-slate-500">Quotation document</p><p className="mt-1 text-xs leading-5 text-slate-500">Generated from the quotation management system · Print date: {formatDate(new Date().toISOString())}</p></div>
+                <div className="quotation-print-footer flex flex-col justify-between gap-3 sm:flex-row sm:items-end">
+                  <div><p className="text-xs font-extrabold uppercase tracking-[0.14em] text-slate-700">OGW KAY IMPEX · Quotation document</p><p className="mt-1 text-xs leading-5 text-slate-500">EXPORT &amp; IMPORT MANAGEMENT · Generated on {formatDate(new Date().toISOString())}</p></div>
                   <p className="text-xs font-semibold text-slate-500">Reference: {quoteReference}</p>
                 </div>
               </footer>
             </div>
           </article>
 
+          {/* Staff with charge-management permission can price additional charges even
+              from the read-only quotation details route; other review controls stay hidden. */}
+          {readOnly && canManageCharges && (
+            <section className="print-hidden rounded-2xl border border-amber-200 bg-white p-4 shadow-sm sm:p-5 lg:col-span-1">
+              <div className="flex items-start gap-3">
+                <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-amber-50 text-amber-800"><PackageCheck size={19} /></span>
+                <div className="min-w-0"><p className="text-[10px] font-bold uppercase tracking-[0.16em] text-amber-800">Operations pricing</p><h2 className="mt-1 text-lg font-bold text-slate-950">Add requested charges</h2></div>
+              </div>
+              <p className="mt-2 text-sm leading-5 text-slate-600">You can record a new additional-service request even when it was not selected during the original quote. Entering a commercial invoice value activates customs assistance; transport can be requested separately.</p>
+              <div className="mt-4 space-y-4 rounded-xl border border-slate-200 bg-slate-50/70 p-3.5">
+                <div>
+                  <label htmlFor="readonly-invoice-assessment-value" className="block text-sm font-semibold text-slate-700">Commercial invoice value</label>
+                  <p className="mt-1 text-xs leading-5 text-slate-500">Entering a value greater than zero triggers the customs-assistance request.</p>
+                  <div className="mt-2 grid grid-cols-[minmax(0,1fr)_100px] gap-2">
+                    <input id="readonly-invoice-assessment-value" type="number" min="0.01" step="0.01" inputMode="decimal" value={invoiceAssessmentValue} onChange={(event) => { const value = event.target.value; setInvoiceAssessmentValue(value); if (value.trim() && Number.isFinite(Number(value)) && Number(value) > 0) setCustomsRequestEnabled(true); }} disabled={busy} placeholder="Enter invoice value" className="min-w-0 rounded-xl border border-slate-200 bg-white px-3 py-3 text-sm outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 disabled:opacity-60" />
+                    <input aria-label="Invoice currency" maxLength={3} value={invoiceAssessmentCurrency} onChange={(event) => setInvoiceAssessmentCurrency(event.target.value.toUpperCase().slice(0, 3))} disabled={busy} placeholder="NGN" className="min-w-0 rounded-xl border border-slate-200 bg-white px-3 py-3 text-sm uppercase outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 disabled:opacity-60" />
+                  </div>
+                  <p className={`mt-2 text-xs font-semibold ${customsRequestEnabled ? "text-emerald-700" : "text-slate-500"}`}>{customsRequestEnabled ? "Customs assistance requested / will be saved" : "Customs assistance has not been requested"}</p>
+                </div>
+                <label className="flex items-start gap-3 text-sm font-semibold text-slate-700">
+                  <input type="checkbox" checked={transportRequestEnabled} onChange={(event) => { if (event.target.checked) setTransportRequestEnabled(true); }} disabled={busy || quotation.transportChargeRequested} className="mt-0.5 h-4 w-4 rounded border-slate-300 text-emerald-700 focus:ring-emerald-500 disabled:opacity-60" />
+                  <span>Request additional transportation pricing<span className="mt-1 block text-xs font-normal leading-5 text-slate-500">Use this for a request added after the quote was originally calculated.</span></span>
+                </label>
+              </div>
+              {customsRequestEnabled && (
+                <div className="mt-4">
+                  <label htmlFor="readonly-customs-charge-amount" className="block text-sm font-semibold text-slate-700">Customs duties and charges ({quotation.currency})</label>
+                  <p className="mt-1 text-xs text-slate-500">Commercial invoice: {quotation.invoiceValue != null ? `${quotation.invoiceCurrency || quotation.currency} ${amount(quotation.invoiceValue)}` : "Not supplied"}</p>
+                  <input id="readonly-customs-charge-amount" type="number" min="0" step="0.01" inputMode="decimal" value={customsChargeAmount} onChange={(event) => setCustomsChargeAmount(event.target.value)} disabled={busy} placeholder="Enter customs charge" className="mt-2 w-full rounded-xl border border-slate-200 px-3 py-3 text-sm outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 disabled:opacity-60" />
+                </div>
+              )}
+              {transportRequestEnabled && (
+                <div className="mt-4">
+                  <label htmlFor="readonly-transport-charge-amount" className="block text-sm font-semibold text-slate-700">Additional transportation charge ({quotation.currency})</label>
+                  <input id="readonly-transport-charge-amount" type="number" min="0" step="0.01" inputMode="decimal" value={transportChargeAmount} onChange={(event) => setTransportChargeAmount(event.target.value)} disabled={busy} placeholder="Enter transport charge" className="mt-2 w-full rounded-xl border border-slate-200 px-3 py-3 text-sm outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 disabled:opacity-60" />
+                </div>
+              )}
+              <button type="button" disabled={busy} onClick={() => { setFeedback(null); chargesMutation.mutate(); }} className="mt-5 inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-xl bg-amber-700 px-4 py-3 text-sm font-bold text-white transition hover:bg-amber-800 disabled:cursor-not-allowed disabled:opacity-50">
+                {chargesMutation.isPending ? <LoaderCircle size={17} className="animate-spin" /> : <CheckCircle2 size={17} />} {chargesMutation.isPending ? "Saving and recalculating…" : "Save requests and recalculate VAT"}
+              </button>
+              {feedback && <p role={feedback.type === "error" ? "alert" : "status"} className={`mt-3 rounded-xl p-3 text-sm ${feedback.type === "success" ? "bg-emerald-50 text-emerald-800" : "bg-rose-50 text-rose-800"}`}>{feedback.text}</p>}
+            </section>
+          )}
+
           {!readOnly && <aside className="space-y-5 print-hidden">
             {feedback && <div role={feedback.type === "error" ? "alert" : "status"} className={`rounded-2xl border p-4 text-sm leading-6 ${feedback.type === "success" ? "border-emerald-200 bg-emerald-50 text-emerald-900" : "border-rose-200 bg-rose-50 text-rose-800"}`}>{feedback.text}</div>}
+
+            {canManageCharges && (
+              <section className="rounded-2xl border border-amber-200 bg-white p-5 shadow-sm">
+                <div className="flex items-start gap-3">
+                  <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-amber-50 text-amber-800"><PackageCheck size={19} /></span>
+                  <div className="min-w-0"><p className="text-[10px] font-bold uppercase tracking-[0.16em] text-amber-800">Operations pricing</p><h2 className="mt-1 text-lg font-bold text-slate-950">Add requested charges</h2></div>
+                </div>
+                <p className="mt-2 text-sm leading-5 text-slate-600">Record an additional-service request if needed, then enter only confirmed operations prices. Saved prices are added to the same itemized quotation and applicable VAT is recalculated.</p>
+                <div className="mt-4 space-y-4 rounded-xl border border-slate-200 bg-slate-50/70 p-3.5">
+                  <div>
+                    <label htmlFor="invoice-assessment-value" className="block text-sm font-semibold text-slate-700">Commercial invoice value</label>
+                    <p className="mt-1 text-xs leading-5 text-slate-500">Entering a value greater than zero triggers the customs-assistance request.</p>
+                    <div className="mt-2 grid grid-cols-[minmax(0,1fr)_100px] gap-2">
+                      <input id="invoice-assessment-value" type="number" min="0.01" step="0.01" inputMode="decimal" value={invoiceAssessmentValue} onChange={(event) => { const value = event.target.value; setInvoiceAssessmentValue(value); if (value.trim() && Number.isFinite(Number(value)) && Number(value) > 0) setCustomsRequestEnabled(true); }} disabled={busy} placeholder="Enter invoice value" className="min-w-0 rounded-xl border border-slate-200 bg-white px-3 py-3 text-sm outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 disabled:opacity-60" />
+                      <input aria-label="Invoice currency" maxLength={3} value={invoiceAssessmentCurrency} onChange={(event) => setInvoiceAssessmentCurrency(event.target.value.toUpperCase().slice(0, 3))} disabled={busy} placeholder="NGN" className="min-w-0 rounded-xl border border-slate-200 bg-white px-3 py-3 text-sm uppercase outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 disabled:opacity-60" />
+                    </div>
+                    <p className={`mt-2 text-xs font-semibold ${customsRequestEnabled ? "text-emerald-700" : "text-slate-500"}`}>{customsRequestEnabled ? "Customs assistance requested / will be saved" : "Customs assistance has not been requested"}</p>
+                  </div>
+                  <label className="flex items-start gap-3 text-sm font-semibold text-slate-700">
+                    <input type="checkbox" checked={transportRequestEnabled} onChange={(event) => { if (event.target.checked) setTransportRequestEnabled(true); }} disabled={busy || quotation.transportChargeRequested} className="mt-0.5 h-4 w-4 rounded border-slate-300 text-emerald-700 focus:ring-emerald-500 disabled:opacity-60" />
+                    <span>Request additional transportation pricing<span className="mt-1 block text-xs font-normal leading-5 text-slate-500">Use this for a request added after the quote was originally calculated.</span></span>
+                  </label>
+                </div>
+                {customsRequestEnabled && (
+                  <div className="mt-4">
+                    <label htmlFor="customs-charge-amount" className="block text-sm font-semibold text-slate-700">Customs duties and charges ({quotation.currency})</label>
+                    <p className="mt-1 text-xs text-slate-500">Invoice value: {quotation.invoiceValue != null ? `${quotation.invoiceCurrency || quotation.currency} ${amount(quotation.invoiceValue)}` : "Not supplied"}</p>
+                    <input id="customs-charge-amount" type="number" min="0" step="0.01" inputMode="decimal" value={customsChargeAmount} onChange={(event) => setCustomsChargeAmount(event.target.value)} disabled={busy} placeholder="Enter customs charge" className="mt-2 w-full rounded-xl border border-slate-200 px-3 py-3 text-sm outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 disabled:opacity-60" />
+                    <p className="mt-1 text-xs text-slate-500">Leave blank to leave this charge unchanged. Enter 0 only if the confirmed charge is zero.</p>
+                  </div>
+                )}
+                {transportRequestEnabled && (
+                  <div className="mt-4">
+                    <label htmlFor="transport-charge-amount" className="block text-sm font-semibold text-slate-700">Additional transportation charge ({quotation.currency})</label>
+                    <input id="transport-charge-amount" type="number" min="0" step="0.01" inputMode="decimal" value={transportChargeAmount} onChange={(event) => setTransportChargeAmount(event.target.value)} disabled={busy} placeholder="Enter transport charge" className="mt-2 w-full rounded-xl border border-slate-200 px-3 py-3 text-sm outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 disabled:opacity-60" />
+                    <p className="mt-1 text-xs text-slate-500">Leave blank to leave this charge unchanged. Enter 0 only if the confirmed charge is zero.</p>
+                  </div>
+                )}
+                <button type="button" disabled={busy} onClick={() => { setFeedback(null); chargesMutation.mutate(); }} className="mt-5 inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-xl bg-amber-700 px-4 py-3 text-sm font-bold text-white transition hover:bg-amber-800 disabled:cursor-not-allowed disabled:opacity-50">
+                  {chargesMutation.isPending ? <LoaderCircle size={17} className="animate-spin" /> : <CheckCircle2 size={17} />} {chargesMutation.isPending ? "Saving and recalculating…" : "Save requests and recalculate VAT"}
+                </button>
+              </section>
+            )}
 
             <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
               <div className="flex items-start justify-between gap-3"><div><p className="text-[10px] font-bold uppercase tracking-[0.16em] text-emerald-800">Workflow</p><h2 className="mt-1 text-lg font-bold text-slate-950">Manage status</h2></div><span className="rounded-xl bg-emerald-50 p-2.5 text-emerald-800"><ShieldCheck size={19} /></span></div>

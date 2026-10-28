@@ -264,8 +264,18 @@ export default function Topbar({ onMenuClick, mobileMenuOpen = false }: Props) {
   */
 
   function handleLogout() {
+    // Resolve the destination before logout clears the authenticated user.
+    const isExporter = String(user?.role ?? "").trim().toUpperCase() === "EXPORTER";
+    const destination = isExporter ? "/exporter/login" : "/login";
+
     logout();
-    navigate("/login");
+
+    // Clear both legacy/current token keys defensively so the next page cannot
+    // reuse a stale bearer token if the store's cleanup changes over time.
+    localStorage.removeItem("token");
+    localStorage.removeItem("accessToken");
+
+    navigate(destination, { replace: true });
   }
 
   /*

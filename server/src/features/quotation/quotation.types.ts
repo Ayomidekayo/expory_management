@@ -26,6 +26,12 @@ export type SubmitQuoteInput = {
   customerName?: string;
   email?: string;
   phone?: string;
+
+   customsChargeRequested?: boolean;
+  /** Commercial invoice value used by operations for customs assessment. */
+  invoiceValue?: number;
+  invoiceCurrency?: string;
+  transportChargeRequested?: boolean;
 };
 
 export type CalculatedLine = {

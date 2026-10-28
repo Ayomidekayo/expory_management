@@ -1,0 +1,14 @@
+Add these optional fields to the existing SubmitQuoteInput interface/type in quotation.types.ts.
+Keep all existing fields and don't replace the whole types file.
+
+export type SubmitQuoteInput = {
+  // Keep all existing properties, including selectedQuoteItemIds and customerMessage.
+  customsChargeRequested?: boolean;
+  /** Commercial invoice value used by operations for customs assessment. */
+  invoiceValue?: number;
+  invoiceCurrency?: string;
+  transportChargeRequested?: boolean;
+  // customerMessage already exists and carries the optional exporter note.
+};
+
+If SubmitQuoteInput is an interface, add the properties to it instead of declaring a second type.

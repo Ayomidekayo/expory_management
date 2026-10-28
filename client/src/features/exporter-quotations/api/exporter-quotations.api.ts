@@ -1,4 +1,3 @@
-
 import api from "../../../lib/axios";
 
 export type QuotationStatus =
@@ -18,14 +17,7 @@ export interface ExporterQuoteItem {
   rateApplied: string | number;
   lineTotal: string | number;
   isSelected: boolean;
-}
-
-export interface QuotationMessage {
-  id: string;
-  message: string;
-  senderType: "ADMIN" | "EXPORTER";
-  senderUserId: string | null;
-  createdAt: string;
+  itemType?: "SERVICE" | "CUSTOMS_CHARGE" | "TRANSPORT_CHARGE";
 }
 
 export interface QuotationAttachment {
@@ -37,8 +29,35 @@ export interface QuotationAttachment {
   fileSize: number | null;
   remarks: string | null;
   createdAt: string;
-  uploadedByType?: "ADMIN" | "EXPORTER";
+  uploadedByType?: "EXPORTER" | "ADMIN";
 }
+
+export interface QuotationMessage {
+  id: string;
+  message: string;
+  senderType: "ADMIN" | "EXPORTER";
+  senderUserId: string | null;
+  createdAt: string;
+  attachments?: QuotationAttachment[];
+}
+
+/** Payload used when initially submitting the selected services from a calculated quote. */
+export type AdditionalChargeRequestPayload = {
+  selectedQuoteItemIds: string[];
+  customsChargeRequested: boolean;
+  invoiceValue?: number;
+  invoiceCurrency?: string;
+  transportChargeRequested: boolean;
+  customerMessage?: string;
+};
+
+/** Payload for requesting additional charges after the submission already exists. */
+export type RequestExporterAdditionalChargesPayload = {
+  customsChargeRequested?: boolean;
+  invoiceValue?: number;
+  invoiceCurrency?: string;
+  transportChargeRequested?: boolean;
+};
 
 export interface ExporterSubmission {
   id: string;
@@ -57,6 +76,12 @@ export interface ExporterSubmission {
   createdAt: string;
   updatedAt: string;
   taxAmount: number | string | null;
+  customsChargeRequested?: boolean;
+  invoiceValue?: string | number | null;
+  invoiceCurrency?: string | null;
+  transportChargeRequested?: boolean;
+  vatEnabled?: boolean;
+  vatPercentage?: string | number;
 
   quote: {
     quoteNumber: string;
@@ -99,6 +124,28 @@ export async function getMySubmission(
   return response.data.data;
 }
 
+/**
+ * Send a new request for customs assistance and/or transportation pricing.
+ * This route records the request only; staff enter confirmed prices separately.
+ */
+export async function requestExporterAdditionalCharges(
+  submissionId: string,
+  payload: RequestExporterAdditionalChargesPayload,
+): Promise<ExporterSubmission> {
+  const response = await api.patch<ApiResponse<ExporterSubmission>>(
+    `/quotations/mine/${encodeURIComponent(submissionId)}/additional-charge-request`,
+    payload,
+  );
+
+  if (!response.data?.success) {
+    throw new Error(
+      response.data?.message ?? "Unable to submit the additional-service request.",
+    );
+  }
+
+  return response.data.data;
+}
+
 export async function sendExporterMessage(
   submissionId: string,
   message: string,
@@ -117,7 +164,6 @@ export async function uploadExporterAttachment(
   remarks?: string,
 ): Promise<QuotationAttachment> {
   const formData = new FormData();
-
   formData.append("file", file);
 
   if (remarks?.trim()) {
@@ -132,33 +178,12 @@ export async function uploadExporterAttachment(
   return response.data.data;
 }
 
-export interface QuotationAttachment {
-  id: string;
-  fileName: string;
-  originalName: string | null;
-  fileUrl: string;
-  mimeType: string | null;
-  fileSize: number | null;
-  remarks: string | null;
-  createdAt: string;
-  uploadedByType?: "EXPORTER" | "ADMIN";
-}
-
-export interface QuotationMessage {
-  id: string;
-  senderType: "EXPORTER" | "ADMIN";
-  message: string;
-  createdAt: string;
-  attachments: QuotationAttachment[];
-}
-
-
-
+// Backwards-compatible aliases retained for existing call sites.
 export async function sendExporterSubmissionMessage(
   submissionId: string,
   message: string,
 ) {
-  const response = await api.post(
+  const response = await api.post<ApiResponse<QuotationMessage>>(
     `/quotations/mine/${encodeURIComponent(submissionId)}/messages`,
     { message },
   );
@@ -178,7 +203,7 @@ export async function uploadExporterSubmissionAttachment(
     formData.append("remarks", remarks.trim());
   }
 
-  const response = await api.post(
+  const response = await api.post<ApiResponse<QuotationAttachment>>(
     `/quotations/mine/${encodeURIComponent(submissionId)}/attachments`,
     formData,
   );
@@ -198,7 +223,7 @@ export async function uploadAdminSubmissionAttachment(
     formData.append("remarks", remarks.trim());
   }
 
-  const response = await api.post(
+  const response = await api.post<ApiResponse<QuotationAttachment>>(
     `/admin/quotations/submissions/${encodeURIComponent(submissionId)}/attachments`,
     formData,
   );

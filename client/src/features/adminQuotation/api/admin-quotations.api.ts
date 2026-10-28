@@ -193,6 +193,13 @@ export interface AdminQuotation {
   attachments?: AdminQuotationAttachment[];
 
   shipmentDetails?: AdminQuotationShipmentDetails;
+  // \\\
+  customsChargeRequested?: boolean;
+  invoiceValue?: number | string | null;
+  invoiceCurrency?: string | null;
+  transportChargeRequested?: boolean;
+  vatEnabled?: boolean;
+  vatPercentage?: number | string;
 }
 
 /* =========================================================
@@ -293,4 +300,32 @@ export async function uploadAdminQuotationAttachment(
   >(endpoint, formData);
 
   return response.data.data;
+}
+
+
+export type UpdateQuotationChargesInput = {
+  customsChargeAmount?: number | null;
+  transportChargeAmount?: number | null;
+};
+
+export async function updateAdminQuotationCharges(
+  submissionId: string,
+  payload: UpdateQuotationChargesInput,
+): Promise<void> {
+  await api.patch(
+    `/admin/quotations/submissions/${encodeURIComponent(submissionId)}/charges`,
+    payload,
+  );
+}
+
+export interface AdminQuotationItem {
+  id: string;
+  componentName: string;
+  componentCode: string | null;
+  quantity: number | string;
+  rateApplied: number | string;
+  lineTotal: number | string;
+  isSelected: boolean;
+  /** SERVICE for original quote lines; other types are priced by operations. */
+  itemType?: "SERVICE" | "CUSTOMS_CHARGE" | "TRANSPORT_CHARGE";
 }

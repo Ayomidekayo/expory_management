@@ -460,10 +460,20 @@ export const Permission: {
   ACCEPT_QUOTE: 'ACCEPT_QUOTE',
   DECLINE_QUOTE: 'DECLINE_QUOTE',
   COMPLETE_QUOTE: 'COMPLETE_QUOTE',
-  REVIEW_QUOTATIONS: 'REVIEW_QUOTATIONS'
+  REVIEW_QUOTATIONS: 'REVIEW_QUOTATIONS',
+  MANAGE_QUOTE_CHARGES: 'MANAGE_QUOTE_CHARGES'
 };
 
 export type Permission = (typeof Permission)[keyof typeof Permission]
+
+
+export const QuoteSubmissionItemType: {
+  SERVICE: 'SERVICE',
+  CUSTOMS_CHARGE: 'CUSTOMS_CHARGE',
+  TRANSPORT_CHARGE: 'TRANSPORT_CHARGE'
+};
+
+export type QuoteSubmissionItemType = (typeof QuoteSubmissionItemType)[keyof typeof QuoteSubmissionItemType]
 
 
 export const QuoteMode: {
@@ -563,7 +573,8 @@ export const QuoteAuditAction: {
   WORK_STARTED: 'WORK_STARTED',
   COMPLETED: 'COMPLETED',
   ARCHIVED: 'ARCHIVED',
-  REOPENED: 'REOPENED'
+  REOPENED: 'REOPENED',
+  CHARGES_UPDATED: 'CHARGES_UPDATED'
 };
 
 export type QuoteAuditAction = (typeof QuoteAuditAction)[keyof typeof QuoteAuditAction]
@@ -641,6 +652,10 @@ export const GateMovementStatus: typeof $Enums.GateMovementStatus
 export type Permission = $Enums.Permission
 
 export const Permission: typeof $Enums.Permission
+
+export type QuoteSubmissionItemType = $Enums.QuoteSubmissionItemType
+
+export const QuoteSubmissionItemType: typeof $Enums.QuoteSubmissionItemType
 
 export type QuoteMode = $Enums.QuoteMode
 
@@ -37270,12 +37285,16 @@ export namespace Prisma {
     subtotal: Decimal | null
     taxAmount: Decimal | null
     totalAmount: Decimal | null
+    invoiceValue: Decimal | null
+    vatPercentage: Decimal | null
   }
 
   export type QuoteSubmissionSumAggregateOutputType = {
     subtotal: Decimal | null
     taxAmount: Decimal | null
     totalAmount: Decimal | null
+    invoiceValue: Decimal | null
+    vatPercentage: Decimal | null
   }
 
   export type QuoteSubmissionMinAggregateOutputType = {
@@ -37299,6 +37318,12 @@ export namespace Prisma {
     archivedAt: Date | null
     createdAt: Date | null
     updatedAt: Date | null
+    customsChargeRequested: boolean | null
+    invoiceValue: Decimal | null
+    invoiceCurrency: string | null
+    transportChargeRequested: boolean | null
+    vatEnabled: boolean | null
+    vatPercentage: Decimal | null
   }
 
   export type QuoteSubmissionMaxAggregateOutputType = {
@@ -37322,6 +37347,12 @@ export namespace Prisma {
     archivedAt: Date | null
     createdAt: Date | null
     updatedAt: Date | null
+    customsChargeRequested: boolean | null
+    invoiceValue: Decimal | null
+    invoiceCurrency: string | null
+    transportChargeRequested: boolean | null
+    vatEnabled: boolean | null
+    vatPercentage: Decimal | null
   }
 
   export type QuoteSubmissionCountAggregateOutputType = {
@@ -37345,6 +37376,12 @@ export namespace Prisma {
     archivedAt: number
     createdAt: number
     updatedAt: number
+    customsChargeRequested: number
+    invoiceValue: number
+    invoiceCurrency: number
+    transportChargeRequested: number
+    vatEnabled: number
+    vatPercentage: number
     _all: number
   }
 
@@ -37353,12 +37390,16 @@ export namespace Prisma {
     subtotal?: true
     taxAmount?: true
     totalAmount?: true
+    invoiceValue?: true
+    vatPercentage?: true
   }
 
   export type QuoteSubmissionSumAggregateInputType = {
     subtotal?: true
     taxAmount?: true
     totalAmount?: true
+    invoiceValue?: true
+    vatPercentage?: true
   }
 
   export type QuoteSubmissionMinAggregateInputType = {
@@ -37382,6 +37423,12 @@ export namespace Prisma {
     archivedAt?: true
     createdAt?: true
     updatedAt?: true
+    customsChargeRequested?: true
+    invoiceValue?: true
+    invoiceCurrency?: true
+    transportChargeRequested?: true
+    vatEnabled?: true
+    vatPercentage?: true
   }
 
   export type QuoteSubmissionMaxAggregateInputType = {
@@ -37405,6 +37452,12 @@ export namespace Prisma {
     archivedAt?: true
     createdAt?: true
     updatedAt?: true
+    customsChargeRequested?: true
+    invoiceValue?: true
+    invoiceCurrency?: true
+    transportChargeRequested?: true
+    vatEnabled?: true
+    vatPercentage?: true
   }
 
   export type QuoteSubmissionCountAggregateInputType = {
@@ -37428,6 +37481,12 @@ export namespace Prisma {
     archivedAt?: true
     createdAt?: true
     updatedAt?: true
+    customsChargeRequested?: true
+    invoiceValue?: true
+    invoiceCurrency?: true
+    transportChargeRequested?: true
+    vatEnabled?: true
+    vatPercentage?: true
     _all?: true
   }
 
@@ -37538,6 +37597,12 @@ export namespace Prisma {
     archivedAt: Date | null
     createdAt: Date
     updatedAt: Date
+    customsChargeRequested: boolean
+    invoiceValue: Decimal | null
+    invoiceCurrency: string | null
+    transportChargeRequested: boolean
+    vatEnabled: boolean
+    vatPercentage: Decimal
     _count: QuoteSubmissionCountAggregateOutputType | null
     _avg: QuoteSubmissionAvgAggregateOutputType | null
     _sum: QuoteSubmissionSumAggregateOutputType | null
@@ -37580,6 +37645,12 @@ export namespace Prisma {
     archivedAt?: boolean
     createdAt?: boolean
     updatedAt?: boolean
+    customsChargeRequested?: boolean
+    invoiceValue?: boolean
+    invoiceCurrency?: boolean
+    transportChargeRequested?: boolean
+    vatEnabled?: boolean
+    vatPercentage?: boolean
     quote?: boolean | QuoteDefaultArgs<ExtArgs>
     exporter?: boolean | QuoteSubmission$exporterArgs<ExtArgs>
     items?: boolean | QuoteSubmission$itemsArgs<ExtArgs>
@@ -37610,6 +37681,12 @@ export namespace Prisma {
     archivedAt?: boolean
     createdAt?: boolean
     updatedAt?: boolean
+    customsChargeRequested?: boolean
+    invoiceValue?: boolean
+    invoiceCurrency?: boolean
+    transportChargeRequested?: boolean
+    vatEnabled?: boolean
+    vatPercentage?: boolean
     quote?: boolean | QuoteDefaultArgs<ExtArgs>
     exporter?: boolean | QuoteSubmission$exporterArgs<ExtArgs>
   }, ExtArgs["result"]["quoteSubmission"]>
@@ -37635,6 +37712,12 @@ export namespace Prisma {
     archivedAt?: boolean
     createdAt?: boolean
     updatedAt?: boolean
+    customsChargeRequested?: boolean
+    invoiceValue?: boolean
+    invoiceCurrency?: boolean
+    transportChargeRequested?: boolean
+    vatEnabled?: boolean
+    vatPercentage?: boolean
     quote?: boolean | QuoteDefaultArgs<ExtArgs>
     exporter?: boolean | QuoteSubmission$exporterArgs<ExtArgs>
   }, ExtArgs["result"]["quoteSubmission"]>
@@ -37660,9 +37743,15 @@ export namespace Prisma {
     archivedAt?: boolean
     createdAt?: boolean
     updatedAt?: boolean
+    customsChargeRequested?: boolean
+    invoiceValue?: boolean
+    invoiceCurrency?: boolean
+    transportChargeRequested?: boolean
+    vatEnabled?: boolean
+    vatPercentage?: boolean
   }
 
-  export type QuoteSubmissionOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "quoteId" | "exporterId" | "customerName" | "email" | "phone" | "status" | "currency" | "subtotal" | "taxAmount" | "totalAmount" | "customerMessage" | "adminMessage" | "submittedAt" | "reviewedAt" | "approvedAt" | "completedAt" | "archivedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["quoteSubmission"]>
+  export type QuoteSubmissionOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "quoteId" | "exporterId" | "customerName" | "email" | "phone" | "status" | "currency" | "subtotal" | "taxAmount" | "totalAmount" | "customerMessage" | "adminMessage" | "submittedAt" | "reviewedAt" | "approvedAt" | "completedAt" | "archivedAt" | "createdAt" | "updatedAt" | "customsChargeRequested" | "invoiceValue" | "invoiceCurrency" | "transportChargeRequested" | "vatEnabled" | "vatPercentage", ExtArgs["result"]["quoteSubmission"]>
   export type QuoteSubmissionInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     quote?: boolean | QuoteDefaultArgs<ExtArgs>
     exporter?: boolean | QuoteSubmission$exporterArgs<ExtArgs>
@@ -37712,6 +37801,12 @@ export namespace Prisma {
       archivedAt: Date | null
       createdAt: Date
       updatedAt: Date
+      customsChargeRequested: boolean
+      invoiceValue: Prisma.Decimal | null
+      invoiceCurrency: string | null
+      transportChargeRequested: boolean
+      vatEnabled: boolean
+      vatPercentage: Prisma.Decimal
     }, ExtArgs["result"]["quoteSubmission"]>
     composites: {}
   }
@@ -38161,6 +38256,12 @@ export namespace Prisma {
     readonly archivedAt: FieldRef<"QuoteSubmission", 'DateTime'>
     readonly createdAt: FieldRef<"QuoteSubmission", 'DateTime'>
     readonly updatedAt: FieldRef<"QuoteSubmission", 'DateTime'>
+    readonly customsChargeRequested: FieldRef<"QuoteSubmission", 'Boolean'>
+    readonly invoiceValue: FieldRef<"QuoteSubmission", 'Decimal'>
+    readonly invoiceCurrency: FieldRef<"QuoteSubmission", 'String'>
+    readonly transportChargeRequested: FieldRef<"QuoteSubmission", 'Boolean'>
+    readonly vatEnabled: FieldRef<"QuoteSubmission", 'Boolean'>
+    readonly vatPercentage: FieldRef<"QuoteSubmission", 'Decimal'>
   }
     
 
@@ -38721,6 +38822,7 @@ export namespace Prisma {
 
   export type QuoteSubmissionItemMinAggregateOutputType = {
     id: string | null
+    itemType: $Enums.QuoteSubmissionItemType | null
     submissionId: string | null
     quoteItemId: string | null
     componentName: string | null
@@ -38734,6 +38836,7 @@ export namespace Prisma {
 
   export type QuoteSubmissionItemMaxAggregateOutputType = {
     id: string | null
+    itemType: $Enums.QuoteSubmissionItemType | null
     submissionId: string | null
     quoteItemId: string | null
     componentName: string | null
@@ -38747,6 +38850,7 @@ export namespace Prisma {
 
   export type QuoteSubmissionItemCountAggregateOutputType = {
     id: number
+    itemType: number
     submissionId: number
     quoteItemId: number
     componentName: number
@@ -38774,6 +38878,7 @@ export namespace Prisma {
 
   export type QuoteSubmissionItemMinAggregateInputType = {
     id?: true
+    itemType?: true
     submissionId?: true
     quoteItemId?: true
     componentName?: true
@@ -38787,6 +38892,7 @@ export namespace Prisma {
 
   export type QuoteSubmissionItemMaxAggregateInputType = {
     id?: true
+    itemType?: true
     submissionId?: true
     quoteItemId?: true
     componentName?: true
@@ -38800,6 +38906,7 @@ export namespace Prisma {
 
   export type QuoteSubmissionItemCountAggregateInputType = {
     id?: true
+    itemType?: true
     submissionId?: true
     quoteItemId?: true
     componentName?: true
@@ -38900,6 +39007,7 @@ export namespace Prisma {
 
   export type QuoteSubmissionItemGroupByOutputType = {
     id: string
+    itemType: $Enums.QuoteSubmissionItemType
     submissionId: string
     quoteItemId: string | null
     componentName: string
@@ -38932,6 +39040,7 @@ export namespace Prisma {
 
   export type QuoteSubmissionItemSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
+    itemType?: boolean
     submissionId?: boolean
     quoteItemId?: boolean
     componentName?: boolean
@@ -38947,6 +39056,7 @@ export namespace Prisma {
 
   export type QuoteSubmissionItemSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
+    itemType?: boolean
     submissionId?: boolean
     quoteItemId?: boolean
     componentName?: boolean
@@ -38962,6 +39072,7 @@ export namespace Prisma {
 
   export type QuoteSubmissionItemSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
+    itemType?: boolean
     submissionId?: boolean
     quoteItemId?: boolean
     componentName?: boolean
@@ -38977,6 +39088,7 @@ export namespace Prisma {
 
   export type QuoteSubmissionItemSelectScalar = {
     id?: boolean
+    itemType?: boolean
     submissionId?: boolean
     quoteItemId?: boolean
     componentName?: boolean
@@ -38988,7 +39100,7 @@ export namespace Prisma {
     createdAt?: boolean
   }
 
-  export type QuoteSubmissionItemOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "submissionId" | "quoteItemId" | "componentName" | "componentCode" | "quantity" | "rateApplied" | "lineTotal" | "isSelected" | "createdAt", ExtArgs["result"]["quoteSubmissionItem"]>
+  export type QuoteSubmissionItemOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "itemType" | "submissionId" | "quoteItemId" | "componentName" | "componentCode" | "quantity" | "rateApplied" | "lineTotal" | "isSelected" | "createdAt", ExtArgs["result"]["quoteSubmissionItem"]>
   export type QuoteSubmissionItemInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     submission?: boolean | QuoteSubmissionDefaultArgs<ExtArgs>
     quoteItem?: boolean | QuoteSubmissionItem$quoteItemArgs<ExtArgs>
@@ -39010,6 +39122,7 @@ export namespace Prisma {
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
+      itemType: $Enums.QuoteSubmissionItemType
       submissionId: string
       quoteItemId: string | null
       componentName: string
@@ -39445,6 +39558,7 @@ export namespace Prisma {
    */
   interface QuoteSubmissionItemFieldRefs {
     readonly id: FieldRef<"QuoteSubmissionItem", 'String'>
+    readonly itemType: FieldRef<"QuoteSubmissionItem", 'QuoteSubmissionItemType'>
     readonly submissionId: FieldRef<"QuoteSubmissionItem", 'String'>
     readonly quoteItemId: FieldRef<"QuoteSubmissionItem", 'String'>
     readonly componentName: FieldRef<"QuoteSubmissionItem", 'String'>
@@ -51537,7 +51651,13 @@ export namespace Prisma {
     completedAt: 'completedAt',
     archivedAt: 'archivedAt',
     createdAt: 'createdAt',
-    updatedAt: 'updatedAt'
+    updatedAt: 'updatedAt',
+    customsChargeRequested: 'customsChargeRequested',
+    invoiceValue: 'invoiceValue',
+    invoiceCurrency: 'invoiceCurrency',
+    transportChargeRequested: 'transportChargeRequested',
+    vatEnabled: 'vatEnabled',
+    vatPercentage: 'vatPercentage'
   };
 
   export type QuoteSubmissionScalarFieldEnum = (typeof QuoteSubmissionScalarFieldEnum)[keyof typeof QuoteSubmissionScalarFieldEnum]
@@ -51545,6 +51665,7 @@ export namespace Prisma {
 
   export const QuoteSubmissionItemScalarFieldEnum: {
     id: 'id',
+    itemType: 'itemType',
     submissionId: 'submissionId',
     quoteItemId: 'quoteItemId',
     componentName: 'componentName',
@@ -52193,6 +52314,20 @@ export namespace Prisma {
    * Reference to a field of type 'QuoteSubmissionStatus[]'
    */
   export type ListEnumQuoteSubmissionStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'QuoteSubmissionStatus[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'QuoteSubmissionItemType'
+   */
+  export type EnumQuoteSubmissionItemTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'QuoteSubmissionItemType'>
+    
+
+
+  /**
+   * Reference to a field of type 'QuoteSubmissionItemType[]'
+   */
+  export type ListEnumQuoteSubmissionItemTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'QuoteSubmissionItemType[]'>
     
 
 
@@ -55143,6 +55278,12 @@ export namespace Prisma {
     archivedAt?: DateTimeNullableFilter<"QuoteSubmission"> | Date | string | null
     createdAt?: DateTimeFilter<"QuoteSubmission"> | Date | string
     updatedAt?: DateTimeFilter<"QuoteSubmission"> | Date | string
+    customsChargeRequested?: BoolFilter<"QuoteSubmission"> | boolean
+    invoiceValue?: DecimalNullableFilter<"QuoteSubmission"> | Decimal | DecimalJsLike | number | string | null
+    invoiceCurrency?: StringNullableFilter<"QuoteSubmission"> | string | null
+    transportChargeRequested?: BoolFilter<"QuoteSubmission"> | boolean
+    vatEnabled?: BoolFilter<"QuoteSubmission"> | boolean
+    vatPercentage?: DecimalFilter<"QuoteSubmission"> | Decimal | DecimalJsLike | number | string
     quote?: XOR<QuoteScalarRelationFilter, QuoteWhereInput>
     exporter?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
     items?: QuoteSubmissionItemListRelationFilter
@@ -55172,6 +55313,12 @@ export namespace Prisma {
     archivedAt?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    customsChargeRequested?: SortOrder
+    invoiceValue?: SortOrderInput | SortOrder
+    invoiceCurrency?: SortOrderInput | SortOrder
+    transportChargeRequested?: SortOrder
+    vatEnabled?: SortOrder
+    vatPercentage?: SortOrder
     quote?: QuoteOrderByWithRelationInput
     exporter?: UserOrderByWithRelationInput
     items?: QuoteSubmissionItemOrderByRelationAggregateInput
@@ -55204,6 +55351,12 @@ export namespace Prisma {
     archivedAt?: DateTimeNullableFilter<"QuoteSubmission"> | Date | string | null
     createdAt?: DateTimeFilter<"QuoteSubmission"> | Date | string
     updatedAt?: DateTimeFilter<"QuoteSubmission"> | Date | string
+    customsChargeRequested?: BoolFilter<"QuoteSubmission"> | boolean
+    invoiceValue?: DecimalNullableFilter<"QuoteSubmission"> | Decimal | DecimalJsLike | number | string | null
+    invoiceCurrency?: StringNullableFilter<"QuoteSubmission"> | string | null
+    transportChargeRequested?: BoolFilter<"QuoteSubmission"> | boolean
+    vatEnabled?: BoolFilter<"QuoteSubmission"> | boolean
+    vatPercentage?: DecimalFilter<"QuoteSubmission"> | Decimal | DecimalJsLike | number | string
     quote?: XOR<QuoteScalarRelationFilter, QuoteWhereInput>
     exporter?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
     items?: QuoteSubmissionItemListRelationFilter
@@ -55233,6 +55386,12 @@ export namespace Prisma {
     archivedAt?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    customsChargeRequested?: SortOrder
+    invoiceValue?: SortOrderInput | SortOrder
+    invoiceCurrency?: SortOrderInput | SortOrder
+    transportChargeRequested?: SortOrder
+    vatEnabled?: SortOrder
+    vatPercentage?: SortOrder
     _count?: QuoteSubmissionCountOrderByAggregateInput
     _avg?: QuoteSubmissionAvgOrderByAggregateInput
     _max?: QuoteSubmissionMaxOrderByAggregateInput
@@ -55264,6 +55423,12 @@ export namespace Prisma {
     archivedAt?: DateTimeNullableWithAggregatesFilter<"QuoteSubmission"> | Date | string | null
     createdAt?: DateTimeWithAggregatesFilter<"QuoteSubmission"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"QuoteSubmission"> | Date | string
+    customsChargeRequested?: BoolWithAggregatesFilter<"QuoteSubmission"> | boolean
+    invoiceValue?: DecimalNullableWithAggregatesFilter<"QuoteSubmission"> | Decimal | DecimalJsLike | number | string | null
+    invoiceCurrency?: StringNullableWithAggregatesFilter<"QuoteSubmission"> | string | null
+    transportChargeRequested?: BoolWithAggregatesFilter<"QuoteSubmission"> | boolean
+    vatEnabled?: BoolWithAggregatesFilter<"QuoteSubmission"> | boolean
+    vatPercentage?: DecimalWithAggregatesFilter<"QuoteSubmission"> | Decimal | DecimalJsLike | number | string
   }
 
   export type QuoteSubmissionItemWhereInput = {
@@ -55271,6 +55436,7 @@ export namespace Prisma {
     OR?: QuoteSubmissionItemWhereInput[]
     NOT?: QuoteSubmissionItemWhereInput | QuoteSubmissionItemWhereInput[]
     id?: StringFilter<"QuoteSubmissionItem"> | string
+    itemType?: EnumQuoteSubmissionItemTypeFilter<"QuoteSubmissionItem"> | $Enums.QuoteSubmissionItemType
     submissionId?: StringFilter<"QuoteSubmissionItem"> | string
     quoteItemId?: StringNullableFilter<"QuoteSubmissionItem"> | string | null
     componentName?: StringFilter<"QuoteSubmissionItem"> | string
@@ -55286,6 +55452,7 @@ export namespace Prisma {
 
   export type QuoteSubmissionItemOrderByWithRelationInput = {
     id?: SortOrder
+    itemType?: SortOrder
     submissionId?: SortOrder
     quoteItemId?: SortOrderInput | SortOrder
     componentName?: SortOrder
@@ -55304,6 +55471,7 @@ export namespace Prisma {
     AND?: QuoteSubmissionItemWhereInput | QuoteSubmissionItemWhereInput[]
     OR?: QuoteSubmissionItemWhereInput[]
     NOT?: QuoteSubmissionItemWhereInput | QuoteSubmissionItemWhereInput[]
+    itemType?: EnumQuoteSubmissionItemTypeFilter<"QuoteSubmissionItem"> | $Enums.QuoteSubmissionItemType
     submissionId?: StringFilter<"QuoteSubmissionItem"> | string
     quoteItemId?: StringNullableFilter<"QuoteSubmissionItem"> | string | null
     componentName?: StringFilter<"QuoteSubmissionItem"> | string
@@ -55319,6 +55487,7 @@ export namespace Prisma {
 
   export type QuoteSubmissionItemOrderByWithAggregationInput = {
     id?: SortOrder
+    itemType?: SortOrder
     submissionId?: SortOrder
     quoteItemId?: SortOrderInput | SortOrder
     componentName?: SortOrder
@@ -55340,6 +55509,7 @@ export namespace Prisma {
     OR?: QuoteSubmissionItemScalarWhereWithAggregatesInput[]
     NOT?: QuoteSubmissionItemScalarWhereWithAggregatesInput | QuoteSubmissionItemScalarWhereWithAggregatesInput[]
     id?: StringWithAggregatesFilter<"QuoteSubmissionItem"> | string
+    itemType?: EnumQuoteSubmissionItemTypeWithAggregatesFilter<"QuoteSubmissionItem"> | $Enums.QuoteSubmissionItemType
     submissionId?: StringWithAggregatesFilter<"QuoteSubmissionItem"> | string
     quoteItemId?: StringNullableWithAggregatesFilter<"QuoteSubmissionItem"> | string | null
     componentName?: StringWithAggregatesFilter<"QuoteSubmissionItem"> | string
@@ -59519,6 +59689,12 @@ export namespace Prisma {
     archivedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
+    customsChargeRequested?: boolean
+    invoiceValue?: Decimal | DecimalJsLike | number | string | null
+    invoiceCurrency?: string | null
+    transportChargeRequested?: boolean
+    vatEnabled?: boolean
+    vatPercentage?: Decimal | DecimalJsLike | number | string
     quote: QuoteCreateNestedOneWithoutSubmissionsInput
     exporter?: UserCreateNestedOneWithoutQuoteSubmissionsInput
     items?: QuoteSubmissionItemCreateNestedManyWithoutSubmissionInput
@@ -59548,6 +59724,12 @@ export namespace Prisma {
     archivedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
+    customsChargeRequested?: boolean
+    invoiceValue?: Decimal | DecimalJsLike | number | string | null
+    invoiceCurrency?: string | null
+    transportChargeRequested?: boolean
+    vatEnabled?: boolean
+    vatPercentage?: Decimal | DecimalJsLike | number | string
     items?: QuoteSubmissionItemUncheckedCreateNestedManyWithoutSubmissionInput
     messages?: QuoteMessageUncheckedCreateNestedManyWithoutSubmissionInput
     attachments?: QuoteAttachmentUncheckedCreateNestedManyWithoutSubmissionInput
@@ -59573,6 +59755,12 @@ export namespace Prisma {
     archivedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    customsChargeRequested?: BoolFieldUpdateOperationsInput | boolean
+    invoiceValue?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    invoiceCurrency?: NullableStringFieldUpdateOperationsInput | string | null
+    transportChargeRequested?: BoolFieldUpdateOperationsInput | boolean
+    vatEnabled?: BoolFieldUpdateOperationsInput | boolean
+    vatPercentage?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     quote?: QuoteUpdateOneRequiredWithoutSubmissionsNestedInput
     exporter?: UserUpdateOneWithoutQuoteSubmissionsNestedInput
     items?: QuoteSubmissionItemUpdateManyWithoutSubmissionNestedInput
@@ -59602,6 +59790,12 @@ export namespace Prisma {
     archivedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    customsChargeRequested?: BoolFieldUpdateOperationsInput | boolean
+    invoiceValue?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    invoiceCurrency?: NullableStringFieldUpdateOperationsInput | string | null
+    transportChargeRequested?: BoolFieldUpdateOperationsInput | boolean
+    vatEnabled?: BoolFieldUpdateOperationsInput | boolean
+    vatPercentage?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     items?: QuoteSubmissionItemUncheckedUpdateManyWithoutSubmissionNestedInput
     messages?: QuoteMessageUncheckedUpdateManyWithoutSubmissionNestedInput
     attachments?: QuoteAttachmentUncheckedUpdateManyWithoutSubmissionNestedInput
@@ -59629,6 +59823,12 @@ export namespace Prisma {
     archivedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
+    customsChargeRequested?: boolean
+    invoiceValue?: Decimal | DecimalJsLike | number | string | null
+    invoiceCurrency?: string | null
+    transportChargeRequested?: boolean
+    vatEnabled?: boolean
+    vatPercentage?: Decimal | DecimalJsLike | number | string
   }
 
   export type QuoteSubmissionUpdateManyMutationInput = {
@@ -59650,6 +59850,12 @@ export namespace Prisma {
     archivedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    customsChargeRequested?: BoolFieldUpdateOperationsInput | boolean
+    invoiceValue?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    invoiceCurrency?: NullableStringFieldUpdateOperationsInput | string | null
+    transportChargeRequested?: BoolFieldUpdateOperationsInput | boolean
+    vatEnabled?: BoolFieldUpdateOperationsInput | boolean
+    vatPercentage?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
   }
 
   export type QuoteSubmissionUncheckedUpdateManyInput = {
@@ -59673,10 +59879,17 @@ export namespace Prisma {
     archivedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    customsChargeRequested?: BoolFieldUpdateOperationsInput | boolean
+    invoiceValue?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    invoiceCurrency?: NullableStringFieldUpdateOperationsInput | string | null
+    transportChargeRequested?: BoolFieldUpdateOperationsInput | boolean
+    vatEnabled?: BoolFieldUpdateOperationsInput | boolean
+    vatPercentage?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
   }
 
   export type QuoteSubmissionItemCreateInput = {
     id?: string
+    itemType?: $Enums.QuoteSubmissionItemType
     componentName: string
     componentCode?: string | null
     quantity?: Decimal | DecimalJsLike | number | string
@@ -59690,6 +59903,7 @@ export namespace Prisma {
 
   export type QuoteSubmissionItemUncheckedCreateInput = {
     id?: string
+    itemType?: $Enums.QuoteSubmissionItemType
     submissionId: string
     quoteItemId?: string | null
     componentName: string
@@ -59703,6 +59917,7 @@ export namespace Prisma {
 
   export type QuoteSubmissionItemUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
+    itemType?: EnumQuoteSubmissionItemTypeFieldUpdateOperationsInput | $Enums.QuoteSubmissionItemType
     componentName?: StringFieldUpdateOperationsInput | string
     componentCode?: NullableStringFieldUpdateOperationsInput | string | null
     quantity?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
@@ -59716,6 +59931,7 @@ export namespace Prisma {
 
   export type QuoteSubmissionItemUncheckedUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
+    itemType?: EnumQuoteSubmissionItemTypeFieldUpdateOperationsInput | $Enums.QuoteSubmissionItemType
     submissionId?: StringFieldUpdateOperationsInput | string
     quoteItemId?: NullableStringFieldUpdateOperationsInput | string | null
     componentName?: StringFieldUpdateOperationsInput | string
@@ -59729,6 +59945,7 @@ export namespace Prisma {
 
   export type QuoteSubmissionItemCreateManyInput = {
     id?: string
+    itemType?: $Enums.QuoteSubmissionItemType
     submissionId: string
     quoteItemId?: string | null
     componentName: string
@@ -59742,6 +59959,7 @@ export namespace Prisma {
 
   export type QuoteSubmissionItemUpdateManyMutationInput = {
     id?: StringFieldUpdateOperationsInput | string
+    itemType?: EnumQuoteSubmissionItemTypeFieldUpdateOperationsInput | $Enums.QuoteSubmissionItemType
     componentName?: StringFieldUpdateOperationsInput | string
     componentCode?: NullableStringFieldUpdateOperationsInput | string | null
     quantity?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
@@ -59753,6 +59971,7 @@ export namespace Prisma {
 
   export type QuoteSubmissionItemUncheckedUpdateManyInput = {
     id?: StringFieldUpdateOperationsInput | string
+    itemType?: EnumQuoteSubmissionItemTypeFieldUpdateOperationsInput | $Enums.QuoteSubmissionItemType
     submissionId?: StringFieldUpdateOperationsInput | string
     quoteItemId?: NullableStringFieldUpdateOperationsInput | string | null
     componentName?: StringFieldUpdateOperationsInput | string
@@ -63394,12 +63613,20 @@ export namespace Prisma {
     archivedAt?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    customsChargeRequested?: SortOrder
+    invoiceValue?: SortOrder
+    invoiceCurrency?: SortOrder
+    transportChargeRequested?: SortOrder
+    vatEnabled?: SortOrder
+    vatPercentage?: SortOrder
   }
 
   export type QuoteSubmissionAvgOrderByAggregateInput = {
     subtotal?: SortOrder
     taxAmount?: SortOrder
     totalAmount?: SortOrder
+    invoiceValue?: SortOrder
+    vatPercentage?: SortOrder
   }
 
   export type QuoteSubmissionMaxOrderByAggregateInput = {
@@ -63423,6 +63650,12 @@ export namespace Prisma {
     archivedAt?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    customsChargeRequested?: SortOrder
+    invoiceValue?: SortOrder
+    invoiceCurrency?: SortOrder
+    transportChargeRequested?: SortOrder
+    vatEnabled?: SortOrder
+    vatPercentage?: SortOrder
   }
 
   export type QuoteSubmissionMinOrderByAggregateInput = {
@@ -63446,12 +63679,20 @@ export namespace Prisma {
     archivedAt?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    customsChargeRequested?: SortOrder
+    invoiceValue?: SortOrder
+    invoiceCurrency?: SortOrder
+    transportChargeRequested?: SortOrder
+    vatEnabled?: SortOrder
+    vatPercentage?: SortOrder
   }
 
   export type QuoteSubmissionSumOrderByAggregateInput = {
     subtotal?: SortOrder
     taxAmount?: SortOrder
     totalAmount?: SortOrder
+    invoiceValue?: SortOrder
+    vatPercentage?: SortOrder
   }
 
   export type EnumQuoteSubmissionStatusWithAggregatesFilter<$PrismaModel = never> = {
@@ -63462,6 +63703,13 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedEnumQuoteSubmissionStatusFilter<$PrismaModel>
     _max?: NestedEnumQuoteSubmissionStatusFilter<$PrismaModel>
+  }
+
+  export type EnumQuoteSubmissionItemTypeFilter<$PrismaModel = never> = {
+    equals?: $Enums.QuoteSubmissionItemType | EnumQuoteSubmissionItemTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.QuoteSubmissionItemType[] | ListEnumQuoteSubmissionItemTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.QuoteSubmissionItemType[] | ListEnumQuoteSubmissionItemTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumQuoteSubmissionItemTypeFilter<$PrismaModel> | $Enums.QuoteSubmissionItemType
   }
 
   export type QuoteSubmissionScalarRelationFilter = {
@@ -63476,6 +63724,7 @@ export namespace Prisma {
 
   export type QuoteSubmissionItemCountOrderByAggregateInput = {
     id?: SortOrder
+    itemType?: SortOrder
     submissionId?: SortOrder
     quoteItemId?: SortOrder
     componentName?: SortOrder
@@ -63495,6 +63744,7 @@ export namespace Prisma {
 
   export type QuoteSubmissionItemMaxOrderByAggregateInput = {
     id?: SortOrder
+    itemType?: SortOrder
     submissionId?: SortOrder
     quoteItemId?: SortOrder
     componentName?: SortOrder
@@ -63508,6 +63758,7 @@ export namespace Prisma {
 
   export type QuoteSubmissionItemMinOrderByAggregateInput = {
     id?: SortOrder
+    itemType?: SortOrder
     submissionId?: SortOrder
     quoteItemId?: SortOrder
     componentName?: SortOrder
@@ -63523,6 +63774,16 @@ export namespace Prisma {
     quantity?: SortOrder
     rateApplied?: SortOrder
     lineTotal?: SortOrder
+  }
+
+  export type EnumQuoteSubmissionItemTypeWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.QuoteSubmissionItemType | EnumQuoteSubmissionItemTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.QuoteSubmissionItemType[] | ListEnumQuoteSubmissionItemTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.QuoteSubmissionItemType[] | ListEnumQuoteSubmissionItemTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumQuoteSubmissionItemTypeWithAggregatesFilter<$PrismaModel> | $Enums.QuoteSubmissionItemType
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumQuoteSubmissionItemTypeFilter<$PrismaModel>
+    _max?: NestedEnumQuoteSubmissionItemTypeFilter<$PrismaModel>
   }
 
   export type EnumQuoteMessageSenderTypeFilter<$PrismaModel = never> = {
@@ -67447,6 +67708,10 @@ export namespace Prisma {
     connect?: QuoteItemWhereUniqueInput
   }
 
+  export type EnumQuoteSubmissionItemTypeFieldUpdateOperationsInput = {
+    set?: $Enums.QuoteSubmissionItemType
+  }
+
   export type QuoteSubmissionUpdateOneRequiredWithoutItemsNestedInput = {
     create?: XOR<QuoteSubmissionCreateWithoutItemsInput, QuoteSubmissionUncheckedCreateWithoutItemsInput>
     connectOrCreate?: QuoteSubmissionCreateOrConnectWithoutItemsInput
@@ -69059,6 +69324,23 @@ export namespace Prisma {
     _max?: NestedEnumQuoteSubmissionStatusFilter<$PrismaModel>
   }
 
+  export type NestedEnumQuoteSubmissionItemTypeFilter<$PrismaModel = never> = {
+    equals?: $Enums.QuoteSubmissionItemType | EnumQuoteSubmissionItemTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.QuoteSubmissionItemType[] | ListEnumQuoteSubmissionItemTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.QuoteSubmissionItemType[] | ListEnumQuoteSubmissionItemTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumQuoteSubmissionItemTypeFilter<$PrismaModel> | $Enums.QuoteSubmissionItemType
+  }
+
+  export type NestedEnumQuoteSubmissionItemTypeWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.QuoteSubmissionItemType | EnumQuoteSubmissionItemTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.QuoteSubmissionItemType[] | ListEnumQuoteSubmissionItemTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.QuoteSubmissionItemType[] | ListEnumQuoteSubmissionItemTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumQuoteSubmissionItemTypeWithAggregatesFilter<$PrismaModel> | $Enums.QuoteSubmissionItemType
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumQuoteSubmissionItemTypeFilter<$PrismaModel>
+    _max?: NestedEnumQuoteSubmissionItemTypeFilter<$PrismaModel>
+  }
+
   export type NestedEnumQuoteMessageSenderTypeFilter<$PrismaModel = never> = {
     equals?: $Enums.QuoteMessageSenderType | EnumQuoteMessageSenderTypeFieldRefInput<$PrismaModel>
     in?: $Enums.QuoteMessageSenderType[] | ListEnumQuoteMessageSenderTypeFieldRefInput<$PrismaModel>
@@ -69778,6 +70060,12 @@ export namespace Prisma {
     archivedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
+    customsChargeRequested?: boolean
+    invoiceValue?: Decimal | DecimalJsLike | number | string | null
+    invoiceCurrency?: string | null
+    transportChargeRequested?: boolean
+    vatEnabled?: boolean
+    vatPercentage?: Decimal | DecimalJsLike | number | string
     quote: QuoteCreateNestedOneWithoutSubmissionsInput
     items?: QuoteSubmissionItemCreateNestedManyWithoutSubmissionInput
     messages?: QuoteMessageCreateNestedManyWithoutSubmissionInput
@@ -69805,6 +70093,12 @@ export namespace Prisma {
     archivedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
+    customsChargeRequested?: boolean
+    invoiceValue?: Decimal | DecimalJsLike | number | string | null
+    invoiceCurrency?: string | null
+    transportChargeRequested?: boolean
+    vatEnabled?: boolean
+    vatPercentage?: Decimal | DecimalJsLike | number | string
     items?: QuoteSubmissionItemUncheckedCreateNestedManyWithoutSubmissionInput
     messages?: QuoteMessageUncheckedCreateNestedManyWithoutSubmissionInput
     attachments?: QuoteAttachmentUncheckedCreateNestedManyWithoutSubmissionInput
@@ -70231,6 +70525,12 @@ export namespace Prisma {
     archivedAt?: DateTimeNullableFilter<"QuoteSubmission"> | Date | string | null
     createdAt?: DateTimeFilter<"QuoteSubmission"> | Date | string
     updatedAt?: DateTimeFilter<"QuoteSubmission"> | Date | string
+    customsChargeRequested?: BoolFilter<"QuoteSubmission"> | boolean
+    invoiceValue?: DecimalNullableFilter<"QuoteSubmission"> | Decimal | DecimalJsLike | number | string | null
+    invoiceCurrency?: StringNullableFilter<"QuoteSubmission"> | string | null
+    transportChargeRequested?: BoolFilter<"QuoteSubmission"> | boolean
+    vatEnabled?: BoolFilter<"QuoteSubmission"> | boolean
+    vatPercentage?: DecimalFilter<"QuoteSubmission"> | Decimal | DecimalJsLike | number | string
   }
 
   export type AllocationCreateWithoutDocumentsInput = {
@@ -77900,6 +78200,12 @@ export namespace Prisma {
     archivedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
+    customsChargeRequested?: boolean
+    invoiceValue?: Decimal | DecimalJsLike | number | string | null
+    invoiceCurrency?: string | null
+    transportChargeRequested?: boolean
+    vatEnabled?: boolean
+    vatPercentage?: Decimal | DecimalJsLike | number | string
     exporter?: UserCreateNestedOneWithoutQuoteSubmissionsInput
     items?: QuoteSubmissionItemCreateNestedManyWithoutSubmissionInput
     messages?: QuoteMessageCreateNestedManyWithoutSubmissionInput
@@ -77927,6 +78233,12 @@ export namespace Prisma {
     archivedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
+    customsChargeRequested?: boolean
+    invoiceValue?: Decimal | DecimalJsLike | number | string | null
+    invoiceCurrency?: string | null
+    transportChargeRequested?: boolean
+    vatEnabled?: boolean
+    vatPercentage?: Decimal | DecimalJsLike | number | string
     items?: QuoteSubmissionItemUncheckedCreateNestedManyWithoutSubmissionInput
     messages?: QuoteMessageUncheckedCreateNestedManyWithoutSubmissionInput
     attachments?: QuoteAttachmentUncheckedCreateNestedManyWithoutSubmissionInput
@@ -78944,6 +79256,7 @@ export namespace Prisma {
 
   export type QuoteSubmissionItemCreateWithoutQuoteItemInput = {
     id?: string
+    itemType?: $Enums.QuoteSubmissionItemType
     componentName: string
     componentCode?: string | null
     quantity?: Decimal | DecimalJsLike | number | string
@@ -78956,6 +79269,7 @@ export namespace Prisma {
 
   export type QuoteSubmissionItemUncheckedCreateWithoutQuoteItemInput = {
     id?: string
+    itemType?: $Enums.QuoteSubmissionItemType
     submissionId: string
     componentName: string
     componentCode?: string | null
@@ -79099,6 +79413,7 @@ export namespace Prisma {
     OR?: QuoteSubmissionItemScalarWhereInput[]
     NOT?: QuoteSubmissionItemScalarWhereInput | QuoteSubmissionItemScalarWhereInput[]
     id?: StringFilter<"QuoteSubmissionItem"> | string
+    itemType?: EnumQuoteSubmissionItemTypeFilter<"QuoteSubmissionItem"> | $Enums.QuoteSubmissionItemType
     submissionId?: StringFilter<"QuoteSubmissionItem"> | string
     quoteItemId?: StringNullableFilter<"QuoteSubmissionItem"> | string | null
     componentName?: StringFilter<"QuoteSubmissionItem"> | string
@@ -79354,6 +79669,7 @@ export namespace Prisma {
 
   export type QuoteSubmissionItemCreateWithoutSubmissionInput = {
     id?: string
+    itemType?: $Enums.QuoteSubmissionItemType
     componentName: string
     componentCode?: string | null
     quantity?: Decimal | DecimalJsLike | number | string
@@ -79366,6 +79682,7 @@ export namespace Prisma {
 
   export type QuoteSubmissionItemUncheckedCreateWithoutSubmissionInput = {
     id?: string
+    itemType?: $Enums.QuoteSubmissionItemType
     quoteItemId?: string | null
     componentName: string
     componentCode?: string | null
@@ -79711,6 +80028,12 @@ export namespace Prisma {
     archivedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
+    customsChargeRequested?: boolean
+    invoiceValue?: Decimal | DecimalJsLike | number | string | null
+    invoiceCurrency?: string | null
+    transportChargeRequested?: boolean
+    vatEnabled?: boolean
+    vatPercentage?: Decimal | DecimalJsLike | number | string
     quote: QuoteCreateNestedOneWithoutSubmissionsInput
     exporter?: UserCreateNestedOneWithoutQuoteSubmissionsInput
     messages?: QuoteMessageCreateNestedManyWithoutSubmissionInput
@@ -79739,6 +80062,12 @@ export namespace Prisma {
     archivedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
+    customsChargeRequested?: boolean
+    invoiceValue?: Decimal | DecimalJsLike | number | string | null
+    invoiceCurrency?: string | null
+    transportChargeRequested?: boolean
+    vatEnabled?: boolean
+    vatPercentage?: Decimal | DecimalJsLike | number | string
     messages?: QuoteMessageUncheckedCreateNestedManyWithoutSubmissionInput
     attachments?: QuoteAttachmentUncheckedCreateNestedManyWithoutSubmissionInput
     auditEvents?: QuoteAuditEventUncheckedCreateNestedManyWithoutSubmissionInput
@@ -79824,6 +80153,12 @@ export namespace Prisma {
     archivedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    customsChargeRequested?: BoolFieldUpdateOperationsInput | boolean
+    invoiceValue?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    invoiceCurrency?: NullableStringFieldUpdateOperationsInput | string | null
+    transportChargeRequested?: BoolFieldUpdateOperationsInput | boolean
+    vatEnabled?: BoolFieldUpdateOperationsInput | boolean
+    vatPercentage?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     quote?: QuoteUpdateOneRequiredWithoutSubmissionsNestedInput
     exporter?: UserUpdateOneWithoutQuoteSubmissionsNestedInput
     messages?: QuoteMessageUpdateManyWithoutSubmissionNestedInput
@@ -79852,6 +80187,12 @@ export namespace Prisma {
     archivedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    customsChargeRequested?: BoolFieldUpdateOperationsInput | boolean
+    invoiceValue?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    invoiceCurrency?: NullableStringFieldUpdateOperationsInput | string | null
+    transportChargeRequested?: BoolFieldUpdateOperationsInput | boolean
+    vatEnabled?: BoolFieldUpdateOperationsInput | boolean
+    vatPercentage?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     messages?: QuoteMessageUncheckedUpdateManyWithoutSubmissionNestedInput
     attachments?: QuoteAttachmentUncheckedUpdateManyWithoutSubmissionNestedInput
     auditEvents?: QuoteAuditEventUncheckedUpdateManyWithoutSubmissionNestedInput
@@ -79998,6 +80339,12 @@ export namespace Prisma {
     archivedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
+    customsChargeRequested?: boolean
+    invoiceValue?: Decimal | DecimalJsLike | number | string | null
+    invoiceCurrency?: string | null
+    transportChargeRequested?: boolean
+    vatEnabled?: boolean
+    vatPercentage?: Decimal | DecimalJsLike | number | string
     quote: QuoteCreateNestedOneWithoutSubmissionsInput
     exporter?: UserCreateNestedOneWithoutQuoteSubmissionsInput
     items?: QuoteSubmissionItemCreateNestedManyWithoutSubmissionInput
@@ -80026,6 +80373,12 @@ export namespace Prisma {
     archivedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
+    customsChargeRequested?: boolean
+    invoiceValue?: Decimal | DecimalJsLike | number | string | null
+    invoiceCurrency?: string | null
+    transportChargeRequested?: boolean
+    vatEnabled?: boolean
+    vatPercentage?: Decimal | DecimalJsLike | number | string
     items?: QuoteSubmissionItemUncheckedCreateNestedManyWithoutSubmissionInput
     attachments?: QuoteAttachmentUncheckedCreateNestedManyWithoutSubmissionInput
     auditEvents?: QuoteAuditEventUncheckedCreateNestedManyWithoutSubmissionInput
@@ -80242,6 +80595,12 @@ export namespace Prisma {
     archivedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    customsChargeRequested?: BoolFieldUpdateOperationsInput | boolean
+    invoiceValue?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    invoiceCurrency?: NullableStringFieldUpdateOperationsInput | string | null
+    transportChargeRequested?: BoolFieldUpdateOperationsInput | boolean
+    vatEnabled?: BoolFieldUpdateOperationsInput | boolean
+    vatPercentage?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     quote?: QuoteUpdateOneRequiredWithoutSubmissionsNestedInput
     exporter?: UserUpdateOneWithoutQuoteSubmissionsNestedInput
     items?: QuoteSubmissionItemUpdateManyWithoutSubmissionNestedInput
@@ -80270,6 +80629,12 @@ export namespace Prisma {
     archivedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    customsChargeRequested?: BoolFieldUpdateOperationsInput | boolean
+    invoiceValue?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    invoiceCurrency?: NullableStringFieldUpdateOperationsInput | string | null
+    transportChargeRequested?: BoolFieldUpdateOperationsInput | boolean
+    vatEnabled?: BoolFieldUpdateOperationsInput | boolean
+    vatPercentage?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     items?: QuoteSubmissionItemUncheckedUpdateManyWithoutSubmissionNestedInput
     attachments?: QuoteAttachmentUncheckedUpdateManyWithoutSubmissionNestedInput
     auditEvents?: QuoteAuditEventUncheckedUpdateManyWithoutSubmissionNestedInput
@@ -80444,6 +80809,12 @@ export namespace Prisma {
     archivedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
+    customsChargeRequested?: boolean
+    invoiceValue?: Decimal | DecimalJsLike | number | string | null
+    invoiceCurrency?: string | null
+    transportChargeRequested?: boolean
+    vatEnabled?: boolean
+    vatPercentage?: Decimal | DecimalJsLike | number | string
     quote: QuoteCreateNestedOneWithoutSubmissionsInput
     exporter?: UserCreateNestedOneWithoutQuoteSubmissionsInput
     items?: QuoteSubmissionItemCreateNestedManyWithoutSubmissionInput
@@ -80472,6 +80843,12 @@ export namespace Prisma {
     archivedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
+    customsChargeRequested?: boolean
+    invoiceValue?: Decimal | DecimalJsLike | number | string | null
+    invoiceCurrency?: string | null
+    transportChargeRequested?: boolean
+    vatEnabled?: boolean
+    vatPercentage?: Decimal | DecimalJsLike | number | string
     items?: QuoteSubmissionItemUncheckedCreateNestedManyWithoutSubmissionInput
     messages?: QuoteMessageUncheckedCreateNestedManyWithoutSubmissionInput
     auditEvents?: QuoteAuditEventUncheckedCreateNestedManyWithoutSubmissionInput
@@ -80671,6 +81048,12 @@ export namespace Prisma {
     archivedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    customsChargeRequested?: BoolFieldUpdateOperationsInput | boolean
+    invoiceValue?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    invoiceCurrency?: NullableStringFieldUpdateOperationsInput | string | null
+    transportChargeRequested?: BoolFieldUpdateOperationsInput | boolean
+    vatEnabled?: BoolFieldUpdateOperationsInput | boolean
+    vatPercentage?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     quote?: QuoteUpdateOneRequiredWithoutSubmissionsNestedInput
     exporter?: UserUpdateOneWithoutQuoteSubmissionsNestedInput
     items?: QuoteSubmissionItemUpdateManyWithoutSubmissionNestedInput
@@ -80699,6 +81082,12 @@ export namespace Prisma {
     archivedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    customsChargeRequested?: BoolFieldUpdateOperationsInput | boolean
+    invoiceValue?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    invoiceCurrency?: NullableStringFieldUpdateOperationsInput | string | null
+    transportChargeRequested?: BoolFieldUpdateOperationsInput | boolean
+    vatEnabled?: BoolFieldUpdateOperationsInput | boolean
+    vatPercentage?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     items?: QuoteSubmissionItemUncheckedUpdateManyWithoutSubmissionNestedInput
     messages?: QuoteMessageUncheckedUpdateManyWithoutSubmissionNestedInput
     auditEvents?: QuoteAuditEventUncheckedUpdateManyWithoutSubmissionNestedInput
@@ -81156,6 +81545,12 @@ export namespace Prisma {
     archivedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
+    customsChargeRequested?: boolean
+    invoiceValue?: Decimal | DecimalJsLike | number | string | null
+    invoiceCurrency?: string | null
+    transportChargeRequested?: boolean
+    vatEnabled?: boolean
+    vatPercentage?: Decimal | DecimalJsLike | number | string
     quote: QuoteCreateNestedOneWithoutSubmissionsInput
     exporter?: UserCreateNestedOneWithoutQuoteSubmissionsInput
     items?: QuoteSubmissionItemCreateNestedManyWithoutSubmissionInput
@@ -81184,6 +81579,12 @@ export namespace Prisma {
     archivedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
+    customsChargeRequested?: boolean
+    invoiceValue?: Decimal | DecimalJsLike | number | string | null
+    invoiceCurrency?: string | null
+    transportChargeRequested?: boolean
+    vatEnabled?: boolean
+    vatPercentage?: Decimal | DecimalJsLike | number | string
     items?: QuoteSubmissionItemUncheckedCreateNestedManyWithoutSubmissionInput
     messages?: QuoteMessageUncheckedCreateNestedManyWithoutSubmissionInput
     attachments?: QuoteAttachmentUncheckedCreateNestedManyWithoutSubmissionInput
@@ -81358,6 +81759,12 @@ export namespace Prisma {
     archivedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    customsChargeRequested?: BoolFieldUpdateOperationsInput | boolean
+    invoiceValue?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    invoiceCurrency?: NullableStringFieldUpdateOperationsInput | string | null
+    transportChargeRequested?: BoolFieldUpdateOperationsInput | boolean
+    vatEnabled?: BoolFieldUpdateOperationsInput | boolean
+    vatPercentage?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     quote?: QuoteUpdateOneRequiredWithoutSubmissionsNestedInput
     exporter?: UserUpdateOneWithoutQuoteSubmissionsNestedInput
     items?: QuoteSubmissionItemUpdateManyWithoutSubmissionNestedInput
@@ -81386,6 +81793,12 @@ export namespace Prisma {
     archivedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    customsChargeRequested?: BoolFieldUpdateOperationsInput | boolean
+    invoiceValue?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    invoiceCurrency?: NullableStringFieldUpdateOperationsInput | string | null
+    transportChargeRequested?: BoolFieldUpdateOperationsInput | boolean
+    vatEnabled?: BoolFieldUpdateOperationsInput | boolean
+    vatPercentage?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     items?: QuoteSubmissionItemUncheckedUpdateManyWithoutSubmissionNestedInput
     messages?: QuoteMessageUncheckedUpdateManyWithoutSubmissionNestedInput
     attachments?: QuoteAttachmentUncheckedUpdateManyWithoutSubmissionNestedInput
@@ -83317,6 +83730,12 @@ export namespace Prisma {
     archivedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
+    customsChargeRequested?: boolean
+    invoiceValue?: Decimal | DecimalJsLike | number | string | null
+    invoiceCurrency?: string | null
+    transportChargeRequested?: boolean
+    vatEnabled?: boolean
+    vatPercentage?: Decimal | DecimalJsLike | number | string
   }
 
   export type ShipmentUpdateWithoutCreatedByInput = {
@@ -84152,6 +84571,12 @@ export namespace Prisma {
     archivedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    customsChargeRequested?: BoolFieldUpdateOperationsInput | boolean
+    invoiceValue?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    invoiceCurrency?: NullableStringFieldUpdateOperationsInput | string | null
+    transportChargeRequested?: BoolFieldUpdateOperationsInput | boolean
+    vatEnabled?: BoolFieldUpdateOperationsInput | boolean
+    vatPercentage?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     quote?: QuoteUpdateOneRequiredWithoutSubmissionsNestedInput
     items?: QuoteSubmissionItemUpdateManyWithoutSubmissionNestedInput
     messages?: QuoteMessageUpdateManyWithoutSubmissionNestedInput
@@ -84179,6 +84604,12 @@ export namespace Prisma {
     archivedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    customsChargeRequested?: BoolFieldUpdateOperationsInput | boolean
+    invoiceValue?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    invoiceCurrency?: NullableStringFieldUpdateOperationsInput | string | null
+    transportChargeRequested?: BoolFieldUpdateOperationsInput | boolean
+    vatEnabled?: BoolFieldUpdateOperationsInput | boolean
+    vatPercentage?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     items?: QuoteSubmissionItemUncheckedUpdateManyWithoutSubmissionNestedInput
     messages?: QuoteMessageUncheckedUpdateManyWithoutSubmissionNestedInput
     attachments?: QuoteAttachmentUncheckedUpdateManyWithoutSubmissionNestedInput
@@ -84205,6 +84636,12 @@ export namespace Prisma {
     archivedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    customsChargeRequested?: BoolFieldUpdateOperationsInput | boolean
+    invoiceValue?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    invoiceCurrency?: NullableStringFieldUpdateOperationsInput | string | null
+    transportChargeRequested?: BoolFieldUpdateOperationsInput | boolean
+    vatEnabled?: BoolFieldUpdateOperationsInput | boolean
+    vatPercentage?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
   }
 
   export type DocumentCreateManyExporterInput = {
@@ -87265,6 +87702,12 @@ export namespace Prisma {
     archivedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
+    customsChargeRequested?: boolean
+    invoiceValue?: Decimal | DecimalJsLike | number | string | null
+    invoiceCurrency?: string | null
+    transportChargeRequested?: boolean
+    vatEnabled?: boolean
+    vatPercentage?: Decimal | DecimalJsLike | number | string
   }
 
   export type QuoteMessageCreateManyQuoteInput = {
@@ -87388,6 +87831,12 @@ export namespace Prisma {
     archivedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    customsChargeRequested?: BoolFieldUpdateOperationsInput | boolean
+    invoiceValue?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    invoiceCurrency?: NullableStringFieldUpdateOperationsInput | string | null
+    transportChargeRequested?: BoolFieldUpdateOperationsInput | boolean
+    vatEnabled?: BoolFieldUpdateOperationsInput | boolean
+    vatPercentage?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     exporter?: UserUpdateOneWithoutQuoteSubmissionsNestedInput
     items?: QuoteSubmissionItemUpdateManyWithoutSubmissionNestedInput
     messages?: QuoteMessageUpdateManyWithoutSubmissionNestedInput
@@ -87415,6 +87864,12 @@ export namespace Prisma {
     archivedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    customsChargeRequested?: BoolFieldUpdateOperationsInput | boolean
+    invoiceValue?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    invoiceCurrency?: NullableStringFieldUpdateOperationsInput | string | null
+    transportChargeRequested?: BoolFieldUpdateOperationsInput | boolean
+    vatEnabled?: BoolFieldUpdateOperationsInput | boolean
+    vatPercentage?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     items?: QuoteSubmissionItemUncheckedUpdateManyWithoutSubmissionNestedInput
     messages?: QuoteMessageUncheckedUpdateManyWithoutSubmissionNestedInput
     attachments?: QuoteAttachmentUncheckedUpdateManyWithoutSubmissionNestedInput
@@ -87441,6 +87896,12 @@ export namespace Prisma {
     archivedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    customsChargeRequested?: BoolFieldUpdateOperationsInput | boolean
+    invoiceValue?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    invoiceCurrency?: NullableStringFieldUpdateOperationsInput | string | null
+    transportChargeRequested?: BoolFieldUpdateOperationsInput | boolean
+    vatEnabled?: BoolFieldUpdateOperationsInput | boolean
+    vatPercentage?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
   }
 
   export type QuoteMessageUpdateWithoutQuoteInput = {
@@ -87673,6 +88134,7 @@ export namespace Prisma {
 
   export type QuoteSubmissionItemCreateManyQuoteItemInput = {
     id?: string
+    itemType?: $Enums.QuoteSubmissionItemType
     submissionId: string
     componentName: string
     componentCode?: string | null
@@ -87685,6 +88147,7 @@ export namespace Prisma {
 
   export type QuoteSubmissionItemUpdateWithoutQuoteItemInput = {
     id?: StringFieldUpdateOperationsInput | string
+    itemType?: EnumQuoteSubmissionItemTypeFieldUpdateOperationsInput | $Enums.QuoteSubmissionItemType
     componentName?: StringFieldUpdateOperationsInput | string
     componentCode?: NullableStringFieldUpdateOperationsInput | string | null
     quantity?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
@@ -87697,6 +88160,7 @@ export namespace Prisma {
 
   export type QuoteSubmissionItemUncheckedUpdateWithoutQuoteItemInput = {
     id?: StringFieldUpdateOperationsInput | string
+    itemType?: EnumQuoteSubmissionItemTypeFieldUpdateOperationsInput | $Enums.QuoteSubmissionItemType
     submissionId?: StringFieldUpdateOperationsInput | string
     componentName?: StringFieldUpdateOperationsInput | string
     componentCode?: NullableStringFieldUpdateOperationsInput | string | null
@@ -87709,6 +88173,7 @@ export namespace Prisma {
 
   export type QuoteSubmissionItemUncheckedUpdateManyWithoutQuoteItemInput = {
     id?: StringFieldUpdateOperationsInput | string
+    itemType?: EnumQuoteSubmissionItemTypeFieldUpdateOperationsInput | $Enums.QuoteSubmissionItemType
     submissionId?: StringFieldUpdateOperationsInput | string
     componentName?: StringFieldUpdateOperationsInput | string
     componentCode?: NullableStringFieldUpdateOperationsInput | string | null
@@ -87721,6 +88186,7 @@ export namespace Prisma {
 
   export type QuoteSubmissionItemCreateManySubmissionInput = {
     id?: string
+    itemType?: $Enums.QuoteSubmissionItemType
     quoteItemId?: string | null
     componentName: string
     componentCode?: string | null
@@ -87768,6 +88234,7 @@ export namespace Prisma {
 
   export type QuoteSubmissionItemUpdateWithoutSubmissionInput = {
     id?: StringFieldUpdateOperationsInput | string
+    itemType?: EnumQuoteSubmissionItemTypeFieldUpdateOperationsInput | $Enums.QuoteSubmissionItemType
     componentName?: StringFieldUpdateOperationsInput | string
     componentCode?: NullableStringFieldUpdateOperationsInput | string | null
     quantity?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
@@ -87780,6 +88247,7 @@ export namespace Prisma {
 
   export type QuoteSubmissionItemUncheckedUpdateWithoutSubmissionInput = {
     id?: StringFieldUpdateOperationsInput | string
+    itemType?: EnumQuoteSubmissionItemTypeFieldUpdateOperationsInput | $Enums.QuoteSubmissionItemType
     quoteItemId?: NullableStringFieldUpdateOperationsInput | string | null
     componentName?: StringFieldUpdateOperationsInput | string
     componentCode?: NullableStringFieldUpdateOperationsInput | string | null
@@ -87792,6 +88260,7 @@ export namespace Prisma {
 
   export type QuoteSubmissionItemUncheckedUpdateManyWithoutSubmissionInput = {
     id?: StringFieldUpdateOperationsInput | string
+    itemType?: EnumQuoteSubmissionItemTypeFieldUpdateOperationsInput | $Enums.QuoteSubmissionItemType
     quoteItemId?: NullableStringFieldUpdateOperationsInput | string | null
     componentName?: StringFieldUpdateOperationsInput | string
     componentCode?: NullableStringFieldUpdateOperationsInput | string | null

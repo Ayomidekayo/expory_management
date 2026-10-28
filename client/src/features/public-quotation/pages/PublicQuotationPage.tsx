@@ -1,3 +1,4 @@
+
 import { useEffect, useMemo, useState } from "react";
 import {
   ArrowRight,
@@ -25,17 +26,58 @@ import type {
   QuoteMode,
 } from "../types/public-quotation.types";
 import { Link, useNavigate } from "react-router-dom";
+import { useAuthStore } from "../../../store/auth.store";
+import { submitPublicQuoteRequest, type AdditionalChargeRequestPayload } from "../api/public-quotation.api";
 
 type LoginHandoff = {
   quoteId: string;
   quoteNumber: string;
   selectedQuoteItemIds: string[];
+  customsChargeRequested: boolean;
+  invoiceValue?: number;
+  invoiceCurrency?: string;
+  transportChargeRequested: boolean;
+  customerMessage?: string;
   quote: CalculatedQuote;
 };
 
 type Props = {
   onRequireLogin?: (handoff: LoginHandoff) => void;
 };
+
+type AuthSnapshot = {
+  user?: { role?: string | null } | null;
+  token?: string | null;
+  accessToken?: string | null;
+};
+
+function normalizeRole(role: unknown): string {
+  return typeof role === "string" ? role.trim().toUpperCase() : "";
+}
+
+/**
+ * Read the latest store state at submission time. This avoids relying only on
+ * a render-time user snapshot when the user has just signed in or navigated
+ * back to the public quote page.
+ */
+function getCurrentAuthSnapshot(): { role: string; token: string | null } {
+  const state = useAuthStore.getState() as unknown as AuthSnapshot;
+  const tokenFromState =
+    (typeof state.token === "string" && state.token.trim()) ||
+    (typeof state.accessToken === "string" && state.accessToken.trim()) ||
+    null;
+
+  const storedToken =
+    typeof window !== "undefined"
+      ? window.localStorage.getItem("token") ||
+        window.localStorage.getItem("accessToken")
+      : null;
+
+  return {
+    role: normalizeRole(state.user?.role),
+    token: tokenFromState || storedToken,
+  };
+}
 
 const modes = [
   {
@@ -176,6 +218,8 @@ function calculateSelectedTotals(
 
 export function PublicQuotationPage({ onRequireLogin }: Props) {
   const navigate = useNavigate();
+  const { user } = useAuthStore();
+  const isSignedInExporter = normalizeRole(user?.role) === "EXPORTER";
   const [mode, setMode] = useState<QuoteMode>("AIR");
   const [direction, setDirection] = useState<QuoteDirection>("IMPORT");
   const [rateCardId, setRateCardId] = useState("");
@@ -191,6 +235,12 @@ export function PublicQuotationPage({ onRequireLogin }: Props) {
   const [nafdacRequired, setNafdacRequired] = useState(false);
   const [transportRequired, setTransportRequired] = useState(false);
   const [selectedItemIds, setSelectedItemIds] = useState<string[]>([]);
+  const [customsChargeRequested, setCustomsChargeRequested] = useState(false);
+  const [invoiceValue, setInvoiceValue] = useState("");
+  const [invoiceCurrency, setInvoiceCurrency] = useState("NGN");
+  const [transportChargeRequested, setTransportChargeRequested] = useState(false);
+  const [customerMessage, setCustomerMessage] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [quote, setQuote] = useState<CalculatedQuote | null>(null);
   const [formError, setFormError] = useState("");
 
@@ -422,6 +472,13 @@ export function PublicQuotationPage({ onRequireLogin }: Props) {
       const result = await calculateMutation.mutateAsync(payload);
       setQuote(result);
       setSelectedItemIds(result.lines.map((line) => line.quoteItemId));
+      // These are request-specific choices and must be reconfirmed for a newly
+      // calculated quote. Reuse an invoice value already entered in the form.
+      setCustomsChargeRequested(false);
+      setInvoiceValue(customsValue.trim());
+      setInvoiceCurrency(result.currency || "NGN");
+      setTransportChargeRequested(false);
+      setCustomerMessage("");
       window.setTimeout(() => {
         document
           .getElementById("quotation-results")
@@ -440,7 +497,7 @@ export function PublicQuotationPage({ onRequireLogin }: Props) {
     }
   }
 
-function requestHelp() {
+async function requestHelp() {
   if (!quote) {
     setFormError("Please calculate your quotation first.");
     return;
@@ -452,32 +509,124 @@ function requestHelp() {
   }
 
   if (!quote.quoteId || !quote.quoteNumber) {
-    setFormError(
-      "Your quotation reference is missing. Please calculate your quote again.",
-    );
+    setFormError("Your quotation reference is missing. Please calculate your quote again.");
     return;
   }
 
-  // Preserve the parent-controlled login handoff when a callback is supplied.
-  // Otherwise, use the page's normal login route and pass the quote reference.
-  if (onRequireLogin) {
-    onRequireLogin({
-      quoteId: quote.quoteId,
-      quoteNumber: quote.quoteNumber,
-      selectedQuoteItemIds: [...selectedItemIds],
-      quote,
+  if (customsChargeRequested) {
+    const invoiceAmount = Number(invoiceValue);
+    if (!invoiceValue.trim() || !Number.isFinite(invoiceAmount) || invoiceAmount <= 0) {
+      setFormError("Enter a commercial invoice value greater than zero for customs assessment.");
+      return;
+    }
+    if (!/^[A-Z]{3}$/.test(invoiceCurrency.trim().toUpperCase())) {
+      setFormError("Choose a valid three-letter invoice currency.");
+      return;
+    }
+  }
+
+  if (customerMessage.trim().length > 5000) {
+    setFormError("Additional information cannot exceed 5,000 characters.");
+    return;
+  }
+
+  const submissionPayload: AdditionalChargeRequestPayload = {
+    selectedQuoteItemIds: [...selectedItemIds],
+    customsChargeRequested,
+    ...(customsChargeRequested
+      ? { invoiceValue: Number(invoiceValue), invoiceCurrency: invoiceCurrency.trim().toUpperCase() }
+      : {}),
+    transportChargeRequested,
+    ...(customerMessage.trim() ? { customerMessage: customerMessage.trim() } : {}),
+  };
+
+  const handoff: LoginHandoff = {
+    quoteId: quote.quoteId,
+    quoteNumber: quote.quoteNumber,
+    selectedQuoteItemIds: [...selectedItemIds],
+    customsChargeRequested,
+    ...(customsChargeRequested
+      ? { invoiceValue: Number(invoiceValue), invoiceCurrency: invoiceCurrency.trim().toUpperCase() }
+      : {}),
+    transportChargeRequested,
+    ...(customerMessage.trim() ? { customerMessage: customerMessage.trim() } : {}),
+    quote,
+  };
+
+  // Submit directly when the current exporter session exists. The token check
+  // is important: frontend role state by itself is not authentication.
+  const currentAuth = getCurrentAuthSnapshot();
+  const currentRole = currentAuth.role || normalizeRole(user?.role);
+  const canSubmitWithCurrentSession =
+    Boolean(currentAuth.token) &&
+    (!currentRole || currentRole === "EXPORTER");
+
+  if (canSubmitWithCurrentSession) {
+    setIsSubmitting(true);
+    setFormError("");
+
+    try {
+      const submission = await submitPublicQuoteRequest(
+        quote.quoteId,
+        submissionPayload,
+      );
+
+      navigate(
+        `/exporter/quotations/${encodeURIComponent(submission.id)}`,
+        { replace: true },
+      );
+    } catch (error: unknown) {
+      const e = error as {
+        response?: { status?: number; data?: { message?: string } };
+        message?: string;
+      };
+
+      // An expired token or a token belonging to a staff account must not
+      // discard the review selections. Resume the same handoff after exporter
+      // sign-in instead of sending the user through the staff login portal.
+      if (e.response?.status === 401 || e.response?.status === 403) {
+        navigate("/exporter/login", {
+          state: {
+            from: "/get-a-quote",
+            quoteHandoff: handoff,
+          },
+        });
+        return;
+      }
+
+      setFormError(
+        e.response?.data?.message ??
+          e.message ??
+          "We couldn't submit your quotation request. Please try again.",
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
+    return;
+  }
+
+  // A currently signed-in staff account cannot submit an exporter request.
+  // Send the user to the exporter sign-in form and preserve the quote handoff.
+  if (currentRole && currentRole !== "EXPORTER") {
+    navigate("/exporter/login", {
+      state: {
+        from: "/get-a-quote",
+        quoteHandoff: handoff,
+      },
     });
+    return;
+  }
+
+  // Keep the callback integration for applications that own their login flow.
+  if (onRequireLogin) {
+    onRequireLogin(handoff);
     return;
   }
 
   navigate("/exporter/login", {
     state: {
-      from: "/exporter/quotations",
-      quoteHandoff: {
-        quoteId: quote.quoteId,
-        quoteNumber: quote.quoteNumber,
-        selectedQuoteItemIds: [...selectedItemIds],
-      },
+      from: "/get-a-quote",
+      quoteHandoff: handoff,
     },
   });
 }
@@ -511,14 +660,16 @@ function requestHelp() {
     <div className="ml-auto flex shrink-0 items-center gap-2">
       <span className="hidden items-center gap-2 rounded-full border border-emerald-100 bg-emerald-50 px-3 py-2 text-xs font-semibold text-emerald-800 sm:flex">
         <LockKeyhole size={14} aria-hidden="true" />
-        Calculate before signing in
+        {isSignedInExporter
+          ? "Exporter account active"
+          : "Calculate before signing in"}
       </span>
 
       <Link
-        to="/exporter/login"
+        to={isSignedInExporter ? "/exporter/quotations" : "/exporter/login"}
         className="inline-flex min-h-10 items-center justify-center gap-2 rounded-xl bg-emerald-700 px-4 py-2.5 text-sm font-bold text-white shadow-sm transition hover:bg-emerald-800 focus:outline-none focus:ring-4 focus:ring-emerald-500/20"
       >
-        Sign In
+        {isSignedInExporter ? "My Quotations" : "Exporter Sign In"}
         <ArrowRight size={16} aria-hidden="true" />
       </Link>
     </div>
@@ -1083,6 +1234,64 @@ function requestHelp() {
                   </div>
                 </div>
 
+                <section className="mt-6 rounded-2xl border border-slate-200 bg-white p-4 sm:p-5" aria-labelledby="additional-request-title">
+                  <div className="flex items-start gap-3">
+                    <span className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-emerald-50 text-emerald-800"><PackageCheck size={18} aria-hidden="true" /></span>
+                    <div className="min-w-0">
+                      <h3 id="additional-request-title" className="text-base font-extrabold text-slate-950">Additional services and instructions</h3>
+                      <p className="mt-1 text-sm leading-5 text-slate-500">Tell our operations team which extra charges you need help with. These charges are assessed by the team and are not included in the estimate above until priced.</p>
+                    </div>
+                  </div>
+
+                  <fieldset className="mt-5">
+                    <legend className="text-sm font-bold text-slate-800">Do you need assistance with customs duties and charges?</legend>
+                    <div className="mt-3 grid grid-cols-2 gap-2 sm:max-w-sm">
+                      {[{value:false,label:"No, thank you"},{value:true,label:"Yes, please"}].map((choice) => (
+                        <button key={String(choice.value)} type="button" aria-pressed={customsChargeRequested === choice.value} onClick={() => { setCustomsChargeRequested(choice.value); setFormError(""); }} className={`min-h-11 rounded-xl border px-3 py-2.5 text-sm font-bold transition focus:outline-none focus-visible:ring-4 focus-visible:ring-emerald-500/20 ${customsChargeRequested === choice.value ? "border-emerald-700 bg-emerald-700 text-white" : "border-slate-200 bg-white text-slate-700 hover:border-emerald-300 hover:bg-emerald-50"}`}>
+                          {choice.label}
+                        </button>
+                      ))}
+                    </div>
+                    {customsChargeRequested && (
+                      <div className="mt-4 grid gap-3 rounded-xl border border-emerald-100 bg-emerald-50/50 p-3 sm:grid-cols-[minmax(0,1fr)_150px] sm:p-4">
+                        <div>
+                          <label htmlFor="customs-invoice-value" className="mb-1.5 block text-sm font-semibold text-slate-800">Commercial invoice value <span className="text-rose-600">*</span></label>
+                          <input id="customs-invoice-value" type="number" min="0.01" step="0.01" inputMode="decimal" value={invoiceValue} onChange={(event) => setInvoiceValue(event.target.value)} placeholder="Enter the invoice value" required aria-describedby="customs-invoice-help" className={inputClass} />
+                          <p id="customs-invoice-help" className="mt-1.5 text-xs leading-5 text-slate-500">Enter the goods value shown on your commercial invoice. Our team will use it to assess the applicable customs charges.</p>
+                        </div>
+                        <div>
+                          <label htmlFor="customs-invoice-currency" className="mb-1.5 block text-sm font-semibold text-slate-800">Invoice currency</label>
+                          <select id="customs-invoice-currency" value={invoiceCurrency} onChange={(event) => setInvoiceCurrency(event.target.value)} className={inputClass}>
+                            {[...new Set([quote.currency || "NGN", "NGN", "USD", "EUR", "GBP", "CNY", "XOF"])].map((currency) => <option key={currency} value={currency}>{currency}</option>)}
+                          </select>
+                        </div>
+                      </div>
+                    )}
+                  </fieldset>
+
+                  <fieldset className="mt-5 border-t border-slate-100 pt-5">
+                    <legend className="text-sm font-bold text-slate-800">Would you like us to arrange and price transportation as well?</legend>
+                    <p className="mt-1 text-xs leading-5 text-slate-500">Choose yes if you need a transport quote in addition to the selected services.</p>
+                    <div className="mt-3 grid grid-cols-2 gap-2 sm:max-w-sm">
+                      {[{value:false,label:"No transport"},{value:true,label:"Yes, quote transport"}].map((choice) => (
+                        <button key={String(choice.value)} type="button" aria-pressed={transportChargeRequested === choice.value} onClick={() => setTransportChargeRequested(choice.value)} className={`min-h-11 rounded-xl border px-3 py-2.5 text-sm font-bold transition focus:outline-none focus-visible:ring-4 focus-visible:ring-emerald-500/20 ${transportChargeRequested === choice.value ? "border-emerald-700 bg-emerald-700 text-white" : "border-slate-200 bg-white text-slate-700 hover:border-emerald-300 hover:bg-emerald-50"}`}>
+                          {choice.label}
+                        </button>
+                      ))}
+                    </div>
+                  </fieldset>
+
+                  <div className="mt-5 border-t border-slate-100 pt-5">
+                    <label htmlFor="quotation-additional-information" className="block text-sm font-bold text-slate-800">Additional information <span className="font-normal text-slate-500">(optional)</span></label>
+                    <textarea id="quotation-additional-information" rows={4} maxLength={5000} value={customerMessage} onChange={(event) => setCustomerMessage(event.target.value)} placeholder="Add delivery location, timing, invoice context, special handling needs, or any other instructions…" className="mt-2 w-full resize-y rounded-xl border border-slate-200 bg-white p-3.5 text-sm leading-6 outline-none transition placeholder:text-slate-400 focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10" />
+                    <p className="mt-1 text-right text-xs text-slate-400">{customerMessage.length}/5000</p>
+                  </div>
+
+                  {(customsChargeRequested || transportChargeRequested) && (
+                    <p className="mt-4 rounded-xl border border-amber-200 bg-amber-50 p-3 text-xs leading-5 text-amber-900">The customs and/or transport amounts will be added by an authorised operations reviewer after assessment. Applicable VAT will be recalculated on the additional charges before the updated quotation total is shown.</p>
+                  )}
+                </section>
+
                 {selectedItemIds.length === 0 ? (
                   <p className="mt-4 rounded-xl border border-amber-200 bg-amber-50 p-3 text-sm leading-5 text-amber-900" role="status">
                     Select at least one service to continue. Your original quotation remains saved.
@@ -1100,10 +1309,10 @@ function requestHelp() {
                   <button
                     type="button"
                     onClick={requestHelp}
-                    disabled={selectedItemIds.length === 0}
+                    disabled={selectedItemIds.length === 0 || isSubmitting}
                     className={primaryButtonClass}
                   >
-                    Continue with selected services <ArrowRight size={17} />
+                    {isSubmitting ? <><LoaderCircle size={17} className="animate-spin" /> Submitting request…</> : <>Continue with selected services <ArrowRight size={17} /></>}
                   </button>
                 </div>
               </div>
@@ -1118,7 +1327,7 @@ function requestHelp() {
               {[
                 ["Choose", "Select air, land or sea, then import or export."],
                 ["Calculate", "Review an itemized estimate based on active rates."],
-                ["Request", "Choose the services you need and sign in to submit."],
+                ["Request", "Choose the services and optional charges. Sign in only if needed."],
               ].map(([title, body], index) => (
                 <li key={title} className="flex gap-3">
                   <span className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-emerald-100 text-xs font-extrabold text-emerald-800">{index + 1}</span>
@@ -1129,7 +1338,7 @@ function requestHelp() {
           </div>
           <div className="rounded-2xl border border-emerald-200 bg-emerald-50 p-5">
             <p className="flex items-center gap-2 text-sm font-extrabold text-emerald-950"><LockKeyhole size={17} /> Calculate without an account</p>
-            <p className="mt-2 text-xs leading-5 text-emerald-900/80">Review your estimate first. Sign-in is needed when you are ready to submit a service request.</p>
+            <p className="mt-2 text-xs leading-5 text-emerald-900/80">Review your estimate first. You can calculate first. Exporters who are already signed in can submit directly; otherwise you will be asked to sign in.</p>
           </div>
           <div className="rounded-2xl border border-slate-200 bg-white p-5">
             <p className="text-sm font-extrabold">Need a custom quote?</p>

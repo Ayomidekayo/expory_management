@@ -668,6 +668,14 @@ enum Permission {
   DECLINE_QUOTE
   COMPLETE_QUOTE
   REVIEW_QUOTATIONS
+
+  MANAGE_QUOTE_CHARGES
+}
+
+enum QuoteSubmissionItemType {
+  SERVICE
+  CUSTOMS_CHARGE
+  TRANSPORT_CHARGE
 }
 
 model UserPermission {
@@ -1017,6 +1025,7 @@ enum QuoteAuditAction {
   COMPLETED
   ARCHIVED
   REOPENED
+  CHARGES_UPDATED
 }
 
 model QuoteSubmission {
@@ -1050,12 +1059,20 @@ model QuoteSubmission {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  quote       Quote                 @relation(fields: [quoteId], references: [id], onDelete: Restrict)
-  exporter    User?                 @relation("ExporterQuoteSubmissions", fields: [exporterId], references: [id], onDelete: SetNull)
-  items       QuoteSubmissionItem[]
-  messages    QuoteMessage[]
-  attachments QuoteAttachment[]
-  auditEvents QuoteAuditEvent[]
+  quote                    Quote                 @relation(fields: [quoteId], references: [id], onDelete: Restrict)
+  exporter                 User?                 @relation("ExporterQuoteSubmissions", fields: [exporterId], references: [id], onDelete: SetNull)
+  items                    QuoteSubmissionItem[]
+  messages                 QuoteMessage[]
+  attachments              QuoteAttachment[]
+  auditEvents              QuoteAuditEvent[]
+  customsChargeRequested   Boolean               @default(false)
+  invoiceValue             Decimal?              @db.Decimal(18, 2)
+  invoiceCurrency          String?
+  transportChargeRequested Boolean               @default(false)
+
+  // Frozen VAT policy from the original quote. It is reused when operations adds charges.
+  vatEnabled    Boolean @default(false)
+  vatPercentage Decimal @default(0) @db.Decimal(7, 4)
 
   @@index([quoteId, createdAt])
   @@index([status, createdAt])
@@ -1064,6 +1081,8 @@ model QuoteSubmission {
 
 model QuoteSubmissionItem {
   id String @id @default(cuid())
+
+  itemType QuoteSubmissionItemType @default(SERVICE)
 
   submissionId String
 

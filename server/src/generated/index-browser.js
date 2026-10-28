@@ -589,11 +589,18 @@ exports.Prisma.QuoteSubmissionScalarFieldEnum = {
   completedAt: 'completedAt',
   archivedAt: 'archivedAt',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  customsChargeRequested: 'customsChargeRequested',
+  invoiceValue: 'invoiceValue',
+  invoiceCurrency: 'invoiceCurrency',
+  transportChargeRequested: 'transportChargeRequested',
+  vatEnabled: 'vatEnabled',
+  vatPercentage: 'vatPercentage'
 };
 
 exports.Prisma.QuoteSubmissionItemScalarFieldEnum = {
   id: 'id',
+  itemType: 'itemType',
   submissionId: 'submissionId',
   quoteItemId: 'quoteItemId',
   componentName: 'componentName',
@@ -957,7 +964,8 @@ exports.Permission = exports.$Enums.Permission = {
   ACCEPT_QUOTE: 'ACCEPT_QUOTE',
   DECLINE_QUOTE: 'DECLINE_QUOTE',
   COMPLETE_QUOTE: 'COMPLETE_QUOTE',
-  REVIEW_QUOTATIONS: 'REVIEW_QUOTATIONS'
+  REVIEW_QUOTATIONS: 'REVIEW_QUOTATIONS',
+  MANAGE_QUOTE_CHARGES: 'MANAGE_QUOTE_CHARGES'
 };
 
 exports.GateType = exports.$Enums.GateType = {
@@ -1029,6 +1037,12 @@ exports.QuoteSubmissionStatus = exports.$Enums.QuoteSubmissionStatus = {
   ARCHIVED: 'ARCHIVED'
 };
 
+exports.QuoteSubmissionItemType = exports.$Enums.QuoteSubmissionItemType = {
+  SERVICE: 'SERVICE',
+  CUSTOMS_CHARGE: 'CUSTOMS_CHARGE',
+  TRANSPORT_CHARGE: 'TRANSPORT_CHARGE'
+};
+
 exports.QuoteMessageSenderType = exports.$Enums.QuoteMessageSenderType = {
   EXPORTER: 'EXPORTER',
   ADMIN: 'ADMIN'
@@ -1042,7 +1056,8 @@ exports.QuoteAuditAction = exports.$Enums.QuoteAuditAction = {
   WORK_STARTED: 'WORK_STARTED',
   COMPLETED: 'COMPLETED',
   ARCHIVED: 'ARCHIVED',
-  REOPENED: 'REOPENED'
+  REOPENED: 'REOPENED',
+  CHARGES_UPDATED: 'CHARGES_UPDATED'
 };
 
 exports.Prisma.ModelName = {

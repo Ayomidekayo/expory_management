@@ -26,28 +26,6 @@ const isSubtotalPercentage = (item: { calculationType?: unknown; calculationBasi
   String(item.calculationType) === String(RateCalculationType.PERCENTAGE) &&
   String(item.calculationBasis) === String(CalculationBasis.SUBTOTAL)
 
-// function getSlabRate(
-//   slabs: any[],
-//   componentId: string,
-//   weightKg: number,
-//   optionId: string | null,
-//   sectionId: string | null,
-// ) {
-//   const slab = slabs.find((s) => {
-//     const min = numeric(s.minWeightKg)
-//     const max = s.maxWeightKg == null ? Infinity : numeric(s.maxWeightKg)
-//     return (
-//       weightKg >= min &&
-//       weightKg <= max &&
-//       (s.optionId ?? null) === optionId &&
-//       (s.pricingSectionId ?? null) === sectionId
-//     )
-//   })
-//   const rate = slab?.rates?.find((r: any) => r.componentId === componentId)
-//   return rate ? { amount: numeric(rate.amount), slabLabel: slab.label } : null
-// }
-
-
 
 function getSlabRate(
   slabs: any[],
@@ -591,6 +569,33 @@ async submit(
   if (!quote) throw new Error("QUOTE_NOT_FOUND")
   if (quote.status !== "CALCULATED") throw new Error("QUOTE_NOT_SUBMITTABLE")
 
+  if (input?.customsChargeRequested !== undefined && typeof input.customsChargeRequested !== "boolean") {
+    throw new Error("INVALID_ADDITIONAL_CHARGE_REQUEST")
+  }
+  if (input?.transportChargeRequested !== undefined && typeof input.transportChargeRequested !== "boolean") {
+    throw new Error("INVALID_ADDITIONAL_CHARGE_REQUEST")
+  }
+  const customsChargeRequested = input.customsChargeRequested === true
+  const transportChargeRequested = input.transportChargeRequested === true
+  let invoiceValue: number | undefined
+  let invoiceCurrency: string | undefined
+  if (customsChargeRequested) {
+    invoiceValue = Number(input.invoiceValue)
+    if (!Number.isFinite(invoiceValue) || invoiceValue <= 0) {
+      throw new Error("INVOICE_VALUE_REQUIRED")
+    }
+    invoiceCurrency = typeof input.invoiceCurrency === "string"
+      ? input.invoiceCurrency.trim().toUpperCase()
+      : ""
+    if (!/^[A-Z]{3}$/.test(invoiceCurrency)) {
+      throw new Error("INVALID_INVOICE_CURRENCY")
+    }
+  }
+  const customerMessage = typeof input.customerMessage === "string"
+    ? input.customerMessage.trim()
+    : ""
+  if (customerMessage.length > 5000) throw new Error("INVALID_CUSTOMER_MESSAGE")
+
   const requestedIds = input?.selectedQuoteItemIds
   if (!Array.isArray(requestedIds) || requestedIds.length === 0) {
     throw new Error("SELECT_AT_LEAST_ONE_SERVICE")
@@ -729,13 +734,19 @@ async submit(
     customerName: input.customerName ?? undefined,
     email: input.email ?? undefined,
     phone: input.phone ?? undefined,
-    customerMessage: input.customerMessage ?? undefined,
+    customerMessage: customerMessage || undefined,
     selectedQuoteItemIds: requestedIds,
     selectedQuoteItems,
     currency: quote.currency,
     subtotal,
     taxAmount,
     totalAmount,
+    customsChargeRequested,
+    invoiceValue,
+    invoiceCurrency,
+    transportChargeRequested,
+    vatEnabled,
+    vatPercentage,
   })
 
   emitToQuotationReviewers("quotation:submitted", {
@@ -743,11 +754,30 @@ async submit(
     quoteId: submission.quoteId,
     status: submission.status,
     submittedAt: submission.submittedAt,
+    customsChargeRequested,
+    invoiceValue: customsChargeRequested ? invoiceValue : undefined,
+    invoiceCurrency: customsChargeRequested ? invoiceCurrency : undefined,
+    transportChargeRequested,
   })
 
   return submission
 }
 
+  async updateSubmissionCharges(data: {
+    submissionId: string;
+    adminId: string;
+    customsChargeAmount?: number | null;
+    transportChargeAmount?: number | null;
+  }) {
+    const submission = await repository.updateSubmissionCharges(data)
+    emitToQuotationReviewers("quotation:charges-updated", {
+      submissionId: submission.id,
+      quoteId: submission.quoteId,
+      status: submission.status,
+      updatedAt: submission.updatedAt,
+    })
+    return submission
+  }
 
   async listExporterSubmissions(exporterId: string) {
   return repository.listExporterSubmissions(exporterId);
