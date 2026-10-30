@@ -4,6 +4,17 @@ import {
   getPublicConfigurations,
   calculatePublicQuote,
   submitQuote,
+  updateSubmissionCharges,
+  requestExporterAdditionalCharges,
+  addCustomSubmissionCharge,
+  editCustomSubmissionCharge,
+  deleteSubmissionAdditionalCharge,
+  deleteQuotationCompletely,
+  addSubmissionSubtraction,
+  getMySubmissionHistory,
+  getAdminSubmissionHistory,
+  listQuotationNotifications,
+  markQuotationNotificationRead,
   listMySubmissions,
   getMySubmission,
   listAdminSubmissions,
@@ -11,7 +22,6 @@ import {
   changeSubmissionStatus,
   uploadQuotationAttachment,
   addExporterSubmissionMessage,
-  updateSubmissionCharges,
 } from "./quotation.controller";
 import authenticate from "../../middleware/auth.middleware";
 import { Permission } from "../../generated";
@@ -51,6 +61,13 @@ function requireAnyPermission(...requiredPermissions: Permission[]): RequestHand
     return next();
   };
 }
+
+
+const requireAdmin: RequestHandler = (req, res, next) => {
+  if (!req.user) return res.status(401).json({ success: false, message: "Authentication required." });
+  if (req.user.role !== "ADMIN") return res.status(403).json({ success: false, message: "Only an administrator can delete a quotation completely." });
+  return next();
+};
 
 const statusPermissionByStatus: Record<string, Permission> = {
   APPROVED: Permission.APPROVE_QUOTE,
@@ -126,7 +143,10 @@ router.post("/public/quotations/calculate", calculatePublicQuote);
 // ---------------------------------------------------------------------------
 // Exporter-owned submissions — controller verifies exporter role and ownership.
 // ---------------------------------------------------------------------------
+router.get("/quotations/notifications", authenticate, listQuotationNotifications);
+router.patch("/quotations/notifications/:notificationId/read", authenticate, markQuotationNotificationRead);
 router.get("/quotations/mine", authenticate, listMySubmissions);
+router.get("/quotations/mine/:submissionId/history", authenticate, getMySubmissionHistory);
 router.get("/quotations/mine/:submissionId", authenticate, getMySubmission);
 router.post("/quotations/:quoteId/submissions", authenticate, submitQuote);
 router.post(
@@ -158,19 +178,25 @@ router.get(
   listAdminSubmissions,
 );
 
+router.get(
+  "/admin/quotations/submissions/:submissionId/history",
+  authenticate,
+  requireAnyPermission(Permission.VIEW_ALL_QUOTES, Permission.REVIEW_QUOTATIONS, Permission.REVIEW_QUOTE, Permission.MANAGE_QUOTE_CHARGES),
+  getAdminSubmissionHistory,
+);
+
+router.post(
+  "/admin/quotations/submissions/:submissionId/subtractions",
+  authenticate,
+  requireAnyPermission(Permission.MANAGE_QUOTE_CHARGES),
+  addSubmissionSubtraction,
+);
+
 router.patch(
   "/admin/quotations/submissions/:submissionId/status",
   authenticate,
   requireStatusPermission,
   changeSubmissionStatus,
-);
-
-// Only admins and staff granted MANAGE_QUOTE_CHARGES can add operations-priced charges.
-router.patch(
-  "/admin/quotations/submissions/:submissionId/charges",
-  authenticate,
-  requireAnyPermission(Permission.MANAGE_QUOTE_CHARGES),
-  updateSubmissionCharges,
 );
 
 router.post(
@@ -187,5 +213,46 @@ router.post(
   quotationUpload.single("file"),
   uploadQuotationAttachment,
 );
+
+
+// Exporter request after submission: amount is not priced here.
+router.patch(
+  "/quotations/mine/:submissionId/additional-charge-request",
+  authenticate,
+  requestExporterAdditionalCharges,
+);
+
+// Charge manager endpoints. Original SERVICE rows are never deleted here.
+router.patch(
+  "/admin/quotations/submissions/:submissionId/charges",
+  authenticate,
+  requireAnyPermission(Permission.MANAGE_QUOTE_CHARGES),
+  updateSubmissionCharges,
+);
+router.post(
+  "/admin/quotations/submissions/:submissionId/additional-charges",
+  authenticate,
+  requireAnyPermission(Permission.MANAGE_QUOTE_CHARGES),
+  addCustomSubmissionCharge,
+);
+router.patch(
+  "/admin/quotations/submissions/:submissionId/additional-charges/:chargeId",
+  authenticate,
+  requireAnyPermission(Permission.MANAGE_QUOTE_CHARGES),
+  editCustomSubmissionCharge,
+);
+router.delete(
+  "/admin/quotations/submissions/:submissionId/additional-charges/:chargeId",
+  authenticate,
+  requireAnyPermission(Permission.MANAGE_QUOTE_CHARGES),
+  deleteSubmissionAdditionalCharge,
+);
+router.delete(
+  "/admin/quotations/submissions/:submissionId",
+  authenticate,
+  requireAdmin,
+  deleteQuotationCompletely,
+);
+
 
 export default router;

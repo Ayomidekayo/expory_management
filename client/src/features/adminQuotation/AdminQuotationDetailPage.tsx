@@ -31,6 +31,9 @@ import {
 } from "lucide-react";
 import { getAdminQuotations, sendAdminQuotationMessage, updateAdminQuotationStatus, updateAdminQuotationCharges, uploadAdminQuotationAttachment, type AdminQuotation, type AdminQuotationAttachment, type QuotationStatus } from "./api/admin-quotations.api";
 import { useAuthStore } from "../../store/auth.store";
+import AdminAdditionalChargesManager from "./AdminAdditionalChargesManager";
+import QuotationAdditionalHistoryCard from "../quotation-notifications/components/QuotationAdditionalHistoryCard";
+
 
 
 
@@ -188,6 +191,8 @@ function quotationItemKind(item: { itemType?: string | null }) {
   const type = String(item.itemType ?? "SERVICE").trim().toUpperCase();
   if (type === "CUSTOMS_CHARGE") return "Customs charge";
   if (type === "TRANSPORT_CHARGE") return "Transportation charge";
+  if (type === "OTHER_CHARGE") return "Additional charge";
+  if (type === "SUBTRACTION") return "Bonus / deduction";
   return "Requested service";
 }
 
@@ -465,8 +470,11 @@ export default function AdminQuotationDetailsPage({ readOnly = false }: AdminQuo
   );
   const pricedAdditionalItems = allSubmissionItems.filter((item) => {
     const itemType = String((item as typeof item & { itemType?: string }).itemType ?? "").toUpperCase();
-    return itemType === "CUSTOMS_CHARGE" || itemType === "TRANSPORT_CHARGE";
+    return itemType === "CUSTOMS_CHARGE" || itemType === "TRANSPORT_CHARGE" || itemType === "OTHER_CHARGE" || itemType === "SUBTRACTION";
   });
+  const otherAdditionalItems = pricedAdditionalItems.filter(
+    (item) => String((item as typeof item & { itemType?: string }).itemType ?? "").toUpperCase() === "OTHER_CHARGE",
+  );
   const customsChargeItem = pricedAdditionalItems.find(
     (item) => String((item as typeof item & { itemType?: string }).itemType ?? "").toUpperCase() === "CUSTOMS_CHARGE",
   );
@@ -860,7 +868,7 @@ export default function AdminQuotationDetailsPage({ readOnly = false }: AdminQuo
                             </td>
                             <td className="break-words px-3 py-3 text-right text-sm tabular-nums text-slate-600">{item.quantity}</td>
                             <td className="break-words px-3 py-3 text-right text-sm tabular-nums text-slate-600">{quotation.currency} {amount(item.rateApplied)}</td>
-                            <td className="break-words px-3 py-3 text-right text-sm font-bold tabular-nums text-slate-900">{quotation.currency} {amount(item.lineTotal)}</td>
+                            <td className={`break-words px-3 py-3 text-right text-sm font-bold tabular-nums ${String((item as typeof item & { itemType?: string }).itemType ?? "").toUpperCase() === "SUBTRACTION" ? "text-amber-800" : "text-slate-900"}`}>{String((item as typeof item & { itemType?: string }).itemType ?? "").toUpperCase() === "SUBTRACTION" ? `− ${quotation.currency} ${amount(Math.abs(Number(item.lineTotal)))}` : `${quotation.currency} ${amount(item.lineTotal)}`}</td>
                           </tr>
                         ))}
                         {quotation.customsChargeRequested && !customsChargeItem && (
@@ -923,7 +931,7 @@ export default function AdminQuotationDetailsPage({ readOnly = false }: AdminQuo
                         <dl className="mt-4 space-y-2.5 border-t border-emerald-200 pt-3">
                           <div className="flex items-start justify-between gap-3 text-sm"><dt className="text-slate-600">Updated subtotal</dt><dd className="text-right font-semibold tabular-nums text-slate-900">{quotation.currency} {amount(currentSubtotal)}</dd></div>
                           <div className="flex items-start justify-between gap-3 text-sm"><dt className="text-slate-600">VAT{vatEnabled ? ` (${amount(vatPercentage)}%)` : ""}</dt><dd className="text-right font-semibold tabular-nums text-slate-900">{quotation.currency} {amount(currentTax)}</dd></div>
-                          <div className="flex items-start justify-between gap-3 text-sm"><dt className="text-slate-600">Additional charges priced</dt><dd className="text-right font-semibold tabular-nums text-slate-900">{quotation.currency} {amount(additionalChargesSubtotal)}</dd></div>
+                          <div className="flex items-start justify-between gap-3 text-sm"><dt className="text-slate-600">Net additional charges / reductions</dt><dd className="text-right font-semibold tabular-nums text-slate-900">{quotation.currency} {amount(additionalChargesSubtotal)}</dd></div>
                         </dl>
                         <div className="mt-4 flex items-start justify-between gap-3 rounded-lg border border-emerald-200 bg-white/80 px-3 py-3">
                           <div className="min-w-0"><p className="text-xs font-bold text-slate-700">Change from original</p><p className="mt-1 text-[11px] leading-4 text-slate-500">Including VAT effect</p></div>
@@ -941,6 +949,8 @@ export default function AdminQuotationDetailsPage({ readOnly = false }: AdminQuo
                           <tr><td>VAT{vatEnabled ? ` (${amount(vatPercentage)}%)` : " (not applicable)"}</td><td>{quotation.currency} {amount(originalServiceTax)}</td><td>{quotation.currency} {amount(currentTax)}</td></tr>
                           <tr><td>Customs duties and charges</td><td>Not included</td><td>{!quotation.customsChargeRequested ? "Not requested" : customsChargeItem ? `${quotation.currency} ${amount(customsChargeItem.lineTotal)}` : "Requested — awaiting pricing"}</td></tr>
                           <tr><td>Additional transportation</td><td>Not included</td><td>{!quotation.transportChargeRequested ? "Not requested" : transportChargeItem ? `${quotation.currency} ${amount(transportChargeItem.lineTotal)}` : "Requested — awaiting pricing"}</td></tr>
+                          {otherAdditionalItems.map((item) => <tr key={item.id}><td>{item.componentName}{item.reason ? ` — ${item.reason}` : ""}</td><td>Not included</td><td>{quotation.currency} {amount(item.lineTotal)}</td></tr>)}
+                          {pricedAdditionalItems.filter((item) => String((item as typeof item & { itemType?: string }).itemType ?? "").toUpperCase() === "SUBTRACTION").map((item) => <tr key={item.id}><td>{item.componentName}{item.reason ? ` — ${item.reason}` : ""}</td><td>Bonus / deduction</td><td>−{quotation.currency} {amount(Math.abs(Number(item.lineTotal)))}</td></tr>)}
                           <tr className="summary-total"><td>Quotation total</td><td>{quotation.currency} {amount(originalServiceTotal)}</td><td>{quotation.currency} {amount(currentTotal)}</td></tr>
                           <tr><td>Change from original (including VAT)</td><td>—</td><td>{totalChangeAfterCharges > 0 ? "+" : totalChangeAfterCharges < 0 ? "−" : ""}{quotation.currency} {amount(Math.abs(totalChangeAfterCharges))}</td></tr>
                           {((quotation.customsChargeRequested && !customsChargeItem) || (quotation.transportChargeRequested && !transportChargeItem)) && (
@@ -951,7 +961,7 @@ export default function AdminQuotationDetailsPage({ readOnly = false }: AdminQuo
                     </div>
                     <div className="flex items-start gap-2 border-t border-slate-200 px-4 py-3 sm:px-5">
                       <ShieldCheck size={15} className="mt-0.5 shrink-0 text-emerald-700 print-hidden" />
-                      <p className="text-xs leading-5 text-slate-600">{pricedAdditionalItems.length > 0 ? "The before figure uses the original quote pricing snapshot, preserving the price shown before additional charges were added." : "Additional charges have been requested but no priced customs or transport line has been saved yet. The current total will change after operations saves a charge."}</p>
+                      <p className="text-xs leading-5 text-slate-600">{pricedAdditionalItems.length > 0 ? "The before figure uses the original quote pricing snapshot, preserving the price shown before additional charges were added." : "Additional services may be pending pricing. The current total changes only after an authorized user saves or removes a priced charge."}</p>
                     </div>
                   </section>
                 )}
@@ -1101,6 +1111,20 @@ export default function AdminQuotationDetailsPage({ readOnly = false }: AdminQuo
                 </button>
               </section>
             )}
+
+            <AdminAdditionalChargesManager
+              submissionId={quotation.id}
+              quoteNumber={quotation.quote?.quoteNumber ?? quotation.id}
+              currency={quotation.currency}
+              items={quotation.items ?? []}
+              canManageCharges={canManageCharges}
+              isAdmin={user?.role === "ADMIN"}
+              onRefresh={refreshQuotations}
+              onDeleted={() => navigate("/quotations")}
+              onFeedback={(type, text) => setFeedback({ type, text })}
+            />
+
+            <QuotationAdditionalHistoryCard submissionId={quotation.id} audience="admin" currency={quotation.currency} />
 
             <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
               <div className="flex items-start justify-between gap-3"><div><p className="text-[10px] font-bold uppercase tracking-[0.16em] text-emerald-800">Workflow</p><h2 className="mt-1 text-lg font-bold text-slate-950">Manage status</h2></div><span className="rounded-xl bg-emerald-50 p-2.5 text-emerald-800"><ShieldCheck size={19} /></span></div>

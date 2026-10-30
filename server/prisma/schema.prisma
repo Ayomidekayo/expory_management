@@ -679,6 +679,8 @@ enum QuoteSubmissionItemType {
   SERVICE
   CUSTOMS_CHARGE
   TRANSPORT_CHARGE
+  OTHER_CHARGE
+   SUBTRACTION
 }
 
 model UserPermission {
@@ -1004,6 +1006,8 @@ model QuoteItem {
   @@index([componentId])
 }
 
+
+
 enum QuoteSubmissionStatus {
   PENDING_REVIEW
   CHANGES_REQUESTED
@@ -1088,6 +1092,9 @@ model QuoteSubmissionItem {
 
   submissionId String
 
+
+
+   reason String?
   // Original charge reference; snapshots remain usable independently
   quoteItemId String?
 
@@ -1173,6 +1180,7 @@ model QuoteNotification {
   message String
   isRead  Boolean   @default(false)
   readAt  DateTime?
+   submissionId String?
 
   createdAt DateTime @default(now())
 

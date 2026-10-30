@@ -4,7 +4,6 @@ import { io } from "socket.io-client";
 import { Toaster, toast } from "sonner";
 
 import {
-  Bell,
   ChevronDown,
   LogOut,
   Menu,
@@ -14,6 +13,8 @@ import {
 } from "lucide-react";
 
 import { useAuthStore } from "../../store/auth.store";
+import QuotationNotificationCenter from "../../features/quotation-notifications/components/QuotationNotificationCenter";
+
 
 interface Props {
   onMenuClick?: () => void;
@@ -28,6 +29,15 @@ interface QuotationSubmittedEvent {
   submittedAt?: string;
 }
 
+interface AdditionalChargeRequestedEvent {
+  submissionId?: string;
+  quoteId?: string;
+  customsChargeRequested?: boolean;
+  invoiceValue?: number | string | null;
+  invoiceCurrency?: string | null;
+  transportChargeRequested?: boolean;
+}
+
 export default function Topbar({ onMenuClick, mobileMenuOpen = false }: Props) {
   const navigate = useNavigate();
   const location = useLocation();
@@ -35,7 +45,6 @@ export default function Topbar({ onMenuClick, mobileMenuOpen = false }: Props) {
   const { user, logout } = useAuthStore();
 
   const [open, setOpen] = useState(false);
-  const [newQuotationCount, setNewQuotationCount] = useState(0);
 
   const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -84,7 +93,8 @@ export default function Topbar({ onMenuClick, mobileMenuOpen = false }: Props) {
     user?.role === "ADMIN" ||
     permissions.includes("REVIEW_QUOTE") ||
     permissions.includes("REVIEW_QUOTATIONS") ||
-    permissions.includes("VIEW_ALL_QUOTES");
+    permissions.includes("VIEW_ALL_QUOTES") ||
+    permissions.includes("MANAGE_QUOTE_CHARGES");
 
   /*
   ========================================================
@@ -151,7 +161,7 @@ export default function Topbar({ onMenuClick, mobileMenuOpen = false }: Props) {
         ? submissionId.slice(0, 8).toUpperCase()
         : "";
 
-      setNewQuotationCount((count) => count + 1);
+      window.dispatchEvent(new Event("quotation-notifications:refresh"));
 
       toast.success("New quotation received", {
         description: submissionId
@@ -178,6 +188,27 @@ export default function Topbar({ onMenuClick, mobileMenuOpen = false }: Props) {
       });
     };
 
+    const handleAdditionalChargeRequested = (event: AdditionalChargeRequestedEvent) => {
+      const submissionId = typeof event?.submissionId === "string" ? event.submissionId : "";
+      const isCustoms = Boolean(event?.customsChargeRequested);
+      const invoiceValue = Number(event?.invoiceValue ?? 0);
+      const currency = typeof event?.invoiceCurrency === "string" ? event.invoiceCurrency : "NGN";
+      const details = [
+        isCustoms && invoiceValue > 0 ? `Invoice value: ${currency} ${invoiceValue.toLocaleString("en-NG", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}.` : "",
+        event?.transportChargeRequested ? "Additional transportation pricing was also requested." : "",
+      ].filter(Boolean).join(" ");
+
+      window.dispatchEvent(new Event("quotation-notifications:refresh"));
+      toast.error(isCustoms ? "Customs assistance requested" : "Additional-service pricing requested", {
+        description: details || "An exporter requested additional quotation services.",
+        duration: 12000,
+        action: {
+          label: "Review request",
+          onClick: () => navigate(submissionId ? `/quotations/review/${encodeURIComponent(submissionId)}` : "/quotations/review"),
+        },
+      });
+    };
+
     const handleConnectionError = (error: Error) => {
       if (import.meta.env.DEV) {
         console.warn(
@@ -191,6 +222,7 @@ export default function Topbar({ onMenuClick, mobileMenuOpen = false }: Props) {
       "quotation:submitted",
       handleQuotationSubmitted,
     );
+    socket.on("quotation:additional-charge-requested", handleAdditionalChargeRequested);
 
     socket.on("connect_error", handleConnectionError);
 
@@ -201,6 +233,7 @@ export default function Topbar({ onMenuClick, mobileMenuOpen = false }: Props) {
         "quotation:submitted",
         handleQuotationSubmitted,
       );
+      socket.off("quotation:additional-charge-requested", handleAdditionalChargeRequested);
 
       socket.off("connect_error", handleConnectionError);
 
@@ -264,18 +297,8 @@ export default function Topbar({ onMenuClick, mobileMenuOpen = false }: Props) {
   */
 
   function handleLogout() {
-    // Resolve the destination before logout clears the authenticated user.
-    const isExporter = String(user?.role ?? "").trim().toUpperCase() === "EXPORTER";
-    const destination = isExporter ? "/exporter/login" : "/login";
-
     logout();
-
-    // Clear both legacy/current token keys defensively so the next page cannot
-    // reuse a stale bearer token if the store's cleanup changes over time.
-    localStorage.removeItem("token");
-    localStorage.removeItem("accessToken");
-
-    navigate(destination, { replace: true });
+    navigate("/login");
   }
 
   /*
@@ -297,11 +320,6 @@ export default function Topbar({ onMenuClick, mobileMenuOpen = false }: Props) {
   OPEN QUOTATION NOTIFICATIONS
   ========================================================
   */
-
-  function handleOpenNotifications() {
-    setNewQuotationCount(0);
-    navigate("/quotations/review");
-  }
 
   /*
   ========================================================
@@ -365,33 +383,8 @@ export default function Topbar({ onMenuClick, mobileMenuOpen = false }: Props) {
             />
           </div>
 
-          {/* NOTIFICATIONS */}
-
-          <button
-            type="button"
-            onClick={handleOpenNotifications}
-            aria-label={
-              newQuotationCount > 0
-                ? `${newQuotationCount} new quotation notifications`
-                : "Open quotation review"
-            }
-            title="Quotation notifications"
-            className="relative inline-flex h-11 w-11 items-center justify-center rounded-xl text-slate-600 transition hover:bg-emerald-50 hover:text-emerald-800 focus:outline-none focus:ring-4 focus:ring-emerald-500/10"
-          >
-            <Bell className="h-5 w-5 sm:h-6 sm:w-6" />
-
-            {newQuotationCount > 0 && (
-              <>
-                <span className="absolute right-2 top-2 h-2 w-2 rounded-full bg-rose-500 ring-2 ring-white" />
-
-                <span className="absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-rose-600 px-1 text-[10px] font-bold text-white shadow-sm">
-                  {newQuotationCount > 99
-                    ? "99+"
-                    : newQuotationCount}
-                </span>
-              </>
-            )}
-          </button>
+          {/* Persistent, user-scoped quotation notifications. Unread alerts stay red until read. */}
+          <QuotationNotificationCenter />
 
           {/* USER DROPDOWN */}
 
@@ -454,11 +447,6 @@ export default function Topbar({ onMenuClick, mobileMenuOpen = false }: Props) {
                   >
                     <FileText className="h-5 w-5 text-emerald-600" />
                     Quotation review
-                    {newQuotationCount > 0 && (
-                      <span className="ml-auto rounded-full bg-rose-100 px-2 py-0.5 text-xs font-bold text-rose-700">
-                        {newQuotationCount}
-                      </span>
-                    )}
                   </button>
                 )}
 

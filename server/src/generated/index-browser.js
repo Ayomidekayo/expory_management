@@ -602,6 +602,7 @@ exports.Prisma.QuoteSubmissionItemScalarFieldEnum = {
   id: 'id',
   itemType: 'itemType',
   submissionId: 'submissionId',
+  reason: 'reason',
   quoteItemId: 'quoteItemId',
   componentName: 'componentName',
   componentCode: 'componentCode',
@@ -647,6 +648,7 @@ exports.Prisma.QuoteNotificationScalarFieldEnum = {
   message: 'message',
   isRead: 'isRead',
   readAt: 'readAt',
+  submissionId: 'submissionId',
   createdAt: 'createdAt'
 };
 
@@ -1040,7 +1042,9 @@ exports.QuoteSubmissionStatus = exports.$Enums.QuoteSubmissionStatus = {
 exports.QuoteSubmissionItemType = exports.$Enums.QuoteSubmissionItemType = {
   SERVICE: 'SERVICE',
   CUSTOMS_CHARGE: 'CUSTOMS_CHARGE',
-  TRANSPORT_CHARGE: 'TRANSPORT_CHARGE'
+  TRANSPORT_CHARGE: 'TRANSPORT_CHARGE',
+  OTHER_CHARGE: 'OTHER_CHARGE',
+  SUBTRACTION: 'SUBTRACTION'
 };
 
 exports.QuoteMessageSenderType = exports.$Enums.QuoteMessageSenderType = {

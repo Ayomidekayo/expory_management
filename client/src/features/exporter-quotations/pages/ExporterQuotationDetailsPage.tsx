@@ -6,16 +6,19 @@ import {
   ArrowLeft,
   ArrowLeftRight,
   CheckCircle2,
+  CircleDollarSign,
   CircleAlert,
   Clock3,
   CalendarDays,
   FileCheck2,
   FileText,
   Hash,
+  History,
   LoaderCircle,
   MessageSquare,
   Package,
   Paperclip,
+  Receipt,
   Plane,
   Ship,
   Truck,
@@ -27,12 +30,15 @@ import {
 } from "lucide-react";
 
 import { useMySubmission } from "../hook/use-exporter-quotations";
+
 import {
   sendExporterMessage,
   uploadExporterAttachment,
   requestExporterAdditionalCharges,
   type QuotationStatus,
 } from "../api/exporter-quotations.api";
+
+import QuotationAdditionalHistoryCard from "../../quotation-notifications/components/QuotationAdditionalHistoryCard";
 
 type ToastState = {
   id: number;
@@ -305,6 +311,8 @@ export default function ExporterQuotationDetailsPage() {
         "Additional-service request sent",
         "The quotation team has been notified. Any new charges will appear after operations confirms the prices.",
       );
+      window.dispatchEvent(new Event("quotation-history:refresh"));
+      window.dispatchEvent(new Event("quotation-notifications:refresh"));
       await refreshDetails();
     },
     onError: (error: unknown) => {
@@ -437,8 +445,88 @@ export default function ExporterQuotationDetailsPage() {
   const messages = data.messages ?? [];
   const attachments = data.attachments ?? [];
   const selectedItems = (data.items ?? []).filter(
-    (item) => item.isSelected,
+    (item) => item.isSelected && String(item.itemType ?? "SERVICE").toUpperCase() === "SERVICE",
   );
+
+  // Keep the original selected service lines, while also showing priced add-ons
+  // and reductions that operations has attached to the submission.
+  const quotationItems = (data.items ?? []).filter((item) => {
+    const itemType = String(item.itemType ?? "SERVICE").toUpperCase();
+    return itemType !== "SERVICE" || item.isSelected;
+  });
+
+  const quotationItemRows = quotationItems.map((item) => {
+    const itemType = String(item.itemType ?? "SERVICE").toUpperCase();
+    const parsedAmount = Number(item.lineTotal);
+    const safeAmount = Number.isFinite(parsedAmount) ? parsedAmount : 0;
+    // Subtractions are stored as negative line items. Enforce the visual sign too
+    // so older records still read correctly without changing the saved totals.
+    const amount = itemType === "SUBTRACTION" ? -Math.abs(safeAmount) : safeAmount;
+    const isReduction = itemType === "SUBTRACTION" || amount < 0;
+    const typeLabel = itemType === "CUSTOMS_CHARGE"
+      ? "Customs charge"
+      : itemType === "TRANSPORT_CHARGE"
+        ? "Transportation"
+        : itemType === "OTHER_CHARGE"
+          ? "Additional charge"
+          : itemType === "SUBTRACTION"
+            ? "Bonus / reduction"
+            : "Requested service";
+    const typeStyle = isReduction
+      ? "bg-rose-50 text-rose-700 ring-rose-200"
+      : itemType === "SERVICE"
+        ? "bg-emerald-50 text-emerald-700 ring-emerald-200"
+        : "bg-blue-50 text-blue-700 ring-blue-200";
+
+    return { item, itemType, amount, isReduction, typeLabel, typeStyle };
+  });
+  const itemTypeOf = (item: (typeof quotationItems)[number]) => String(item.itemType ?? "SERVICE").toUpperCase();
+  const serviceBaselineItems = (data.items ?? []).filter((item) => item.isSelected && itemTypeOf(item) === "SERVICE");
+  const snapshot = quote?.pricingSnapshot && typeof quote.pricingSnapshot === "object"
+    ? quote.pricingSnapshot as { subtotal?: number | string | null; taxAmount?: number | string | null; totalAmount?: number | string | null; vatEnabled?: boolean; vatPercentage?: number | string | null }
+    : {};
+  const readMoney = (value: unknown): number | null => {
+    if (value === null || value === undefined || value === "") return null;
+    const parsed = Number(value);
+    return Number.isFinite(parsed) ? parsed : null;
+  };
+  const roundMoney = (value: number) => Math.round((value + Number.EPSILON) * 100) / 100;
+  const snapshotSubtotal = readMoney(snapshot.subtotal) ?? readMoney(quote?.subtotal);
+  const snapshotTax = readMoney(snapshot.taxAmount) ?? readMoney(quote?.taxAmount);
+  const snapshotTotal = readMoney(snapshot.totalAmount) ?? readMoney(quote?.totalAmount);
+  const baselineServicesSubtotal = roundMoney(serviceBaselineItems.reduce((sum, item) => sum + (Number(item.lineTotal) || 0), 0));
+  const hasBaselineServices = serviceBaselineItems.length > 0;
+  const originalSubtotal = hasBaselineServices ? baselineServicesSubtotal : (snapshotSubtotal ?? (Number(data.subtotal) || 0));
+  const submittedVatRate = readMoney(chargeRequestData.vatPercentage);
+  const snapshotVatRate = readMoney(snapshot.vatPercentage);
+  const currentSubtotalForRate = Number(data.subtotal) || 0;
+  const currentTaxForRate = Number(data.taxAmount) || 0;
+  const inferredVatRate = currentSubtotalForRate > 0 ? (currentTaxForRate / currentSubtotalForRate) * 100 : 0;
+  const originalVatPercentage = submittedVatRate !== null && (submittedVatRate > 0 || snapshotVatRate === null)
+    ? submittedVatRate
+    : snapshotVatRate ?? submittedVatRate ?? inferredVatRate;
+  const originalVatEnabled = typeof chargeRequestData.vatEnabled === "boolean"
+    ? chargeRequestData.vatEnabled
+    : typeof snapshot.vatEnabled === "boolean"
+      ? snapshot.vatEnabled
+      : currentTaxForRate > 0;
+  const recalculatedOriginalTax = originalVatEnabled ? roundMoney(originalSubtotal * originalVatPercentage / 100) : 0;
+  const originalTax = hasBaselineServices ? recalculatedOriginalTax : (snapshotTax ?? recalculatedOriginalTax);
+  const originalTotal = hasBaselineServices
+    ? roundMoney(originalSubtotal + originalTax)
+    : (snapshotTotal ?? roundMoney(originalSubtotal + originalTax));
+  const additionalItemRows = (data.items ?? []).filter((item) => ["CUSTOMS_CHARGE", "TRANSPORT_CHARGE", "OTHER_CHARGE"].includes(itemTypeOf(item)));
+  const reductionItemRows = (data.items ?? []).filter((item) => itemTypeOf(item) === "SUBTRACTION");
+  const additionalChargesTotal = roundMoney(additionalItemRows.reduce((sum, item) => sum + Math.max(0, Number(item.lineTotal) || 0), 0));
+  const reductionsTotal = roundMoney(reductionItemRows.reduce((sum, item) => sum + Math.abs(Number(item.lineTotal) || 0), 0));
+  const currentSubtotalForComparison = Number(data.subtotal) || 0;
+  const currentTaxForComparison = Number(data.taxAmount) || 0;
+  const currentTotalForComparison = Number(data.totalAmount) || 0;
+  const totalChangeFromOriginal = roundMoney(currentTotalForComparison - originalTotal);
+  const hasPriceHistory = Boolean(
+    chargeRequestData.customsChargeRequested || chargeRequestData.transportChargeRequested || additionalItemRows.length || reductionItemRows.length,
+  );
+
   const shipmentMode = String(quote?.rateCard?.mode ?? "").toUpperCase();
   const ShipmentModeIcon =
     shipmentMode === "AIR" ? Plane : shipmentMode === "LAND" ? Truck : shipmentMode === "SEA" ? Ship : Package;
@@ -628,6 +716,202 @@ export default function ExporterQuotationDetailsPage() {
             </div>
           </div>
 
+          {/* Responsive quotation itemization: cards on mobile, data table on wider screens. */}
+          <section
+            aria-labelledby="quotation-items-heading"
+            className="mx-4 mb-5 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm shadow-slate-900/[0.03] sm:mx-8 sm:mb-8"
+          >
+            <div className="flex flex-col gap-3 border-b border-slate-100 bg-gradient-to-r from-slate-50 via-white to-emerald-50/50 p-4 sm:flex-row sm:items-center sm:justify-between sm:p-5">
+              <div className="flex min-w-0 items-start gap-3">
+                <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-emerald-100 text-emerald-800">
+                  <FileText size={19} aria-hidden="true" />
+                </span>
+                <div className="min-w-0">
+                  <h2 id="quotation-items-heading" className="text-base font-extrabold text-slate-900 sm:text-lg">
+                    Quotation items
+                  </h2>
+                  <p className="mt-1 text-xs leading-5 text-slate-500 sm:text-sm">
+                    A transparent breakdown of requested services, additional charges, and any applied reductions.
+                  </p>
+                </div>
+              </div>
+              <span className="inline-flex w-fit shrink-0 items-center rounded-full bg-emerald-50 px-3 py-1.5 text-xs font-bold text-emerald-800 ring-1 ring-inset ring-emerald-200">
+                {quotationItemRows.length} {quotationItemRows.length === 1 ? "item" : "items"}
+              </span>
+            </div>
+
+            {quotationItemRows.length === 0 ? (
+              <div className="m-4 rounded-xl border border-dashed border-slate-200 bg-slate-50 px-4 py-8 text-center sm:m-5">
+                <Package className="mx-auto text-slate-400" size={27} aria-hidden="true" />
+                <p className="mt-3 text-sm font-semibold text-slate-700">No quotation items to display</p>
+                <p className="mx-auto mt-1 max-w-md text-xs leading-5 text-slate-500">
+                  Selected services and any priced additional items will appear here once they are available.
+                </p>
+              </div>
+            ) : (
+              <>
+                {/* Mobile: avoid forcing users to scroll a wide table on small screens. */}
+                <div className="divide-y divide-slate-100 md:hidden print:hidden">
+                  {quotationItemRows.map(({ item, itemType, amount, isReduction, typeLabel, typeStyle }, index) => (
+                    <article key={item.id} className="min-w-0 p-4 sm:p-5">
+                      <div className="flex min-w-0 items-start gap-3">
+                        <span className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-slate-100 text-xs font-extrabold tabular-nums text-slate-600">
+                          {String(index + 1).padStart(2, "0")}
+                        </span>
+                        <div className="min-w-0 flex-1">
+                          <div className="flex flex-wrap items-center gap-2">
+                            <h3 className="break-words text-sm font-bold leading-5 text-slate-900">
+                              {item.componentName || "Quotation item"}
+                            </h3>
+                            <span className={`inline-flex rounded-full px-2 py-1 text-[10px] font-bold ring-1 ring-inset ${typeStyle}`}>
+                              {typeLabel}
+                            </span>
+                          </div>
+                          {item.componentCode && (
+                            <p className="mt-1 break-all text-xs text-slate-500">Code: {item.componentCode}</p>
+                          )}
+                          {item.reason && (
+                            <p className="mt-2 break-words text-xs leading-5 text-slate-600">
+                              <span className="font-semibold text-slate-700">Reason:</span> {item.reason}
+                            </p>
+                          )}
+                        </div>
+                      </div>
+
+                      <div className="mt-4 grid grid-cols-2 gap-3">
+                        <div className="min-w-0 rounded-xl bg-slate-50 p-3">
+                          <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-500">Quantity</p>
+                          <p className="mt-1 break-words text-sm font-bold tabular-nums text-slate-800">
+                            {itemType === "SUBTRACTION" ? "—" : item.quantity ?? "—"}
+                          </p>
+                        </div>
+                        <div className="min-w-0 rounded-xl bg-slate-50 p-3">
+                          <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-500">Unit rate</p>
+                          <p className="mt-1 break-words text-sm font-semibold tabular-nums text-slate-800">
+                            {itemType === "SUBTRACTION" ? "—" : money(item.rateApplied, data.currency)}
+                          </p>
+                        </div>
+                      </div>
+
+                      <div className={`mt-3 flex min-w-0 items-center justify-between gap-3 rounded-xl border px-3.5 py-3 ${isReduction ? "border-rose-200 bg-rose-50" : "border-emerald-100 bg-emerald-50/80"}`}>
+                        <span className={`text-xs font-bold ${isReduction ? "text-rose-800" : "text-emerald-900"}`}>
+                          {isReduction ? "Reduction" : "Line amount"}
+                        </span>
+                        <span className={`break-words text-right text-base font-extrabold tabular-nums ${isReduction ? "text-rose-800" : "text-emerald-900"}`}>
+                          {money(amount, data.currency)}
+                        </span>
+                      </div>
+                    </article>
+                  ))}
+                </div>
+
+                {/* Desktop/tablet: readable table with horizontal overflow as a fallback. */}
+                <div className="hidden overflow-x-auto md:block print:block print:overflow-visible">
+                  <table className="w-full min-w-[900px] border-collapse text-left">
+                    <caption className="sr-only">Quotation items, additional charges, reductions and prices</caption>
+                    <thead className="bg-slate-50 text-[10px] uppercase tracking-[0.12em] text-slate-500">
+                      <tr>
+                        <th scope="col" className="w-14 px-4 py-3.5 font-extrabold">S/N</th>
+                        <th scope="col" className="min-w-52 px-4 py-3.5 font-extrabold">Item / service</th>
+                        <th scope="col" className="min-w-36 px-4 py-3.5 font-extrabold">Type</th>
+                        <th scope="col" className="min-w-28 px-4 py-3.5 font-extrabold">Code</th>
+                        <th scope="col" className="w-20 px-4 py-3.5 text-right font-extrabold">Qty</th>
+                        <th scope="col" className="min-w-36 px-4 py-3.5 text-right font-extrabold">Unit rate</th>
+                        <th scope="col" className="min-w-40 px-4 py-3.5 text-right font-extrabold">Amount</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-slate-100">
+                      {quotationItemRows.map(({ item, itemType, amount, isReduction, typeLabel, typeStyle }, index) => (
+                        <tr key={item.id} className={`align-top transition-colors ${isReduction ? "bg-rose-50/30 hover:bg-rose-50/70" : "hover:bg-emerald-50/30"}`}>
+                          <td className="px-4 py-4 text-sm font-semibold tabular-nums text-slate-500">{index + 1}</td>
+                          <td className="max-w-xs break-words px-4 py-4 text-sm font-bold leading-5 text-slate-800">
+                            {item.componentName || "Quotation item"}
+                            {item.reason && <p className="mt-1 break-words text-xs font-normal leading-5 text-slate-500">Reason: {item.reason}</p>}
+                          </td>
+                          <td className="px-4 py-4">
+                            <span className={`inline-flex whitespace-nowrap rounded-full px-2.5 py-1 text-[10px] font-bold ring-1 ring-inset ${typeStyle}`}>{typeLabel}</span>
+                          </td>
+                          <td className="break-all px-4 py-4 text-xs leading-5 text-slate-500">{item.componentCode || "—"}</td>
+                          <td className="px-4 py-4 text-right text-sm tabular-nums text-slate-700">{itemType === "SUBTRACTION" ? "—" : item.quantity ?? "—"}</td>
+                          <td className="whitespace-nowrap px-4 py-4 text-right text-sm tabular-nums text-slate-700">{itemType === "SUBTRACTION" ? "—" : money(item.rateApplied, data.currency)}</td>
+                          <td className={`whitespace-nowrap px-4 py-4 text-right text-sm font-extrabold tabular-nums ${isReduction ? "text-rose-700" : "text-slate-900"}`}>{money(amount, data.currency)}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </>
+            )}
+
+            <div className="border-t border-emerald-100 bg-gradient-to-br from-emerald-50 via-white to-teal-50 p-4 sm:p-5">
+              <div className="ml-auto w-full max-w-md space-y-3">
+                <div className="flex items-center justify-between gap-4 text-sm text-slate-600">
+                  <span>Subtotal</span>
+                  <span className="text-right font-semibold tabular-nums text-slate-800">{money(data.subtotal, data.currency)}</span>
+                </div>
+                <div className="flex items-center justify-between gap-4 text-sm text-slate-600">
+                  <span>{chargeRequestData.vatEnabled ? `VAT${Number(chargeRequestData.vatPercentage) > 0 ? ` (${Number(chargeRequestData.vatPercentage)}%)` : ""}` : "Tax"}</span>
+                  <span className="text-right font-semibold tabular-nums text-slate-800">{money(data.taxAmount ?? 0, data.currency)}</span>
+                </div>
+                <div className="border-t border-emerald-200 pt-3">
+                  <div className="flex items-start justify-between gap-4">
+                    <div className="min-w-0">
+                      <p className="text-sm font-extrabold text-slate-900">Current quotation total</p>
+                      <p className="mt-1 text-[11px] leading-5 text-slate-500">Includes priced additional items and applied reductions.</p>
+                    </div>
+                    <p className="break-words text-right text-xl font-extrabold tracking-tight tabular-nums text-emerald-900 sm:text-2xl">{money(data.totalAmount, data.currency)}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          {hasPriceHistory && (
+            <section className="mx-4 mb-5 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm sm:mx-8 sm:mb-8" aria-labelledby="quotation-before-after-heading">
+              <div className="flex items-start gap-3 border-b border-slate-200 bg-slate-50 px-4 py-4 sm:px-5">
+                <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-white text-slate-700 ring-1 ring-slate-200">
+                  <History size={19} aria-hidden="true" />
+                </span>
+                <div className="min-w-0">
+                  <p className="text-[10px] font-extrabold uppercase tracking-[0.16em] text-emerald-800">Price history</p>
+                  <h2 id="quotation-before-after-heading" className="mt-1 text-base font-extrabold text-slate-950 sm:text-lg">Before and after additional charges</h2>
+                  <p className="mt-1 text-xs leading-5 text-slate-600">Compare the services originally submitted with the current price after operations adjustments. Your original service lines are retained for reference.</p>
+                </div>
+              </div>
+              <div className="grid gap-3 p-3 sm:grid-cols-2 sm:p-4">
+                <article className="min-w-0 rounded-xl border border-slate-200 bg-slate-50/70 p-4 sm:p-5">
+                  <div className="flex items-center gap-2 text-slate-600"><Receipt size={17} aria-hidden="true" /><p className="text-xs font-extrabold uppercase tracking-[0.12em]">Original estimate</p></div>
+                  <p className="mt-3 text-xs text-slate-500">Before additional charges</p>
+                  <p className="mt-1 break-words text-2xl font-extrabold tracking-tight text-slate-900 sm:text-3xl">{money(originalTotal, data.currency)}</p>
+                  <dl className="mt-4 space-y-2.5 border-t border-slate-200 pt-3">
+                    <div className="flex items-start justify-between gap-3 text-sm"><dt className="text-slate-600">Selected services</dt><dd className="text-right font-semibold tabular-nums text-slate-800">{money(originalSubtotal, data.currency)}</dd></div>
+                    <div className="flex items-start justify-between gap-3 text-sm"><dt className="text-slate-600">VAT{originalVatEnabled ? ` (${originalVatPercentage.toFixed(2)}%)` : ""}</dt><dd className="text-right font-semibold tabular-nums text-slate-800">{money(originalTax, data.currency)}</dd></div>
+                    <div className="flex items-start justify-between gap-3 text-sm"><dt className="text-slate-600">Additional charges</dt><dd className="text-right font-semibold tabular-nums text-slate-800">{money(0, data.currency)}</dd></div>
+                  </dl>
+                  <p className="mt-3 text-xs leading-5 text-slate-500">This baseline is built from the selected service rows saved when the request was submitted.</p>
+                </article>
+                <article className="min-w-0 rounded-xl border border-emerald-200 bg-emerald-50/50 p-4 sm:p-5">
+                  <div className="flex items-center gap-2 text-emerald-800"><CircleDollarSign size={17} aria-hidden="true" /><p className="text-xs font-extrabold uppercase tracking-[0.12em]">Current quotation</p></div>
+                  <p className="mt-3 text-xs text-slate-600">After operations pricing</p>
+                  <p className="mt-1 break-words text-2xl font-extrabold tracking-tight text-emerald-950 sm:text-3xl">{money(currentTotalForComparison, data.currency)}</p>
+                  <dl className="mt-4 space-y-2.5 border-t border-emerald-200 pt-3">
+                    <div className="flex items-start justify-between gap-3 text-sm"><dt className="text-slate-600">Updated subtotal</dt><dd className="text-right font-semibold tabular-nums text-slate-900">{money(currentSubtotalForComparison, data.currency)}</dd></div>
+                    <div className="flex items-start justify-between gap-3 text-sm"><dt className="text-slate-600">VAT{chargeRequestData.vatEnabled ? ` (${Number(chargeRequestData.vatPercentage ?? 0).toFixed(2)}%)` : ""}</dt><dd className="text-right font-semibold tabular-nums text-slate-900">{money(currentTaxForComparison, data.currency)}</dd></div>
+                    <div className="flex items-start justify-between gap-3 text-sm"><dt className="text-slate-600">Additional charges priced</dt><dd className="text-right font-semibold tabular-nums text-slate-900">{money(additionalChargesTotal, data.currency)}</dd></div>
+                    <div className="flex items-start justify-between gap-3 text-sm"><dt className="text-slate-600">Bonuses / reductions</dt><dd className="text-right font-semibold tabular-nums text-rose-700">−{money(reductionsTotal, data.currency)}</dd></div>
+                  </dl>
+                  <div className="mt-4 flex items-start justify-between gap-3 rounded-lg border border-emerald-200 bg-white/80 px-3 py-3">
+                    <div className="min-w-0"><p className="text-xs font-bold text-slate-700">Change from original</p><p className="mt-1 text-[11px] leading-4 text-slate-500">Including VAT effect</p></div>
+                    <p className={`break-words text-right text-sm font-extrabold tabular-nums ${totalChangeFromOriginal > 0 ? "text-emerald-800" : totalChangeFromOriginal < 0 ? "text-rose-700" : "text-slate-800"}`}>{totalChangeFromOriginal > 0 ? "+" : totalChangeFromOriginal < 0 ? "−" : ""}{money(Math.abs(totalChangeFromOriginal), data.currency)}</p>
+                  </div>
+                </article>
+              </div>
+              <div className="border-t border-slate-200 px-4 py-3 sm:px-5">
+                <p className="text-xs leading-5 text-slate-600">The original quotation snapshot is not modified by new charges or deductions. Amounts here reflect the saved submission records returned by the server.</p>
+              </div>
+            </section>
+          )}
+
           <section className="mx-5 mb-5 rounded-2xl border border-amber-200 bg-white p-4 shadow-sm sm:mx-8 sm:mb-8 sm:p-5" aria-labelledby="additional-charge-request-heading">
             <div className="flex items-start gap-3">
               <span className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-amber-50 text-amber-800 ring-1 ring-amber-100">
@@ -720,6 +1004,9 @@ export default function ExporterQuotationDetailsPage() {
             </div>
           )}
         </section>
+
+
+        <QuotationAdditionalHistoryCard submissionId={data.id} audience="exporter" currency={data.currency} />
 
         {/* Conversation */}
         <section className="quotation-section-enter quotation-delay-1 rounded-3xl border border-emerald-100/90 bg-white p-5 shadow-lg shadow-emerald-950/[0.035] transition duration-300 hover:shadow-xl hover:shadow-emerald-950/[0.05] sm:p-8">

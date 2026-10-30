@@ -470,7 +470,9 @@ export type Permission = (typeof Permission)[keyof typeof Permission]
 export const QuoteSubmissionItemType: {
   SERVICE: 'SERVICE',
   CUSTOMS_CHARGE: 'CUSTOMS_CHARGE',
-  TRANSPORT_CHARGE: 'TRANSPORT_CHARGE'
+  TRANSPORT_CHARGE: 'TRANSPORT_CHARGE',
+  OTHER_CHARGE: 'OTHER_CHARGE',
+  SUBTRACTION: 'SUBTRACTION'
 };
 
 export type QuoteSubmissionItemType = (typeof QuoteSubmissionItemType)[keyof typeof QuoteSubmissionItemType]
@@ -38824,6 +38826,7 @@ export namespace Prisma {
     id: string | null
     itemType: $Enums.QuoteSubmissionItemType | null
     submissionId: string | null
+    reason: string | null
     quoteItemId: string | null
     componentName: string | null
     componentCode: string | null
@@ -38838,6 +38841,7 @@ export namespace Prisma {
     id: string | null
     itemType: $Enums.QuoteSubmissionItemType | null
     submissionId: string | null
+    reason: string | null
     quoteItemId: string | null
     componentName: string | null
     componentCode: string | null
@@ -38852,6 +38856,7 @@ export namespace Prisma {
     id: number
     itemType: number
     submissionId: number
+    reason: number
     quoteItemId: number
     componentName: number
     componentCode: number
@@ -38880,6 +38885,7 @@ export namespace Prisma {
     id?: true
     itemType?: true
     submissionId?: true
+    reason?: true
     quoteItemId?: true
     componentName?: true
     componentCode?: true
@@ -38894,6 +38900,7 @@ export namespace Prisma {
     id?: true
     itemType?: true
     submissionId?: true
+    reason?: true
     quoteItemId?: true
     componentName?: true
     componentCode?: true
@@ -38908,6 +38915,7 @@ export namespace Prisma {
     id?: true
     itemType?: true
     submissionId?: true
+    reason?: true
     quoteItemId?: true
     componentName?: true
     componentCode?: true
@@ -39009,6 +39017,7 @@ export namespace Prisma {
     id: string
     itemType: $Enums.QuoteSubmissionItemType
     submissionId: string
+    reason: string | null
     quoteItemId: string | null
     componentName: string
     componentCode: string | null
@@ -39042,6 +39051,7 @@ export namespace Prisma {
     id?: boolean
     itemType?: boolean
     submissionId?: boolean
+    reason?: boolean
     quoteItemId?: boolean
     componentName?: boolean
     componentCode?: boolean
@@ -39058,6 +39068,7 @@ export namespace Prisma {
     id?: boolean
     itemType?: boolean
     submissionId?: boolean
+    reason?: boolean
     quoteItemId?: boolean
     componentName?: boolean
     componentCode?: boolean
@@ -39074,6 +39085,7 @@ export namespace Prisma {
     id?: boolean
     itemType?: boolean
     submissionId?: boolean
+    reason?: boolean
     quoteItemId?: boolean
     componentName?: boolean
     componentCode?: boolean
@@ -39090,6 +39102,7 @@ export namespace Prisma {
     id?: boolean
     itemType?: boolean
     submissionId?: boolean
+    reason?: boolean
     quoteItemId?: boolean
     componentName?: boolean
     componentCode?: boolean
@@ -39100,7 +39113,7 @@ export namespace Prisma {
     createdAt?: boolean
   }
 
-  export type QuoteSubmissionItemOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "itemType" | "submissionId" | "quoteItemId" | "componentName" | "componentCode" | "quantity" | "rateApplied" | "lineTotal" | "isSelected" | "createdAt", ExtArgs["result"]["quoteSubmissionItem"]>
+  export type QuoteSubmissionItemOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "itemType" | "submissionId" | "reason" | "quoteItemId" | "componentName" | "componentCode" | "quantity" | "rateApplied" | "lineTotal" | "isSelected" | "createdAt", ExtArgs["result"]["quoteSubmissionItem"]>
   export type QuoteSubmissionItemInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     submission?: boolean | QuoteSubmissionDefaultArgs<ExtArgs>
     quoteItem?: boolean | QuoteSubmissionItem$quoteItemArgs<ExtArgs>
@@ -39124,6 +39137,7 @@ export namespace Prisma {
       id: string
       itemType: $Enums.QuoteSubmissionItemType
       submissionId: string
+      reason: string | null
       quoteItemId: string | null
       componentName: string
       componentCode: string | null
@@ -39560,6 +39574,7 @@ export namespace Prisma {
     readonly id: FieldRef<"QuoteSubmissionItem", 'String'>
     readonly itemType: FieldRef<"QuoteSubmissionItem", 'QuoteSubmissionItemType'>
     readonly submissionId: FieldRef<"QuoteSubmissionItem", 'String'>
+    readonly reason: FieldRef<"QuoteSubmissionItem", 'String'>
     readonly quoteItemId: FieldRef<"QuoteSubmissionItem", 'String'>
     readonly componentName: FieldRef<"QuoteSubmissionItem", 'String'>
     readonly componentCode: FieldRef<"QuoteSubmissionItem", 'String'>
@@ -42492,6 +42507,7 @@ export namespace Prisma {
     message: string | null
     isRead: boolean | null
     readAt: Date | null
+    submissionId: string | null
     createdAt: Date | null
   }
 
@@ -42503,6 +42519,7 @@ export namespace Prisma {
     message: string | null
     isRead: boolean | null
     readAt: Date | null
+    submissionId: string | null
     createdAt: Date | null
   }
 
@@ -42514,6 +42531,7 @@ export namespace Prisma {
     message: number
     isRead: number
     readAt: number
+    submissionId: number
     createdAt: number
     _all: number
   }
@@ -42527,6 +42545,7 @@ export namespace Prisma {
     message?: true
     isRead?: true
     readAt?: true
+    submissionId?: true
     createdAt?: true
   }
 
@@ -42538,6 +42557,7 @@ export namespace Prisma {
     message?: true
     isRead?: true
     readAt?: true
+    submissionId?: true
     createdAt?: true
   }
 
@@ -42549,6 +42569,7 @@ export namespace Prisma {
     message?: true
     isRead?: true
     readAt?: true
+    submissionId?: true
     createdAt?: true
     _all?: true
   }
@@ -42633,6 +42654,7 @@ export namespace Prisma {
     message: string
     isRead: boolean
     readAt: Date | null
+    submissionId: string | null
     createdAt: Date
     _count: QuoteNotificationCountAggregateOutputType | null
     _min: QuoteNotificationMinAggregateOutputType | null
@@ -42661,6 +42683,7 @@ export namespace Prisma {
     message?: boolean
     isRead?: boolean
     readAt?: boolean
+    submissionId?: boolean
     createdAt?: boolean
     quote?: boolean | QuoteDefaultArgs<ExtArgs>
     recipient?: boolean | QuoteNotification$recipientArgs<ExtArgs>
@@ -42674,6 +42697,7 @@ export namespace Prisma {
     message?: boolean
     isRead?: boolean
     readAt?: boolean
+    submissionId?: boolean
     createdAt?: boolean
     quote?: boolean | QuoteDefaultArgs<ExtArgs>
     recipient?: boolean | QuoteNotification$recipientArgs<ExtArgs>
@@ -42687,6 +42711,7 @@ export namespace Prisma {
     message?: boolean
     isRead?: boolean
     readAt?: boolean
+    submissionId?: boolean
     createdAt?: boolean
     quote?: boolean | QuoteDefaultArgs<ExtArgs>
     recipient?: boolean | QuoteNotification$recipientArgs<ExtArgs>
@@ -42700,10 +42725,11 @@ export namespace Prisma {
     message?: boolean
     isRead?: boolean
     readAt?: boolean
+    submissionId?: boolean
     createdAt?: boolean
   }
 
-  export type QuoteNotificationOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "quoteId" | "recipientUserId" | "title" | "message" | "isRead" | "readAt" | "createdAt", ExtArgs["result"]["quoteNotification"]>
+  export type QuoteNotificationOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "quoteId" | "recipientUserId" | "title" | "message" | "isRead" | "readAt" | "submissionId" | "createdAt", ExtArgs["result"]["quoteNotification"]>
   export type QuoteNotificationInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     quote?: boolean | QuoteDefaultArgs<ExtArgs>
     recipient?: boolean | QuoteNotification$recipientArgs<ExtArgs>
@@ -42731,6 +42757,7 @@ export namespace Prisma {
       message: string
       isRead: boolean
       readAt: Date | null
+      submissionId: string | null
       createdAt: Date
     }, ExtArgs["result"]["quoteNotification"]>
     composites: {}
@@ -43164,6 +43191,7 @@ export namespace Prisma {
     readonly message: FieldRef<"QuoteNotification", 'String'>
     readonly isRead: FieldRef<"QuoteNotification", 'Boolean'>
     readonly readAt: FieldRef<"QuoteNotification", 'DateTime'>
+    readonly submissionId: FieldRef<"QuoteNotification", 'String'>
     readonly createdAt: FieldRef<"QuoteNotification", 'DateTime'>
   }
     
@@ -51667,6 +51695,7 @@ export namespace Prisma {
     id: 'id',
     itemType: 'itemType',
     submissionId: 'submissionId',
+    reason: 'reason',
     quoteItemId: 'quoteItemId',
     componentName: 'componentName',
     componentCode: 'componentCode',
@@ -51721,6 +51750,7 @@ export namespace Prisma {
     message: 'message',
     isRead: 'isRead',
     readAt: 'readAt',
+    submissionId: 'submissionId',
     createdAt: 'createdAt'
   };
 
@@ -55438,6 +55468,7 @@ export namespace Prisma {
     id?: StringFilter<"QuoteSubmissionItem"> | string
     itemType?: EnumQuoteSubmissionItemTypeFilter<"QuoteSubmissionItem"> | $Enums.QuoteSubmissionItemType
     submissionId?: StringFilter<"QuoteSubmissionItem"> | string
+    reason?: StringNullableFilter<"QuoteSubmissionItem"> | string | null
     quoteItemId?: StringNullableFilter<"QuoteSubmissionItem"> | string | null
     componentName?: StringFilter<"QuoteSubmissionItem"> | string
     componentCode?: StringNullableFilter<"QuoteSubmissionItem"> | string | null
@@ -55454,6 +55485,7 @@ export namespace Prisma {
     id?: SortOrder
     itemType?: SortOrder
     submissionId?: SortOrder
+    reason?: SortOrderInput | SortOrder
     quoteItemId?: SortOrderInput | SortOrder
     componentName?: SortOrder
     componentCode?: SortOrderInput | SortOrder
@@ -55473,6 +55505,7 @@ export namespace Prisma {
     NOT?: QuoteSubmissionItemWhereInput | QuoteSubmissionItemWhereInput[]
     itemType?: EnumQuoteSubmissionItemTypeFilter<"QuoteSubmissionItem"> | $Enums.QuoteSubmissionItemType
     submissionId?: StringFilter<"QuoteSubmissionItem"> | string
+    reason?: StringNullableFilter<"QuoteSubmissionItem"> | string | null
     quoteItemId?: StringNullableFilter<"QuoteSubmissionItem"> | string | null
     componentName?: StringFilter<"QuoteSubmissionItem"> | string
     componentCode?: StringNullableFilter<"QuoteSubmissionItem"> | string | null
@@ -55489,6 +55522,7 @@ export namespace Prisma {
     id?: SortOrder
     itemType?: SortOrder
     submissionId?: SortOrder
+    reason?: SortOrderInput | SortOrder
     quoteItemId?: SortOrderInput | SortOrder
     componentName?: SortOrder
     componentCode?: SortOrderInput | SortOrder
@@ -55511,6 +55545,7 @@ export namespace Prisma {
     id?: StringWithAggregatesFilter<"QuoteSubmissionItem"> | string
     itemType?: EnumQuoteSubmissionItemTypeWithAggregatesFilter<"QuoteSubmissionItem"> | $Enums.QuoteSubmissionItemType
     submissionId?: StringWithAggregatesFilter<"QuoteSubmissionItem"> | string
+    reason?: StringNullableWithAggregatesFilter<"QuoteSubmissionItem"> | string | null
     quoteItemId?: StringNullableWithAggregatesFilter<"QuoteSubmissionItem"> | string | null
     componentName?: StringWithAggregatesFilter<"QuoteSubmissionItem"> | string
     componentCode?: StringNullableWithAggregatesFilter<"QuoteSubmissionItem"> | string | null
@@ -55717,6 +55752,7 @@ export namespace Prisma {
     message?: StringFilter<"QuoteNotification"> | string
     isRead?: BoolFilter<"QuoteNotification"> | boolean
     readAt?: DateTimeNullableFilter<"QuoteNotification"> | Date | string | null
+    submissionId?: StringNullableFilter<"QuoteNotification"> | string | null
     createdAt?: DateTimeFilter<"QuoteNotification"> | Date | string
     quote?: XOR<QuoteScalarRelationFilter, QuoteWhereInput>
     recipient?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
@@ -55730,6 +55766,7 @@ export namespace Prisma {
     message?: SortOrder
     isRead?: SortOrder
     readAt?: SortOrderInput | SortOrder
+    submissionId?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     quote?: QuoteOrderByWithRelationInput
     recipient?: UserOrderByWithRelationInput
@@ -55746,6 +55783,7 @@ export namespace Prisma {
     message?: StringFilter<"QuoteNotification"> | string
     isRead?: BoolFilter<"QuoteNotification"> | boolean
     readAt?: DateTimeNullableFilter<"QuoteNotification"> | Date | string | null
+    submissionId?: StringNullableFilter<"QuoteNotification"> | string | null
     createdAt?: DateTimeFilter<"QuoteNotification"> | Date | string
     quote?: XOR<QuoteScalarRelationFilter, QuoteWhereInput>
     recipient?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
@@ -55759,6 +55797,7 @@ export namespace Prisma {
     message?: SortOrder
     isRead?: SortOrder
     readAt?: SortOrderInput | SortOrder
+    submissionId?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     _count?: QuoteNotificationCountOrderByAggregateInput
     _max?: QuoteNotificationMaxOrderByAggregateInput
@@ -55776,6 +55815,7 @@ export namespace Prisma {
     message?: StringWithAggregatesFilter<"QuoteNotification"> | string
     isRead?: BoolWithAggregatesFilter<"QuoteNotification"> | boolean
     readAt?: DateTimeNullableWithAggregatesFilter<"QuoteNotification"> | Date | string | null
+    submissionId?: StringNullableWithAggregatesFilter<"QuoteNotification"> | string | null
     createdAt?: DateTimeWithAggregatesFilter<"QuoteNotification"> | Date | string
   }
 
@@ -59890,6 +59930,7 @@ export namespace Prisma {
   export type QuoteSubmissionItemCreateInput = {
     id?: string
     itemType?: $Enums.QuoteSubmissionItemType
+    reason?: string | null
     componentName: string
     componentCode?: string | null
     quantity?: Decimal | DecimalJsLike | number | string
@@ -59905,6 +59946,7 @@ export namespace Prisma {
     id?: string
     itemType?: $Enums.QuoteSubmissionItemType
     submissionId: string
+    reason?: string | null
     quoteItemId?: string | null
     componentName: string
     componentCode?: string | null
@@ -59918,6 +59960,7 @@ export namespace Prisma {
   export type QuoteSubmissionItemUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     itemType?: EnumQuoteSubmissionItemTypeFieldUpdateOperationsInput | $Enums.QuoteSubmissionItemType
+    reason?: NullableStringFieldUpdateOperationsInput | string | null
     componentName?: StringFieldUpdateOperationsInput | string
     componentCode?: NullableStringFieldUpdateOperationsInput | string | null
     quantity?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
@@ -59933,6 +59976,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     itemType?: EnumQuoteSubmissionItemTypeFieldUpdateOperationsInput | $Enums.QuoteSubmissionItemType
     submissionId?: StringFieldUpdateOperationsInput | string
+    reason?: NullableStringFieldUpdateOperationsInput | string | null
     quoteItemId?: NullableStringFieldUpdateOperationsInput | string | null
     componentName?: StringFieldUpdateOperationsInput | string
     componentCode?: NullableStringFieldUpdateOperationsInput | string | null
@@ -59947,6 +59991,7 @@ export namespace Prisma {
     id?: string
     itemType?: $Enums.QuoteSubmissionItemType
     submissionId: string
+    reason?: string | null
     quoteItemId?: string | null
     componentName: string
     componentCode?: string | null
@@ -59960,6 +60005,7 @@ export namespace Prisma {
   export type QuoteSubmissionItemUpdateManyMutationInput = {
     id?: StringFieldUpdateOperationsInput | string
     itemType?: EnumQuoteSubmissionItemTypeFieldUpdateOperationsInput | $Enums.QuoteSubmissionItemType
+    reason?: NullableStringFieldUpdateOperationsInput | string | null
     componentName?: StringFieldUpdateOperationsInput | string
     componentCode?: NullableStringFieldUpdateOperationsInput | string | null
     quantity?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
@@ -59973,6 +60019,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     itemType?: EnumQuoteSubmissionItemTypeFieldUpdateOperationsInput | $Enums.QuoteSubmissionItemType
     submissionId?: StringFieldUpdateOperationsInput | string
+    reason?: NullableStringFieldUpdateOperationsInput | string | null
     quoteItemId?: NullableStringFieldUpdateOperationsInput | string | null
     componentName?: StringFieldUpdateOperationsInput | string
     componentCode?: NullableStringFieldUpdateOperationsInput | string | null
@@ -60175,6 +60222,7 @@ export namespace Prisma {
     message: string
     isRead?: boolean
     readAt?: Date | string | null
+    submissionId?: string | null
     createdAt?: Date | string
     quote: QuoteCreateNestedOneWithoutNotificationsInput
     recipient?: UserCreateNestedOneWithoutQuoteNotificationsInput
@@ -60188,6 +60236,7 @@ export namespace Prisma {
     message: string
     isRead?: boolean
     readAt?: Date | string | null
+    submissionId?: string | null
     createdAt?: Date | string
   }
 
@@ -60197,6 +60246,7 @@ export namespace Prisma {
     message?: StringFieldUpdateOperationsInput | string
     isRead?: BoolFieldUpdateOperationsInput | boolean
     readAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    submissionId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     quote?: QuoteUpdateOneRequiredWithoutNotificationsNestedInput
     recipient?: UserUpdateOneWithoutQuoteNotificationsNestedInput
@@ -60210,6 +60260,7 @@ export namespace Prisma {
     message?: StringFieldUpdateOperationsInput | string
     isRead?: BoolFieldUpdateOperationsInput | boolean
     readAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    submissionId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -60221,6 +60272,7 @@ export namespace Prisma {
     message: string
     isRead?: boolean
     readAt?: Date | string | null
+    submissionId?: string | null
     createdAt?: Date | string
   }
 
@@ -60230,6 +60282,7 @@ export namespace Prisma {
     message?: StringFieldUpdateOperationsInput | string
     isRead?: BoolFieldUpdateOperationsInput | boolean
     readAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    submissionId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -60241,6 +60294,7 @@ export namespace Prisma {
     message?: StringFieldUpdateOperationsInput | string
     isRead?: BoolFieldUpdateOperationsInput | boolean
     readAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    submissionId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -63726,6 +63780,7 @@ export namespace Prisma {
     id?: SortOrder
     itemType?: SortOrder
     submissionId?: SortOrder
+    reason?: SortOrder
     quoteItemId?: SortOrder
     componentName?: SortOrder
     componentCode?: SortOrder
@@ -63746,6 +63801,7 @@ export namespace Prisma {
     id?: SortOrder
     itemType?: SortOrder
     submissionId?: SortOrder
+    reason?: SortOrder
     quoteItemId?: SortOrder
     componentName?: SortOrder
     componentCode?: SortOrder
@@ -63760,6 +63816,7 @@ export namespace Prisma {
     id?: SortOrder
     itemType?: SortOrder
     submissionId?: SortOrder
+    reason?: SortOrder
     quoteItemId?: SortOrder
     componentName?: SortOrder
     componentCode?: SortOrder
@@ -63910,6 +63967,7 @@ export namespace Prisma {
     message?: SortOrder
     isRead?: SortOrder
     readAt?: SortOrder
+    submissionId?: SortOrder
     createdAt?: SortOrder
   }
 
@@ -63921,6 +63979,7 @@ export namespace Prisma {
     message?: SortOrder
     isRead?: SortOrder
     readAt?: SortOrder
+    submissionId?: SortOrder
     createdAt?: SortOrder
   }
 
@@ -63932,6 +63991,7 @@ export namespace Prisma {
     message?: SortOrder
     isRead?: SortOrder
     readAt?: SortOrder
+    submissionId?: SortOrder
     createdAt?: SortOrder
   }
 
@@ -69987,6 +70047,7 @@ export namespace Prisma {
     message: string
     isRead?: boolean
     readAt?: Date | string | null
+    submissionId?: string | null
     createdAt?: Date | string
     quote: QuoteCreateNestedOneWithoutNotificationsInput
   }
@@ -69998,6 +70059,7 @@ export namespace Prisma {
     message: string
     isRead?: boolean
     readAt?: Date | string | null
+    submissionId?: string | null
     createdAt?: Date | string
   }
 
@@ -70452,6 +70514,7 @@ export namespace Prisma {
     message?: StringFilter<"QuoteNotification"> | string
     isRead?: BoolFilter<"QuoteNotification"> | boolean
     readAt?: DateTimeNullableFilter<"QuoteNotification"> | Date | string | null
+    submissionId?: StringNullableFilter<"QuoteNotification"> | string | null
     createdAt?: DateTimeFilter<"QuoteNotification"> | Date | string
   }
 
@@ -78333,6 +78396,7 @@ export namespace Prisma {
     message: string
     isRead?: boolean
     readAt?: Date | string | null
+    submissionId?: string | null
     createdAt?: Date | string
     recipient?: UserCreateNestedOneWithoutQuoteNotificationsInput
   }
@@ -78344,6 +78408,7 @@ export namespace Prisma {
     message: string
     isRead?: boolean
     readAt?: Date | string | null
+    submissionId?: string | null
     createdAt?: Date | string
   }
 
@@ -79257,6 +79322,7 @@ export namespace Prisma {
   export type QuoteSubmissionItemCreateWithoutQuoteItemInput = {
     id?: string
     itemType?: $Enums.QuoteSubmissionItemType
+    reason?: string | null
     componentName: string
     componentCode?: string | null
     quantity?: Decimal | DecimalJsLike | number | string
@@ -79271,6 +79337,7 @@ export namespace Prisma {
     id?: string
     itemType?: $Enums.QuoteSubmissionItemType
     submissionId: string
+    reason?: string | null
     componentName: string
     componentCode?: string | null
     quantity?: Decimal | DecimalJsLike | number | string
@@ -79415,6 +79482,7 @@ export namespace Prisma {
     id?: StringFilter<"QuoteSubmissionItem"> | string
     itemType?: EnumQuoteSubmissionItemTypeFilter<"QuoteSubmissionItem"> | $Enums.QuoteSubmissionItemType
     submissionId?: StringFilter<"QuoteSubmissionItem"> | string
+    reason?: StringNullableFilter<"QuoteSubmissionItem"> | string | null
     quoteItemId?: StringNullableFilter<"QuoteSubmissionItem"> | string | null
     componentName?: StringFilter<"QuoteSubmissionItem"> | string
     componentCode?: StringNullableFilter<"QuoteSubmissionItem"> | string | null
@@ -79670,6 +79738,7 @@ export namespace Prisma {
   export type QuoteSubmissionItemCreateWithoutSubmissionInput = {
     id?: string
     itemType?: $Enums.QuoteSubmissionItemType
+    reason?: string | null
     componentName: string
     componentCode?: string | null
     quantity?: Decimal | DecimalJsLike | number | string
@@ -79683,6 +79752,7 @@ export namespace Prisma {
   export type QuoteSubmissionItemUncheckedCreateWithoutSubmissionInput = {
     id?: string
     itemType?: $Enums.QuoteSubmissionItemType
+    reason?: string | null
     quoteItemId?: string | null
     componentName: string
     componentCode?: string | null
@@ -83697,6 +83767,7 @@ export namespace Prisma {
     message: string
     isRead?: boolean
     readAt?: Date | string | null
+    submissionId?: string | null
     createdAt?: Date | string
   }
 
@@ -84498,6 +84569,7 @@ export namespace Prisma {
     message?: StringFieldUpdateOperationsInput | string
     isRead?: BoolFieldUpdateOperationsInput | boolean
     readAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    submissionId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     quote?: QuoteUpdateOneRequiredWithoutNotificationsNestedInput
   }
@@ -84509,6 +84581,7 @@ export namespace Prisma {
     message?: StringFieldUpdateOperationsInput | string
     isRead?: BoolFieldUpdateOperationsInput | boolean
     readAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    submissionId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -84519,6 +84592,7 @@ export namespace Prisma {
     message?: StringFieldUpdateOperationsInput | string
     isRead?: BoolFieldUpdateOperationsInput | boolean
     readAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    submissionId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -87742,6 +87816,7 @@ export namespace Prisma {
     message: string
     isRead?: boolean
     readAt?: Date | string | null
+    submissionId?: string | null
     createdAt?: Date | string
   }
 
@@ -87987,6 +88062,7 @@ export namespace Prisma {
     message?: StringFieldUpdateOperationsInput | string
     isRead?: BoolFieldUpdateOperationsInput | boolean
     readAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    submissionId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     recipient?: UserUpdateOneWithoutQuoteNotificationsNestedInput
   }
@@ -87998,6 +88074,7 @@ export namespace Prisma {
     message?: StringFieldUpdateOperationsInput | string
     isRead?: BoolFieldUpdateOperationsInput | boolean
     readAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    submissionId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -88008,6 +88085,7 @@ export namespace Prisma {
     message?: StringFieldUpdateOperationsInput | string
     isRead?: BoolFieldUpdateOperationsInput | boolean
     readAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    submissionId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -88136,6 +88214,7 @@ export namespace Prisma {
     id?: string
     itemType?: $Enums.QuoteSubmissionItemType
     submissionId: string
+    reason?: string | null
     componentName: string
     componentCode?: string | null
     quantity?: Decimal | DecimalJsLike | number | string
@@ -88148,6 +88227,7 @@ export namespace Prisma {
   export type QuoteSubmissionItemUpdateWithoutQuoteItemInput = {
     id?: StringFieldUpdateOperationsInput | string
     itemType?: EnumQuoteSubmissionItemTypeFieldUpdateOperationsInput | $Enums.QuoteSubmissionItemType
+    reason?: NullableStringFieldUpdateOperationsInput | string | null
     componentName?: StringFieldUpdateOperationsInput | string
     componentCode?: NullableStringFieldUpdateOperationsInput | string | null
     quantity?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
@@ -88162,6 +88242,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     itemType?: EnumQuoteSubmissionItemTypeFieldUpdateOperationsInput | $Enums.QuoteSubmissionItemType
     submissionId?: StringFieldUpdateOperationsInput | string
+    reason?: NullableStringFieldUpdateOperationsInput | string | null
     componentName?: StringFieldUpdateOperationsInput | string
     componentCode?: NullableStringFieldUpdateOperationsInput | string | null
     quantity?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
@@ -88175,6 +88256,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     itemType?: EnumQuoteSubmissionItemTypeFieldUpdateOperationsInput | $Enums.QuoteSubmissionItemType
     submissionId?: StringFieldUpdateOperationsInput | string
+    reason?: NullableStringFieldUpdateOperationsInput | string | null
     componentName?: StringFieldUpdateOperationsInput | string
     componentCode?: NullableStringFieldUpdateOperationsInput | string | null
     quantity?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
@@ -88187,6 +88269,7 @@ export namespace Prisma {
   export type QuoteSubmissionItemCreateManySubmissionInput = {
     id?: string
     itemType?: $Enums.QuoteSubmissionItemType
+    reason?: string | null
     quoteItemId?: string | null
     componentName: string
     componentCode?: string | null
@@ -88235,6 +88318,7 @@ export namespace Prisma {
   export type QuoteSubmissionItemUpdateWithoutSubmissionInput = {
     id?: StringFieldUpdateOperationsInput | string
     itemType?: EnumQuoteSubmissionItemTypeFieldUpdateOperationsInput | $Enums.QuoteSubmissionItemType
+    reason?: NullableStringFieldUpdateOperationsInput | string | null
     componentName?: StringFieldUpdateOperationsInput | string
     componentCode?: NullableStringFieldUpdateOperationsInput | string | null
     quantity?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
@@ -88248,6 +88332,7 @@ export namespace Prisma {
   export type QuoteSubmissionItemUncheckedUpdateWithoutSubmissionInput = {
     id?: StringFieldUpdateOperationsInput | string
     itemType?: EnumQuoteSubmissionItemTypeFieldUpdateOperationsInput | $Enums.QuoteSubmissionItemType
+    reason?: NullableStringFieldUpdateOperationsInput | string | null
     quoteItemId?: NullableStringFieldUpdateOperationsInput | string | null
     componentName?: StringFieldUpdateOperationsInput | string
     componentCode?: NullableStringFieldUpdateOperationsInput | string | null
@@ -88261,6 +88346,7 @@ export namespace Prisma {
   export type QuoteSubmissionItemUncheckedUpdateManyWithoutSubmissionInput = {
     id?: StringFieldUpdateOperationsInput | string
     itemType?: EnumQuoteSubmissionItemTypeFieldUpdateOperationsInput | $Enums.QuoteSubmissionItemType
+    reason?: NullableStringFieldUpdateOperationsInput | string | null
     quoteItemId?: NullableStringFieldUpdateOperationsInput | string | null
     componentName?: StringFieldUpdateOperationsInput | string
     componentCode?: NullableStringFieldUpdateOperationsInput | string | null

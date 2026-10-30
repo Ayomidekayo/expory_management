@@ -36,6 +36,9 @@ function respondError(res: Response, error: unknown) {
     "CUSTOMS_CHARGE_NOT_REQUESTED",
     "TRANSPORT_CHARGE_NOT_REQUESTED",
     "NO_CHARGE_FIELDS_TO_UPDATE",
+    "INVALID_CUSTOM_CHARGE",
+    "INVALID_SUBTRACTION",
+    "SUBTRACTION_EXCEEDS_SUBTOTAL",
     "SHIPMENT_OPTIONS_NOT_CONFIGURED",
     "SHIPMENT_OPTION_REQUIRED",
     "SELECT_ONE_SHIPMENT_OPTION",
@@ -71,6 +74,9 @@ function respondError(res: Response, error: unknown) {
       "The exporter did not request transportation pricing on this submission.",
     NO_CHARGE_FIELDS_TO_UPDATE:
       "Provide at least one additional charge to update.",
+    INVALID_CUSTOM_CHARGE: "Provide a valid custom charge name, positive amount, and optional reason.",
+    INVALID_SUBTRACTION: "Provide a positive reduction amount and a reason up to 1,000 characters.",
+    SUBTRACTION_EXCEEDS_SUBTOTAL: "The reduction cannot exceed the current quotation subtotal.",
     SHIPMENT_OPTIONS_NOT_CONFIGURED:
       "No active shipment options are configured for this rate-card configuration. Please contact the quotation team.",
     SHIPMENT_OPTION_REQUIRED:
@@ -206,66 +212,299 @@ export async function submitQuote(req: Request, res: Response) {
 
 export async function updateSubmissionCharges(req: Request, res: Response) {
   const user = req.user;
-  if (!user) {
-    return res.status(401).json({ success: false, message: "Authentication required." });
-  }
-
-  const canManageCharges = user.role === "ADMIN" ||
-    user.permissions?.includes(Permission.MANAGE_QUOTE_CHARGES);
-  if (!canManageCharges) {
-    return res.status(403).json({ success: false, message: "You do not have permission to manage quotation charges." });
-  }
-
+  if (!user) return res.status(401).json({ success: false, message: "Authentication required." });
+  const canManageCharges = user.role === "ADMIN" || user.permissions?.includes(Permission.MANAGE_QUOTE_CHARGES);
+  if (!canManageCharges) return res.status(403).json({ success: false, message: "You do not have permission to manage quotation charges." });
   const submissionId = getRouteParam(req.params.submissionId);
-  if (!submissionId) {
-    return res.status(400).json({ success: false, message: "A valid submission ID is required." });
-  }
+  if (!submissionId) return res.status(400).json({ success: false, message: "A valid submission ID is required." });
 
   const body: Record<string, unknown> = req.body ?? {};
-  type ParsedAmount =
-    | { kind: "absent" }
-    | { kind: "invalid" }
-    | { kind: "value"; value: number | null };
+  type ParsedAmount = { kind: "absent" } | { kind: "invalid" } | { kind: "value"; value: number | null };
   const parseOptionalAmount = (key: "customsChargeAmount" | "transportChargeAmount"): ParsedAmount => {
     if (!Object.prototype.hasOwnProperty.call(body, key)) return { kind: "absent" };
     if (body[key] === null || body[key] === "") return { kind: "value", value: null };
     if (typeof body[key] !== "number" && typeof body[key] !== "string") return { kind: "invalid" };
     if (typeof body[key] === "string" && !body[key].trim()) return { kind: "value", value: null };
     const value = Number(body[key]);
-    if (!Number.isFinite(value) || value < 0) return { kind: "invalid" };
-    return { kind: "value", value };
+    return Number.isFinite(value) && value >= 0 ? { kind: "value", value } : { kind: "invalid" };
   };
-
   const customs = parseOptionalAmount("customsChargeAmount");
   const transport = parseOptionalAmount("transportChargeAmount");
   if (customs.kind === "invalid" || transport.kind === "invalid") {
     return res.status(400).json({ success: false, message: "Charge amounts must be valid numbers greater than or equal to zero.", code: "INVALID_CHARGE_AMOUNT" });
   }
-  if (customs.kind === "absent" && transport.kind === "absent") {
-    return res.status(400).json({ success: false, message: "Provide at least one additional charge to update.", code: "NO_CHARGE_FIELDS_TO_UPDATE" });
+  for (const key of ["customsChargeRequested", "transportChargeRequested"] as const) {
+    if (body[key] !== undefined && typeof body[key] !== "boolean") {
+      return res.status(400).json({ success: false, message: "Request flags must be true or false.", code: "INVALID_ADDITIONAL_CHARGE_REQUEST" });
+    }
   }
-
+  const invoiceValue = body.invoiceValue === undefined || body.invoiceValue === null || body.invoiceValue === "" ? undefined : Number(body.invoiceValue);
+  if (invoiceValue !== undefined && (!Number.isFinite(invoiceValue) || invoiceValue <= 0)) {
+    return res.status(400).json({ success: false, message: "Enter a commercial invoice value greater than zero.", code: "INVOICE_VALUE_REQUIRED" });
+  }
+  const invoiceCurrency = typeof body.invoiceCurrency === "string" ? body.invoiceCurrency.trim().toUpperCase() : undefined;
+  if (invoiceCurrency !== undefined && !/^[A-Z]{3}$/.test(invoiceCurrency)) {
+    return res.status(400).json({ success: false, message: "Enter a valid three-letter invoice currency code.", code: "INVALID_INVOICE_CURRENCY" });
+  }
+  const hasRequestPatch = body.customsChargeRequested !== undefined || body.transportChargeRequested !== undefined || invoiceValue !== undefined || invoiceCurrency !== undefined;
+  if (customs.kind === "absent" && transport.kind === "absent" && !hasRequestPatch) {
+    return res.status(400).json({ success: false, message: "Provide at least one additional charge or request field to update.", code: "NO_CHARGE_FIELDS_TO_UPDATE" });
+  }
   try {
     const data = await service.updateSubmissionCharges({
       submissionId,
       adminId: user.id,
       ...(customs.kind === "value" ? { customsChargeAmount: customs.value } : {}),
       ...(transport.kind === "value" ? { transportChargeAmount: transport.value } : {}),
+      ...(body.customsChargeRequested !== undefined ? { customsChargeRequested: body.customsChargeRequested as boolean } : {}),
+      ...(body.transportChargeRequested !== undefined ? { transportChargeRequested: body.transportChargeRequested as boolean } : {}),
+      ...(invoiceValue !== undefined ? { invoiceValue } : {}),
+      ...(invoiceCurrency !== undefined ? { invoiceCurrency } : {}),
     });
-    return res.status(200).json({ success: true, message: "Additional charges saved and VAT recalculated.", data });
+    return res.status(200).json({ success: true, message: "Additional-service requests and charges saved; current totals and VAT recalculated.", data });
   } catch (error) {
-    const message = error instanceof Error ? error.message : "INTERNAL_ERROR";
-    if (message === "SUBMISSION_NOT_FOUND") {
-      return res.status(404).json({ success: false, message: "Quotation submission not found.", code: message });
-    }
-    if (["CUSTOMS_CHARGE_NOT_REQUESTED", "TRANSPORT_CHARGE_NOT_REQUESTED", "INVALID_CHARGE_AMOUNT", "NO_CHARGE_FIELDS_TO_UPDATE"].includes(message)) {
-      return res.status(400).json({ success: false, message: {
+    const code = error instanceof Error ? error.message : "INTERNAL_ERROR";
+    if (code === "SUBMISSION_NOT_FOUND") return res.status(404).json({ success: false, message: "Quotation submission not found.", code });
+    if (["CUSTOMS_CHARGE_NOT_REQUESTED", "TRANSPORT_CHARGE_NOT_REQUESTED", "INVALID_CHARGE_AMOUNT", "NO_CHARGE_FIELDS_TO_UPDATE", "INVOICE_VALUE_REQUIRED", "INVALID_INVOICE_CURRENCY", "INVALID_ADDITIONAL_CHARGE_REQUEST"].includes(code)) {
+      const messages: Record<string, string> = {
         CUSTOMS_CHARGE_NOT_REQUESTED: "The exporter did not request customs assistance on this submission.",
         TRANSPORT_CHARGE_NOT_REQUESTED: "The exporter did not request transportation pricing on this submission.",
         INVALID_CHARGE_AMOUNT: "Charge amounts must be valid numbers greater than or equal to zero.",
-        NO_CHARGE_FIELDS_TO_UPDATE: "Provide at least one additional charge to update.",
-      }[message], code: message });
+        NO_CHARGE_FIELDS_TO_UPDATE: "Provide at least one additional charge or request field to update.",
+        INVOICE_VALUE_REQUIRED: "Enter a commercial invoice value greater than zero when requesting customs assistance.",
+        INVALID_INVOICE_CURRENCY: "Enter a valid three-letter invoice currency code.",
+        INVALID_ADDITIONAL_CHARGE_REQUEST: "Choose valid yes/no options for the additional services.",
+      };
+      return res.status(400).json({ success: false, message: messages[code], code });
     }
+    return respondError(res, error);
+  }
+}
+
+/** Exporter self-service: request customs/transport pricing after submission. */
+export async function requestExporterAdditionalCharges(req: Request, res: Response) {
+  const user = req.user;
+  const submissionId = getRouteParam(req.params.submissionId);
+  if (!user) return res.status(401).json({ success: false, message: "Authentication required." });
+  if (user.role !== "EXPORTER") return res.status(403).json({ success: false, message: "Exporter access required." });
+  if (!submissionId) return res.status(400).json({ success: false, message: "A valid submission ID is required." });
+
+  const body = req.body ?? {};
+  if (body.customsChargeRequested !== undefined && typeof body.customsChargeRequested !== "boolean") {
+    return res.status(400).json({ success: false, message: "Choose a valid option for customs assistance.", code: "INVALID_ADDITIONAL_CHARGE_REQUEST" });
+  }
+  if (body.transportChargeRequested !== undefined && typeof body.transportChargeRequested !== "boolean") {
+    return res.status(400).json({ success: false, message: "Choose a valid option for transportation pricing.", code: "INVALID_ADDITIONAL_CHARGE_REQUEST" });
+  }
+  const invoiceValue = body.invoiceValue === undefined || body.invoiceValue === null || body.invoiceValue === ""
+    ? undefined
+    : Number(body.invoiceValue);
+  if (invoiceValue !== undefined && (!Number.isFinite(invoiceValue) || invoiceValue <= 0)) {
+    return res.status(400).json({ success: false, message: "Enter a commercial invoice value greater than zero.", code: "INVOICE_VALUE_REQUIRED" });
+  }
+  const invoiceCurrency = typeof body.invoiceCurrency === "string" ? body.invoiceCurrency.trim().toUpperCase() : undefined;
+  if (invoiceCurrency !== undefined && !/^[A-Z]{3}$/.test(invoiceCurrency)) {
+    return res.status(400).json({ success: false, message: "Enter a valid three-letter invoice currency code.", code: "INVALID_INVOICE_CURRENCY" });
+  }
+
+  try {
+    const data = await service.requestExporterAdditionalCharges({
+      submissionId,
+      exporterId: user.id,
+      ...(body.customsChargeRequested !== undefined ? { customsChargeRequested: body.customsChargeRequested } : {}),
+      ...(invoiceValue !== undefined ? { invoiceValue } : {}),
+      ...(invoiceCurrency !== undefined ? { invoiceCurrency } : {}),
+      ...(body.transportChargeRequested !== undefined ? { transportChargeRequested: body.transportChargeRequested } : {}),
+    });
+    return res.status(200).json({ success: true, message: "Additional-service request saved. No charge was added until operations prices it.", data });
+  } catch (error) {
+    const code = error instanceof Error ? error.message : "INTERNAL_ERROR";
+    if (code === "SUBMISSION_NOT_FOUND") return res.status(404).json({ success: false, message: "Quotation submission not found.", code });
+    if (["INVOICE_VALUE_REQUIRED", "INVALID_INVOICE_CURRENCY", "INVALID_ADDITIONAL_CHARGE_REQUEST"].includes(code)) {
+      const messages: Record<string, string> = {
+        INVOICE_VALUE_REQUIRED: "Enter a commercial invoice value greater than zero when requesting customs assistance.",
+        INVALID_INVOICE_CURRENCY: "Enter a valid three-letter invoice currency code.",
+        INVALID_ADDITIONAL_CHARGE_REQUEST: "Choose customs assistance and/or transportation pricing.",
+      };
+      return res.status(400).json({ success: false, message: messages[code], code });
+    }
+    return respondError(res, error);
+  }
+}
+
+function canManageAdditionalCharges(req: Request): boolean {
+  const user = req.user;
+  return Boolean(user && (user.role === "ADMIN" || user.permissions?.includes(Permission.MANAGE_QUOTE_CHARGES)));
+}
+
+function parsePositiveChargeAmount(value: unknown): number | null {
+  if (typeof value !== "number" && typeof value !== "string") return null;
+  if (typeof value === "string" && !value.trim()) return null;
+  const parsed = Number(value);
+  return Number.isFinite(parsed) && parsed > 0 ? parsed : null;
+}
+
+/** Create a named, user-defined additional charge. */
+export async function addCustomSubmissionCharge(req: Request, res: Response) {
+  const user = req.user;
+  const submissionId = getRouteParam(req.params.submissionId);
+  if (!user) return res.status(401).json({ success: false, message: "Authentication required." });
+  if (!canManageAdditionalCharges(req)) return res.status(403).json({ success: false, message: "You do not have permission to manage quotation charges." });
+  const name = typeof req.body?.name === "string" ? req.body.name.trim() : "";
+  const amount = parsePositiveChargeAmount(req.body?.amount);
+  const reason = typeof req.body?.reason === "string" ? req.body.reason.trim() : "";
+  if (!submissionId || name.length < 2 || name.length > 120 || amount === null || reason.length > 1000) {
+    return res.status(400).json({ success: false, message: "Enter a charge name (2–120 characters), a positive amount, and an optional reason up to 1,000 characters." });
+  }
+  try {
+    const data = await service.addCustomSubmissionCharge({ submissionId, adminId: user.id, name, amount, reason: reason || undefined });
+    return res.status(201).json({ success: true, message: "Additional charge added and quotation totals recalculated.", data });
+  } catch (error) {
+    const code = error instanceof Error ? error.message : "INTERNAL_ERROR";
+    if (code === "SUBMISSION_NOT_FOUND") return res.status(404).json({ success: false, message: "Quotation submission not found.", code });
+    return respondError(res, error);
+  }
+}
+
+/** Edit a named, user-defined additional charge. */
+export async function editCustomSubmissionCharge(req: Request, res: Response) {
+  const user = req.user;
+  const submissionId = getRouteParam(req.params.submissionId);
+  const chargeId = getRouteParam(req.params.chargeId);
+  if (!user) return res.status(401).json({ success: false, message: "Authentication required." });
+  if (!canManageAdditionalCharges(req)) return res.status(403).json({ success: false, message: "You do not have permission to manage quotation charges." });
+  const name = typeof req.body?.name === "string" ? req.body.name.trim() : "";
+  const amount = parsePositiveChargeAmount(req.body?.amount);
+  const reason = typeof req.body?.reason === "string" ? req.body.reason.trim() : "";
+  if (!submissionId || !chargeId || name.length < 2 || name.length > 120 || amount === null || reason.length > 1000) {
+    return res.status(400).json({ success: false, message: "Enter a charge name (2–120 characters), a positive amount, and an optional reason up to 1,000 characters." });
+  }
+  try {
+    const data = await service.editCustomSubmissionCharge({ submissionId, chargeId, adminId: user.id, name, amount, reason: reason || undefined });
+    return res.status(200).json({ success: true, message: "Additional charge updated and quotation totals recalculated.", data });
+  } catch (error) {
+    const code = error instanceof Error ? error.message : "INTERNAL_ERROR";
+    if (code === "SUBMISSION_NOT_FOUND" || code === "ADDITIONAL_CHARGE_NOT_FOUND") return res.status(404).json({ success: false, message: "Quotation or additional charge not found.", code });
+    if (code === "NOT_A_CUSTOM_CHARGE") return res.status(400).json({ success: false, message: "Only a named custom charge can be edited here.", code });
+    return respondError(res, error);
+  }
+}
+
+/** Delete a priced extra line; original SERVICE rows cannot be deleted here. */
+export async function deleteSubmissionAdditionalCharge(req: Request, res: Response) {
+  const user = req.user;
+  const submissionId = getRouteParam(req.params.submissionId);
+  const chargeId = getRouteParam(req.params.chargeId);
+  if (!user) return res.status(401).json({ success: false, message: "Authentication required." });
+  if (!canManageAdditionalCharges(req)) return res.status(403).json({ success: false, message: "You do not have permission to manage quotation charges." });
+  if (!submissionId || !chargeId) return res.status(400).json({ success: false, message: "Submission and charge IDs are required." });
+  try {
+    const data = await service.deleteSubmissionAdditionalCharge({ submissionId, chargeId, adminId: user.id });
+    return res.status(200).json({ success: true, message: "Additional charge removed and quotation totals recalculated.", data });
+  } catch (error) {
+    const code = error instanceof Error ? error.message : "INTERNAL_ERROR";
+    if (code === "SUBMISSION_NOT_FOUND" || code === "ADDITIONAL_CHARGE_NOT_FOUND") return res.status(404).json({ success: false, message: "Quotation or additional charge not found.", code });
+    if (code === "NOT_AN_ADDITIONAL_CHARGE") return res.status(400).json({ success: false, message: "Original requested service lines cannot be removed as additional charges.", code });
+    return respondError(res, error);
+  }
+}
+
+/** Hard-delete the whole quotation and every submission attached to its quote. ADMIN only. */
+export async function deleteQuotationCompletely(req: Request, res: Response) {
+  const user = req.user;
+  const submissionId = getRouteParam(req.params.submissionId);
+  if (!user) return res.status(401).json({ success: false, message: "Authentication required." });
+  if (user.role !== "ADMIN") return res.status(403).json({ success: false, message: "Only an administrator can delete a quotation completely." });
+  if (!submissionId) return res.status(400).json({ success: false, message: "A valid submission ID is required." });
+  try {
+    const result = await service.deleteQuotationCompletely({ submissionId, adminId: user.id });
+    return res.status(200).json({ success: true, message: "Quotation and its submissions were permanently deleted.", data: result });
+  } catch (error) {
+    const code = error instanceof Error ? error.message : "INTERNAL_ERROR";
+    if (code === "SUBMISSION_NOT_FOUND") return res.status(404).json({ success: false, message: "Quotation submission not found.", code });
+    return respondError(res, error);
+  }
+}
+
+
+/** Create a reason-backed subtotal reduction/bonus. The database stores it as a negative line item. */
+export async function addSubmissionSubtraction(req: Request, res: Response) {
+  const user = req.user;
+  const submissionId = getRouteParam(req.params.submissionId);
+  if (!user) return res.status(401).json({ success: false, message: "Authentication required." });
+  if (!canManageAdditionalCharges(req)) return res.status(403).json({ success: false, message: "You do not have permission to manage quotation charges." });
+
+  const amount = parsePositiveChargeAmount(req.body?.amount);
+  const reason = typeof req.body?.reason === "string" ? req.body.reason.trim() : "";
+  const name = typeof req.body?.name === "string" ? req.body.name.trim() : "Bonus / deduction";
+  if (!submissionId || amount === null || reason.length < 3 || reason.length > 1000 || name.length < 2 || name.length > 120) {
+    return res.status(400).json({ success: false, message: "Enter a positive reduction amount, a short name, and a reason (3–1,000 characters).", code: "INVALID_SUBTRACTION" });
+  }
+  try {
+    const data = await service.addSubmissionSubtraction({ submissionId, adminId: user.id, amount, reason, name });
+    return res.status(201).json({ success: true, message: "Reduction applied and quotation totals recalculated.", data });
+  } catch (error) {
+    const code = error instanceof Error ? error.message : "INTERNAL_ERROR";
+    if (code === "SUBMISSION_NOT_FOUND") return res.status(404).json({ success: false, message: "Quotation submission not found.", code });
+    if (code === "SUBTRACTION_EXCEEDS_SUBTOTAL" || code === "INVALID_SUBTRACTION") {
+      return res.status(400).json({ success: false, message: code === "SUBTRACTION_EXCEEDS_SUBTOTAL" ? "The reduction cannot exceed the current quotation subtotal." : "Enter a positive reduction amount and a reason.", code });
+    }
+    return respondError(res, error);
+  }
+}
+
+export async function getMySubmissionHistory(req: Request, res: Response) {
+  const user = req.user;
+  const submissionId = getRouteParam(req.params.submissionId);
+  if (!user) return res.status(401).json({ success: false, message: "Authentication required." });
+  if (user.role !== "EXPORTER") return res.status(403).json({ success: false, message: "Exporter access required." });
+  if (!submissionId) return res.status(400).json({ success: false, message: "A valid submission ID is required." });
+  try {
+    const data = await service.listSubmissionHistory(submissionId, user.id);
+    return res.status(200).json({ success: true, data });
+  } catch (error) {
+    if (error instanceof Error && error.message === "SUBMISSION_NOT_FOUND") return res.status(404).json({ success: false, message: "Quotation submission not found.", code: error.message });
+    return respondError(res, error);
+  }
+}
+
+export async function getAdminSubmissionHistory(req: Request, res: Response) {
+  const user = req.user;
+  const submissionId = getRouteParam(req.params.submissionId);
+  if (!user) return res.status(401).json({ success: false, message: "Authentication required." });
+  const canView = user.role === "ADMIN" || [Permission.VIEW_ALL_QUOTES, Permission.REVIEW_QUOTE, Permission.REVIEW_QUOTATIONS, Permission.MANAGE_QUOTE_CHARGES].some((permission) => user.permissions?.includes(permission));
+  if (!canView) return res.status(403).json({ success: false, message: "You do not have permission to view quotation history." });
+  if (!submissionId) return res.status(400).json({ success: false, message: "A valid submission ID is required." });
+  try {
+    const data = await service.listSubmissionHistory(submissionId);
+    return res.status(200).json({ success: true, data });
+  } catch (error) {
+    if (error instanceof Error && error.message === "SUBMISSION_NOT_FOUND") return res.status(404).json({ success: false, message: "Quotation submission not found.", code: error.message });
+    return respondError(res, error);
+  }
+}
+
+export async function listQuotationNotifications(req: Request, res: Response) {
+  const user = req.user;
+  if (!user) return res.status(401).json({ success: false, message: "Authentication required." });
+  try {
+    const data = await service.listQuotationNotifications(user.id);
+    return res.status(200).json({ success: true, data });
+  } catch (error) {
+    return respondError(res, error);
+  }
+}
+
+export async function markQuotationNotificationRead(req: Request, res: Response) {
+  const user = req.user;
+  const notificationId = getRouteParam(req.params.notificationId);
+  if (!user) return res.status(401).json({ success: false, message: "Authentication required." });
+  if (!notificationId) return res.status(400).json({ success: false, message: "A valid notification ID is required." });
+  try {
+    const data = await service.markQuotationNotificationRead(user.id, notificationId);
+    return res.status(200).json({ success: true, message: "Notification marked as read.", data });
+  } catch (error) {
+    if (error instanceof Error && error.message === "NOTIFICATION_NOT_FOUND") return res.status(404).json({ success: false, message: "Notification not found.", code: error.message });
     return respondError(res, error);
   }
 }

@@ -9,6 +9,14 @@ export type QuotationStatus =
   | "COMPLETED"
   | "ARCHIVED";
 
+/** Every kind of row returned in the exporter's quotation item table. */
+export type ExporterQuoteItemType =
+  | "SERVICE"
+  | "CUSTOMS_CHARGE"
+  | "TRANSPORT_CHARGE"
+  | "OTHER_CHARGE"
+  | "SUBTRACTION";
+
 export interface ExporterQuoteItem {
   id: string;
   componentName: string;
@@ -17,7 +25,9 @@ export interface ExporterQuoteItem {
   rateApplied: string | number;
   lineTotal: string | number;
   isSelected: boolean;
-  itemType?: "SERVICE" | "CUSTOMS_CHARGE" | "TRANSPORT_CHARGE";
+  itemType?: ExporterQuoteItemType;
+  /** Optional explanation for manual charges or deductions. */
+  reason?: string | null;
 }
 
 export interface QuotationAttachment {
@@ -88,6 +98,10 @@ export interface ExporterSubmission {
     goodsDescription: string | null;
     hsCode: string | null;
     weightKg: string | number | null;
+    subtotal?: string | number | null;
+    taxAmount?: string | number | null;
+    totalAmount?: string | number | null;
+    pricingSnapshot?: unknown;
     rateCard: {
       name: string;
       mode: string;

@@ -676,6 +676,8 @@ enum QuoteSubmissionItemType {
   SERVICE
   CUSTOMS_CHARGE
   TRANSPORT_CHARGE
+  OTHER_CHARGE
+  SUBTRACTION
 }
 
 model UserPermission {
@@ -1086,6 +1088,7 @@ model QuoteSubmissionItem {
 
   submissionId String
 
+  reason      String?
   // Original charge reference; snapshots remain usable independently
   quoteItemId String?
 
@@ -1167,10 +1170,11 @@ model QuoteNotification {
   quoteId         String
   recipientUserId String?
 
-  title   String
-  message String
-  isRead  Boolean   @default(false)
-  readAt  DateTime?
+  title        String
+  message      String
+  isRead       Boolean   @default(false)
+  readAt       DateTime?
+  submissionId String?
 
   createdAt DateTime @default(now())
 

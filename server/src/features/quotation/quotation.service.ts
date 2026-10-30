@@ -768,6 +768,10 @@ async submit(
     adminId: string;
     customsChargeAmount?: number | null;
     transportChargeAmount?: number | null;
+    customsChargeRequested?: boolean;
+    transportChargeRequested?: boolean;
+    invoiceValue?: number;
+    invoiceCurrency?: string;
   }) {
     const submission = await repository.updateSubmissionCharges(data)
     emitToQuotationReviewers("quotation:charges-updated", {
@@ -777,6 +781,72 @@ async submit(
       updatedAt: submission.updatedAt,
     })
     return submission
+  }
+
+
+  async requestExporterAdditionalCharges(data: {
+    submissionId: string; exporterId: string; customsChargeRequested?: boolean; invoiceValue?: number;
+    invoiceCurrency?: string; transportChargeRequested?: boolean;
+  }) {
+    const submission = await repository.requestExporterAdditionalCharges(data)
+    emitToQuotationReviewers("quotation:charges-updated", {
+      submissionId: submission.id, quoteId: submission.quoteId, status: submission.status, updatedAt: submission.updatedAt,
+      customsChargeRequested: submission.customsChargeRequested, invoiceValue: submission.invoiceValue,
+      invoiceCurrency: submission.invoiceCurrency, transportChargeRequested: submission.transportChargeRequested,
+    })
+    emitToQuotationReviewers("quotation:additional-charge-requested", {
+      submissionId: submission.id,
+      quoteId: submission.quoteId,
+      status: submission.status,
+      customsChargeRequested: submission.customsChargeRequested,
+      invoiceValue: submission.invoiceValue,
+      invoiceCurrency: submission.invoiceCurrency,
+      transportChargeRequested: submission.transportChargeRequested,
+      updatedAt: submission.updatedAt,
+    })
+    return submission
+  }
+
+  async addSubmissionSubtraction(data: { submissionId: string; adminId: string; amount: number; reason: string; name?: string }) {
+    const submission = await repository.addSubmissionSubtraction(data)
+    emitToQuotationReviewers("quotation:charges-updated", { submissionId: submission.id, quoteId: submission.quoteId, status: submission.status, updatedAt: submission.updatedAt })
+    return submission
+  }
+
+  async listSubmissionHistory(submissionId: string, exporterId?: string) {
+    return repository.listSubmissionHistory(submissionId, exporterId)
+  }
+
+  async listQuotationNotifications(userId: string) {
+    return repository.listQuotationNotifications(userId)
+  }
+
+  async markQuotationNotificationRead(userId: string, notificationId: string) {
+    return repository.markQuotationNotificationRead({ recipientUserId: userId, notificationId })
+  }
+
+  async addCustomSubmissionCharge(data: { submissionId: string; adminId: string; name: string; amount: number; reason?: string }) {
+    const submission = await repository.addCustomSubmissionCharge(data)
+    emitToQuotationReviewers("quotation:charges-updated", { submissionId: submission.id, quoteId: submission.quoteId, status: submission.status, updatedAt: submission.updatedAt })
+    return submission
+  }
+
+  async editCustomSubmissionCharge(data: { submissionId: string; chargeId: string; adminId: string; name: string; amount: number; reason?: string }) {
+    const submission = await repository.editCustomSubmissionCharge(data)
+    emitToQuotationReviewers("quotation:charges-updated", { submissionId: submission.id, quoteId: submission.quoteId, status: submission.status, updatedAt: submission.updatedAt })
+    return submission
+  }
+
+  async deleteSubmissionAdditionalCharge(data: { submissionId: string; chargeId: string; adminId: string }) {
+    const submission = await repository.deleteSubmissionAdditionalCharge(data)
+    emitToQuotationReviewers("quotation:charges-updated", { submissionId: submission.id, quoteId: submission.quoteId, status: submission.status, updatedAt: submission.updatedAt })
+    return submission
+  }
+
+  async deleteQuotationCompletely(data: { submissionId: string; adminId: string }) {
+    // Permanent deletion is followed by a redirect in the admin UI. Do not emit
+    // a new socket event unless the realtime client explicitly subscribes to it.
+    return repository.deleteQuotationCompletely(data)
   }
 
   async listExporterSubmissions(exporterId: string) {

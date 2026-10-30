@@ -308,15 +308,7 @@ export type UpdateQuotationChargesInput = {
   transportChargeAmount?: number | null;
 };
 
-export async function updateAdminQuotationCharges(
-  submissionId: string,
-  payload: UpdateQuotationChargesInput,
-): Promise<void> {
-  await api.patch(
-    `/admin/quotations/submissions/${encodeURIComponent(submissionId)}/charges`,
-    payload,
-  );
-}
+
 
 export interface AdminQuotationItem {
   id: string;
@@ -327,5 +319,64 @@ export interface AdminQuotationItem {
   lineTotal: number | string;
   isSelected: boolean;
   /** SERVICE for original quote lines; other types are priced by operations. */
-  itemType?: "SERVICE" | "CUSTOMS_CHARGE" | "TRANSPORT_CHARGE";
+   itemType?: "SERVICE" | "CUSTOMS_CHARGE" | "TRANSPORT_CHARGE" | "OTHER_CHARGE" | string;
+  reason?: string | null;
+}
+
+
+export type UpdateAdminQuotationChargesPayload = {
+  customsChargeAmount?: number | null;
+  transportChargeAmount?: number | null;
+  customsChargeRequested?: boolean;
+  transportChargeRequested?: boolean;
+  invoiceValue?: number;
+  invoiceCurrency?: string;
+}
+
+export async function updateAdminQuotationCharges(
+  submissionId: string,
+  payload: UpdateAdminQuotationChargesPayload,
+): Promise<void> {
+  await api.patch(
+    `/admin/quotations/submissions/${encodeURIComponent(submissionId)}/charges`,
+    payload,
+  );
+}
+
+export type CustomAdditionalChargePayload = { name: string; amount: number; reason?: string };
+
+export async function addAdminAdditionalCharge(submissionId: string, payload: CustomAdditionalChargePayload): Promise<void> {
+  await api.post(
+    `/admin/quotations/submissions/${encodeURIComponent(submissionId)}/additional-charges`,
+    payload,
+  );
+}
+
+export async function editAdminAdditionalCharge(submissionId: string, chargeId: string, payload: CustomAdditionalChargePayload): Promise<void> {
+  await api.patch(
+    `/admin/quotations/submissions/${encodeURIComponent(submissionId)}/additional-charges/${encodeURIComponent(chargeId)}`,
+    payload,
+  );
+}
+
+export async function deleteAdminAdditionalCharge(submissionId: string, chargeId: string): Promise<void> {
+  await api.delete(
+    `/admin/quotations/submissions/${encodeURIComponent(submissionId)}/additional-charges/${encodeURIComponent(chargeId)}`,
+  );
+}
+
+export async function deleteAdminQuotationCompletely(submissionId: string): Promise<void> {
+  await api.delete(`/admin/quotations/submissions/${encodeURIComponent(submissionId)}`);
+}
+
+
+export async function addAdminSubtraction(
+  submissionId: string,
+  payload: { name?: string; amount: number; reason: string },
+): Promise<AdminQuotation> {
+  const response = await api.post<ApiResponse<AdminQuotation>>(
+    `/admin/quotations/submissions/${encodeURIComponent(submissionId)}/subtractions`,
+    payload,
+  );
+  return response.data.data;
 }
