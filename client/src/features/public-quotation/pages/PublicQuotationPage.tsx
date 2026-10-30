@@ -1,4 +1,1368 @@
 
+// import { useEffect, useMemo, useState } from "react";
+// import {
+//   ArrowRight,
+//   CheckCircle2,
+//   CircleAlert,
+//   LoaderCircle,
+//   LockKeyhole,
+//   PackageCheck,
+//   Plane,
+//   Plus,
+//   Ship,
+//   Trash2,
+//   Truck,
+// } from "lucide-react";
+// import { Field, inputClass } from "../components/Field";
+// import {
+//   useCalculatePublicQuote,
+//   usePublicConfigurations,
+//   usePublicRateCards,
+// } from "../hooks/use-public-quotation";
+// import type {
+//   CalculateQuoteInput,
+//   CalculatedQuote,
+//   QuoteDirection,
+//   QuoteMode,
+// } from "../types/public-quotation.types";
+// import { Link, useNavigate } from "react-router-dom";
+// import { useAuthStore } from "../../../store/auth.store";
+// import { submitPublicQuoteRequest, type AdditionalChargeRequestPayload } from "../api/public-quotation.api";
+
+// type LoginHandoff = {
+//   quoteId: string;
+//   quoteNumber: string;
+//   selectedQuoteItemIds: string[];
+//   customsChargeRequested: boolean;
+//   invoiceValue?: number;
+//   invoiceCurrency?: string;
+//   transportChargeRequested: boolean;
+//   customerMessage?: string;
+//   quote: CalculatedQuote;
+// };
+
+// type Props = {
+//   onRequireLogin?: (handoff: LoginHandoff) => void;
+// };
+
+// type AuthSnapshot = {
+//   user?: { role?: string | null } | null;
+//   token?: string | null;
+//   accessToken?: string | null;
+// };
+
+// function normalizeRole(role: unknown): string {
+//   return typeof role === "string" ? role.trim().toUpperCase() : "";
+// }
+
+// /**
+//  * Read the latest store state at submission time. This avoids relying only on
+//  * a render-time user snapshot when the user has just signed in or navigated
+//  * back to the public quote page.
+//  */
+// function getCurrentAuthSnapshot(): { role: string; token: string | null } {
+//   const state = useAuthStore.getState() as unknown as AuthSnapshot;
+//   const tokenFromState =
+//     (typeof state.token === "string" && state.token.trim()) ||
+//     (typeof state.accessToken === "string" && state.accessToken.trim()) ||
+//     null;
+
+//   const storedToken =
+//     typeof window !== "undefined"
+//       ? window.localStorage.getItem("token") ||
+//         window.localStorage.getItem("accessToken")
+//       : null;
+
+//   return {
+//     role: normalizeRole(state.user?.role),
+//     token: tokenFromState || storedToken,
+//   };
+// }
+
+// const modes = [
+//   {
+//     value: "AIR" as const,
+//     label: "Air freight",
+//     description: "Fast international cargo",
+//     Icon: Plane,
+//   },
+//   {
+//     value: "LAND" as const,
+//     label: "Land transport",
+//     description: "Regional road movement",
+//     Icon: Truck,
+//   },
+//   {
+//     value: "SEA" as const,
+//     label: "Sea freight",
+//     description: "Container shipping",
+//     Icon: Ship,
+//   },
+// ];
+
+// const money = (amount: number, currency: string) => {
+//   const normalizedCurrency = currency === "CFA" ? "XOF" : currency || "NGN";
+//   try {
+//     return new Intl.NumberFormat("en-NG", {
+//       style: "currency",
+//       currency: normalizedCurrency,
+//       maximumFractionDigits: 2,
+//     }).format(Number.isFinite(amount) ? amount : 0);
+//   } catch {
+//     return `${normalizedCurrency} ${new Intl.NumberFormat("en-NG", {
+//       maximumFractionDigits: 2,
+//     }).format(Number.isFinite(amount) ? amount : 0)}`;
+//   }
+// };
+
+// const primaryButtonClass =
+//   "inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-xl bg-emerald-700 px-5 py-3 text-sm font-bold text-white transition hover:bg-emerald-800 focus:outline-none focus:ring-4 focus:ring-emerald-500/20 disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto";
+
+// // The backend includes these calculation fields on each calculated quote line.
+// // The shared frontend CalculatedQuote type predates the selection-review payload.
+// type SelectionAwareLine = CalculatedQuote["lines"][number] & {
+//   calculationType?: string | null;
+//   calculationBasis?: string | null;
+//   percentage?: number | null;
+// };
+// type QuoteWithTaxRules = CalculatedQuote & {
+//   vatEnabled?: boolean;
+//   vatPercentage?: number;
+//   vatRule?: string;
+// };
+
+// type SelectedTotals = {
+//   subtotal: number;
+//   taxAmount: number;
+//   totalAmount: number;
+//   vatEnabled: boolean;
+//   vatPercentage: number;
+//   lineAmounts: Record<string, number>;
+// };
+
+// const roundMoney = (amount: number) =>
+//   Math.round((amount + Number.EPSILON) * 100) / 100;
+
+// function calculateSelectedTotals(
+//   quote: CalculatedQuote | null,
+//   selectedItemIds: string[],
+// ): SelectedTotals {
+//   if (!quote) {
+//     return {
+//       subtotal: 0,
+//       taxAmount: 0,
+//       totalAmount: 0,
+//       vatEnabled: false,
+//       vatPercentage: 0,
+//       lineAmounts: {},
+//     };
+//   }
+
+//   const quoteWithTaxRules = quote as QuoteWithTaxRules;
+//   const selected = new Set(selectedItemIds);
+//   const selectedLines = (quote.lines as SelectionAwareLine[]).filter((line) =>
+//     selected.has(line.quoteItemId),
+//   );
+//   const isSubtotalPercentage = (line: SelectionAwareLine) =>
+//     String(line.calculationType) === "PERCENTAGE" &&
+//     String(line.calculationBasis) === "SUBTOTAL";
+
+//   // Match backend logic: subtotal percentage charges are calculated from the
+//   // selected non-subtotal-percentage lines, not the original full quote.
+//   const baseSubtotal = roundMoney(
+//     selectedLines
+//       .filter((line) => String(line.calculationType) !== "PERCENTAGE")
+//       .reduce((sum, line) => sum + (Number(line.lineTotal) || 0), 0),
+//   );
+
+//   const lineAmounts: Record<string, number> = {};
+//   let subtotal = 0;
+//   for (const line of selectedLines) {
+//     let amount = Number(line.lineTotal) || 0;
+//     if (
+//       isSubtotalPercentage(line) &&
+//       typeof line.percentage === "number" &&
+//       Number.isFinite(line.percentage)
+//     ) {
+//       amount = roundMoney((baseSubtotal * line.percentage) / 100);
+//     }
+//     lineAmounts[line.quoteItemId] = amount;
+//     subtotal += amount;
+//   }
+
+//   subtotal = roundMoney(subtotal);
+//   const vatEnabled =
+//     typeof quoteWithTaxRules.vatEnabled === "boolean"
+//       ? quoteWithTaxRules.vatEnabled
+//       : Number(quote.taxAmount) > 0;
+//   const vatPercentage =
+//     typeof quoteWithTaxRules.vatPercentage === "number" &&
+//     Number.isFinite(quoteWithTaxRules.vatPercentage)
+//       ? quoteWithTaxRules.vatPercentage
+//       : Number(quote.subtotal) > 0
+//         ? (Number(quote.taxAmount) / Number(quote.subtotal)) * 100
+//         : 0;
+//   const taxAmount = vatEnabled
+//     ? roundMoney((subtotal * vatPercentage) / 100)
+//     : 0;
+
+//   return {
+//     subtotal,
+//     taxAmount,
+//     totalAmount: roundMoney(subtotal + taxAmount),
+//     vatEnabled,
+//     vatPercentage,
+//     lineAmounts,
+//   };
+// }
+
+// export function PublicQuotationPage({ onRequireLogin }: Props) {
+//   const navigate = useNavigate();
+//   const { user } = useAuthStore();
+//   const isSignedInExporter = normalizeRole(user?.role) === "EXPORTER";
+//   const [mode, setMode] = useState<QuoteMode>("AIR");
+//   const [direction, setDirection] = useState<QuoteDirection>("IMPORT");
+//   const [rateCardId, setRateCardId] = useState("");
+//   const [configurationId, setConfigurationId] = useState("");
+//   const [optionIds, setOptionIds] = useState<string[]>([]);
+//   const [airlineId, setAirlineId] = useState("");
+//   const [weightKg, setWeightKg] = useState("");
+//   const [quantity, setQuantity] = useState("1");
+//   const [customsValue, setCustomsValue] = useState("");
+//   const [freightAmount, setFreightAmount] = useState("");
+//   const [goodsDescription, setGoodsDescription] = useState("");
+//   const [hsCode, setHsCode] = useState("");
+//   const [nafdacRequired, setNafdacRequired] = useState(false);
+//   const [transportRequired, setTransportRequired] = useState(false);
+//   const [selectedItemIds, setSelectedItemIds] = useState<string[]>([]);
+//   const [customsChargeRequested, setCustomsChargeRequested] = useState(false);
+//   const [invoiceValue, setInvoiceValue] = useState("");
+//   const [invoiceCurrency, setInvoiceCurrency] = useState("NGN");
+//   const [transportChargeRequested, setTransportChargeRequested] = useState(false);
+//   const [customerMessage, setCustomerMessage] = useState("");
+//   const [isSubmitting, setIsSubmitting] = useState(false);
+//   const [quote, setQuote] = useState<CalculatedQuote | null>(null);
+//   const [formError, setFormError] = useState("");
+
+//   const cardsQuery = usePublicRateCards(mode, direction);
+//   const configsQuery = usePublicConfigurations(rateCardId);
+//   const calculateMutation = useCalculatePublicQuote();
+//   const cards = cardsQuery.data ?? [];
+//   const configurations = configsQuery.data?.configurations ?? [];
+//   const configuration = useMemo(
+//     () => configurations.find((item) => item.id === configurationId),
+//     [configurations, configurationId],
+//   );
+//   // All customer-facing options are loaded from the selected configuration's
+//   // active RateCardOption rows; no transport/container choices are hard-coded.
+//   const activeConfigurationOptions = configuration?.options?.filter(
+//     (option) => option.isActive !== false,
+//   ) ?? [];
+//   const requiresSingleModeOption = mode === "LAND" || mode === "SEA";
+//   const isAirFreight = mode === "AIR";
+//   const weightInputRequired = isAirFreight || Boolean(configuration?.weightEnabled);
+//   const missingRequiredModeOptions =
+//     Boolean(configuration) && requiresSingleModeOption && activeConfigurationOptions.length === 0;
+//   const modeOptionTitle =
+//     mode === "LAND"
+//       ? "Choose your land transport option"
+//       : mode === "SEA"
+//         ? "Choose your container type"
+//         : "Additional air freight services";
+//   const modeOptionHelp =
+//     mode === "LAND"
+//       ? "Select one option configured by the quotation team, such as short haul or long haul."
+//       : mode === "SEA"
+//         ? "Select one container option configured by the quotation team, such as 20ft or 40ft."
+//         : "Select any additional services you need. Air freight chargeable weight is required below.";
+//   const selectedTotals = useMemo(
+//     () => calculateSelectedTotals(quote, selectedItemIds),
+//     [quote, selectedItemIds],
+//   );
+
+//   // The public page hides internal pricing IDs. Auto-select only when there is
+//   // exactly one active rate card for the chosen shipment mode and direction.
+//   useEffect(() => {
+//     if (cardsQuery.isLoading || cardsQuery.isError) return;
+//     if (cards.length === 1 && rateCardId !== cards[0].id) {
+//       setRateCardId(cards[0].id);
+//       setConfigurationId("");
+//       setOptionIds([]);
+//       setAirlineId("");
+//       setQuote(null);
+//       setSelectedItemIds([]);
+//     } else if (cards.length !== 1 && rateCardId) {
+//       setRateCardId("");
+//       setConfigurationId("");
+//       setOptionIds([]);
+//       setAirlineId("");
+//       setQuote(null);
+//       setSelectedItemIds([]);
+//     }
+//   }, [cards, cardsQuery.isLoading, cardsQuery.isError, rateCardId]);
+
+//   // If there is exactly one active configuration, select it automatically so
+//   // the mobile flow can move straight from direction to the relevant detail
+//   // (air weight, land transport choice, or sea container choice).
+//   useEffect(() => {
+//     if (!rateCardId || configsQuery.isLoading || configsQuery.isError) return;
+
+//     if (configurations.length === 1 && configurationId !== configurations[0].id) {
+//       setConfigurationId(configurations[0].id);
+//       setOptionIds([]);
+//       setAirlineId("");
+//       setQuote(null);
+//       setSelectedItemIds([]);
+//       setFormError("");
+//       return;
+//     }
+
+//     if (
+//       configurationId &&
+//       !configurations.some((item) => item.id === configurationId)
+//     ) {
+//       setConfigurationId("");
+//       setOptionIds([]);
+//       setAirlineId("");
+//       setQuote(null);
+//       setSelectedItemIds([]);
+//       setFormError("");
+//     }
+//   }, [
+//     rateCardId,
+//     configsQuery.isLoading,
+//     configsQuery.isError,
+//     configurations,
+//     configurationId,
+//   ]);
+
+//   function clearQuote() {
+//     setQuote(null);
+//     setSelectedItemIds([]);
+//     setFormError("");
+//   }
+
+//   function changeMode(next: QuoteMode) {
+//     setMode(next);
+//     setRateCardId("");
+//     setConfigurationId("");
+//     setOptionIds([]);
+//     setAirlineId("");
+//     setQuote(null);
+//     setSelectedItemIds([]);
+//     setFormError("");
+//   }
+
+//   function changeDirection(next: QuoteDirection) {
+//     setDirection(next);
+//     setRateCardId("");
+//     setConfigurationId("");
+//     setOptionIds([]);
+//     setAirlineId("");
+//     setQuote(null);
+//     setSelectedItemIds([]);
+//     setFormError("");
+//   }
+
+//   function toggleOption(id: string) {
+//     if (mode === "LAND" || mode === "SEA") {
+//       // Transport route/haul type and sea container type are mutually exclusive.
+//       // Clicking another card replaces the prior choice; clicking the chosen
+//       // card cannot leave the request without a required option.
+//       setOptionIds([id]);
+//     } else {
+//       // Air freight add-on services are independently selectable.
+//       setOptionIds((current) =>
+//         current.includes(id)
+//           ? current.filter((item) => item !== id)
+//           : [...current, id],
+//       );
+//     }
+//     clearQuote();
+//   }
+
+//   function toggleItem(id: string) {
+//     setSelectedItemIds((current) =>
+//       current.includes(id)
+//         ? current.filter((item) => item !== id)
+//         : [...current, id],
+//     );
+//     setFormError("");
+//   }
+
+//   async function calculate() {
+//     setFormError("");
+
+//     if (cards.length !== 1 || !rateCardId || !configuration) {
+//       setFormError(
+//         cards.length > 1
+//           ? "More than one active pricing schedule matches this shipment. Please contact the quotation team."
+//           : "No active pricing option is available for this shipment yet.",
+//       );
+//       return;
+//     }
+//     if (weightInputRequired && (!weightKg.trim() || !Number.isFinite(Number(weightKg)) || Number(weightKg) <= 0)) {
+//       setFormError(
+//         isAirFreight
+//           ? "Enter the chargeable air freight weight in kilograms."
+//           : "Enter a shipment weight greater than zero.",
+//       );
+//       return;
+//     }
+//     if (requiresSingleModeOption) {
+//       if (activeConfigurationOptions.length === 0) {
+//         setFormError(
+//           mode === "LAND"
+//             ? "No active land transport options are configured for this pricing setup. Please contact the quotation team."
+//             : "No active container options are configured for this pricing setup. Please contact the quotation team.",
+//         );
+//         return;
+//       }
+//       if (
+//         optionIds.length !== 1 ||
+//         !activeConfigurationOptions.some((option) => option.id === optionIds[0])
+//       ) {
+//         setFormError(
+//           mode === "LAND"
+//             ? "Choose one land transport option to continue."
+//             : "Choose one container type to continue.",
+//         );
+//         return;
+//       }
+//     }
+//     if (configuration.quantityEnabled && (!quantity || Number(quantity) <= 0)) {
+//       setFormError("Enter a quantity greater than zero.");
+//       return;
+//     }
+//     if (configuration.airlineSelectorEnabled && !airlineId) {
+//       setFormError("Choose an airline to continue.");
+//       return;
+//     }
+//     if (configuration.customsValueEnabled && Number(customsValue || 0) < 0) {
+//       setFormError("Customs value cannot be negative.");
+//       return;
+//     }
+//     if (configuration.freightAmountEnabled && Number(freightAmount || 0) < 0) {
+//       setFormError("Freight amount cannot be negative.");
+//       return;
+//     }
+
+//     const payload: CalculateQuoteInput = {
+//       rateCardId,
+//       configurationId: configuration.id,
+//       optionIds,
+//       ...(airlineId ? { airlineId } : {}),
+//       ...(weightInputRequired ? { weightKg: Number(weightKg) } : {}),
+//       ...(configuration.quantityEnabled ? { quantity: Number(quantity) } : {}),
+//       ...(configuration.customsValueEnabled
+//         ? { customsValue: Number(customsValue || 0) }
+//         : {}),
+//       ...(configuration.freightAmountEnabled
+//         ? { freightAmount: Number(freightAmount || 0) }
+//         : {}),
+//       ...(goodsDescription.trim()
+//         ? { goodsDescription: goodsDescription.trim() }
+//         : {}),
+//       ...(hsCode.trim() ? { hsCode: hsCode.trim() } : {}),
+//       ...(configuration.nafdacEnabled ? { nafdacRequired } : {}),
+//       ...(configuration.transportEnabled ? { transportRequired } : {}),
+//     };
+
+//     try {
+//       const result = await calculateMutation.mutateAsync(payload);
+//       setQuote(result);
+//       setSelectedItemIds(result.lines.map((line) => line.quoteItemId));
+//       // These are request-specific choices and must be reconfirmed for a newly
+//       // calculated quote. Reuse an invoice value already entered in the form.
+//       setCustomsChargeRequested(false);
+//       setInvoiceValue(customsValue.trim());
+//       setInvoiceCurrency(result.currency || "NGN");
+//       setTransportChargeRequested(false);
+//       setCustomerMessage("");
+//       window.setTimeout(() => {
+//         document
+//           .getElementById("quotation-results")
+//           ?.scrollIntoView({ behavior: "smooth", block: "start" });
+//       }, 80);
+//     } catch (error: unknown) {
+//       const e = error as {
+//         response?: { data?: { message?: string } };
+//         message?: string;
+//       };
+//       setFormError(
+//         e.response?.data?.message ??
+//           e.message ??
+//           "We couldn't calculate this quotation. Please try again.",
+//       );
+//     }
+//   }
+
+// async function requestHelp() {
+//   if (!quote) {
+//     setFormError("Please calculate your quotation first.");
+//     return;
+//   }
+
+//   if (selectedItemIds.length === 0) {
+//     setFormError("Select at least one service you want help with.");
+//     return;
+//   }
+
+//   if (!quote.quoteId || !quote.quoteNumber) {
+//     setFormError("Your quotation reference is missing. Please calculate your quote again.");
+//     return;
+//   }
+
+//   if (customsChargeRequested) {
+//     const invoiceAmount = Number(invoiceValue);
+//     if (!invoiceValue.trim() || !Number.isFinite(invoiceAmount) || invoiceAmount <= 0) {
+//       setFormError("Enter a commercial invoice value greater than zero for customs assessment.");
+//       return;
+//     }
+//     if (!/^[A-Z]{3}$/.test(invoiceCurrency.trim().toUpperCase())) {
+//       setFormError("Choose a valid three-letter invoice currency.");
+//       return;
+//     }
+//   }
+
+//   if (customerMessage.trim().length > 5000) {
+//     setFormError("Additional information cannot exceed 5,000 characters.");
+//     return;
+//   }
+
+//   const submissionPayload: AdditionalChargeRequestPayload = {
+//     selectedQuoteItemIds: [...selectedItemIds],
+//     customsChargeRequested,
+//     ...(customsChargeRequested
+//       ? { invoiceValue: Number(invoiceValue), invoiceCurrency: invoiceCurrency.trim().toUpperCase() }
+//       : {}),
+//     transportChargeRequested,
+//     ...(customerMessage.trim() ? { customerMessage: customerMessage.trim() } : {}),
+//   };
+
+//   const handoff: LoginHandoff = {
+//     quoteId: quote.quoteId,
+//     quoteNumber: quote.quoteNumber,
+//     selectedQuoteItemIds: [...selectedItemIds],
+//     customsChargeRequested,
+//     ...(customsChargeRequested
+//       ? { invoiceValue: Number(invoiceValue), invoiceCurrency: invoiceCurrency.trim().toUpperCase() }
+//       : {}),
+//     transportChargeRequested,
+//     ...(customerMessage.trim() ? { customerMessage: customerMessage.trim() } : {}),
+//     quote,
+//   };
+
+//   // Submit directly when the current exporter session exists. The token check
+//   // is important: frontend role state by itself is not authentication.
+//   const currentAuth = getCurrentAuthSnapshot();
+//   const currentRole = currentAuth.role || normalizeRole(user?.role);
+//   const canSubmitWithCurrentSession =
+//     Boolean(currentAuth.token) &&
+//     (!currentRole || currentRole === "EXPORTER");
+
+//   if (canSubmitWithCurrentSession) {
+//     setIsSubmitting(true);
+//     setFormError("");
+
+//     try {
+//       const submission = await submitPublicQuoteRequest(
+//         quote.quoteId,
+//         submissionPayload,
+//       );
+
+//       navigate(
+//         `/exporter/quotations/${encodeURIComponent(submission.id)}`,
+//         { replace: true },
+//       );
+//     } catch (error: unknown) {
+//       const e = error as {
+//         response?: { status?: number; data?: { message?: string } };
+//         message?: string;
+//       };
+
+//       // An expired token or a token belonging to a staff account must not
+//       // discard the review selections. Resume the same handoff after exporter
+//       // sign-in instead of sending the user through the staff login portal.
+//       if (e.response?.status === 401 || e.response?.status === 403) {
+//         navigate("/exporter/login", {
+//           state: {
+//             from: "/get-a-quote",
+//             quoteHandoff: handoff,
+//           },
+//         });
+//         return;
+//       }
+
+//       setFormError(
+//         e.response?.data?.message ??
+//           e.message ??
+//           "We couldn't submit your quotation request. Please try again.",
+//       );
+//     } finally {
+//       setIsSubmitting(false);
+//     }
+//     return;
+//   }
+
+//   // A currently signed-in staff account cannot submit an exporter request.
+//   // Send the user to the exporter sign-in form and preserve the quote handoff.
+//   if (currentRole && currentRole !== "EXPORTER") {
+//     navigate("/exporter/login", {
+//       state: {
+//         from: "/get-a-quote",
+//         quoteHandoff: handoff,
+//       },
+//     });
+//     return;
+//   }
+
+//   // Keep the callback integration for applications that own their login flow.
+//   if (onRequireLogin) {
+//     onRequireLogin(handoff);
+//     return;
+//   }
+
+//   navigate("/exporter/login", {
+//     state: {
+//       from: "/get-a-quote",
+//       quoteHandoff: handoff,
+//     },
+//   });
+// }
+
+//   const errorMessage = formError;
+//   const hasSingleCard = cards.length === 1 && Boolean(rateCardId);
+//   const selectedModeLabel = modes.find((item) => item.value === mode)?.label ?? mode;
+//   const selectedShipmentOption = configuration
+//     ? configuration.equipmentType || configuration.routeLabel || configuration.name || "Standard shipment"
+//     : "Not selected";
+//   const selectedDirectionLabel = direction === "IMPORT" ? "Import" : "Export";
+
+//   return (
+//     <main className="min-h-screen overflow-x-hidden bg-emerald-50/40 text-slate-900">
+//      <header className="border-b border-emerald-100 bg-white">
+//   <div className="mx-auto flex max-w-7xl items-center gap-3 px-4 py-3.5 sm:px-6 sm:py-4 lg:px-8">
+//     <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-emerald-700 text-white shadow-sm">
+//       <PackageCheck size={21} aria-hidden="true" />
+//     </span>
+
+//     <div className="min-w-0">
+//       <p className="text-sm font-extrabold tracking-tight text-emerald-950">
+//         Freight Quotations
+//       </p>
+
+//       <p className="text-xs text-slate-500">
+//         Clear pricing. Confident shipping.
+//       </p>
+//     </div>
+
+//     <div className="ml-auto flex shrink-0 items-center gap-2">
+//       <span className="hidden items-center gap-2 rounded-full border border-emerald-100 bg-emerald-50 px-3 py-2 text-xs font-semibold text-emerald-800 sm:flex">
+//         <LockKeyhole size={14} aria-hidden="true" />
+//         {isSignedInExporter
+//           ? "Exporter account active"
+//           : "Calculate before signing in"}
+//       </span>
+
+//       <Link
+//         to={isSignedInExporter ? "/exporter/quotations" : "/exporter/login"}
+//         className="inline-flex min-h-10 items-center justify-center gap-2 rounded-xl bg-emerald-700 px-4 py-2.5 text-sm font-bold text-white shadow-sm transition hover:bg-emerald-800 focus:outline-none focus:ring-4 focus:ring-emerald-500/20"
+//       >
+//         {isSignedInExporter ? "My Quotations" : "Exporter Sign In"}
+//         <ArrowRight size={16} aria-hidden="true" />
+//       </Link>
+//     </div>
+//   </div>
+// </header>
+//       <section className="bg-gradient-to-br from-emerald-950 via-emerald-800 to-green-700 text-white">
+//         <div className="mx-auto max-w-7xl px-4 py-9 sm:px-6 sm:py-12 lg:px-8 lg:py-14">
+//           <span className="inline-flex rounded-full border border-white/20 bg-white/10 px-3 py-1.5 text-xs font-bold tracking-wide text-emerald-50">
+//             AIR · LAND · SEA
+//           </span>
+//           <h1 className="mt-4 max-w-3xl text-3xl font-extrabold leading-tight tracking-tight sm:text-4xl lg:text-5xl">
+//             Get a shipping quote, <span className="text-lime-300">your way.</span>
+//           </h1>
+//           <p className="mt-3 max-w-2xl text-sm leading-6 text-emerald-50/90 sm:text-base sm:leading-7">
+//             Choose your shipment, see an itemized estimate, and select the services you need. No account is needed to calculate a quote.
+//           </p>
+//           <div className="mt-5 flex flex-wrap gap-2 text-xs font-semibold text-white/90">
+//             <span className="rounded-full bg-white/10 px-3 py-1.5">Transparent charges</span>
+//             <span className="rounded-full bg-white/10 px-3 py-1.5">Itemized estimate</span>
+//             <span className="rounded-full bg-white/10 px-3 py-1.5">Sign in only to submit</span>
+//           </div>
+//         </div>
+//       </section>
+
+//       <div className="mx-auto grid max-w-7xl min-w-0 gap-5 px-3 py-5 sm:gap-6 sm:px-6 sm:py-8 lg:grid-cols-[minmax(0,1fr)_300px] lg:px-8">
+//         <section className="min-w-0 rounded-2xl border border-emerald-100 bg-white p-4 shadow-sm sm:rounded-3xl sm:p-6 lg:p-7">
+//           <div className="flex items-start gap-3">
+//             <span className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-emerald-100 text-sm font-extrabold text-emerald-800">1</span>
+//             <div>
+//               <h2 className="text-xl font-extrabold tracking-tight sm:text-2xl">Shipment details</h2>
+//               <p className="mt-1 text-sm leading-5 text-slate-500">First, choose how your goods will travel.</p>
+//             </div>
+//           </div>
+
+//           <div className="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-3">
+//             {modes.map(({ value, label, description, Icon }) => {
+//               const selected = mode === value;
+//               return (
+//                 <button
+//                   key={value}
+//                   type="button"
+//                   onClick={() => changeMode(value)}
+//                   aria-pressed={selected}
+//                   className={`flex min-h-[84px] min-w-0 items-center gap-3 rounded-2xl border p-3.5 text-left transition focus:outline-none focus:ring-4 focus:ring-emerald-500/15 sm:flex-col sm:items-start sm:p-4 lg:flex-row lg:items-center ${
+//                     selected
+//                       ? "border-emerald-600 bg-emerald-50 ring-1 ring-emerald-600"
+//                       : "border-slate-200 bg-white hover:border-emerald-300 hover:bg-emerald-50/40"
+//                   }`}
+//                 >
+//                   <span className={`grid h-11 w-11 shrink-0 place-items-center rounded-xl ${selected ? "bg-emerald-700 text-white" : "bg-slate-100 text-slate-600"}`}>
+//                     <Icon size={21} aria-hidden="true" />
+//                   </span>
+//                   <span className="min-w-0 flex-1">
+//                     <span className="block text-sm font-bold">{label}</span>
+//                     <span className="mt-1 block text-xs leading-4 text-slate-500">{description}</span>
+//                   </span>
+//                   {selected && <CheckCircle2 size={18} className="shrink-0 text-emerald-700" aria-hidden="true" />}
+//                 </button>
+//               );
+//             })}
+//           </div>
+
+//           <div className="mt-6">
+//             <Field label="Shipment direction">
+//               <div className="grid grid-cols-2 rounded-xl bg-slate-100 p-1">
+//                 {(["IMPORT", "EXPORT"] as const).map((value) => (
+//                   <button
+//                     key={value}
+//                     type="button"
+//                     onClick={() => changeDirection(value)}
+//                     aria-pressed={direction === value}
+//                     className={`min-h-11 rounded-lg text-sm font-bold transition ${direction === value ? "bg-white text-emerald-800 shadow-sm" : "text-slate-500 hover:text-slate-800"}`}
+//                   >
+//                     {value === "IMPORT" ? "Import" : "Export"}
+//                   </button>
+//                 ))}
+//               </div>
+//             </Field>
+//           </div>
+
+//           {cardsQuery.isLoading && (
+//             <div className="mt-5 flex items-center gap-2 rounded-xl border border-emerald-100 bg-emerald-50/60 p-4 text-sm text-emerald-800" role="status">
+//               <LoaderCircle size={17} className="animate-spin" /> Finding available shipment options…
+//             </div>
+//           )}
+
+//           {cardsQuery.isError && (
+//             <div role="alert" className="mt-5 flex flex-col gap-3 rounded-xl border border-rose-200 bg-rose-50 p-4 text-sm text-rose-800 sm:flex-row sm:items-center sm:justify-between">
+//               <span>We couldn't load the available shipping options.</span>
+//               <button type="button" onClick={() => void cardsQuery.refetch()} className="self-start font-bold underline sm:self-auto">Try again</button>
+//             </div>
+//           )}
+
+//           {!cardsQuery.isLoading && !cardsQuery.isError && cards.length === 0 && (
+//             <div className="mt-5 rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm leading-6 text-amber-950">
+//               No shipping options are currently available for this selection. Please contact our quotation team for assistance.
+//             </div>
+//           )}
+
+//           {cards.length > 1 && (
+//             <div role="alert" className="mt-5 rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm leading-6 text-amber-950">
+//               More than one active pricing schedule matches this shipment. Please ask the administrator to configure one active schedule for this shipping method and direction.
+//             </div>
+//           )}
+
+//           {hasSingleCard && configsQuery.isLoading && (
+//             <div className="mt-5 flex items-center gap-2 text-sm text-slate-500" role="status">
+//               <LoaderCircle size={16} className="animate-spin" /> Loading shipment choices…
+//             </div>
+//           )}
+
+//           {configsQuery.isError && (
+//             <div role="alert" className="mt-5 rounded-xl border border-rose-200 bg-rose-50 p-4 text-sm text-rose-800">
+//               We couldn't load the shipment choices. <button type="button" onClick={() => void configsQuery.refetch()} className="font-bold underline">Try again</button>
+//             </div>
+//           )}
+
+//           {hasSingleCard && !configsQuery.isLoading && !configsQuery.isError && configurations.length === 0 && (
+//             <div className="mt-5 rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm leading-6 text-amber-950">
+//               Shipment options have not been configured for this service yet.
+//             </div>
+//           )}
+
+//           {hasSingleCard && configurations.length > 1 && (
+//             <div className="mt-7 border-t border-slate-100 pt-6">
+//               <div className="flex items-start gap-3">
+//                 <span className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-emerald-100 text-sm font-extrabold text-emerald-800">2</span>
+//                 <div>
+//                   <h3 className="text-lg font-extrabold">
+//                     {mode === "AIR"
+//                       ? "Choose your air freight configuration"
+//                       : mode === "LAND"
+//                         ? "Choose your land transport configuration"
+//                         : "Choose your sea freight configuration"}
+//                   </h3>
+//                   <p className="mt-1 text-sm leading-5 text-slate-500">
+//                     {mode === "AIR"
+//                       ? "Choose an active air freight pricing configuration, then enter the chargeable weight."
+//                       : mode === "LAND"
+//                         ? "Choose an active land transport configuration, then select one transport option."
+//                         : "Choose an active sea freight configuration, then select one container type."}
+//                   </p>
+//                 </div>
+//               </div>
+
+//               <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
+//                 {configurations.map((item) => {
+//                   const selected = configurationId === item.id;
+//                   const title = item.equipmentType || item.routeLabel || item.name;
+//                   const subtitle = [
+//                     item.routeLabel && item.routeLabel !== title ? item.routeLabel : "",
+//                     item.name && item.name !== title && item.name !== item.routeLabel ? item.name : "",
+//                   ].filter(Boolean).join(" · ");
+//                   return (
+//                     <button
+//                       key={item.id}
+//                       type="button"
+//                       aria-pressed={selected}
+//                       onClick={() => {
+//                         setConfigurationId(item.id);
+//                         setOptionIds([]);
+//                         setAirlineId("");
+//                         clearQuote();
+//                       }}
+//                       className={`flex min-h-[88px] min-w-0 items-center justify-between gap-3 rounded-2xl border p-4 text-left transition focus:outline-none focus:ring-4 focus:ring-emerald-500/15 ${selected ? "border-emerald-600 bg-emerald-50 ring-1 ring-emerald-600" : "border-slate-200 hover:border-emerald-300 hover:bg-emerald-50/40"}`}
+//                     >
+//                       <span className="min-w-0">
+//                         <span className="block break-words text-sm font-bold text-slate-900">{title}</span>
+//                         {subtitle && <span className="mt-1 block text-xs leading-5 text-slate-500">{subtitle}</span>}
+//                         <span className="mt-2 inline-flex rounded-full bg-white px-2.5 py-1 text-xs font-semibold text-emerald-800 ring-1 ring-emerald-100">{item.currency}</span>
+//                       </span>
+//                       {selected && <CheckCircle2 size={20} className="shrink-0 text-emerald-700" aria-hidden="true" />}
+//                     </button>
+//                   );
+//                 })}
+//               </div>
+//             </div>
+//           )}
+
+//           {hasSingleCard && configurations.length === 1 && configuration && (
+//             <div className="mt-5 flex items-start gap-3 rounded-xl border border-emerald-100 bg-emerald-50/70 p-3.5 sm:p-4">
+//               <span className="mt-0.5 grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-emerald-700 text-white">
+//                 <CheckCircle2 size={17} aria-hidden="true" />
+//               </span>
+//               <div className="min-w-0">
+//                 <p className="text-[11px] font-bold uppercase tracking-[0.12em] text-emerald-800">Active pricing configuration</p>
+//                 <p className="mt-1 break-words text-sm font-bold text-emerald-950">
+//                   {configuration.equipmentType || configuration.routeLabel || configuration.name}
+//                 </p>
+//                 {(configuration.routeLabel || configuration.name) && (
+//                   <p className="mt-1 break-words text-xs leading-5 text-emerald-900/75">
+//                     {[configuration.routeLabel, configuration.name]
+//                       .filter((value, index, all) => Boolean(value) && all.indexOf(value) === index)
+//                       .filter((value) => value !== (configuration.equipmentType || configuration.routeLabel || configuration.name))
+//                       .join(" · ")}
+//                   </p>
+//                 )}
+//               </div>
+//               <span className="ml-auto shrink-0 rounded-full bg-white px-2.5 py-1 text-xs font-bold text-emerald-800 ring-1 ring-emerald-100">
+//                 {configuration.currency}
+//               </span>
+//             </div>
+//           )}
+
+//           {configuration && (
+//             <div className="mt-7 border-t border-slate-100 pt-6">
+//               <div className="flex flex-wrap items-center justify-between gap-3">
+//                 <div>
+//                   <p className="text-xs font-bold uppercase tracking-[0.16em] text-emerald-700">
+//                     {configurations.length > 1 ? "Step 3" : "Step 2"}
+//                   </p>
+//                   <h3 className="mt-1 text-lg font-extrabold text-slate-900">
+//                     {mode === "AIR"
+//                       ? "Air freight details"
+//                       : mode === "LAND"
+//                         ? "Land transport details"
+//                         : "Sea freight details"}
+//                   </h3>
+//                   <p className="mt-1 max-w-2xl text-sm leading-5 text-slate-500">
+//                     {mode === "AIR"
+//                       ? "Enter the chargeable weight. Your estimate uses the active rates configured for this air freight service."
+//                       : mode === "LAND"
+//                         ? "Choose one configured transport option. The available choices below are managed in your rate-card settings."
+//                         : "Choose one configured container type. The available choices below are managed in your rate-card settings."}
+//                   </p>
+//                 </div>
+//                 <span className="rounded-full bg-emerald-50 px-3 py-1.5 text-xs font-bold text-emerald-800">{configuration.currency}</span>
+//               </div>
+
+//               {activeConfigurationOptions.length > 0 && (
+//                 <div className="mt-5">
+//                   <p className="text-sm font-bold">{modeOptionTitle}</p>
+//                   <p className="mt-1 text-xs leading-5 text-slate-500">{modeOptionHelp}</p>
+//                   <div className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2">
+//                     {activeConfigurationOptions.map((option) => {
+//                       const selected = optionIds.includes(option.id);
+//                       if (requiresSingleModeOption) {
+//                         return (
+//                           <label
+//                             key={option.id}
+//                             className={`flex min-h-[64px] cursor-pointer items-center gap-3 rounded-xl border p-3.5 text-left transition focus-within:ring-4 focus-within:ring-emerald-500/15 ${selected ? "border-emerald-600 bg-emerald-50 ring-1 ring-emerald-600" : "border-slate-200 bg-white hover:border-emerald-300 hover:bg-emerald-50/40"}`}
+//                           >
+//                             <input
+//                               type="radio"
+//                               name="shipment-mode-option"
+//                               value={option.id}
+//                               checked={selected}
+//                               onChange={() => toggleOption(option.id)}
+//                               className="h-4 w-4 shrink-0 accent-emerald-700"
+//                             />
+//                             <span className="min-w-0 flex-1">
+//                               <span className="block break-words text-sm font-bold text-slate-900">{option.name}</span>
+//                               {option.code && option.code !== option.name && (
+//                                 <span className="mt-1 block text-xs text-slate-500">{option.code}</span>
+//                               )}
+//                             </span>
+//                             {selected && <CheckCircle2 size={18} className="shrink-0 text-emerald-700" aria-hidden="true" />}
+//                           </label>
+//                         );
+//                       }
+
+//                       return (
+//                         <button
+//                           key={option.id}
+//                           type="button"
+//                           aria-pressed={selected}
+//                           onClick={() => toggleOption(option.id)}
+//                           className={`flex min-h-[56px] items-center justify-between gap-3 rounded-xl border p-3.5 text-left text-sm font-semibold transition focus:outline-none focus:ring-4 focus:ring-emerald-500/15 ${selected ? "border-emerald-600 bg-emerald-50 text-emerald-900 ring-1 ring-emerald-600" : "border-slate-200 bg-white hover:border-emerald-300 hover:bg-emerald-50/40"}`}
+//                         >
+//                           <span className="min-w-0 break-words">{option.name}</span>
+//                           {selected && <CheckCircle2 size={17} className="shrink-0 text-emerald-700" aria-hidden="true" />}
+//                         </button>
+//                       );
+//                     })}
+//                   </div>
+//                 </div>
+//               )}
+
+//               {missingRequiredModeOptions && (
+//                 <div role="alert" className="mt-5 rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm leading-6 text-amber-950">
+//                   {mode === "LAND"
+//                     ? "No active land transport options have been configured for this rate-card configuration. Add options such as short haul or long haul in Rate Card Management before making this configuration available."
+//                     : "No active sea freight container options have been configured for this rate-card configuration. Add options such as 20ft or 40ft in Rate Card Management before making this configuration available."}
+//                 </div>
+//               )}
+
+//               <div className="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-2">
+//                 {weightInputRequired && (
+//                   <Field
+//                     label={isAirFreight ? "Chargeable air freight weight (kg)" : "Shipment weight (kg)"}
+//                     hint={isAirFreight ? "Required for air freight. Enter the total chargeable weight in kilograms." : "Enter the total chargeable weight."}
+//                   >
+//                     <input
+//                       className={inputClass}
+//                       type="number"
+//                       min="0.01"
+//                       step="0.01"
+//                       inputMode="decimal"
+//                       autoComplete="off"
+//                       required
+//                       placeholder={isAirFreight ? "e.g. 125 kg" : "e.g. 125"}
+//                       value={weightKg}
+//                       onChange={(event) => { setWeightKg(event.target.value); clearQuote(); }}
+//                     />
+//                   </Field>
+//                 )}
+//                 {configuration.quantityEnabled && (
+//                   <Field label="Quantity">
+//                     <input className={inputClass} type="number" min="1" step="1" inputMode="numeric" value={quantity} onChange={(event) => { setQuantity(event.target.value); clearQuote(); }} />
+//                   </Field>
+//                 )}
+//                 {configuration.customsValueEnabled && (
+//                   <Field label={`Customs value (${configuration.currency})`}>
+//                     <input className={inputClass} type="number" min="0" step="0.01" inputMode="decimal" placeholder="0.00" value={customsValue} onChange={(event) => { setCustomsValue(event.target.value); clearQuote(); }} />
+//                   </Field>
+//                 )}
+//                 {configuration.freightAmountEnabled && (
+//                   <Field label={`Freight amount (${configuration.currency})`}>
+//                     <input className={inputClass} type="number" min="0" step="0.01" inputMode="decimal" placeholder="0.00" value={freightAmount} onChange={(event) => { setFreightAmount(event.target.value); clearQuote(); }} />
+//                   </Field>
+//                 )}
+//                 {configuration.airlineSelectorEnabled && (
+//                   <Field label="Airline">
+//                     <select className={inputClass} value={airlineId} onChange={(event) => { setAirlineId(event.target.value); clearQuote(); }}>
+//                       <option value="">Choose airline</option>
+//                       {configuration.airlines.filter((airline) => airline.isActive !== false).map((airline) => (
+//                         <option key={airline.id} value={airline.id}>{airline.name} ({airline.code})</option>
+//                       ))}
+//                     </select>
+//                   </Field>
+//                 )}
+//                 {configuration.nafdacEnabled && (
+//                   <Field label="NAFDAC service">
+//                     <label className="flex min-h-12 cursor-pointer items-center gap-3 rounded-xl border border-slate-200 px-3 text-sm hover:bg-emerald-50/40">
+//                       <input type="checkbox" checked={nafdacRequired} onChange={(event) => { setNafdacRequired(event.target.checked); clearQuote(); }} className="h-4 w-4 accent-emerald-700" />
+//                       Include NAFDAC assistance
+//                     </label>
+//                   </Field>
+//                 )}
+//                 {configuration.transportEnabled && (
+//                   <Field label="Transport service">
+//                     <label className="flex min-h-12 cursor-pointer items-center gap-3 rounded-xl border border-slate-200 px-3 text-sm hover:bg-emerald-50/40">
+//                       <input type="checkbox" checked={transportRequired} onChange={(event) => { setTransportRequired(event.target.checked); clearQuote(); }} className="h-4 w-4 accent-emerald-700" />
+//                       Include transport
+//                     </label>
+//                   </Field>
+//                 )}
+//                 <Field label="Goods description" hint="Optional">
+//                   <input className={inputClass} placeholder="What are you shipping?" value={goodsDescription} onChange={(event) => { setGoodsDescription(event.target.value); clearQuote(); }} />
+//                 </Field>
+//                 <Field label="HS code" hint="Optional customs classification">
+//                   <input className={inputClass} placeholder="Enter HS code if known" value={hsCode} onChange={(event) => { setHsCode(event.target.value); clearQuote(); }} />
+//                 </Field>
+//               </div>
+
+//               <div className="mt-6 flex flex-col gap-3 border-t border-slate-100 pt-5 sm:flex-row sm:items-center sm:justify-between">
+//                 <p className="max-w-md text-xs leading-5 text-slate-500">Your estimate uses the current saved rates. Some variable charges may need a final review.</p>
+//                 <button type="button" onClick={() => void calculate()} disabled={calculateMutation.isPending || missingRequiredModeOptions} className={primaryButtonClass}>
+//                   {calculateMutation.isPending ? <LoaderCircle size={17} className="animate-spin" /> : <ArrowRight size={17} />}
+//                   {calculateMutation.isPending ? "Calculating…" : "Calculate my quote"}
+//                 </button>
+//               </div>
+//             </div>
+//           )}
+
+//           {errorMessage && (
+//             <div role="alert" className="mt-5 flex items-start gap-3 rounded-xl border border-rose-200 bg-rose-50 p-4 text-sm leading-6 text-rose-800">
+//               <CircleAlert size={18} className="mt-0.5 shrink-0" />
+//               <span>{errorMessage}</span>
+//             </div>
+//           )}
+
+//           {quote && (
+//             <section
+//               id="quotation-results"
+//               className="mt-8 scroll-mt-5 overflow-hidden rounded-2xl border border-emerald-100 bg-white shadow-lg shadow-emerald-950/5 sm:rounded-3xl"
+//             >
+//               <div className="bg-gradient-to-br from-emerald-950 via-emerald-900 to-emerald-700 p-5 text-white sm:p-7">
+//                 <div className="flex flex-wrap items-start justify-between gap-3">
+//                   <div>
+//                     <p className="text-xs font-bold uppercase tracking-[0.16em] text-lime-300">Estimate for selected services</p>
+//                     <h2 className="mt-2 break-words text-3xl font-extrabold tracking-tight sm:text-4xl">
+//                       {money(selectedTotals.totalAmount, quote.currency)}
+//                     </h2>
+//                     <p className="mt-2 break-words text-sm text-emerald-50">
+//                       Reference: <span className="font-bold text-white">{quote.quoteNumber}</span>
+//                     </p>
+//                     {selectedItemIds.length !== quote.lines.length && (
+//                       <p className="mt-2 break-words text-xs text-emerald-100/90">
+//                         Original full-quote estimate: {money(quote.totalAmount, quote.currency)}
+//                       </p>
+//                     )}
+//                   </div>
+//                   <span className="inline-flex shrink-0 items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3 py-2 text-xs font-bold text-white">
+//                     <CheckCircle2 size={15} aria-hidden="true" />
+//                     Estimate ready
+//                   </span>
+//                 </div>
+
+//                 <div className="mt-6 overflow-hidden rounded-xl border border-white/20 bg-white/10">
+//                   <div className="grid grid-cols-3 divide-x divide-white/15">
+//                     <div className="min-w-0 px-3 py-3 sm:px-4 sm:py-3.5">
+//                       <p className="text-[9px] font-extrabold uppercase leading-4 tracking-[0.12em] text-emerald-100 sm:text-[10px]">
+//                         Mode of shipment
+//                       </p>
+//                       <p className="mt-1 break-words text-xs font-bold leading-5 text-white sm:text-sm">
+//                         {selectedModeLabel}
+//                       </p>
+//                     </div>
+//                     <div className="min-w-0 px-3 py-3 sm:px-4 sm:py-3.5">
+//                       <p className="text-[9px] font-extrabold uppercase leading-4 tracking-[0.12em] text-emerald-100 sm:text-[10px]">
+//                         Shipment option
+//                       </p>
+//                       <p className="mt-1 break-words text-xs font-bold leading-5 text-white sm:text-sm">
+//                         {selectedShipmentOption}
+//                       </p>
+//                     </div>
+//                     <div className="min-w-0 px-3 py-3 sm:px-4 sm:py-3.5">
+//                       <p className="text-[9px] font-extrabold uppercase leading-4 tracking-[0.12em] text-emerald-100 sm:text-[10px]">
+//                         Direction
+//                       </p>
+//                       <p className="mt-1 break-words text-xs font-bold leading-5 text-white sm:text-sm">
+//                         {selectedDirectionLabel}
+//                       </p>
+//                     </div>
+//                   </div>
+//                 </div>
+
+//                 {quote.requiresReview ? (
+//                   <p className="mt-4 rounded-xl border border-amber-300/40 bg-amber-300/10 p-3 text-sm leading-5 text-amber-50">
+//                     Some charges require manual review. The final amount may change after review.
+//                   </p>
+//                 ) : (
+//                   <p className="mt-4 flex items-center gap-2 text-sm text-lime-200">
+//                     <CheckCircle2 size={17} aria-hidden="true" />
+//                     Calculated from saved active rates
+//                   </p>
+//                 )}
+//               </div>
+
+//               <div className="p-4 sm:p-6">
+//                 <div className="flex flex-col gap-1 sm:flex-row sm:items-end sm:justify-between">
+//                   <div>
+//                     <h3 className="text-lg font-extrabold">Review &amp; Customize Your Quote</h3>
+//                     <p className="mt-1 text-sm leading-5 text-slate-500">
+//                       Include only the services you want our team to handle. Removing a service here does not delete the original quotation.
+//                     </p>
+//                   </div>
+//                   <span className="mt-2 inline-flex w-fit rounded-full bg-emerald-50 px-3 py-1.5 text-xs font-bold text-emerald-800">
+//                     {selectedItemIds.length} selected
+//                   </span>
+//                 </div>
+
+//                 <div className="mt-4 space-y-3">
+//                   {quote.lines.map((line) => {
+//                     const selected = selectedItemIds.includes(line.quoteItemId);
+//                     const selectionLine = line as SelectionAwareLine;
+//                     const displayedAmount = selected
+//                       ? selectedTotals.lineAmounts[line.quoteItemId] ?? line.lineTotal
+//                       : line.lineTotal;
+
+//                     return (
+//                       <div
+//                         key={line.quoteItemId}
+//                         className={`rounded-xl border p-3.5 transition sm:p-4 ${
+//                           selected
+//                             ? "border-emerald-300 bg-emerald-50/60"
+//                             : "border-slate-200 bg-slate-50/70"
+//                         }`}
+//                       >
+//                         <div className="flex min-w-0 flex-col gap-3 sm:flex-row sm:items-start">
+//                           <label className="flex min-w-0 flex-1 cursor-pointer items-start gap-3">
+//                             <input
+//                               type="checkbox"
+//                               checked={selected}
+//                               onChange={() => toggleItem(line.quoteItemId)}
+//                               aria-label={`${selected ? "Exclude" : "Include"} ${line.componentName}`}
+//                               className="mt-1 h-4 w-4 shrink-0 accent-emerald-700"
+//                             />
+//                             <span className="min-w-0 flex-1">
+//                               <span className="flex flex-wrap items-center gap-2">
+//                                 <span className={`break-words text-sm font-semibold ${selected ? "text-slate-900" : "text-slate-600"}`}>
+//                                   {line.componentName}
+//                                 </span>
+//                                 {line.isEstimate && (
+//                                   <span className="inline-block rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-bold uppercase text-amber-800">
+//                                     Estimate
+//                                   </span>
+//                                 )}
+//                                 <span className={`inline-block rounded-full px-2 py-0.5 text-[10px] font-bold uppercase ${selected ? "bg-emerald-100 text-emerald-800" : "bg-slate-200 text-slate-600"}`}>
+//                                   {selected ? "Included" : "Excluded"}
+//                                 </span>
+//                               </span>
+//                               {line.remarks && (
+//                                 <span className="mt-1 block break-words text-xs leading-5 text-slate-500">
+//                                   {line.remarks}
+//                                 </span>
+//                               )}
+//                               {line.quantity > 1 && line.unit && (
+//                                 <span className="mt-1 block text-xs text-slate-500">
+//                                   {line.quantity} {line.unit}
+//                                 </span>
+//                               )}
+//                               {selected &&
+//                                 String(selectionLine.calculationType) === "PERCENTAGE" &&
+//                                 String(selectionLine.calculationBasis) === "SUBTOTAL" &&
+//                                 typeof selectionLine.percentage === "number" && (
+//                                   <span className="mt-1 block text-xs text-emerald-800">
+//                                     Recalculated at {selectionLine.percentage}% of selected service subtotal
+//                                   </span>
+//                                 )}
+//                             </span>
+//                             <span className="shrink-0 text-right">
+//                               <span className={`block text-sm font-bold tabular-nums ${selected ? "text-slate-900" : "text-slate-500"}`}>
+//                                 {money(displayedAmount, quote.currency)}
+//                               </span>
+//                               {!selected && (
+//                                 <span className="mt-1 block text-[11px] text-slate-400">Not in request</span>
+//                               )}
+//                             </span>
+//                           </label>
+
+//                           <button
+//                             type="button"
+//                             onClick={() => toggleItem(line.quoteItemId)}
+//                             aria-label={selected ? `Remove ${line.componentName} from request` : `Add ${line.componentName} to request`}
+//                             className={`inline-flex min-h-9 shrink-0 items-center justify-center gap-2 self-end rounded-lg border px-3 py-2 text-xs font-bold transition focus:outline-none focus:ring-4 focus:ring-emerald-500/15 sm:self-start ${
+//                               selected
+//                                 ? "border-rose-200 bg-white text-rose-700 hover:border-rose-300 hover:bg-rose-50"
+//                                 : "border-emerald-200 bg-white text-emerald-800 hover:border-emerald-300 hover:bg-emerald-50"
+//                             }`}
+//                           >
+//                             {selected ? <Trash2 size={14} aria-hidden="true" /> : <Plus size={14} aria-hidden="true" />}
+//                             {selected ? "Remove" : "Add back"}
+//                           </button>
+//                         </div>
+//                       </div>
+//                     );
+//                   })}
+//                 </div>
+
+//                 <div className="mt-5 rounded-xl bg-emerald-50/70 p-4 sm:p-5">
+//                   <div className="flex justify-between gap-3 text-sm text-slate-600">
+//                     <span>Selected services subtotal</span>
+//                     <span className="text-right font-semibold tabular-nums">
+//                       {money(selectedTotals.subtotal, quote.currency)}
+//                     </span>
+//                   </div>
+//                   <div className="mt-3 flex justify-between gap-3 text-sm text-slate-600">
+//                     <span>
+//                       VAT / tax{selectedTotals.vatEnabled ? ` (${selectedTotals.vatPercentage}%)` : ""}
+//                     </span>
+//                     <span className="text-right font-semibold tabular-nums">
+//                       {money(selectedTotals.taxAmount, quote.currency)}
+//                     </span>
+//                   </div>
+//                   <div className="mt-4 flex justify-between gap-3 border-t border-emerald-100 pt-4">
+//                     <span className="font-extrabold">Estimated total for selected services</span>
+//                     <span className="text-right text-lg font-extrabold text-emerald-800 tabular-nums">
+//                       {money(selectedTotals.totalAmount, quote.currency)}
+//                     </span>
+//                   </div>
+//                 </div>
+
+//                 <section className="mt-6 rounded-2xl border border-slate-200 bg-white p-4 sm:p-5" aria-labelledby="additional-request-title">
+//                   <div className="flex items-start gap-3">
+//                     <span className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-emerald-50 text-emerald-800"><PackageCheck size={18} aria-hidden="true" /></span>
+//                     <div className="min-w-0">
+//                       <h3 id="additional-request-title" className="text-base font-extrabold text-slate-950">Additional services and instructions</h3>
+//                       <p className="mt-1 text-sm leading-5 text-slate-500">Tell our operations team which extra charges you need help with. These charges are assessed by the team and are not included in the estimate above until priced.</p>
+//                     </div>
+//                   </div>
+
+//                   <fieldset className="mt-5">
+//                     <legend className="text-sm font-bold text-slate-800">Do you need assistance with customs duties and charges?</legend>
+//                     <div className="mt-3 grid grid-cols-2 gap-2 sm:max-w-sm">
+//                       {[{value:false,label:"No, thank you"},{value:true,label:"Yes, please"}].map((choice) => (
+//                         <button key={String(choice.value)} type="button" aria-pressed={customsChargeRequested === choice.value} onClick={() => { setCustomsChargeRequested(choice.value); setFormError(""); }} className={`min-h-11 rounded-xl border px-3 py-2.5 text-sm font-bold transition focus:outline-none focus-visible:ring-4 focus-visible:ring-emerald-500/20 ${customsChargeRequested === choice.value ? "border-emerald-700 bg-emerald-700 text-white" : "border-slate-200 bg-white text-slate-700 hover:border-emerald-300 hover:bg-emerald-50"}`}>
+//                           {choice.label}
+//                         </button>
+//                       ))}
+//                     </div>
+//                     {customsChargeRequested && (
+//                       <div className="mt-4 grid gap-3 rounded-xl border border-emerald-100 bg-emerald-50/50 p-3 sm:grid-cols-[minmax(0,1fr)_150px] sm:p-4">
+//                         <div>
+//                           <label htmlFor="customs-invoice-value" className="mb-1.5 block text-sm font-semibold text-slate-800">Commercial invoice value <span className="text-rose-600">*</span></label>
+//                           <input id="customs-invoice-value" type="number" min="0.01" step="0.01" inputMode="decimal" value={invoiceValue} onChange={(event) => setInvoiceValue(event.target.value)} placeholder="Enter the invoice value" required aria-describedby="customs-invoice-help" className={inputClass} />
+//                           <p id="customs-invoice-help" className="mt-1.5 text-xs leading-5 text-slate-500">Enter the goods value shown on your commercial invoice. Our team will use it to assess the applicable customs charges.</p>
+//                         </div>
+//                         <div>
+//                           <label htmlFor="customs-invoice-currency" className="mb-1.5 block text-sm font-semibold text-slate-800">Invoice currency</label>
+//                           <select id="customs-invoice-currency" value={invoiceCurrency} onChange={(event) => setInvoiceCurrency(event.target.value)} className={inputClass}>
+//                             {[...new Set([quote.currency || "NGN", "NGN", "USD", "EUR", "GBP", "CNY", "XOF"])].map((currency) => <option key={currency} value={currency}>{currency}</option>)}
+//                           </select>
+//                         </div>
+//                       </div>
+//                     )}
+//                   </fieldset>
+
+//                   <fieldset className="mt-5 border-t border-slate-100 pt-5">
+//                     <legend className="text-sm font-bold text-slate-800">Would you like us to arrange and price transportation as well?</legend>
+//                     <p className="mt-1 text-xs leading-5 text-slate-500">Choose yes if you need a transport quote in addition to the selected services.</p>
+//                     <div className="mt-3 grid grid-cols-2 gap-2 sm:max-w-sm">
+//                       {[{value:false,label:"No transport"},{value:true,label:"Yes, quote transport"}].map((choice) => (
+//                         <button key={String(choice.value)} type="button" aria-pressed={transportChargeRequested === choice.value} onClick={() => setTransportChargeRequested(choice.value)} className={`min-h-11 rounded-xl border px-3 py-2.5 text-sm font-bold transition focus:outline-none focus-visible:ring-4 focus-visible:ring-emerald-500/20 ${transportChargeRequested === choice.value ? "border-emerald-700 bg-emerald-700 text-white" : "border-slate-200 bg-white text-slate-700 hover:border-emerald-300 hover:bg-emerald-50"}`}>
+//                           {choice.label}
+//                         </button>
+//                       ))}
+//                     </div>
+//                   </fieldset>
+
+//                   <div className="mt-5 border-t border-slate-100 pt-5">
+//                     <label htmlFor="quotation-additional-information" className="block text-sm font-bold text-slate-800">Additional information <span className="font-normal text-slate-500">(optional)</span></label>
+//                     <textarea id="quotation-additional-information" rows={4} maxLength={5000} value={customerMessage} onChange={(event) => setCustomerMessage(event.target.value)} placeholder="Add delivery location, timing, invoice context, special handling needs, or any other instructions…" className="mt-2 w-full resize-y rounded-xl border border-slate-200 bg-white p-3.5 text-sm leading-6 outline-none transition placeholder:text-slate-400 focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10" />
+//                     <p className="mt-1 text-right text-xs text-slate-400">{customerMessage.length}/5000</p>
+//                   </div>
+
+//                   {(customsChargeRequested || transportChargeRequested) && (
+//                     <p className="mt-4 rounded-xl border border-amber-200 bg-amber-50 p-3 text-xs leading-5 text-amber-900">The customs and/or transport amounts will be added by an authorised operations reviewer after assessment. Applicable VAT will be recalculated on the additional charges before the updated quotation total is shown.</p>
+//                   )}
+//                 </section>
+
+//                 {selectedItemIds.length === 0 ? (
+//                   <p className="mt-4 rounded-xl border border-amber-200 bg-amber-50 p-3 text-sm leading-5 text-amber-900" role="status">
+//                     Select at least one service to continue. Your original quotation remains saved.
+//                   </p>
+//                 ) : selectedItemIds.length < quote.lines.length ? (
+//                   <p className="mt-4 text-xs leading-5 text-slate-500" role="status">
+//                     {quote.lines.length - selectedItemIds.length} service(s) excluded. Only the {selectedItemIds.length} selected service(s) and their recalculated total will be included in your request.
+//                   </p>
+//                 ) : null}
+
+//                 <div className="mt-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+//                   <p className="text-xs text-slate-500">
+//                     {selectedItemIds.length} of {quote.lines.length} services selected
+//                   </p>
+//                   <button
+//                     type="button"
+//                     onClick={requestHelp}
+//                     disabled={selectedItemIds.length === 0 || isSubmitting}
+//                     className={primaryButtonClass}
+//                   >
+//                     {isSubmitting ? <><LoaderCircle size={17} className="animate-spin" /> Submitting request…</> : <>Continue with selected services <ArrowRight size={17} /></>}
+//                   </button>
+//                 </div>
+//               </div>
+//             </section>
+//           )}
+//         </section>
+
+//         <aside className="space-y-4 lg:sticky lg:top-6 lg:self-start">
+//           <div className="rounded-2xl border border-emerald-100 bg-white p-5 shadow-sm">
+//             <p className="text-xs font-bold uppercase tracking-[0.16em] text-emerald-700">How it works</p>
+//             <ol className="mt-4 space-y-4">
+//               {[
+//                 ["Choose", "Select air, land or sea, then import or export."],
+//                 ["Calculate", "Review an itemized estimate based on active rates."],
+//                 ["Request", "Choose the services and optional charges. Sign in only if needed."],
+//               ].map(([title, body], index) => (
+//                 <li key={title} className="flex gap-3">
+//                   <span className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-emerald-100 text-xs font-extrabold text-emerald-800">{index + 1}</span>
+//                   <span><b className="text-sm">{title}</b><span className="mt-1 block text-xs leading-5 text-slate-500">{body}</span></span>
+//                 </li>
+//               ))}
+//             </ol>
+//           </div>
+//           <div className="rounded-2xl border border-emerald-200 bg-emerald-50 p-5">
+//             <p className="flex items-center gap-2 text-sm font-extrabold text-emerald-950"><LockKeyhole size={17} /> Calculate without an account</p>
+//             <p className="mt-2 text-xs leading-5 text-emerald-900/80">Review your estimate first. You can calculate first. Exporters who are already signed in can submit directly; otherwise you will be asked to sign in.</p>
+//           </div>
+//           <div className="rounded-2xl border border-slate-200 bg-white p-5">
+//             <p className="text-sm font-extrabold">Need a custom quote?</p>
+//             <p className="mt-2 text-xs leading-5 text-slate-500">Some variable charges may need our quotation team to review your shipment details.</p>
+//           </div>
+//         </aside>
+//       </div>
+
+//       <footer className="border-t border-emerald-100 bg-white px-4 py-6 text-center text-xs leading-5 text-slate-500">
+//         Estimates use active pricing rates and may be subject to review.
+//       </footer>
+//     </main>
+//   );
+// }
+
+// export default PublicQuotationPage;
+
+
+
+
+
+
+
+
 import { useEffect, useMemo, useState } from "react";
 import {
   ArrowRight,
@@ -25,7 +1389,7 @@ import type {
   QuoteDirection,
   QuoteMode,
 } from "../types/public-quotation.types";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuthStore } from "../../../store/auth.store";
 import { submitPublicQuoteRequest, type AdditionalChargeRequestPayload } from "../api/public-quotation.api";
 
@@ -218,6 +1582,7 @@ function calculateSelectedTotals(
 
 export function PublicQuotationPage({ onRequireLogin }: Props) {
   const navigate = useNavigate();
+  const location = useLocation();
   const { user } = useAuthStore();
   const isSignedInExporter = normalizeRole(user?.role) === "EXPORTER";
   const [mode, setMode] = useState<QuoteMode>("AIR");
@@ -243,6 +1608,55 @@ export function PublicQuotationPage({ onRequireLogin }: Props) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [quote, setQuote] = useState<CalculatedQuote | null>(null);
   const [formError, setFormError] = useState("");
+
+  /**
+   * Public quote inputs are intentionally transient. A new visit (including
+   * browser back/forward restoration) starts with a clean form so a different
+   * exporter does not see values entered during an earlier visit.
+   *
+   * Keep the default quantity at 1 and preserve the existing mode/direction
+   * controls; users can still choose AIR/LAND/SEA and IMPORT/EXPORT normally.
+   */
+  useEffect(() => {
+    const resetVisitorForm = () => {
+      setMode("AIR");
+      setDirection("IMPORT");
+      setRateCardId("");
+      setConfigurationId("");
+      setOptionIds([]);
+      setAirlineId("");
+      setWeightKg("");
+      setQuantity("1");
+      setCustomsValue("");
+      setFreightAmount("");
+      setGoodsDescription("");
+      setHsCode("");
+      setNafdacRequired(false);
+      setTransportRequired(false);
+      setSelectedItemIds([]);
+      setCustomsChargeRequested(false);
+      setInvoiceValue("");
+      setInvoiceCurrency("NGN");
+      setTransportChargeRequested(false);
+      setCustomerMessage("");
+      setIsSubmitting(false);
+      setQuote(null);
+      setFormError("");
+    };
+
+    // A new React Router location represents a fresh entry to this page.
+    resetVisitorForm();
+
+    // Browsers may restore a page from the back/forward cache without
+    // remounting the React tree. Clear those restored values as well.
+    const handlePageShow = (event: PageTransitionEvent) => {
+      if (event.persisted) resetVisitorForm();
+    };
+
+    window.addEventListener("pageshow", handlePageShow);
+    return () => window.removeEventListener("pageshow", handlePageShow);
+  }, [location.key]);
+
 
   const cardsQuery = usePublicRateCards(mode, direction);
   const configsQuery = usePublicConfigurations(rateCardId);
@@ -472,10 +1886,10 @@ export function PublicQuotationPage({ onRequireLogin }: Props) {
       const result = await calculateMutation.mutateAsync(payload);
       setQuote(result);
       setSelectedItemIds(result.lines.map((line) => line.quoteItemId));
-      // These are request-specific choices and must be reconfirmed for a newly
-      // calculated quote. Reuse an invoice value already entered in the form.
+      // These are request-specific choices and must be entered intentionally
+      // for each new quotation. Do not carry a previously entered value forward.
       setCustomsChargeRequested(false);
-      setInvoiceValue(customsValue.trim());
+      setInvoiceValue("");
       setInvoiceCurrency(result.currency || "NGN");
       setTransportChargeRequested(false);
       setCustomerMessage("");
@@ -640,7 +2054,7 @@ async function requestHelp() {
   const selectedDirectionLabel = direction === "IMPORT" ? "Import" : "Export";
 
   return (
-    <main className="min-h-screen overflow-x-hidden bg-emerald-50/40 text-slate-900">
+    <main data-form-autofill="disabled" className="min-h-screen overflow-x-hidden bg-emerald-50/40 text-slate-900">
      <header className="border-b border-emerald-100 bg-white">
   <div className="mx-auto flex max-w-7xl items-center gap-3 px-4 py-3.5 sm:px-6 sm:py-4 lg:px-8">
     <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-emerald-700 text-white shadow-sm">
@@ -978,22 +2392,22 @@ async function requestHelp() {
                 )}
                 {configuration.quantityEnabled && (
                   <Field label="Quantity">
-                    <input className={inputClass} type="number" min="1" step="1" inputMode="numeric" value={quantity} onChange={(event) => { setQuantity(event.target.value); clearQuote(); }} />
+                    <input autoComplete="off" name="quotation-quantity" className={inputClass} type="number" min="1" step="1" inputMode="numeric" value={quantity} onChange={(event) => { setQuantity(event.target.value); clearQuote(); }} />
                   </Field>
                 )}
                 {configuration.customsValueEnabled && (
                   <Field label={`Customs value (${configuration.currency})`}>
-                    <input className={inputClass} type="number" min="0" step="0.01" inputMode="decimal" placeholder="0.00" value={customsValue} onChange={(event) => { setCustomsValue(event.target.value); clearQuote(); }} />
+                    <input autoComplete="off" name="quotation-customs-value" className={inputClass} type="number" min="0" step="0.01" inputMode="decimal" placeholder="0.00" value={customsValue} onChange={(event) => { setCustomsValue(event.target.value); clearQuote(); }} />
                   </Field>
                 )}
                 {configuration.freightAmountEnabled && (
                   <Field label={`Freight amount (${configuration.currency})`}>
-                    <input className={inputClass} type="number" min="0" step="0.01" inputMode="decimal" placeholder="0.00" value={freightAmount} onChange={(event) => { setFreightAmount(event.target.value); clearQuote(); }} />
+                    <input autoComplete="off" name="quotation-freight-amount" className={inputClass} type="number" min="0" step="0.01" inputMode="decimal" placeholder="0.00" value={freightAmount} onChange={(event) => { setFreightAmount(event.target.value); clearQuote(); }} />
                   </Field>
                 )}
                 {configuration.airlineSelectorEnabled && (
                   <Field label="Airline">
-                    <select className={inputClass} value={airlineId} onChange={(event) => { setAirlineId(event.target.value); clearQuote(); }}>
+                    <select autoComplete="off" name="quotation-airline" className={inputClass} value={airlineId} onChange={(event) => { setAirlineId(event.target.value); clearQuote(); }}>
                       <option value="">Choose airline</option>
                       {configuration.airlines.filter((airline) => airline.isActive !== false).map((airline) => (
                         <option key={airline.id} value={airline.id}>{airline.name} ({airline.code})</option>
@@ -1018,10 +2432,10 @@ async function requestHelp() {
                   </Field>
                 )}
                 <Field label="Goods description" hint="Optional">
-                  <input className={inputClass} placeholder="What are you shipping?" value={goodsDescription} onChange={(event) => { setGoodsDescription(event.target.value); clearQuote(); }} />
+                  <input autoComplete="off" name="quotation-goods-description" className={inputClass} placeholder="What are you shipping?" value={goodsDescription} onChange={(event) => { setGoodsDescription(event.target.value); clearQuote(); }} />
                 </Field>
                 <Field label="HS code" hint="Optional customs classification">
-                  <input className={inputClass} placeholder="Enter HS code if known" value={hsCode} onChange={(event) => { setHsCode(event.target.value); clearQuote(); }} />
+                  <input autoComplete="off" name="quotation-hs-code" className={inputClass} placeholder="Enter HS code if known" value={hsCode} onChange={(event) => { setHsCode(event.target.value); clearQuote(); }} />
                 </Field>
               </div>
 
@@ -1246,7 +2660,7 @@ async function requestHelp() {
                   <fieldset className="mt-5">
                     <legend className="text-sm font-bold text-slate-800">Do you need assistance with customs duties and charges?</legend>
                     <div className="mt-3 grid grid-cols-2 gap-2 sm:max-w-sm">
-                      {[{value:false,label:"No, thank you"},{value:true,label:"Yes, please"}].map((choice) => (
+                      {[{value:false,label:"No"},{value:true,label:"Yes"}].map((choice) => (
                         <button key={String(choice.value)} type="button" aria-pressed={customsChargeRequested === choice.value} onClick={() => { setCustomsChargeRequested(choice.value); setFormError(""); }} className={`min-h-11 rounded-xl border px-3 py-2.5 text-sm font-bold transition focus:outline-none focus-visible:ring-4 focus-visible:ring-emerald-500/20 ${customsChargeRequested === choice.value ? "border-emerald-700 bg-emerald-700 text-white" : "border-slate-200 bg-white text-slate-700 hover:border-emerald-300 hover:bg-emerald-50"}`}>
                           {choice.label}
                         </button>
@@ -1256,12 +2670,12 @@ async function requestHelp() {
                       <div className="mt-4 grid gap-3 rounded-xl border border-emerald-100 bg-emerald-50/50 p-3 sm:grid-cols-[minmax(0,1fr)_150px] sm:p-4">
                         <div>
                           <label htmlFor="customs-invoice-value" className="mb-1.5 block text-sm font-semibold text-slate-800">Commercial invoice value <span className="text-rose-600">*</span></label>
-                          <input id="customs-invoice-value" type="number" min="0.01" step="0.01" inputMode="decimal" value={invoiceValue} onChange={(event) => setInvoiceValue(event.target.value)} placeholder="Enter the invoice value" required aria-describedby="customs-invoice-help" className={inputClass} />
+                          <input autoComplete="off" name="quotation-invoice-value" id="customs-invoice-value" type="number" min="0.01" step="0.01" inputMode="decimal" value={invoiceValue} onChange={(event) => setInvoiceValue(event.target.value)} placeholder="Enter the invoice value" required aria-describedby="customs-invoice-help" className={inputClass} />
                           <p id="customs-invoice-help" className="mt-1.5 text-xs leading-5 text-slate-500">Enter the goods value shown on your commercial invoice. Our team will use it to assess the applicable customs charges.</p>
                         </div>
                         <div>
                           <label htmlFor="customs-invoice-currency" className="mb-1.5 block text-sm font-semibold text-slate-800">Invoice currency</label>
-                          <select id="customs-invoice-currency" value={invoiceCurrency} onChange={(event) => setInvoiceCurrency(event.target.value)} className={inputClass}>
+                          <select autoComplete="off" name="quotation-invoice-currency" id="customs-invoice-currency" value={invoiceCurrency} onChange={(event) => setInvoiceCurrency(event.target.value)} className={inputClass}>
                             {[...new Set([quote.currency || "NGN", "NGN", "USD", "EUR", "GBP", "CNY", "XOF"])].map((currency) => <option key={currency} value={currency}>{currency}</option>)}
                           </select>
                         </div>
@@ -1283,7 +2697,7 @@ async function requestHelp() {
 
                   <div className="mt-5 border-t border-slate-100 pt-5">
                     <label htmlFor="quotation-additional-information" className="block text-sm font-bold text-slate-800">Additional information <span className="font-normal text-slate-500">(optional)</span></label>
-                    <textarea id="quotation-additional-information" rows={4} maxLength={5000} value={customerMessage} onChange={(event) => setCustomerMessage(event.target.value)} placeholder="Add delivery location, timing, invoice context, special handling needs, or any other instructions…" className="mt-2 w-full resize-y rounded-xl border border-slate-200 bg-white p-3.5 text-sm leading-6 outline-none transition placeholder:text-slate-400 focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10" />
+                    <textarea autoComplete="off" name="quotation-additional-information" id="quotation-additional-information" rows={4} maxLength={5000} value={customerMessage} onChange={(event) => setCustomerMessage(event.target.value)} placeholder="Add delivery location, timing, invoice context, special handling needs, or any other instructions…" className="mt-2 w-full resize-y rounded-xl border border-slate-200 bg-white p-3.5 text-sm leading-6 outline-none transition placeholder:text-slate-400 focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10" />
                     <p className="mt-1 text-right text-xs text-slate-400">{customerMessage.length}/5000</p>
                   </div>
 
