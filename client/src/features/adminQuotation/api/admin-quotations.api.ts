@@ -200,6 +200,24 @@ export interface AdminQuotation {
   transportChargeRequested?: boolean;
   vatEnabled?: boolean;
   vatPercentage?: number | string;
+
+
+
+
+
+
+
+  itemType?: AdminQuotationItemType;
+reason?: string | null;
+
+// Add to the existing AdminQuotation interface:
+
+completedAt?: string | null;
+
+// Add to the existing nested AdminQuotation.quote interface:
+customsValue?: number | string | null;
+freightAmount?: number | string | null;
+pricingSnapshot?: unknown;
 }
 
 /* =========================================================
@@ -380,3 +398,27 @@ export async function addAdminSubtraction(
   );
   return response.data.data;
 }
+
+
+
+
+export type AdminQuotationItemType =
+  | "SERVICE"
+  | "CUSTOMS_CHARGE"
+  | "TRANSPORT_CHARGE"
+  | "OTHER_CHARGE"
+  | "SUBTRACTION";
+
+// Add to the existing AdminQuotationItem interface:
+
+
+// Ensure quote.rateCard.configurations is declared, if not already present:
+// configurations?: Array<{
+//   id: string;
+//   name: string;
+//   code?: string | null;
+//   routeLabel?: string | null;
+//   routeCode?: string | null;
+//   equipmentType?: string | null;
+//   options?: Array<{ id: string; name: string; code?: string | null }>;
+// }>;

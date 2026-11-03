@@ -9,7 +9,6 @@ export type QuotationStatus =
   | "COMPLETED"
   | "ARCHIVED";
 
-/** Every kind of row returned in the exporter's quotation item table. */
 export type ExporterQuoteItemType =
   | "SERVICE"
   | "CUSTOMS_CHARGE"
@@ -26,8 +25,23 @@ export interface ExporterQuoteItem {
   lineTotal: string | number;
   isSelected: boolean;
   itemType?: ExporterQuoteItemType;
-  /** Optional explanation for manual charges or deductions. */
   reason?: string | null;
+}
+
+export interface ExporterRateCardOption {
+  id: string;
+  name: string;
+  code?: string | null;
+}
+
+export interface ExporterRateCardConfiguration {
+  id: string;
+  name: string;
+  code?: string | null;
+  routeCode?: string | null;
+  routeLabel?: string | null;
+  equipmentType?: string | null;
+  options?: ExporterRateCardOption[];
 }
 
 export interface QuotationAttachment {
@@ -94,18 +108,28 @@ export interface ExporterSubmission {
   vatPercentage?: string | number;
 
   quote: {
+    id?: string;
     quoteNumber: string;
     goodsDescription: string | null;
     hsCode: string | null;
     weightKg: string | number | null;
+    quantity?: string | number | null;
+    customsValue?: string | number | null;
+    freightAmount?: string | number | null;
+    currency?: string | null;
     subtotal?: string | number | null;
     taxAmount?: string | number | null;
     totalAmount?: string | number | null;
+    /** Immutable calculation inputs saved at the time the quote was created. */
+    inputSnapshot?: unknown;
+    /** Original pricing snapshot; never overwritten by submission add-ons. */
     pricingSnapshot?: unknown;
     rateCard: {
+      id?: string;
       name: string;
       mode: string;
       direction: string;
+      configurations?: ExporterRateCardConfiguration[];
     };
   };
 

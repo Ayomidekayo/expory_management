@@ -10,6 +10,7 @@ import {
   CircleAlert,
   Clock3,
   CalendarDays,
+  Download,
   FileCheck2,
   FileText,
   Hash,
@@ -39,6 +40,8 @@ import {
 } from "../api/exporter-quotations.api";
 
 import QuotationAdditionalHistoryCard from "../../quotation-notifications/components/QuotationAdditionalHistoryCard";
+import { downloadExporterQuotationPdf } from "../utils/quotation-pdf.shipment-profile";
+
 
 type ToastState = {
   id: number;
@@ -215,6 +218,7 @@ export default function ExporterQuotationDetailsPage() {
   const [file, setFile] = useState<File | null>(null);
   const [remarks, setRemarks] = useState("");
   const [toast, setToast] = useState<ToastState>(null);
+  const [isDownloadingPdf, setIsDownloadingPdf] = useState(false);
   const [invoiceValue, setInvoiceValue] = useState("");
   const [invoiceCurrency, setInvoiceCurrency] = useState("NGN");
   const [customsRequestEnabled, setCustomsRequestEnabled] = useState(false);
@@ -231,6 +235,30 @@ export default function ExporterQuotationDetailsPage() {
       title,
       message: messageText,
     });
+  };
+
+  const handleDownloadPdf = async () => {
+    if (!data || isDownloadingPdf) return;
+
+    setIsDownloadingPdf(true);
+    try {
+      await downloadExporterQuotationPdf(data);
+      notify(
+        "success",
+        "Quotation PDF downloaded",
+        "Your shipment profile, itemised charges and quotation totals have been included.",
+      );
+    } catch (error) {
+      notify(
+        "error",
+        "PDF download failed",
+        error instanceof Error
+          ? error.message
+          : "We could not prepare the quotation PDF. Please try again.",
+      );
+    } finally {
+      setIsDownloadingPdf(false);
+    }
   };
 
   useEffect(() => {
@@ -581,13 +609,29 @@ export default function ExporterQuotationDetailsPage() {
       </div>
 
       <div className="quotation-page-enter mx-auto max-w-6xl space-y-6">
-        <Link
-          to="/exporter/quotations"
-          className="group inline-flex min-h-10 items-center gap-2 rounded-xl border border-emerald-100 bg-white/80 px-3.5 py-2 text-sm font-semibold text-emerald-900 shadow-sm shadow-emerald-950/[0.02] transition duration-200 hover:-translate-x-0.5 hover:border-emerald-200 hover:bg-white hover:shadow-md focus:outline-none focus:ring-4 focus:ring-emerald-500/15"
-        >
-          <ArrowLeft size={17} className="transition-transform group-hover:-translate-x-0.5" />
-          My quotations
-        </Link>
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <Link
+            to="/exporter/quotations"
+            className="group inline-flex min-h-10 w-fit items-center gap-2 rounded-xl border border-emerald-100 bg-white/80 px-3.5 py-2 text-sm font-semibold text-emerald-900 shadow-sm shadow-emerald-950/[0.02] transition duration-200 hover:-translate-x-0.5 hover:border-emerald-200 hover:bg-white hover:shadow-md focus:outline-none focus:ring-4 focus:ring-emerald-500/15"
+          >
+            <ArrowLeft size={17} className="transition-transform group-hover:-translate-x-0.5" />
+            My quotations
+          </Link>
+
+          <button
+            type="button"
+            onClick={() => void handleDownloadPdf()}
+            disabled={!data || isDownloadingPdf}
+            className="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-xl bg-emerald-800 px-4 py-2.5 text-sm font-bold text-white shadow-sm transition hover:bg-emerald-900 focus:outline-none focus:ring-4 focus:ring-emerald-500/20 disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
+          >
+            {isDownloadingPdf ? (
+              <LoaderCircle size={17} className="animate-spin" aria-hidden="true" />
+            ) : (
+              <Download size={17} aria-hidden="true" />
+            )}
+            {isDownloadingPdf ? "Preparing PDF…" : "Download quotation PDF"}
+          </button>
+        </div>
 
         {/* Quotation overview */}
         <section className="quotation-section-enter overflow-hidden rounded-[1.75rem] border border-emerald-100/90 bg-white shadow-xl shadow-emerald-950/[0.045]">
