@@ -2,7 +2,6 @@
 import { useNavigate } from "react-router-dom";
 import {
   Truck,
-  Package,
   Pencil,
   Lock,
 } from "lucide-react";
