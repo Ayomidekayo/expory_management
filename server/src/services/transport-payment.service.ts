@@ -1,8 +1,9 @@
-import { Prisma } from "@prisma/client";
+
 import { ApiError } from "../utils/ApiError";
 
 import type { CreateTransportPaymentDto } from "../validations/transport-payment.validation";
 import { transportPaymentRepository } from "../Repository/transport-payment.repository";
+import { Prisma } from "../generated";
 
 export const transportPaymentService = {
   async findPayments(itemId: string) {

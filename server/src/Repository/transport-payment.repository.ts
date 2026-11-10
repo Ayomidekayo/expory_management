@@ -1,5 +1,6 @@
-import { Prisma } from "@prisma/client";
+
 import { prisma } from "../config/prisma";
+import { Prisma } from "../generated";
 
 
 const paymentInclude = {
