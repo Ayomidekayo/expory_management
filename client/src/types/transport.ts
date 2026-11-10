@@ -61,7 +61,7 @@ export interface UpdateTransportItemPayload
 }
 
 export interface CreateTransportPayload {
-  shipmentId?: string;
+  shipmentId?: string | null;
   transportDate: string;
   remarks?: string;
   items: CreateTransportItemPayload[];

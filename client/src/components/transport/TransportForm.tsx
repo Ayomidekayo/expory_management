@@ -25,6 +25,7 @@ import type {
 } from "../../types/transport";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
+import { useShipments } from "../../hooks/shipments/useShipments";
 
 type TransportFormValues = {
   transportDate: string;
@@ -123,7 +124,16 @@ export default function TransportForm({
   } = useForm<TransportFormValues>({
     defaultValues: getInitialValues(initialData),
   });
+const {
+  data: shipmentResponse,
+  isLoading: isLoadingShipments,
+  isError: isShipmentError,
+} = useShipments({
+  page: 1,
+  limit: 100,
+});
 
+const shipments = shipmentResponse?.data ?? [];
   const {
     fields,
     append,
@@ -185,7 +195,7 @@ export default function TransportForm({
 
     const payload = {
       transportDate: values.transportDate,
-      shipmentId: values.shipmentId.trim() || undefined,
+      shipmentId: values.shipmentId.trim() || null,
       remarks: values.remarks.trim() || undefined,
       items,
     };
@@ -229,20 +239,64 @@ export default function TransportForm({
             )}
           </div>
 
-          <div className="space-y-2">
-            <label className="text-sm font-medium">
-              Shipment ID
-            </label>
+         <div className="space-y-2">
+  <label className="text-sm font-medium">
+    Link to Shipment
+  </label>
 
-            <Input
-              placeholder="Enter shipment ID (optional)"
-              {...register("shipmentId")}
-            />
+  <select
+    {...register("shipmentId")}
+    disabled={isLoadingShipments}
+    className="h-11 w-full rounded-lg border border-slate-300 bg-white px-3 text-sm outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 disabled:cursor-not-allowed disabled:bg-slate-100"
+  >
+    <option value="">
+      {isLoadingShipments
+        ? "Loading shipments..."
+        : "Independent Transport (No Shipment)"}
+    </option>
 
-            <p className="text-xs text-muted-foreground">
-              Leave empty to create an independent transport record.
-            </p>
-          </div>
+    {/* Preserve the existing shipment when editing,
+        even if it is not in the first 100 results. */}
+    {initialData?.shipment &&
+      !shipments.some(
+        (shipment) =>
+          shipment.id === initialData.shipment?.id,
+      ) && (
+        <option value={initialData.shipment.id}>
+          {initialData.shipment.shipmentNumber}
+        </option>
+      )}
+
+    {shipments.map((shipment) => (
+      <option key={shipment.id} value={shipment.id}>
+        {shipment.shipmentNumber}
+        {shipment.client?.companyName
+          ? ` — ${shipment.client.companyName}`
+          : ""}
+      </option>
+    ))}
+  </select>
+
+  {isShipmentError && (
+    <p className="text-xs text-red-500">
+      Unable to load shipments. Please refresh and try again.
+    </p>
+  )}
+
+  {!isLoadingShipments &&
+    !isShipmentError &&
+    shipments.length === 0 &&
+    !initialData?.shipment && (
+      <p className="text-xs text-muted-foreground">
+        No shipments available. You can still create an independent transport.
+      </p>
+    )}
+
+  <p className="text-xs text-muted-foreground">
+    Select a shipment to associate this transport with it.
+    Leave empty to create an independent transport.
+  </p>
+</div>
 
           <div className="space-y-2 md:col-span-2">
             <label className="text-sm font-medium">
