@@ -86,6 +86,10 @@ import ExporterQuotationsPage from "../features/exporter-quotations/pages/Export
 import AdminQuotationsPage from "../features/adminQuotation/AdminQuotationPage";
 import ExporterQuotationDetailsPage from "../features/exporter-quotations/pages/ExporterQuotationDetailsPage";
 import AdminQuotationDetailsPage from "../features/adminQuotation/AdminQuotationDetailPage";
+import TransportsPage from "../pages/transport/TransportsPage";
+import EditTransportPage from "../pages/transport/EditTransportPage";
+import CreateTransportPage from "../pages/transport/CreateTransportPage";
+import TransportDetailsPage from "../pages/transport/TransportDetailsPage";
 
 
 
@@ -712,7 +716,47 @@ export const router = createBrowserRouter([
   ),
 },
 
+// ================================
+// TRANSPORT
+// ================================
 
+{
+  path: "/transports",
+  element: (
+    <PermissionRoute permission="VIEW_TRANSPORTS">
+      <TransportsPage />
+    </PermissionRoute>
+  ),
+},
+// TRANSPORT CREATE
+{
+  path: "/transports/create",
+  element: (
+    <PermissionRoute permission="CREATE_TRANSPORT">
+      <CreateTransportPage />
+    </PermissionRoute>
+  ),
+},
+
+// TRANSPORT DETAILS
+{
+  path: "/transports/:id",
+  element: (
+    <PermissionRoute permission="VIEW_TRANSPORTS">
+      <TransportDetailsPage />
+    </PermissionRoute>
+  ),
+},
+
+// TRANSPORT EDIT
+{
+  path: "/transports/:id/edit",
+  element: (
+    <PermissionRoute permission="EDIT_TRANSPORT">
+      <EditTransportPage />
+    </PermissionRoute>
+  ),
+},
 // {
 //   path: "/quotations/rate-cards/new",
 //   element: (

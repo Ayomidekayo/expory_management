@@ -36,6 +36,18 @@ model User {
   quoteNotifications QuoteNotification[]
   quoteAuditEvents   QuoteAuditEvent[]
   quoteSubmissions   QuoteSubmission[]   @relation("ExporterQuoteSubmissions")
+  // Column locking audit relationships
+// Transport
+transportPayments       TransportPayment[]       @relation("TransportPaymentRecorder")
+transportColumnLocks    TransportItemColumnLock[]    @relation("TransportColumnLockUser")
+updatedTransports Transport[] @relation("TransportUpdatedBy")
+// Transit In
+transitInPayments       TransitInPayment[]       @relation("TransitInPaymentRecorder")
+transitInColumnLocks    TransitInItemColumnLock[]    @relation("TransitInColumnLockUser")
+
+// Transit Out
+transitOutPayments      TransitOutPayment[]      @relation("TransitOutPaymentRecorder")
+transitOutColumnLocks   TransitOutItemColumnLock[]   @relation("TransitOutColumnLockUser")
 }
 
 model AllocationDocument {
@@ -133,6 +145,9 @@ model Shipment {
   containers        Container[]
   documents         Document[]
   invoices          Invoice[]
+  transports        Transport[]
+  transitIns        TransitIn[]
+  transitOuts       TransitOut[]
   packingList       PackingList?
   allocation        Allocation?    @relation(fields: [allocationId], references: [id])
   client            Client         @relation(fields: [clientId], references: [id])
@@ -585,7 +600,7 @@ enum GateMovementStatus {
 
 enum Permission {
   VIEW_DASHBOARD
-  
+
   VIEW_CLIENTS
   CREATE_CLIENT
   EDIT_CLIENT
@@ -656,7 +671,6 @@ enum Permission {
   EDIT_GATE
   DELETE_GATE
 
-
   VIEW_OWN_QUOTES
   CREATE_QUOTE
   REQUEST_QUOTE_CHANGES
@@ -670,9 +684,33 @@ enum Permission {
   COMPLETE_QUOTE
   REVIEW_QUOTATIONS
 
-
-
   MANAGE_QUOTE_CHARGES
+  // Transport permissions
+  VIEW_TRANSPORTS
+  CREATE_TRANSPORT
+  EDIT_TRANSPORT
+  DELETE_TRANSPORT
+  MANAGE_TRANSPORT_PAYMENTS
+
+  // Transit In permissions
+  VIEW_TRANSIT_IN
+  CREATE_TRANSIT_IN
+  EDIT_TRANSIT_IN
+  DELETE_TRANSIT_IN
+  MANAGE_TRANSIT_IN_PAYMENTS
+
+  // Transit Out permissions
+  VIEW_TRANSIT_OUT
+  CREATE_TRANSIT_OUT
+  EDIT_TRANSIT_OUT
+  DELETE_TRANSIT_OUT
+  MANAGE_TRANSIT_OUT_PAYMENTS
+
+  // Lock management
+  LOCK_TRANSPORT_ITEMS
+  LOCK_TRANSIT_IN_ITEMS
+  LOCK_TRANSIT_OUT_ITEMS
+  LOCK_TRANSPORT_COLUMNS
 }
 
 enum QuoteSubmissionItemType {
@@ -680,7 +718,7 @@ enum QuoteSubmissionItemType {
   CUSTOMS_CHARGE
   TRANSPORT_CHARGE
   OTHER_CHARGE
-   SUBTRACTION
+  SUBTRACTION
 }
 
 model UserPermission {
@@ -1006,8 +1044,6 @@ model QuoteItem {
   @@index([componentId])
 }
 
-
-
 enum QuoteSubmissionStatus {
   PENDING_REVIEW
   CHANGES_REQUESTED
@@ -1066,20 +1102,21 @@ model QuoteSubmission {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  quote       Quote                 @relation(fields: [quoteId], references: [id], onDelete: Restrict)
-  exporter    User?                 @relation("ExporterQuoteSubmissions", fields: [exporterId], references: [id], onDelete: SetNull)
-  items       QuoteSubmissionItem[]
-  messages    QuoteMessage[]
-  attachments QuoteAttachment[]
-  auditEvents QuoteAuditEvent[]
-   customsChargeRequested Boolean @default(false)
-  invoiceValue           Decimal? @db.Decimal(18, 2)
-  invoiceCurrency        String?
-  transportChargeRequested Boolean @default(false)
+  quote                    Quote                 @relation(fields: [quoteId], references: [id], onDelete: Restrict)
+  exporter                 User?                 @relation("ExporterQuoteSubmissions", fields: [exporterId], references: [id], onDelete: SetNull)
+  items                    QuoteSubmissionItem[]
+  messages                 QuoteMessage[]
+  attachments              QuoteAttachment[]
+  auditEvents              QuoteAuditEvent[]
+  customsChargeRequested   Boolean               @default(false)
+  invoiceValue             Decimal?              @db.Decimal(18, 2)
+  invoiceCurrency          String?
+  transportChargeRequested Boolean               @default(false)
 
   // Frozen VAT policy from the original quote. It is reused when operations adds charges.
-  vatEnabled   Boolean @default(false)
+  vatEnabled    Boolean @default(false)
   vatPercentage Decimal @default(0) @db.Decimal(7, 4)
+
   @@index([quoteId, createdAt])
   @@index([status, createdAt])
   @@index([email])
@@ -1088,13 +1125,11 @@ model QuoteSubmission {
 model QuoteSubmissionItem {
   id String @id @default(cuid())
 
-   itemType QuoteSubmissionItemType @default(SERVICE)
+  itemType QuoteSubmissionItemType @default(SERVICE)
 
   submissionId String
 
-
-
-   reason String?
+  reason      String?
   // Original charge reference; snapshots remain usable independently
   quoteItemId String?
 
@@ -1176,11 +1211,11 @@ model QuoteNotification {
   quoteId         String
   recipientUserId String?
 
-  title   String
-  message String
-  isRead  Boolean   @default(false)
-  readAt  DateTime?
-   submissionId String?
+  title        String
+  message      String
+  isRead       Boolean   @default(false)
+  readAt       DateTime?
+  submissionId String?
 
   createdAt DateTime @default(now())
 
@@ -1349,4 +1384,340 @@ model RateCardPricingSection {
   @@unique([configurationId, code])
   @@index([configurationId, isActive, displayOrder])
   @@index([optionId])
+}
+
+//// new 
+
+enum TransportItemType {
+  TRUCK
+  CONTAINER
+}
+
+enum PaymentStatus {
+  UNPAID
+  ADVANCE
+  PARTIALLY_PAID
+  PAID
+}
+
+enum ItemPaymentType {
+  ADVANCE
+  REGULAR
+}
+
+model Transport {
+  id              String   @id @default(cuid())
+  transportNumber String   @unique
+  transportDate   DateTime
+
+  shipmentId String?
+  shipment   Shipment? @relation(fields: [shipmentId], references: [id], onDelete: SetNull)
+
+  remarks String?
+
+  isLocked Boolean   @default(false)
+  lockedAt DateTime?
+   updatedById   String?
+  updatedBy     User?    @relation("TransportUpdatedBy", fields: [updatedById], references: [id], onDelete: SetNull)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  items TransportItem[]
+
+  @@index([shipmentId])
+  @@index([transportDate])
+  @@index([createdAt])
+}
+
+model TransportItem {
+  id          String @id @default(cuid())
+  transportId String
+
+  itemDate  DateTime
+  itemType  TransportItemType
+  name      String?
+  ownerName String
+
+  // Truck details
+  frontPlateNumber String?
+  backPlateNumber  String?
+
+  // Container details
+  containerName   String?
+  containerNumber String?
+
+  // Charges
+  chargeAmount   Decimal       @default(0) @db.Decimal(18, 2)
+  chargeCurrency Currency      @default(NGN)
+  paymentStatus  PaymentStatus @default(UNPAID)
+
+  remarks String?
+
+  // Individual item locking
+  isLocked     Boolean   @default(false)
+  lockedFields String[]  @default([])
+  lockedAt     DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  transport Transport          @relation(fields: [transportId], references: [id], onDelete: Cascade)
+  payments  TransportPayment[]
+
+  @@index([transportId])
+  @@index([itemDate])
+  @@index([itemType])
+  @@index([paymentStatus])
+}
+
+model TransportPayment {
+  id              String @id @default(cuid())
+  transportItemId String
+  recordedById    String?
+
+  amount        Decimal         @db.Decimal(18, 2)
+  paymentType   ItemPaymentType
+  paymentDate   DateTime        @default(now())
+  paymentMethod String?
+  reference     String?
+  description   String?
+  notes         String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  transportItem TransportItem @relation(fields: [transportItemId], references: [id], onDelete: Restrict)
+  recordedBy    User?          @relation("TransportPaymentRecorder", fields: [recordedById], references: [id], onDelete: SetNull)
+
+  @@index([transportItemId])
+  @@index([paymentDate])
+}
+
+model TransitIn {
+  id              String   @id @default(cuid())
+  transitInNumber String   @unique
+  transitDate     DateTime
+
+  shipmentId String?
+  shipment   Shipment? @relation(fields: [shipmentId], references: [id], onDelete: SetNull)
+
+  remarks String?
+
+  isLocked Boolean   @default(false)
+  lockedAt DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  items TransitInItem[]
+
+  @@index([shipmentId])
+  @@index([transitDate])
+  @@index([createdAt])
+}
+
+model TransitInItem {
+  id          String @id @default(cuid())
+  transitInId String
+
+  itemDate  DateTime
+  itemType  TransportItemType
+  name      String?
+  ownerName String
+
+  // Truck details
+  frontPlateNumber String?
+  backPlateNumber  String?
+
+  // Container details
+  containerName   String?
+  containerNumber String?
+
+  // Charges
+  chargeAmount   Decimal       @default(0) @db.Decimal(18, 2)
+  chargeCurrency Currency      @default(NGN)
+  paymentStatus  PaymentStatus @default(UNPAID)
+
+  remarks String?
+
+  // Individual item locking
+  isLocked     Boolean   @default(false)
+  lockedFields String[]  @default([])
+  lockedAt     DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  transitIn TransitIn          @relation(fields: [transitInId], references: [id], onDelete: Cascade)
+  payments  TransitInPayment[]
+
+  @@index([transitInId])
+  @@index([itemDate])
+  @@index([itemType])
+  @@index([paymentStatus])
+}
+
+model TransitInPayment {
+  id              String @id @default(cuid())
+  transitInItemId String
+  recordedById    String?
+
+  amount        Decimal         @db.Decimal(18, 2)
+  paymentType   ItemPaymentType
+  paymentDate   DateTime        @default(now())
+  paymentMethod String?
+  reference     String?
+  description   String?
+  notes         String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  transitInItem TransitInItem @relation(fields: [transitInItemId], references: [id], onDelete: Restrict)
+  recordedBy    User?         @relation("TransitInPaymentRecorder", fields: [recordedById], references: [id], onDelete: SetNull)
+
+  @@index([transitInItemId])
+  @@index([paymentDate])
+}
+
+model TransitOut {
+  id               String   @id @default(cuid())
+  transitOutNumber String   @unique
+  transitDate      DateTime
+
+  shipmentId String?
+  shipment   Shipment? @relation(fields: [shipmentId], references: [id], onDelete: SetNull)
+
+  remarks String?
+
+  isLocked Boolean   @default(false)
+  lockedAt DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  items TransitOutItem[]
+
+  @@index([shipmentId])
+  @@index([transitDate])
+  @@index([createdAt])
+}
+
+model TransitOutItem {
+  id           String @id @default(cuid())
+  transitOutId String
+
+  itemDate  DateTime
+  itemType  TransportItemType
+  name      String?
+  ownerName String
+
+  // Truck details
+  frontPlateNumber String?
+  backPlateNumber  String?
+
+  // Container details
+  containerName   String?
+  containerNumber String?
+
+  // Charges
+  chargeAmount   Decimal       @default(0) @db.Decimal(18, 2)
+  chargeCurrency Currency      @default(NGN)
+  paymentStatus  PaymentStatus @default(UNPAID)
+
+  remarks String?
+
+  // Individual item locking
+  isLocked     Boolean   @default(false)
+  lockedFields String[]  @default([])
+  lockedAt     DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  transitOut TransitOut          @relation(fields: [transitOutId], references: [id], onDelete: Cascade)
+  payments   TransitOutPayment[]
+
+  @@index([transitOutId])
+  @@index([itemDate])
+  @@index([itemType])
+  @@index([paymentStatus])
+}
+
+model TransitOutPayment {
+  id               String @id @default(cuid())
+  transitOutItemId String
+  recordedById     String?
+
+  amount        Decimal         @db.Decimal(18, 2)
+  paymentType   ItemPaymentType
+  paymentDate   DateTime        @default(now())
+  paymentMethod String?
+  reference     String?
+  description   String?
+  notes         String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  transitOutItem TransitOutItem @relation(fields: [transitOutItemId], references: [id], onDelete: Restrict)
+  recordedBy     User?          @relation("TransitOutPaymentRecorder", fields: [recordedById], references: [id], onDelete: SetNull)
+
+  @@index([transitOutItemId])
+  @@index([paymentDate])
+}
+//lock colum 
+
+
+model TransportItemColumnLock {
+  id         String   @id @default(cuid())
+  columnKey  String   @unique
+  isLocked   Boolean  @default(false)
+  lockedAt   DateTime?
+  lockedById String?
+  lockReason String?
+
+  lockedBy User? @relation("TransportColumnLockUser", fields: [lockedById], references: [id], onDelete: SetNull)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([isLocked])
+  @@index([lockedById])
+}
+
+
+model TransitInItemColumnLock {
+  id         String   @id @default(cuid())
+  columnKey  String   @unique
+  isLocked   Boolean  @default(false)
+  lockedAt   DateTime?
+  lockedById String?
+  lockReason String?
+
+  lockedBy User? @relation("TransitInColumnLockUser", fields: [lockedById], references: [id], onDelete: SetNull)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([isLocked])
+  @@index([lockedById])
+}
+
+
+model TransitOutItemColumnLock {
+  id         String   @id @default(cuid())
+  columnKey  String   @unique
+  isLocked   Boolean  @default(false)
+  lockedAt   DateTime?
+  lockedById String?
+  lockReason String?
+
+  lockedBy User? @relation("TransitOutColumnLockUser", fields: [lockedById], references: [id], onDelete: SetNull)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([isLocked])
+  @@index([lockedById])
 }

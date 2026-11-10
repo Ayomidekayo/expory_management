@@ -115,6 +115,13 @@ export const sidebarItems: SidebarItem[] = [
     permission: "VIEW_TRANSITS",
     section: "Operations",
   },
+  {
+    title: "Transport",
+    path: "/transports",
+    icon: Truck,
+    permission: "VIEW_TRANSPORTS",
+    section: "Operations",
+  },
 
   // =========================
   // DOCUMENTATION

@@ -737,6 +737,187 @@ exports.Prisma.RateCardPricingSectionScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
+exports.Prisma.TransportScalarFieldEnum = {
+  id: 'id',
+  transportNumber: 'transportNumber',
+  transportDate: 'transportDate',
+  shipmentId: 'shipmentId',
+  remarks: 'remarks',
+  isLocked: 'isLocked',
+  lockedAt: 'lockedAt',
+  updatedById: 'updatedById',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.TransportItemScalarFieldEnum = {
+  id: 'id',
+  transportId: 'transportId',
+  itemDate: 'itemDate',
+  itemType: 'itemType',
+  name: 'name',
+  ownerName: 'ownerName',
+  frontPlateNumber: 'frontPlateNumber',
+  backPlateNumber: 'backPlateNumber',
+  containerName: 'containerName',
+  containerNumber: 'containerNumber',
+  chargeAmount: 'chargeAmount',
+  chargeCurrency: 'chargeCurrency',
+  paymentStatus: 'paymentStatus',
+  remarks: 'remarks',
+  isLocked: 'isLocked',
+  lockedFields: 'lockedFields',
+  lockedAt: 'lockedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.TransportPaymentScalarFieldEnum = {
+  id: 'id',
+  transportItemId: 'transportItemId',
+  recordedById: 'recordedById',
+  amount: 'amount',
+  paymentType: 'paymentType',
+  paymentDate: 'paymentDate',
+  paymentMethod: 'paymentMethod',
+  reference: 'reference',
+  description: 'description',
+  notes: 'notes',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.TransitInScalarFieldEnum = {
+  id: 'id',
+  transitInNumber: 'transitInNumber',
+  transitDate: 'transitDate',
+  shipmentId: 'shipmentId',
+  remarks: 'remarks',
+  isLocked: 'isLocked',
+  lockedAt: 'lockedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.TransitInItemScalarFieldEnum = {
+  id: 'id',
+  transitInId: 'transitInId',
+  itemDate: 'itemDate',
+  itemType: 'itemType',
+  name: 'name',
+  ownerName: 'ownerName',
+  frontPlateNumber: 'frontPlateNumber',
+  backPlateNumber: 'backPlateNumber',
+  containerName: 'containerName',
+  containerNumber: 'containerNumber',
+  chargeAmount: 'chargeAmount',
+  chargeCurrency: 'chargeCurrency',
+  paymentStatus: 'paymentStatus',
+  remarks: 'remarks',
+  isLocked: 'isLocked',
+  lockedFields: 'lockedFields',
+  lockedAt: 'lockedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.TransitInPaymentScalarFieldEnum = {
+  id: 'id',
+  transitInItemId: 'transitInItemId',
+  recordedById: 'recordedById',
+  amount: 'amount',
+  paymentType: 'paymentType',
+  paymentDate: 'paymentDate',
+  paymentMethod: 'paymentMethod',
+  reference: 'reference',
+  description: 'description',
+  notes: 'notes',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.TransitOutScalarFieldEnum = {
+  id: 'id',
+  transitOutNumber: 'transitOutNumber',
+  transitDate: 'transitDate',
+  shipmentId: 'shipmentId',
+  remarks: 'remarks',
+  isLocked: 'isLocked',
+  lockedAt: 'lockedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.TransitOutItemScalarFieldEnum = {
+  id: 'id',
+  transitOutId: 'transitOutId',
+  itemDate: 'itemDate',
+  itemType: 'itemType',
+  name: 'name',
+  ownerName: 'ownerName',
+  frontPlateNumber: 'frontPlateNumber',
+  backPlateNumber: 'backPlateNumber',
+  containerName: 'containerName',
+  containerNumber: 'containerNumber',
+  chargeAmount: 'chargeAmount',
+  chargeCurrency: 'chargeCurrency',
+  paymentStatus: 'paymentStatus',
+  remarks: 'remarks',
+  isLocked: 'isLocked',
+  lockedFields: 'lockedFields',
+  lockedAt: 'lockedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.TransitOutPaymentScalarFieldEnum = {
+  id: 'id',
+  transitOutItemId: 'transitOutItemId',
+  recordedById: 'recordedById',
+  amount: 'amount',
+  paymentType: 'paymentType',
+  paymentDate: 'paymentDate',
+  paymentMethod: 'paymentMethod',
+  reference: 'reference',
+  description: 'description',
+  notes: 'notes',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.TransportItemColumnLockScalarFieldEnum = {
+  id: 'id',
+  columnKey: 'columnKey',
+  isLocked: 'isLocked',
+  lockedAt: 'lockedAt',
+  lockedById: 'lockedById',
+  lockReason: 'lockReason',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.TransitInItemColumnLockScalarFieldEnum = {
+  id: 'id',
+  columnKey: 'columnKey',
+  isLocked: 'isLocked',
+  lockedAt: 'lockedAt',
+  lockedById: 'lockedById',
+  lockReason: 'lockReason',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.TransitOutItemColumnLockScalarFieldEnum = {
+  id: 'id',
+  columnKey: 'columnKey',
+  isLocked: 'isLocked',
+  lockedAt: 'lockedAt',
+  lockedById: 'lockedById',
+  lockReason: 'lockReason',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -967,7 +1148,26 @@ exports.Permission = exports.$Enums.Permission = {
   DECLINE_QUOTE: 'DECLINE_QUOTE',
   COMPLETE_QUOTE: 'COMPLETE_QUOTE',
   REVIEW_QUOTATIONS: 'REVIEW_QUOTATIONS',
-  MANAGE_QUOTE_CHARGES: 'MANAGE_QUOTE_CHARGES'
+  MANAGE_QUOTE_CHARGES: 'MANAGE_QUOTE_CHARGES',
+  VIEW_TRANSPORTS: 'VIEW_TRANSPORTS',
+  CREATE_TRANSPORT: 'CREATE_TRANSPORT',
+  EDIT_TRANSPORT: 'EDIT_TRANSPORT',
+  DELETE_TRANSPORT: 'DELETE_TRANSPORT',
+  MANAGE_TRANSPORT_PAYMENTS: 'MANAGE_TRANSPORT_PAYMENTS',
+  VIEW_TRANSIT_IN: 'VIEW_TRANSIT_IN',
+  CREATE_TRANSIT_IN: 'CREATE_TRANSIT_IN',
+  EDIT_TRANSIT_IN: 'EDIT_TRANSIT_IN',
+  DELETE_TRANSIT_IN: 'DELETE_TRANSIT_IN',
+  MANAGE_TRANSIT_IN_PAYMENTS: 'MANAGE_TRANSIT_IN_PAYMENTS',
+  VIEW_TRANSIT_OUT: 'VIEW_TRANSIT_OUT',
+  CREATE_TRANSIT_OUT: 'CREATE_TRANSIT_OUT',
+  EDIT_TRANSIT_OUT: 'EDIT_TRANSIT_OUT',
+  DELETE_TRANSIT_OUT: 'DELETE_TRANSIT_OUT',
+  MANAGE_TRANSIT_OUT_PAYMENTS: 'MANAGE_TRANSIT_OUT_PAYMENTS',
+  LOCK_TRANSPORT_ITEMS: 'LOCK_TRANSPORT_ITEMS',
+  LOCK_TRANSIT_IN_ITEMS: 'LOCK_TRANSIT_IN_ITEMS',
+  LOCK_TRANSIT_OUT_ITEMS: 'LOCK_TRANSIT_OUT_ITEMS',
+  LOCK_TRANSPORT_COLUMNS: 'LOCK_TRANSPORT_COLUMNS'
 };
 
 exports.GateType = exports.$Enums.GateType = {
@@ -1064,6 +1264,23 @@ exports.QuoteAuditAction = exports.$Enums.QuoteAuditAction = {
   CHARGES_UPDATED: 'CHARGES_UPDATED'
 };
 
+exports.TransportItemType = exports.$Enums.TransportItemType = {
+  TRUCK: 'TRUCK',
+  CONTAINER: 'CONTAINER'
+};
+
+exports.PaymentStatus = exports.$Enums.PaymentStatus = {
+  UNPAID: 'UNPAID',
+  ADVANCE: 'ADVANCE',
+  PARTIALLY_PAID: 'PARTIALLY_PAID',
+  PAID: 'PAID'
+};
+
+exports.ItemPaymentType = exports.$Enums.ItemPaymentType = {
+  ADVANCE: 'ADVANCE',
+  REGULAR: 'REGULAR'
+};
+
 exports.Prisma.ModelName = {
   User: 'User',
   AllocationDocument: 'AllocationDocument',
@@ -1099,7 +1316,19 @@ exports.Prisma.ModelName = {
   RateCardAirline: 'RateCardAirline',
   QuoteSegment: 'QuoteSegment',
   RateCardOption: 'RateCardOption',
-  RateCardPricingSection: 'RateCardPricingSection'
+  RateCardPricingSection: 'RateCardPricingSection',
+  Transport: 'Transport',
+  TransportItem: 'TransportItem',
+  TransportPayment: 'TransportPayment',
+  TransitIn: 'TransitIn',
+  TransitInItem: 'TransitInItem',
+  TransitInPayment: 'TransitInPayment',
+  TransitOut: 'TransitOut',
+  TransitOutItem: 'TransitOutItem',
+  TransitOutPayment: 'TransitOutPayment',
+  TransportItemColumnLock: 'TransportItemColumnLock',
+  TransitInItemColumnLock: 'TransitInItemColumnLock',
+  TransitOutItemColumnLock: 'TransitOutItemColumnLock'
 };
 
 /**
