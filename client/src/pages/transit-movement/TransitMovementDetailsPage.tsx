@@ -37,7 +37,6 @@ import {
 import type {
   TransitMovementItem,
   TransitMovementPaymentPayload,
-  Currency,
 } from "../../types/transit-movement";
 
 const currencyFormatter = (amount: number, currency: string) =>
