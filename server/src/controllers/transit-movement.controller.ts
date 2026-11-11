@@ -1,47 +1,33 @@
-
-import type {
-  Request,
-  Response,
-  NextFunction,
-} from "express";
+import type { Request, Response, NextFunction } from 'express'
 
 import {
   createTransitMovementSchema,
   updateTransitMovementSchema,
-} from "../validations/transit-movement.validation";
+} from '../validations/transit-movement.validation'
 
-import {
-  transitMovementQuerySchema,
-} from "../validations/transit-movement-query.validation";
+import { transitMovementQuerySchema } from '../validations/transit-movement-query.validation'
 
 import {
   updateTransitMovementColumnLockSchema,
   updateTransitMovementItemLockSchema,
   transitMovementColumnKeySchema,
-} from "../validations/transit-movement-column-lock.validation";
+} from '../validations/transit-movement-column-lock.validation'
 
-import {
-  createTransitMovementPaymentSchema,
-} from "../validations/transit-movement-payment.validation";
+import { createTransitMovementPaymentSchema } from '../validations/transit-movement-payment.validation'
 
-import transitMovementService from "../services/transit-movement.service";
+import transitMovementService from '../services/transit-movement.service'
 
 /* ===========================================
    TRANSIT MOVEMENT CONTROLLER
 =========================================== */
 
 class TransitMovementController {
-
   /* ===========================================
      PARAMETER HELPER
   =========================================== */
 
-  private getParam(
-    value: string | string[] | undefined,
-  ): string {
-    return Array.isArray(value)
-      ? value[0] ?? ""
-      : value ?? "";
+  private getParam(value: string | string[] | undefined): string {
+    return Array.isArray(value) ? (value[0] ?? '') : (value ?? '')
   }
 
   /* ===========================================
@@ -54,31 +40,28 @@ class TransitMovementController {
     next: NextFunction,
   ): Promise<void> => {
     try {
-      const parsed = createTransitMovementSchema.safeParse(
-        req.body,
-      );
+      const parsed = createTransitMovementSchema.safeParse(req.body)
 
       if (!parsed.success) {
         res.status(400).json({
           success: false,
-          message: "Invalid Transit Movement data.",
+          message: 'Invalid Transit Movement data.',
           errors: parsed.error.flatten(),
-        });
-        return;
+        })
+        return
       }
 
-      const movement =
-        await transitMovementService.create(parsed.data);
+      const movement = await transitMovementService.create(parsed.data)
 
       res.status(201).json({
         success: true,
-        message: "Transit Movement created successfully.",
+        message: 'Transit Movement created successfully.',
         data: movement,
-      });
+      })
     } catch (error) {
-      next(error);
+      next(error)
     }
-  };
+  }
 
   /* ===========================================
      GET ALL TRANSIT MOVEMENTS
@@ -90,31 +73,28 @@ class TransitMovementController {
     next: NextFunction,
   ): Promise<void> => {
     try {
-      const parsed = transitMovementQuerySchema.safeParse(
-        req.query,
-      );
+      const parsed = transitMovementQuerySchema.safeParse(req.query)
 
       if (!parsed.success) {
         res.status(400).json({
           success: false,
-          message: "Invalid Transit Movement query.",
+          message: 'Invalid Transit Movement query.',
           errors: parsed.error.flatten(),
-        });
-        return;
+        })
+        return
       }
 
-      const result =
-        await transitMovementService.findAll(parsed.data);
+      const result = await transitMovementService.findAll(parsed.data)
 
       res.status(200).json({
         success: true,
-        message: "Transit Movements retrieved successfully.",
+        message: 'Transit Movements retrieved successfully.',
         ...result,
-      });
+      })
     } catch (error) {
-      next(error);
+      next(error)
     }
-  };
+  }
 
   /* ===========================================
      GET ONE TRANSIT MOVEMENT
@@ -126,28 +106,27 @@ class TransitMovementController {
     next: NextFunction,
   ): Promise<void> => {
     try {
-      const id = this.getParam(req.params.id);
+      const id = this.getParam(req.params.id)
 
       if (!id) {
         res.status(400).json({
           success: false,
-          message: "Transit Movement ID is required.",
-        });
-        return;
+          message: 'Transit Movement ID is required.',
+        })
+        return
       }
 
-      const movement =
-        await transitMovementService.findById(id);
+      const movement = await transitMovementService.findById(id)
 
       res.status(200).json({
         success: true,
-        message: "Transit Movement retrieved successfully.",
+        message: 'Transit Movement retrieved successfully.',
         data: movement,
-      });
+      })
     } catch (error) {
-      next(error);
+      next(error)
     }
-  };
+  }
 
   /* ===========================================
      FIND TRANSIT MOVEMENTS BY SHIPMENT
@@ -159,32 +138,28 @@ class TransitMovementController {
     next: NextFunction,
   ): Promise<void> => {
     try {
-      const shipmentId = this.getParam(
-        req.params.shipmentId,
-      );
+      const shipmentId = this.getParam(req.params.shipmentId)
 
       if (!shipmentId) {
         res.status(400).json({
           success: false,
-          message: "Shipment ID is required.",
-        });
-        return;
+          message: 'Shipment ID is required.',
+        })
+        return
       }
 
       const movements =
-        await transitMovementService.findByShipmentId(
-          shipmentId,
-        );
+        await transitMovementService.findByShipmentId(shipmentId)
 
       res.status(200).json({
         success: true,
-        message: "Transit Movements retrieved successfully.",
+        message: 'Transit Movements retrieved successfully.',
         data: movements,
-      });
+      })
     } catch (error) {
-      next(error);
+      next(error)
     }
-  };
+  }
 
   /* ===========================================
      UPDATE TRANSIT MOVEMENT
@@ -196,44 +171,38 @@ class TransitMovementController {
     next: NextFunction,
   ): Promise<void> => {
     try {
-      const id = this.getParam(req.params.id);
+      const id = this.getParam(req.params.id)
 
       if (!id) {
         res.status(400).json({
           success: false,
-          message: "Transit Movement ID is required.",
-        });
-        return;
+          message: 'Transit Movement ID is required.',
+        })
+        return
       }
 
-      const parsed = updateTransitMovementSchema.safeParse(
-        req.body,
-      );
+      const parsed = updateTransitMovementSchema.safeParse(req.body)
 
       if (!parsed.success) {
         res.status(400).json({
           success: false,
-          message: "Invalid Transit Movement data.",
+          message: 'Invalid Transit Movement data.',
           errors: parsed.error.flatten(),
-        });
-        return;
+        })
+        return
       }
 
-      const movement =
-        await transitMovementService.update(
-          id,
-          parsed.data,
-        );
+      const movement = await transitMovementService.update(id, parsed.data)
 
       res.status(200).json({
         success: true,
-        message: "Transit Movement updated successfully.",
+        message: 'Transit Movement updated successfully.',
         data: movement,
-      });
+      })
     } catch (error) {
-      next(error);
+      next(error)
     }
-  };
+  }
 
   /* ===========================================
      DELETE TRANSIT MOVEMENT
@@ -245,26 +214,26 @@ class TransitMovementController {
     next: NextFunction,
   ): Promise<void> => {
     try {
-      const id = this.getParam(req.params.id);
+      const id = this.getParam(req.params.id)
 
       if (!id) {
         res.status(400).json({
           success: false,
-          message: "Transit Movement ID is required.",
-        });
-        return;
+          message: 'Transit Movement ID is required.',
+        })
+        return
       }
 
-      await transitMovementService.delete(id);
+      await transitMovementService.delete(id)
 
       res.status(200).json({
         success: true,
-        message: "Transit Movement deleted successfully.",
-      });
+        message: 'Transit Movement deleted successfully.',
+      })
     } catch (error) {
-      next(error);
+      next(error)
     }
-  };
+  }
 
   /* ===========================================
      RECORD ITEM PAYMENT
@@ -276,56 +245,50 @@ class TransitMovementController {
     next: NextFunction,
   ): Promise<void> => {
     try {
-      const parsed =
-        createTransitMovementPaymentSchema.safeParse(
-          req.body,
-        );
+      const parsed = createTransitMovementPaymentSchema.safeParse(req.body)
 
       if (!parsed.success) {
         res.status(400).json({
           success: false,
-          message: "Invalid payment information.",
+          message: 'Invalid payment information.',
           errors: parsed.error.flatten(),
-        });
-        return;
+        })
+        return
       }
 
       if (!req.user?.id) {
         res.status(401).json({
           success: false,
-          message: "Authentication required to record payment.",
-        });
-        return;
+          message: 'Authentication required to record payment.',
+        })
+        return
       }
 
-      const itemId = this.getParam(
-        req.params.itemId,
-      );
+      const itemId = this.getParam(req.params.itemId)
 
       if (!itemId) {
         res.status(400).json({
           success: false,
-          message: "Transit Movement item ID is required.",
-        });
-        return;
+          message: 'Transit Movement item ID is required.',
+        })
+        return
       }
 
-      const payment =
-        await transitMovementService.createPayment(
-          itemId,
-          parsed.data,
-          req.user.id,
-        );
+      const payment = await transitMovementService.createPayment(
+        itemId,
+        parsed.data,
+        req.user.id,
+      )
 
       res.status(201).json({
         success: true,
-        message: "Payment recorded successfully.",
+        message: 'Payment recorded successfully.',
         data: payment,
-      });
+      })
     } catch (error) {
-      next(error);
+      next(error)
     }
-  };
+  }
 
   /* ===========================================
      GET ITEM PAYMENT HISTORY
@@ -337,32 +300,27 @@ class TransitMovementController {
     next: NextFunction,
   ): Promise<void> => {
     try {
-      const itemId = this.getParam(
-        req.params.itemId,
-      );
+      const itemId = this.getParam(req.params.itemId)
 
       if (!itemId) {
         res.status(400).json({
           success: false,
-          message: "Transit Movement item ID is required.",
-        });
-        return;
+          message: 'Transit Movement item ID is required.',
+        })
+        return
       }
 
-      const payments =
-        await transitMovementService.findItemPayments(
-          itemId,
-        );
+      const payments = await transitMovementService.findItemPayments(itemId)
 
       res.status(200).json({
         success: true,
-        message: "Payment history retrieved successfully.",
+        message: 'Payment history retrieved successfully.',
         data: payments,
-      });
+      })
     } catch (error) {
-      next(error);
+      next(error)
     }
-  };
+  }
 
   /* ===========================================
      LOCK / UNLOCK ITEM
@@ -374,49 +332,43 @@ class TransitMovementController {
     next: NextFunction,
   ): Promise<void> => {
     try {
-      const parsed =
-        updateTransitMovementItemLockSchema.safeParse(
-          req.body,
-        );
+      const parsed = updateTransitMovementItemLockSchema.safeParse(req.body)
 
       if (!parsed.success) {
         res.status(400).json({
           success: false,
-          message: "Invalid item lock information.",
+          message: 'Invalid item lock information.',
           errors: parsed.error.flatten(),
-        });
-        return;
+        })
+        return
       }
 
-      const itemId = this.getParam(
-        req.params.itemId,
-      );
+      const itemId = this.getParam(req.params.itemId)
 
       if (!itemId) {
         res.status(400).json({
           success: false,
-          message: "Transit Movement item ID is required.",
-        });
-        return;
+          message: 'Transit Movement item ID is required.',
+        })
+        return
       }
 
-      const item =
-        await transitMovementService.updateItemLock(
-          itemId,
-          parsed.data.isLocked,
-        );
+      const item = await transitMovementService.updateItemLock(
+        itemId,
+        parsed.data.isLocked,
+      )
 
       res.status(200).json({
         success: true,
         message: parsed.data.isLocked
-          ? "Transit Movement item locked successfully."
-          : "Transit Movement item unlocked successfully.",
+          ? 'Transit Movement item locked successfully.'
+          : 'Transit Movement item unlocked successfully.',
         data: item,
-      });
+      })
     } catch (error) {
-      next(error);
+      next(error)
     }
-  };
+  }
 
   /* ===========================================
      GET GLOBAL COLUMN LOCKS
@@ -428,18 +380,17 @@ class TransitMovementController {
     next: NextFunction,
   ): Promise<void> => {
     try {
-      const locks =
-        await transitMovementService.getColumnLocks();
+      const locks = await transitMovementService.getColumnLocks()
 
       res.status(200).json({
         success: true,
-        message: "Column locks retrieved successfully.",
+        message: 'Column locks retrieved successfully.',
         data: locks,
-      });
+      })
     } catch (error) {
-      next(error);
+      next(error)
     }
-  };
+  }
 
   /* ===========================================
      UPDATE GLOBAL COLUMN LOCK
@@ -451,51 +402,48 @@ class TransitMovementController {
     next: NextFunction,
   ): Promise<void> => {
     try {
-      const keyParsed =
-        transitMovementColumnKeySchema.safeParse(
-          req.params.columnKey,
-        );
+      const keyParsed = transitMovementColumnKeySchema.safeParse(
+        req.params.columnKey,
+      )
 
       if (!keyParsed.success) {
         res.status(400).json({
           success: false,
-          message: "Invalid Transit Movement column key.",
-        });
-        return;
+          message: 'Invalid Transit Movement column key.',
+        })
+        return
       }
 
-      const bodyParsed =
-        updateTransitMovementColumnLockSchema.safeParse(
-          req.body,
-        );
+      const bodyParsed = updateTransitMovementColumnLockSchema.safeParse(
+        req.body,
+      )
 
       if (!bodyParsed.success) {
         res.status(400).json({
           success: false,
-          message: "Invalid column lock information.",
+          message: 'Invalid column lock information.',
           errors: bodyParsed.error.flatten(),
-        });
-        return;
+        })
+        return
       }
 
-      const lock =
-        await transitMovementService.updateColumnLock(
-          keyParsed.data,
-          bodyParsed.data,
-          req.user?.id,
-        );
+      const lock = await transitMovementService.updateColumnLock(
+        keyParsed.data,
+        bodyParsed.data,
+        req.user?.id,
+      )
 
       res.status(200).json({
         success: true,
         message: bodyParsed.data.isLocked
-          ? "Column locked successfully."
-          : "Column unlocked successfully.",
+          ? 'Column locked successfully.'
+          : 'Column unlocked successfully.',
         data: lock,
-      });
+      })
     } catch (error) {
-      next(error);
+      next(error)
     }
-  };
+  }
 }
 
-export default new TransitMovementController();
+export default new TransitMovementController()
