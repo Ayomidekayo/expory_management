@@ -265,4 +265,37 @@ export const permissionGroups: PermissionGroup[] = [
       },
     ],
   },
+  {
+  title: "Transport",
+  permissions: [
+    {
+      key: PERMISSIONS.VIEW_TRANSPORTS,
+      label: "View Transports",
+    },
+    {
+      key: PERMISSIONS.CREATE_TRANSPORT,
+      label: "Create Transports",
+    },
+    {
+      key: PERMISSIONS.EDIT_TRANSPORT,
+      label: "Edit Transports",
+    },
+    {
+      key: PERMISSIONS.DELETE_TRANSPORT,
+      label: "Delete Transports",
+    },
+    {
+      key: PERMISSIONS.LOCK_TRANSPORT_ITEMS,
+      label: "Lock Transport Items",
+    },
+    {
+      key: PERMISSIONS.LOCK_TRANSPORT_COLUMNS,
+      label: "Manage Transport Column Locks",
+    },
+    {
+      key: PERMISSIONS.MANAGE_TRANSPORT_PAYMENTS,
+      label: "Manage Transport Payments",
+    },
+  ],
+},
 ];

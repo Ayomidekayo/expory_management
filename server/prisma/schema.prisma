@@ -29,25 +29,22 @@ model User {
   approvedAllocations Allocation[]         @relation("ApprovedAllocations")
   uploadedDocuments   AllocationDocument[]
 
-  createdAt          DateTime            @default(now())
-  updatedAt          DateTime            @updatedAt
-  quoteMessages      QuoteMessage[]
-  quoteAttachments   QuoteAttachment[]
-  quoteNotifications QuoteNotification[]
-  quoteAuditEvents   QuoteAuditEvent[]
-  quoteSubmissions   QuoteSubmission[]   @relation("ExporterQuoteSubmissions")
+  createdAt            DateTime                  @default(now())
+  updatedAt            DateTime                  @updatedAt
+  quoteMessages        QuoteMessage[]
+  quoteAttachments     QuoteAttachment[]
+  quoteNotifications   QuoteNotification[]
+  quoteAuditEvents     QuoteAuditEvent[]
+  quoteSubmissions     QuoteSubmission[]         @relation("ExporterQuoteSubmissions")
   // Column locking audit relationships
-// Transport
-transportPayments       TransportPayment[]       @relation("TransportPaymentRecorder")
-transportColumnLocks    TransportItemColumnLock[]    @relation("TransportColumnLockUser")
-updatedTransports Transport[] @relation("TransportUpdatedBy")
-// Transit In
-transitInPayments       TransitInPayment[]       @relation("TransitInPaymentRecorder")
-transitInColumnLocks    TransitInItemColumnLock[]    @relation("TransitInColumnLockUser")
+  // Transport
+  transportPayments    TransportPayment[]        @relation("TransportPaymentRecorder")
+  transportColumnLocks TransportItemColumnLock[] @relation("TransportColumnLockUser")
+  updatedTransports    Transport[]               @relation("TransportUpdatedBy")
 
-// Transit Out
-transitOutPayments      TransitOutPayment[]      @relation("TransitOutPaymentRecorder")
-transitOutColumnLocks   TransitOutItemColumnLock[]   @relation("TransitOutColumnLockUser")
+  // Transit Movement
+  transitMovementPayments    TransitMovementPayment[]        @relation("TransitMovementPaymentRecorder")
+  transitMovementColumnLocks TransitMovementItemColumnLock[] @relation("TransitMovementColumnLockUser")
 }
 
 model AllocationDocument {
@@ -146,15 +143,15 @@ model Shipment {
   documents         Document[]
   invoices          Invoice[]
   transports        Transport[]
-  transitIns        TransitIn[]
-  transitOuts       TransitOut[]
-  packingList       PackingList?
-  allocation        Allocation?    @relation(fields: [allocationId], references: [id])
-  client            Client         @relation(fields: [clientId], references: [id])
-  consignee         Consignee      @relation(fields: [consigneeId], references: [id])
-  createdBy         User           @relation(fields: [createdById], references: [id])
-  exporter          Exporter       @relation(fields: [exporterId], references: [id])
-  transits          Transit[]
+
+  packingList      PackingList?
+  allocation       Allocation?       @relation(fields: [allocationId], references: [id])
+  client           Client            @relation(fields: [clientId], references: [id])
+  consignee        Consignee         @relation(fields: [consigneeId], references: [id])
+  createdBy        User              @relation(fields: [createdById], references: [id])
+  exporter         Exporter          @relation(fields: [exporterId], references: [id])
+  transits         Transit[]
+  transitMovements TransitMovement[]
 
   @@index([shipmentDate])
   @@index([status])
@@ -162,6 +159,11 @@ model Shipment {
   @@index([clientId])
   @@index([exporterId])
   @@index([consigneeId])
+}
+
+enum TransitDirection {
+  IN
+  OUT
 }
 
 model Invoice {
@@ -692,24 +694,17 @@ enum Permission {
   DELETE_TRANSPORT
   MANAGE_TRANSPORT_PAYMENTS
 
-  // Transit In permissions
-  VIEW_TRANSIT_IN
-  CREATE_TRANSIT_IN
-  EDIT_TRANSIT_IN
-  DELETE_TRANSIT_IN
-  MANAGE_TRANSIT_IN_PAYMENTS
-
-  // Transit Out permissions
-  VIEW_TRANSIT_OUT
-  CREATE_TRANSIT_OUT
-  EDIT_TRANSIT_OUT
-  DELETE_TRANSIT_OUT
-  MANAGE_TRANSIT_OUT_PAYMENTS
+  // Transit Movement permissions
+  VIEW_TRANSIT_MOVEMENTS
+  CREATE_TRANSIT_MOVEMENT
+  EDIT_TRANSIT_MOVEMENT
+  DELETE_TRANSIT_MOVEMENT
+  MANAGE_TRANSIT_MOVEMENT_PAYMENTS
+  LOCK_TRANSIT_MOVEMENT_ITEMS
+  LOCK_TRANSIT_MOVEMENT_COLUMNS
 
   // Lock management
   LOCK_TRANSPORT_ITEMS
-  LOCK_TRANSIT_IN_ITEMS
-  LOCK_TRANSIT_OUT_ITEMS
   LOCK_TRANSPORT_COLUMNS
 }
 
@@ -1415,12 +1410,12 @@ model Transport {
 
   remarks String?
 
-  isLocked Boolean   @default(false)
-  lockedAt DateTime?
-   updatedById   String?
-  updatedBy     User?    @relation("TransportUpdatedBy", fields: [updatedById], references: [id], onDelete: SetNull)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  isLocked    Boolean   @default(false)
+  lockedAt    DateTime?
+  updatedById String?
+  updatedBy   User?     @relation("TransportUpdatedBy", fields: [updatedById], references: [id], onDelete: SetNull)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
 
   items TransportItem[]
 
@@ -1471,7 +1466,7 @@ model TransportItem {
 }
 
 model TransportPayment {
-  id              String @id @default(cuid())
+  id              String  @id @default(cuid())
   transportItemId String
   recordedById    String?
 
@@ -1487,16 +1482,17 @@ model TransportPayment {
   updatedAt DateTime @updatedAt
 
   transportItem TransportItem @relation(fields: [transportItemId], references: [id], onDelete: Restrict)
-  recordedBy    User?          @relation("TransportPaymentRecorder", fields: [recordedById], references: [id], onDelete: SetNull)
+  recordedBy    User?         @relation("TransportPaymentRecorder", fields: [recordedById], references: [id], onDelete: SetNull)
 
   @@index([transportItemId])
   @@index([paymentDate])
 }
 
-model TransitIn {
-  id              String   @id @default(cuid())
-  transitInNumber String   @unique
-  transitDate     DateTime
+model TransitMovement {
+  id            String           @id @default(cuid())
+  transitNumber String           @unique
+  transitDate   DateTime
+  direction     TransitDirection
 
   shipmentId String?
   shipment   Shipment? @relation(fields: [shipmentId], references: [id], onDelete: SetNull)
@@ -1509,21 +1505,22 @@ model TransitIn {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  items TransitInItem[]
+  items TransitMovementItem[]
 
   @@index([shipmentId])
   @@index([transitDate])
+  @@index([direction])
   @@index([createdAt])
 }
 
-model TransitInItem {
-  id          String @id @default(cuid())
-  transitInId String
+model TransitMovementItem {
+  id                String @id @default(cuid())
+  transitMovementId String
 
-  itemDate  DateTime
-  itemType  TransportItemType
-  name      String?
-  ownerName String
+  itemDate   DateTime
+  itemType   TransportItemType
+  name       String?
+  clientName String
 
   // Truck details
   frontPlateNumber String?
@@ -1548,19 +1545,19 @@ model TransitInItem {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  transitIn TransitIn          @relation(fields: [transitInId], references: [id], onDelete: Cascade)
-  payments  TransitInPayment[]
+  transitMovement TransitMovement          @relation(fields: [transitMovementId], references: [id], onDelete: Cascade)
+  payments        TransitMovementPayment[]
 
-  @@index([transitInId])
+  @@index([transitMovementId])
   @@index([itemDate])
   @@index([itemType])
   @@index([paymentStatus])
 }
 
-model TransitInPayment {
-  id              String @id @default(cuid())
-  transitInItemId String
-  recordedById    String?
+model TransitMovementPayment {
+  id                    String  @id @default(cuid())
+  transitMovementItemId String
+  recordedById          String?
 
   amount        Decimal         @db.Decimal(18, 2)
   paymentType   ItemPaymentType
@@ -1573,147 +1570,41 @@ model TransitInPayment {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  transitInItem TransitInItem @relation(fields: [transitInItemId], references: [id], onDelete: Restrict)
-  recordedBy    User?         @relation("TransitInPaymentRecorder", fields: [recordedById], references: [id], onDelete: SetNull)
+  transitMovementItem TransitMovementItem @relation(fields: [transitMovementItemId], references: [id], onDelete: Restrict)
+  recordedBy          User?               @relation("TransitMovementPaymentRecorder", fields: [recordedById], references: [id], onDelete: SetNull)
 
-  @@index([transitInItemId])
+  @@index([transitMovementItemId])
   @@index([paymentDate])
 }
 
-model TransitOut {
-  id               String   @id @default(cuid())
-  transitOutNumber String   @unique
-  transitDate      DateTime
+model TransitMovementItemColumnLock {
+  id         String    @id @default(cuid())
+  columnKey  String    @unique
+  isLocked   Boolean   @default(false)
+  lockedAt   DateTime?
+  lockedById String?
+  lockReason String?
 
-  shipmentId String?
-  shipment   Shipment? @relation(fields: [shipmentId], references: [id], onDelete: SetNull)
-
-  remarks String?
-
-  isLocked Boolean   @default(false)
-  lockedAt DateTime?
+  lockedBy User? @relation("TransitMovementColumnLockUser", fields: [lockedById], references: [id], onDelete: SetNull)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  items TransitOutItem[]
-
-  @@index([shipmentId])
-  @@index([transitDate])
-  @@index([createdAt])
+  @@index([isLocked])
+  @@index([lockedById])
 }
 
-model TransitOutItem {
-  id           String @id @default(cuid())
-  transitOutId String
-
-  itemDate  DateTime
-  itemType  TransportItemType
-  name      String?
-  ownerName String
-
-  // Truck details
-  frontPlateNumber String?
-  backPlateNumber  String?
-
-  // Container details
-  containerName   String?
-  containerNumber String?
-
-  // Charges
-  chargeAmount   Decimal       @default(0) @db.Decimal(18, 2)
-  chargeCurrency Currency      @default(NGN)
-  paymentStatus  PaymentStatus @default(UNPAID)
-
-  remarks String?
-
-  // Individual item locking
-  isLocked     Boolean   @default(false)
-  lockedFields String[]  @default([])
-  lockedAt     DateTime?
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  transitOut TransitOut          @relation(fields: [transitOutId], references: [id], onDelete: Cascade)
-  payments   TransitOutPayment[]
-
-  @@index([transitOutId])
-  @@index([itemDate])
-  @@index([itemType])
-  @@index([paymentStatus])
-}
-
-model TransitOutPayment {
-  id               String @id @default(cuid())
-  transitOutItemId String
-  recordedById     String?
-
-  amount        Decimal         @db.Decimal(18, 2)
-  paymentType   ItemPaymentType
-  paymentDate   DateTime        @default(now())
-  paymentMethod String?
-  reference     String?
-  description   String?
-  notes         String?
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  transitOutItem TransitOutItem @relation(fields: [transitOutItemId], references: [id], onDelete: Restrict)
-  recordedBy     User?          @relation("TransitOutPaymentRecorder", fields: [recordedById], references: [id], onDelete: SetNull)
-
-  @@index([transitOutItemId])
-  @@index([paymentDate])
-}
 //lock colum 
 
-
 model TransportItemColumnLock {
-  id         String   @id @default(cuid())
-  columnKey  String   @unique
-  isLocked   Boolean  @default(false)
+  id         String    @id @default(cuid())
+  columnKey  String    @unique
+  isLocked   Boolean   @default(false)
   lockedAt   DateTime?
   lockedById String?
   lockReason String?
 
   lockedBy User? @relation("TransportColumnLockUser", fields: [lockedById], references: [id], onDelete: SetNull)
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@index([isLocked])
-  @@index([lockedById])
-}
-
-
-model TransitInItemColumnLock {
-  id         String   @id @default(cuid())
-  columnKey  String   @unique
-  isLocked   Boolean  @default(false)
-  lockedAt   DateTime?
-  lockedById String?
-  lockReason String?
-
-  lockedBy User? @relation("TransitInColumnLockUser", fields: [lockedById], references: [id], onDelete: SetNull)
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@index([isLocked])
-  @@index([lockedById])
-}
-
-
-model TransitOutItemColumnLock {
-  id         String   @id @default(cuid())
-  columnKey  String   @unique
-  isLocked   Boolean  @default(false)
-  lockedAt   DateTime?
-  lockedById String?
-  lockReason String?
-
-  lockedBy User? @relation("TransitOutColumnLockUser", fields: [lockedById], references: [id], onDelete: SetNull)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

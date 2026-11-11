@@ -122,6 +122,13 @@ export const sidebarItems: SidebarItem[] = [
     permission: "VIEW_TRANSPORTS",
     section: "Operations",
   },
+  {
+    title: "Transit Movements",
+    path: "/transit-movements",
+    icon: Truck,
+    permission: "VIEW_TRANSIT_MOVEMENTS",
+    section: "Operations",
+  },
 
   // =========================
   // DOCUMENTATION

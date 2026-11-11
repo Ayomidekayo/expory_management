@@ -90,6 +90,10 @@ import TransportsPage from "../pages/transport/TransportsPage";
 import EditTransportPage from "../pages/transport/EditTransportPage";
 import CreateTransportPage from "../pages/transport/CreateTransportPage";
 import TransportDetailsPage from "../pages/transport/TransportDetailsPage";
+import EditTransitMovementPage from "../pages/transit-movement/EditTransitMovementPage";
+import TransitMovementsPage from "../pages/transit-movement/TransitMovementsPage";
+import CreateTransitMovementPage from "../pages/transit-movement/CreateTransitMovementPage";
+import TransitMovementDetailsPage from "../pages/transit-movement/TransitMovementDetailsPage";
 
 
 
@@ -756,7 +760,49 @@ export const router = createBrowserRouter([
       <EditTransportPage />
     </PermissionRoute>
   ),
+},// ==========================================
+// TRANSIT MOVEMENTS
+// ==========================================
+
+// TRANSIT MOVEMENT LIST
+{
+  path: "/transit-movements",
+  element: (
+    <PermissionRoute permission="VIEW_TRANSIT_MOVEMENTS">
+      <TransitMovementsPage />
+    </PermissionRoute>
+  ),
 },
+
+// CREATE TRANSIT MOVEMENT
+{
+  path: "/transit-movements/new",
+  element: (
+    <PermissionRoute permission="CREATE_TRANSIT_MOVEMENT">
+      <CreateTransitMovementPage />
+    </PermissionRoute>
+  ),
+},
+{
+  path: "/transit-movements/:id",
+  element: (
+    <PermissionRoute permission="VIEW_TRANSIT_MOVEMENTS">
+      <TransitMovementDetailsPage />
+    </PermissionRoute>
+  ),
+},
+
+// EDIT TRANSIT MOVEMENT
+{
+  path: "/transit-movements/:id/edit",
+  element: (
+    <PermissionRoute permission="EDIT_TRANSIT_MOVEMENT">
+      <EditTransitMovementPage />
+    </PermissionRoute>
+  ),
+},
+
+
 // {
 //   path: "/quotations/rate-cards/new",
 //   element: (
