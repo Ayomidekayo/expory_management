@@ -16,11 +16,12 @@ export interface TransportQuery {
   limit?: number;
   search?: string;
   shipmentId?: string;
-   ownerName: string;
+
   sortBy?:
     | "transportDate"
     | "transportNumber"
     | "createdAt";
+
   sortOrder?: "asc" | "desc";
 }
 

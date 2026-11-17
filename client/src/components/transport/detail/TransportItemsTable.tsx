@@ -3,7 +3,6 @@ import {
   CalendarDays,
   Truck,
   Container,
-  UserRound,
   Wallet,
   CreditCard,
   History,
