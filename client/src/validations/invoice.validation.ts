@@ -48,16 +48,15 @@ export const createInvoiceSchema = z.object({
   /*
    * Default invoice status
    */
-  status: z
-    .enum([
-      "UNPAID",
-      "DRAFT",
-      "SENT",
-      "APPROVED",
-      "PAID",
-      "CANCELLED",
-    ])
-    .default("UNPAID"),
+status: z.enum([
+  "UNPAID",
+  "DRAFT",
+  "SENT",
+  "APPROVED",
+  "PAID",
+  "CANCELLED",
+  "PARTIALLY_PAID",
+]).optional(),
 
   incoterm: z
     .string()

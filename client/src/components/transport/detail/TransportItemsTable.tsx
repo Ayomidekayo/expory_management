@@ -346,18 +346,6 @@ export default function TransportItemsTable({
                   {/* ITEM DETAILS */}
                   <div className="space-y-4 p-4">
                     <div className="grid grid-cols-2 gap-4">
-                      <div className="min-w-0">
-                        <p className="text-xs text-muted-foreground">
-                          Owner
-                        </p>
-                        <p className="mt-1 flex items-center gap-1.5 break-words text-sm font-medium">
-                          <UserRound className="h-3.5 w-3.5 shrink-0 text-slate-400" />
-                          {item.ownerName}
-                          {isColumnLocked("ownerName") && (
-                            <Lock className="h-3 w-3 shrink-0 text-amber-600" />
-                          )}
-                        </p>
-                      </div>
 
                       <div className="min-w-0">
                         <p className="text-xs text-muted-foreground">
@@ -472,7 +460,6 @@ export default function TransportItemsTable({
                     <TableHead className="w-12">#</TableHead>
                     <TableHead>Item / Date</TableHead>
                     <TableHead>Type</TableHead>
-                    <TableHead>Owner</TableHead>
                     <TableHead>Vehicle / Container</TableHead>
                     <TableHead className="text-right">Charge</TableHead>
                     <TableHead className="text-right">Amount Paid</TableHead>
@@ -537,15 +524,6 @@ export default function TransportItemsTable({
                           </Badge>
                         </TableCell>
 
-                        <TableCell className="min-w-[130px]">
-                          <div className="flex items-center gap-1.5">
-                            <UserRound className="h-3.5 w-3.5 text-muted-foreground" />
-                            {item.ownerName}
-                            {isColumnLocked("ownerName") && (
-                              <Lock className="h-3 w-3 text-amber-600" />
-                            )}
-                          </div>
-                        </TableCell>
 
                         <TableCell className="min-w-[160px]">
                           {vehicleDetails || "-"}

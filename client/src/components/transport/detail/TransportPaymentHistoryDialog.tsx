@@ -1,4 +1,3 @@
-
 import { Loader2, History } from "lucide-react";
 
 import {
@@ -17,6 +16,9 @@ interface Props {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   item: TransportItem | null;
+
+  // Owner belongs to the parent Transport record.
+  ownerName?: string | null;
 }
 
 const symbols: Record<string, string> = {
@@ -43,6 +45,7 @@ export default function TransportPaymentHistoryDialog({
   open,
   onOpenChange,
   item,
+  ownerName,
 }: Props) {
   const isEnabled = open && item !== null;
 
@@ -52,7 +55,7 @@ export default function TransportPaymentHistoryDialog({
     isError,
   } = useTransportPayments(
     item?.id ?? "",
-    isEnabled
+    isEnabled,
   );
 
   const payments = data?.payments ?? [];
@@ -71,8 +74,11 @@ export default function TransportPaymentHistoryDialog({
           </DialogTitle>
 
           <DialogDescription>
-            {item?.name || item?.ownerName || "Transport item"} —
-            payment records and outstanding balance.
+            {item?.name || "Transport item"}
+            {ownerName?.trim()
+              ? ` · Owner: ${ownerName.trim()}`
+              : ""}
+            {" — payment records and outstanding balance."}
           </DialogDescription>
         </DialogHeader>
 
@@ -99,7 +105,7 @@ export default function TransportPaymentHistoryDialog({
                 <p className="break-words font-semibold">
                   {money(
                     summary?.chargeAmount ?? item.chargeAmount,
-                    currency
+                    currency,
                   )}
                 </p>
               </div>
