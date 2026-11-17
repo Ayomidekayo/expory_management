@@ -1,4 +1,3 @@
-
 import { useEffect } from "react";
 import {
   useForm,
@@ -38,7 +37,6 @@ function newItem(itemType: ItemType) {
     itemType,
     itemDate: today(),
     name: "",
-    clientName: "",
     chargeAmount: 0,
     chargeCurrency: "NGN" as const,
     remarks: "",
@@ -58,20 +56,22 @@ export function TransitMovementForm({
 }: Props) {
   const form = useForm<TransitMovementFormValues>({
     resolver: zodResolver(transitMovementFormSchema),
-    defaultValues: initialValues ?? {
-      transitDate: today(),
-      direction: "IN",
-      shipmentId: null,
-      remarks: "",
-      items: [newItem("TRUCK")],
-    },
+    defaultValues: initialValues
+      ? {
+          ...initialValues,
+          clientName: initialValues.clientName ?? "",
+        }
+      : {
+          clientName: "",
+          transitDate: today(),
+          direction: "IN",
+          shipmentId: null,
+          remarks: "",
+          items: [newItem("TRUCK")],
+        },
   });
 
-  const {
-    fields,
-    append,
-    remove,
-  } = useFieldArray({
+  const { fields, append, remove } = useFieldArray({
     control: form.control,
     name: "items",
   });
@@ -79,30 +79,35 @@ export function TransitMovementForm({
   // Synchronize form values when the API record loads.
   useEffect(() => {
     if (initialValues) {
-      form.reset(initialValues);
+      form.reset({
+        ...initialValues,
+        clientName: initialValues.clientName ?? "",
+      });
     }
   }, [initialValues, form]);
 
   const direction = form.watch("direction");
-
   const isFormDisabled = isSubmitting || isLocked;
 
   const handleAddItem = (itemType: ItemType) => {
     if (isFormDisabled || fields.length >= 100) return;
-
     append(newItem(itemType));
   };
 
   const handleRemoveItem = (index: number) => {
     if (isFormDisabled || fields.length <= 1) return;
-
     remove(index);
   };
 
   const handleFormSubmit = form.handleSubmit(async (values) => {
     if (isLocked || isSubmitting) return;
 
-    await onSubmit(values);
+    // clientName belongs to the parent TransitMovement record.
+    // The item schema must not contain clientName.
+    await onSubmit({
+      ...values,
+      clientName: values.clientName.trim(),
+    });
   });
 
   return (
@@ -113,15 +118,11 @@ export function TransitMovementForm({
       {isLocked && (
         <div className="flex items-start gap-3 rounded-lg border border-amber-300 bg-amber-50 p-4 text-sm text-amber-900">
           <Lock className="mt-0.5 h-4 w-4 shrink-0" />
-
           <div>
-            <p className="font-semibold">
-              Movement is locked
-            </p>
-
+            <p className="font-semibold">Movement is locked</p>
             <p className="mt-1">
-              This movement is currently locked. You can view its
-              information, but editing is disabled.
+              This movement is currently locked. You can view its information,
+              but editing is disabled.
             </p>
           </div>
         </div>
@@ -130,10 +131,7 @@ export function TransitMovementForm({
       {/* MOVEMENT INFORMATION */}
       <section className="space-y-5 rounded-xl border bg-white p-4 shadow-sm sm:p-6">
         <div>
-          <h2 className="text-lg font-semibold">
-            Movement Information
-          </h2>
-
+          <h2 className="text-lg font-semibold">Movement Information</h2>
           <p className="text-sm text-muted-foreground">
             Enter the movement details and optionally link a shipment.
           </p>
@@ -143,15 +141,12 @@ export function TransitMovementForm({
           {/* DIRECTION */}
           <div className="space-y-2">
             <Label>Direction</Label>
-
             <div className="grid grid-cols-2 gap-2">
               {(["IN", "OUT"] as const).map((option) => (
                 <Button
                   key={option}
                   type="button"
-                  variant={
-                    direction === option ? "default" : "outline"
-                  }
+                  variant={direction === option ? "default" : "outline"}
                   disabled={mode === "edit" || isFormDisabled}
                   onClick={() =>
                     form.setValue("direction", option, {
@@ -179,14 +174,13 @@ export function TransitMovementForm({
 
           {/* TRANSIT DATE */}
           <div className="space-y-2">
-            <Label>Transit Date</Label>
-
+            <Label htmlFor="transitDate">Transit Date</Label>
             <Input
+              id="transitDate"
               type="date"
               disabled={isFormDisabled}
               {...form.register("transitDate")}
             />
-
             <p className="text-xs text-red-600">
               {form.formState.errors.transitDate?.message}
             </p>
@@ -194,8 +188,7 @@ export function TransitMovementForm({
 
           {/* SHIPMENT */}
           <div className="space-y-2 sm:col-span-2">
-            <Label>Shipment (Optional)</Label>
-
+            <Label htmlFor="shipmentId">Shipment (Optional)</Label>
             <Controller
               name="shipmentId"
               control={form.control}
@@ -209,11 +202,35 @@ export function TransitMovementForm({
             />
           </div>
 
+          {/* CLIENT NAME — PARENT TRANSIT MOVEMENT FIELD */}
+          <div className="space-y-2 sm:col-span-2">
+            <Label htmlFor="clientName">
+              Client Name <span className="text-red-500">*</span>
+            </Label>
+            <Input
+              id="clientName"
+              autoComplete="organization"
+              placeholder="Enter the client name for this movement"
+              disabled={isFormDisabled}
+              aria-invalid={Boolean(form.formState.errors.clientName)}
+              {...form.register("clientName")}
+            />
+            {form.formState.errors.clientName?.message && (
+              <p className="text-xs text-red-600">
+                {form.formState.errors.clientName.message}
+              </p>
+            )}
+            <p className="text-xs text-muted-foreground">
+              This name applies to the entire movement, not to individual
+              trucks or containers.
+            </p>
+          </div>
+
           {/* REMARKS */}
           <div className="space-y-2 sm:col-span-2">
-            <Label>Remarks</Label>
-
+            <Label htmlFor="remarks">Remarks</Label>
             <textarea
+              id="remarks"
               rows={3}
               className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm outline-none transition focus:ring-2 focus:ring-green-600 disabled:cursor-not-allowed disabled:opacity-50"
               placeholder="Optional movement remarks"
@@ -228,10 +245,7 @@ export function TransitMovementForm({
       <section className="space-y-4">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
-            <h2 className="text-lg font-semibold">
-              Movement Items
-            </h2>
-
+            <h2 className="text-lg font-semibold">Movement Items</h2>
             <p className="text-sm text-muted-foreground">
               Add trucks and containers associated with this movement.
             </p>
@@ -247,7 +261,6 @@ export function TransitMovementForm({
               <Plus className="mr-2 h-4 w-4" />
               Add Truck
             </Button>
-
             <Button
               type="button"
               variant="outline"
@@ -295,7 +308,6 @@ export function TransitMovementForm({
           ) : (
             <Save className="mr-2 h-4 w-4" />
           )}
-
           {isLocked
             ? "Movement Locked"
             : mode === "edit"

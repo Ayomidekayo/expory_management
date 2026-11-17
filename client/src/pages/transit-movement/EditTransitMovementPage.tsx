@@ -1,4 +1,3 @@
-
 import { useNavigate, useParams } from "react-router-dom";
 import { ArrowLeft, Loader2 } from "lucide-react";
 import { toast } from "sonner";
@@ -11,31 +10,33 @@ import {
   useUpdateTransitMovement,
 } from "../../hooks/transit-movement/useTransitMovements";
 
-import type { TransitMovement } from "../../types/transit-movement";
-import type { UpdateTransitMovementPayload } from "../../types/transit-movement";
+import type {
+  TransitMovement,
+  UpdateTransitMovementPayload,
+} from "../../types/transit-movement";
 
 import type {
   TransitMovementFormValues,
 } from "../../validations/transit-movement-form.schema";
 
+/**
+ * Convert an API TransitMovement into the form's parent/item structure.
+ * clientName is a parent-level field; it must not be copied onto items.
+ */
 function mapMovementToForm(
-  movement: TransitMovement
+  movement: TransitMovement,
 ): TransitMovementFormValues {
   return {
     transitDate: movement.transitDate.slice(0, 10),
-
     direction: movement.direction,
-
     shipmentId: movement.shipmentId ?? null,
-
+    clientName: movement.clientName ?? "",
     remarks: movement.remarks ?? "",
-
     items: movement.items.map((item) => ({
       id: item.id,
       itemDate: item.itemDate.slice(0, 10),
       itemType: item.itemType,
       name: item.name ?? "",
-      clientName: item.clientName,
       frontPlateNumber: item.frontPlateNumber ?? "",
       backPlateNumber: item.backPlateNumber ?? "",
       containerName: item.containerName ?? "",
@@ -50,8 +51,6 @@ function mapMovementToForm(
 export default function EditTransitMovementPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-
-  // Validate the route parameter before using it.
   const movementId = id ?? "";
 
   const {
@@ -102,18 +101,26 @@ export default function EditTransitMovementPage() {
     );
   }
 
-  async function handleUpdate(
-    values: TransitMovementFormValues
-  ) {
+  async function handleUpdate(values: TransitMovementFormValues) {
     try {
       const payload: UpdateTransitMovementPayload = {
         transitDate: values.transitDate,
-        shipmentId: values.shipmentId || null,
-        remarks: values.remarks,
-
+        // Client name belongs to the parent TransitMovement record.
+        clientName: values.clientName.trim(),
+        shipmentId: values.shipmentId ?? null,
+        remarks: values.remarks?.trim() || undefined,
         items: values.items.map((item) => ({
-          ...item,
+          ...(item.id ? { id: item.id } : {}),
+          itemDate: item.itemDate,
+          itemType: item.itemType,
+          name: item.name.trim(),
+          frontPlateNumber: item.frontPlateNumber?.trim() || undefined,
+          backPlateNumber: item.backPlateNumber?.trim() || undefined,
+          containerName: item.containerName?.trim() || undefined,
+          containerNumber: item.containerNumber?.trim() || undefined,
           chargeAmount: Number(item.chargeAmount),
+          chargeCurrency: item.chargeCurrency,
+          remarks: item.remarks?.trim() || undefined,
         })),
       };
 
@@ -123,13 +130,17 @@ export default function EditTransitMovementPage() {
       });
 
       toast.success("Transit movement updated successfully");
-
       navigate(`/transit-movements/${movementId}`);
     } catch (error) {
+      const apiMessage =
+        (error as { response?: { data?: { message?: string } } })
+          ?.response?.data?.message;
+
       toast.error(
-        error instanceof Error
-          ? error.message
-          : "Unable to update transit movement"
+        apiMessage ??
+          (error instanceof Error
+            ? error.message
+            : "Unable to update transit movement"),
       );
     }
   }
@@ -141,9 +152,7 @@ export default function EditTransitMovementPage() {
           type="button"
           variant="outline"
           size="icon"
-          onClick={() =>
-            navigate(`/transit-movements/${movementId}`)
-          }
+          onClick={() => navigate(`/transit-movements/${movementId}`)}
         >
           <ArrowLeft className="h-4 w-4" />
         </Button>
@@ -152,7 +161,6 @@ export default function EditTransitMovementPage() {
           <h1 className="text-xl font-semibold sm:text-2xl">
             Edit Transit Movement
           </h1>
-
           <p className="text-sm text-muted-foreground">
             {movement.transitNumber}
           </p>

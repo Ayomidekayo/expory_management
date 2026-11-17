@@ -15,7 +15,7 @@ import {
 
 import { createTransitMovementPaymentSchema } from '../validations/transit-movement-payment.validation'
 
-import transitMovementService from '../services/transit-movement.service'
+import transitMovementService from '../types/transit-movement.service'
 
 /* ===========================================
    TRANSIT MOVEMENT CONTROLLER

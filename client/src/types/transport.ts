@@ -27,7 +27,6 @@ export type TransportColumnKey =
   | "itemDate"
   | "itemType"
   | "name"
-  | "ownerName"
   | "frontPlateNumber"
   | "backPlateNumber"
   | "containerName"
@@ -41,7 +40,6 @@ export interface CreateTransportItemPayload {
   itemDate: string;
   itemType: TransportItemType;
   name?: string;
-  ownerName: string;
 
   frontPlateNumber?: string;
   backPlateNumber?: string;
@@ -91,7 +89,6 @@ export interface TransportItem {
   itemDate: string;
   itemType: TransportItemType;
   name?: string | null;
-  ownerName: string;
 
   frontPlateNumber?: string | null;
   backPlateNumber?: string | null;
@@ -119,6 +116,7 @@ export interface Transport {
   id: string;
   transportNumber: string;
   transportDate: string;
+  ownerName: string;
 
   shipmentId?: string | null;
 

@@ -310,6 +310,11 @@ async updateItemLock(
   async create(data: CreateTransitMovementDto) {
     await this.validateShipment(data.shipmentId);
 
+    const clientName = data.clientName?.trim();
+    if (!clientName) {
+      throw new ApiError(400, "Client name is required.");
+    }
+
     const transitNumber =
       await this.generateTransitMovementNumber(
         data.direction,
@@ -317,6 +322,7 @@ async updateItemLock(
 
     return transitMovementRepository.create({
       ...data,
+      clientName,
       transitNumber,
     });
   }
@@ -399,6 +405,12 @@ async updateItemLock(
     // Validate shipment only when supplied.
     if (data.shipmentId !== undefined) {
       await this.validateShipment(data.shipmentId);
+    }
+
+    // Client name belongs to the parent Transit Movement, not its items.
+    const normalizedClientName = data.clientName?.trim();
+    if (data.clientName !== undefined && !normalizedClientName) {
+      throw new ApiError(400, "Client name cannot be empty.");
     }
 
     // Direction is deliberately immutable.
@@ -528,7 +540,12 @@ async updateItemLock(
       }
     }
 
-    return transitMovementRepository.update(id, data);
+    return transitMovementRepository.update(
+      id,
+      data.clientName !== undefined
+        ? { ...data, clientName: normalizedClientName as string }
+        : data,
+    );
   }
 
   /* ===========================================
@@ -545,18 +562,8 @@ async updateItemLock(
       );
     }
 
-    // Never delete financial history.
-    const hasPayments = movement.items.some(
-      (item) => item.payments.length > 0,
-    );
-
-    if (hasPayments) {
-      throw new ApiError(
-        400,
-        "This Transit Movement cannot be deleted because one or more items have payment history.",
-      );
-    }
-
+    // The repository deletes linked payment rows, then items, then the parent
+    // within one Prisma transaction. Keep the parent-level lock protection above.
     return transitMovementRepository.delete(id);
   }
 

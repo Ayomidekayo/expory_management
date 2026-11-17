@@ -91,9 +91,10 @@ import EditTransportPage from "../pages/transport/EditTransportPage";
 import CreateTransportPage from "../pages/transport/CreateTransportPage";
 import TransportDetailsPage from "../pages/transport/TransportDetailsPage";
 import EditTransitMovementPage from "../pages/transit-movement/EditTransitMovementPage";
-import TransitMovementsPage from "../pages/transit-movement/TransitMovementsPage";
-import CreateTransitMovementPage from "../pages/transit-movement/CreateTransitMovementPage";
 import TransitMovementDetailsPage from "../pages/transit-movement/TransitMovementDetailsPage";
+import CreateTransitMovementPage from "../pages/transit-movement/CreateTransitMovementPage";
+import TransitMovementsPage from "../pages/transit-movement/TransitMovementsPage";
+
 
 
 

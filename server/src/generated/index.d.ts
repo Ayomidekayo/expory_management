@@ -5862,12 +5862,14 @@ export namespace Prisma {
   export type ClientCountOutputType = {
     allocations: number
     shipments: number
+    transitMovements: number
     documents: number
   }
 
   export type ClientCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     allocations?: boolean | ClientCountOutputTypeCountAllocationsArgs
     shipments?: boolean | ClientCountOutputTypeCountShipmentsArgs
+    transitMovements?: boolean | ClientCountOutputTypeCountTransitMovementsArgs
     documents?: boolean | ClientCountOutputTypeCountDocumentsArgs
   }
 
@@ -5894,6 +5896,13 @@ export namespace Prisma {
    */
   export type ClientCountOutputTypeCountShipmentsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: ShipmentWhereInput
+  }
+
+  /**
+   * ClientCountOutputType without action
+   */
+  export type ClientCountOutputTypeCountTransitMovementsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: TransitMovementWhereInput
   }
 
   /**
@@ -23453,6 +23462,7 @@ export namespace Prisma {
     updatedAt?: boolean
     allocations?: boolean | Client$allocationsArgs<ExtArgs>
     shipments?: boolean | Client$shipmentsArgs<ExtArgs>
+    transitMovements?: boolean | Client$transitMovementsArgs<ExtArgs>
     documents?: boolean | Client$documentsArgs<ExtArgs>
     _count?: boolean | ClientCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["client"]>
@@ -23524,6 +23534,7 @@ export namespace Prisma {
   export type ClientInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     allocations?: boolean | Client$allocationsArgs<ExtArgs>
     shipments?: boolean | Client$shipmentsArgs<ExtArgs>
+    transitMovements?: boolean | Client$transitMovementsArgs<ExtArgs>
     documents?: boolean | Client$documentsArgs<ExtArgs>
     _count?: boolean | ClientCountOutputTypeDefaultArgs<ExtArgs>
   }
@@ -23535,6 +23546,7 @@ export namespace Prisma {
     objects: {
       allocations: Prisma.$AllocationPayload<ExtArgs>[]
       shipments: Prisma.$ShipmentPayload<ExtArgs>[]
+      transitMovements: Prisma.$TransitMovementPayload<ExtArgs>[]
       documents: Prisma.$DocumentPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
@@ -23952,6 +23964,7 @@ export namespace Prisma {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     allocations<T extends Client$allocationsArgs<ExtArgs> = {}>(args?: Subset<T, Client$allocationsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AllocationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     shipments<T extends Client$shipmentsArgs<ExtArgs> = {}>(args?: Subset<T, Client$shipmentsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ShipmentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    transitMovements<T extends Client$transitMovementsArgs<ExtArgs> = {}>(args?: Subset<T, Client$transitMovementsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TransitMovementPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     documents<T extends Client$documentsArgs<ExtArgs> = {}>(args?: Subset<T, Client$documentsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$DocumentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -24438,6 +24451,30 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: ShipmentScalarFieldEnum | ShipmentScalarFieldEnum[]
+  }
+
+  /**
+   * Client.transitMovements
+   */
+  export type Client$transitMovementsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TransitMovement
+     */
+    select?: TransitMovementSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TransitMovement
+     */
+    omit?: TransitMovementOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TransitMovementInclude<ExtArgs> | null
+    where?: TransitMovementWhereInput
+    orderBy?: TransitMovementOrderByWithRelationInput | TransitMovementOrderByWithRelationInput[]
+    cursor?: TransitMovementWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: TransitMovementScalarFieldEnum | TransitMovementScalarFieldEnum[]
   }
 
   /**
@@ -52313,6 +52350,7 @@ export namespace Prisma {
     id: string | null
     transportNumber: string | null
     transportDate: Date | null
+    ownerName: string | null
     shipmentId: string | null
     remarks: string | null
     isLocked: boolean | null
@@ -52326,6 +52364,7 @@ export namespace Prisma {
     id: string | null
     transportNumber: string | null
     transportDate: Date | null
+    ownerName: string | null
     shipmentId: string | null
     remarks: string | null
     isLocked: boolean | null
@@ -52339,6 +52378,7 @@ export namespace Prisma {
     id: number
     transportNumber: number
     transportDate: number
+    ownerName: number
     shipmentId: number
     remarks: number
     isLocked: number
@@ -52354,6 +52394,7 @@ export namespace Prisma {
     id?: true
     transportNumber?: true
     transportDate?: true
+    ownerName?: true
     shipmentId?: true
     remarks?: true
     isLocked?: true
@@ -52367,6 +52408,7 @@ export namespace Prisma {
     id?: true
     transportNumber?: true
     transportDate?: true
+    ownerName?: true
     shipmentId?: true
     remarks?: true
     isLocked?: true
@@ -52380,6 +52422,7 @@ export namespace Prisma {
     id?: true
     transportNumber?: true
     transportDate?: true
+    ownerName?: true
     shipmentId?: true
     remarks?: true
     isLocked?: true
@@ -52466,6 +52509,7 @@ export namespace Prisma {
     id: string
     transportNumber: string
     transportDate: Date
+    ownerName: string
     shipmentId: string | null
     remarks: string | null
     isLocked: boolean
@@ -52496,6 +52540,7 @@ export namespace Prisma {
     id?: boolean
     transportNumber?: boolean
     transportDate?: boolean
+    ownerName?: boolean
     shipmentId?: boolean
     remarks?: boolean
     isLocked?: boolean
@@ -52513,6 +52558,7 @@ export namespace Prisma {
     id?: boolean
     transportNumber?: boolean
     transportDate?: boolean
+    ownerName?: boolean
     shipmentId?: boolean
     remarks?: boolean
     isLocked?: boolean
@@ -52528,6 +52574,7 @@ export namespace Prisma {
     id?: boolean
     transportNumber?: boolean
     transportDate?: boolean
+    ownerName?: boolean
     shipmentId?: boolean
     remarks?: boolean
     isLocked?: boolean
@@ -52543,6 +52590,7 @@ export namespace Prisma {
     id?: boolean
     transportNumber?: boolean
     transportDate?: boolean
+    ownerName?: boolean
     shipmentId?: boolean
     remarks?: boolean
     isLocked?: boolean
@@ -52552,7 +52600,7 @@ export namespace Prisma {
     updatedAt?: boolean
   }
 
-  export type TransportOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "transportNumber" | "transportDate" | "shipmentId" | "remarks" | "isLocked" | "lockedAt" | "updatedById" | "createdAt" | "updatedAt", ExtArgs["result"]["transport"]>
+  export type TransportOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "transportNumber" | "transportDate" | "ownerName" | "shipmentId" | "remarks" | "isLocked" | "lockedAt" | "updatedById" | "createdAt" | "updatedAt", ExtArgs["result"]["transport"]>
   export type TransportInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     shipment?: boolean | Transport$shipmentArgs<ExtArgs>
     updatedBy?: boolean | Transport$updatedByArgs<ExtArgs>
@@ -52579,6 +52627,7 @@ export namespace Prisma {
       id: string
       transportNumber: string
       transportDate: Date
+      ownerName: string
       shipmentId: string | null
       remarks: string | null
       isLocked: boolean
@@ -53015,6 +53064,7 @@ export namespace Prisma {
     readonly id: FieldRef<"Transport", 'String'>
     readonly transportNumber: FieldRef<"Transport", 'String'>
     readonly transportDate: FieldRef<"Transport", 'DateTime'>
+    readonly ownerName: FieldRef<"Transport", 'String'>
     readonly shipmentId: FieldRef<"Transport", 'String'>
     readonly remarks: FieldRef<"Transport", 'String'>
     readonly isLocked: FieldRef<"Transport", 'Boolean'>
@@ -53529,7 +53579,6 @@ export namespace Prisma {
     itemDate: Date | null
     itemType: $Enums.TransportItemType | null
     name: string | null
-    ownerName: string | null
     frontPlateNumber: string | null
     backPlateNumber: string | null
     containerName: string | null
@@ -53550,7 +53599,6 @@ export namespace Prisma {
     itemDate: Date | null
     itemType: $Enums.TransportItemType | null
     name: string | null
-    ownerName: string | null
     frontPlateNumber: string | null
     backPlateNumber: string | null
     containerName: string | null
@@ -53571,7 +53619,6 @@ export namespace Prisma {
     itemDate: number
     itemType: number
     name: number
-    ownerName: number
     frontPlateNumber: number
     backPlateNumber: number
     containerName: number
@@ -53603,7 +53650,6 @@ export namespace Prisma {
     itemDate?: true
     itemType?: true
     name?: true
-    ownerName?: true
     frontPlateNumber?: true
     backPlateNumber?: true
     containerName?: true
@@ -53624,7 +53670,6 @@ export namespace Prisma {
     itemDate?: true
     itemType?: true
     name?: true
-    ownerName?: true
     frontPlateNumber?: true
     backPlateNumber?: true
     containerName?: true
@@ -53645,7 +53690,6 @@ export namespace Prisma {
     itemDate?: true
     itemType?: true
     name?: true
-    ownerName?: true
     frontPlateNumber?: true
     backPlateNumber?: true
     containerName?: true
@@ -53754,7 +53798,6 @@ export namespace Prisma {
     itemDate: Date
     itemType: $Enums.TransportItemType
     name: string | null
-    ownerName: string
     frontPlateNumber: string | null
     backPlateNumber: string | null
     containerName: string | null
@@ -53795,7 +53838,6 @@ export namespace Prisma {
     itemDate?: boolean
     itemType?: boolean
     name?: boolean
-    ownerName?: boolean
     frontPlateNumber?: boolean
     backPlateNumber?: boolean
     containerName?: boolean
@@ -53820,7 +53862,6 @@ export namespace Prisma {
     itemDate?: boolean
     itemType?: boolean
     name?: boolean
-    ownerName?: boolean
     frontPlateNumber?: boolean
     backPlateNumber?: boolean
     containerName?: boolean
@@ -53843,7 +53884,6 @@ export namespace Prisma {
     itemDate?: boolean
     itemType?: boolean
     name?: boolean
-    ownerName?: boolean
     frontPlateNumber?: boolean
     backPlateNumber?: boolean
     containerName?: boolean
@@ -53866,7 +53906,6 @@ export namespace Prisma {
     itemDate?: boolean
     itemType?: boolean
     name?: boolean
-    ownerName?: boolean
     frontPlateNumber?: boolean
     backPlateNumber?: boolean
     containerName?: boolean
@@ -53882,7 +53921,7 @@ export namespace Prisma {
     updatedAt?: boolean
   }
 
-  export type TransportItemOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "transportId" | "itemDate" | "itemType" | "name" | "ownerName" | "frontPlateNumber" | "backPlateNumber" | "containerName" | "containerNumber" | "chargeAmount" | "chargeCurrency" | "paymentStatus" | "remarks" | "isLocked" | "lockedFields" | "lockedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["transportItem"]>
+  export type TransportItemOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "transportId" | "itemDate" | "itemType" | "name" | "frontPlateNumber" | "backPlateNumber" | "containerName" | "containerNumber" | "chargeAmount" | "chargeCurrency" | "paymentStatus" | "remarks" | "isLocked" | "lockedFields" | "lockedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["transportItem"]>
   export type TransportItemInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     transport?: boolean | TransportDefaultArgs<ExtArgs>
     payments?: boolean | TransportItem$paymentsArgs<ExtArgs>
@@ -53907,7 +53946,6 @@ export namespace Prisma {
       itemDate: Date
       itemType: $Enums.TransportItemType
       name: string | null
-      ownerName: string
       frontPlateNumber: string | null
       backPlateNumber: string | null
       containerName: string | null
@@ -54351,7 +54389,6 @@ export namespace Prisma {
     readonly itemDate: FieldRef<"TransportItem", 'DateTime'>
     readonly itemType: FieldRef<"TransportItem", 'TransportItemType'>
     readonly name: FieldRef<"TransportItem", 'String'>
-    readonly ownerName: FieldRef<"TransportItem", 'String'>
     readonly frontPlateNumber: FieldRef<"TransportItem", 'String'>
     readonly backPlateNumber: FieldRef<"TransportItem", 'String'>
     readonly containerName: FieldRef<"TransportItem", 'String'>
@@ -56038,6 +56075,8 @@ export namespace Prisma {
     transitNumber: string | null
     transitDate: Date | null
     direction: $Enums.TransitDirection | null
+    clientId: string | null
+    clientName: string | null
     shipmentId: string | null
     remarks: string | null
     isLocked: boolean | null
@@ -56051,6 +56090,8 @@ export namespace Prisma {
     transitNumber: string | null
     transitDate: Date | null
     direction: $Enums.TransitDirection | null
+    clientId: string | null
+    clientName: string | null
     shipmentId: string | null
     remarks: string | null
     isLocked: boolean | null
@@ -56064,6 +56105,8 @@ export namespace Prisma {
     transitNumber: number
     transitDate: number
     direction: number
+    clientId: number
+    clientName: number
     shipmentId: number
     remarks: number
     isLocked: number
@@ -56079,6 +56122,8 @@ export namespace Prisma {
     transitNumber?: true
     transitDate?: true
     direction?: true
+    clientId?: true
+    clientName?: true
     shipmentId?: true
     remarks?: true
     isLocked?: true
@@ -56092,6 +56137,8 @@ export namespace Prisma {
     transitNumber?: true
     transitDate?: true
     direction?: true
+    clientId?: true
+    clientName?: true
     shipmentId?: true
     remarks?: true
     isLocked?: true
@@ -56105,6 +56152,8 @@ export namespace Prisma {
     transitNumber?: true
     transitDate?: true
     direction?: true
+    clientId?: true
+    clientName?: true
     shipmentId?: true
     remarks?: true
     isLocked?: true
@@ -56191,6 +56240,8 @@ export namespace Prisma {
     transitNumber: string
     transitDate: Date
     direction: $Enums.TransitDirection
+    clientId: string | null
+    clientName: string
     shipmentId: string | null
     remarks: string | null
     isLocked: boolean
@@ -56221,12 +56272,15 @@ export namespace Prisma {
     transitNumber?: boolean
     transitDate?: boolean
     direction?: boolean
+    clientId?: boolean
+    clientName?: boolean
     shipmentId?: boolean
     remarks?: boolean
     isLocked?: boolean
     lockedAt?: boolean
     createdAt?: boolean
     updatedAt?: boolean
+    client?: boolean | TransitMovement$clientArgs<ExtArgs>
     shipment?: boolean | TransitMovement$shipmentArgs<ExtArgs>
     items?: boolean | TransitMovement$itemsArgs<ExtArgs>
     _count?: boolean | TransitMovementCountOutputTypeDefaultArgs<ExtArgs>
@@ -56237,12 +56291,15 @@ export namespace Prisma {
     transitNumber?: boolean
     transitDate?: boolean
     direction?: boolean
+    clientId?: boolean
+    clientName?: boolean
     shipmentId?: boolean
     remarks?: boolean
     isLocked?: boolean
     lockedAt?: boolean
     createdAt?: boolean
     updatedAt?: boolean
+    client?: boolean | TransitMovement$clientArgs<ExtArgs>
     shipment?: boolean | TransitMovement$shipmentArgs<ExtArgs>
   }, ExtArgs["result"]["transitMovement"]>
 
@@ -56251,12 +56308,15 @@ export namespace Prisma {
     transitNumber?: boolean
     transitDate?: boolean
     direction?: boolean
+    clientId?: boolean
+    clientName?: boolean
     shipmentId?: boolean
     remarks?: boolean
     isLocked?: boolean
     lockedAt?: boolean
     createdAt?: boolean
     updatedAt?: boolean
+    client?: boolean | TransitMovement$clientArgs<ExtArgs>
     shipment?: boolean | TransitMovement$shipmentArgs<ExtArgs>
   }, ExtArgs["result"]["transitMovement"]>
 
@@ -56265,6 +56325,8 @@ export namespace Prisma {
     transitNumber?: boolean
     transitDate?: boolean
     direction?: boolean
+    clientId?: boolean
+    clientName?: boolean
     shipmentId?: boolean
     remarks?: boolean
     isLocked?: boolean
@@ -56273,22 +56335,26 @@ export namespace Prisma {
     updatedAt?: boolean
   }
 
-  export type TransitMovementOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "transitNumber" | "transitDate" | "direction" | "shipmentId" | "remarks" | "isLocked" | "lockedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["transitMovement"]>
+  export type TransitMovementOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "transitNumber" | "transitDate" | "direction" | "clientId" | "clientName" | "shipmentId" | "remarks" | "isLocked" | "lockedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["transitMovement"]>
   export type TransitMovementInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    client?: boolean | TransitMovement$clientArgs<ExtArgs>
     shipment?: boolean | TransitMovement$shipmentArgs<ExtArgs>
     items?: boolean | TransitMovement$itemsArgs<ExtArgs>
     _count?: boolean | TransitMovementCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type TransitMovementIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    client?: boolean | TransitMovement$clientArgs<ExtArgs>
     shipment?: boolean | TransitMovement$shipmentArgs<ExtArgs>
   }
   export type TransitMovementIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    client?: boolean | TransitMovement$clientArgs<ExtArgs>
     shipment?: boolean | TransitMovement$shipmentArgs<ExtArgs>
   }
 
   export type $TransitMovementPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "TransitMovement"
     objects: {
+      client: Prisma.$ClientPayload<ExtArgs> | null
       shipment: Prisma.$ShipmentPayload<ExtArgs> | null
       items: Prisma.$TransitMovementItemPayload<ExtArgs>[]
     }
@@ -56297,6 +56363,8 @@ export namespace Prisma {
       transitNumber: string
       transitDate: Date
       direction: $Enums.TransitDirection
+      clientId: string | null
+      clientName: string
       shipmentId: string | null
       remarks: string | null
       isLocked: boolean
@@ -56697,6 +56765,7 @@ export namespace Prisma {
    */
   export interface Prisma__TransitMovementClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
+    client<T extends TransitMovement$clientArgs<ExtArgs> = {}>(args?: Subset<T, TransitMovement$clientArgs<ExtArgs>>): Prisma__ClientClient<$Result.GetResult<Prisma.$ClientPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     shipment<T extends TransitMovement$shipmentArgs<ExtArgs> = {}>(args?: Subset<T, TransitMovement$shipmentArgs<ExtArgs>>): Prisma__ShipmentClient<$Result.GetResult<Prisma.$ShipmentPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     items<T extends TransitMovement$itemsArgs<ExtArgs> = {}>(args?: Subset<T, TransitMovement$itemsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TransitMovementItemPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
@@ -56732,6 +56801,8 @@ export namespace Prisma {
     readonly transitNumber: FieldRef<"TransitMovement", 'String'>
     readonly transitDate: FieldRef<"TransitMovement", 'DateTime'>
     readonly direction: FieldRef<"TransitMovement", 'TransitDirection'>
+    readonly clientId: FieldRef<"TransitMovement", 'String'>
+    readonly clientName: FieldRef<"TransitMovement", 'String'>
     readonly shipmentId: FieldRef<"TransitMovement", 'String'>
     readonly remarks: FieldRef<"TransitMovement", 'String'>
     readonly isLocked: FieldRef<"TransitMovement", 'Boolean'>
@@ -57139,6 +57210,25 @@ export namespace Prisma {
   }
 
   /**
+   * TransitMovement.client
+   */
+  export type TransitMovement$clientArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Client
+     */
+    select?: ClientSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Client
+     */
+    omit?: ClientOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ClientInclude<ExtArgs> | null
+    where?: ClientWhereInput
+  }
+
+  /**
    * TransitMovement.shipment
    */
   export type TransitMovement$shipmentArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -57226,7 +57316,6 @@ export namespace Prisma {
     itemDate: Date | null
     itemType: $Enums.TransportItemType | null
     name: string | null
-    clientName: string | null
     frontPlateNumber: string | null
     backPlateNumber: string | null
     containerName: string | null
@@ -57247,7 +57336,6 @@ export namespace Prisma {
     itemDate: Date | null
     itemType: $Enums.TransportItemType | null
     name: string | null
-    clientName: string | null
     frontPlateNumber: string | null
     backPlateNumber: string | null
     containerName: string | null
@@ -57268,7 +57356,6 @@ export namespace Prisma {
     itemDate: number
     itemType: number
     name: number
-    clientName: number
     frontPlateNumber: number
     backPlateNumber: number
     containerName: number
@@ -57300,7 +57387,6 @@ export namespace Prisma {
     itemDate?: true
     itemType?: true
     name?: true
-    clientName?: true
     frontPlateNumber?: true
     backPlateNumber?: true
     containerName?: true
@@ -57321,7 +57407,6 @@ export namespace Prisma {
     itemDate?: true
     itemType?: true
     name?: true
-    clientName?: true
     frontPlateNumber?: true
     backPlateNumber?: true
     containerName?: true
@@ -57342,7 +57427,6 @@ export namespace Prisma {
     itemDate?: true
     itemType?: true
     name?: true
-    clientName?: true
     frontPlateNumber?: true
     backPlateNumber?: true
     containerName?: true
@@ -57451,7 +57535,6 @@ export namespace Prisma {
     itemDate: Date
     itemType: $Enums.TransportItemType
     name: string | null
-    clientName: string
     frontPlateNumber: string | null
     backPlateNumber: string | null
     containerName: string | null
@@ -57492,7 +57575,6 @@ export namespace Prisma {
     itemDate?: boolean
     itemType?: boolean
     name?: boolean
-    clientName?: boolean
     frontPlateNumber?: boolean
     backPlateNumber?: boolean
     containerName?: boolean
@@ -57517,7 +57599,6 @@ export namespace Prisma {
     itemDate?: boolean
     itemType?: boolean
     name?: boolean
-    clientName?: boolean
     frontPlateNumber?: boolean
     backPlateNumber?: boolean
     containerName?: boolean
@@ -57540,7 +57621,6 @@ export namespace Prisma {
     itemDate?: boolean
     itemType?: boolean
     name?: boolean
-    clientName?: boolean
     frontPlateNumber?: boolean
     backPlateNumber?: boolean
     containerName?: boolean
@@ -57563,7 +57643,6 @@ export namespace Prisma {
     itemDate?: boolean
     itemType?: boolean
     name?: boolean
-    clientName?: boolean
     frontPlateNumber?: boolean
     backPlateNumber?: boolean
     containerName?: boolean
@@ -57579,7 +57658,7 @@ export namespace Prisma {
     updatedAt?: boolean
   }
 
-  export type TransitMovementItemOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "transitMovementId" | "itemDate" | "itemType" | "name" | "clientName" | "frontPlateNumber" | "backPlateNumber" | "containerName" | "containerNumber" | "chargeAmount" | "chargeCurrency" | "paymentStatus" | "remarks" | "isLocked" | "lockedFields" | "lockedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["transitMovementItem"]>
+  export type TransitMovementItemOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "transitMovementId" | "itemDate" | "itemType" | "name" | "frontPlateNumber" | "backPlateNumber" | "containerName" | "containerNumber" | "chargeAmount" | "chargeCurrency" | "paymentStatus" | "remarks" | "isLocked" | "lockedFields" | "lockedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["transitMovementItem"]>
   export type TransitMovementItemInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     transitMovement?: boolean | TransitMovementDefaultArgs<ExtArgs>
     payments?: boolean | TransitMovementItem$paymentsArgs<ExtArgs>
@@ -57604,7 +57683,6 @@ export namespace Prisma {
       itemDate: Date
       itemType: $Enums.TransportItemType
       name: string | null
-      clientName: string
       frontPlateNumber: string | null
       backPlateNumber: string | null
       containerName: string | null
@@ -58048,7 +58126,6 @@ export namespace Prisma {
     readonly itemDate: FieldRef<"TransitMovementItem", 'DateTime'>
     readonly itemType: FieldRef<"TransitMovementItem", 'TransportItemType'>
     readonly name: FieldRef<"TransitMovementItem", 'String'>
-    readonly clientName: FieldRef<"TransitMovementItem", 'String'>
     readonly frontPlateNumber: FieldRef<"TransitMovementItem", 'String'>
     readonly backPlateNumber: FieldRef<"TransitMovementItem", 'String'>
     readonly containerName: FieldRef<"TransitMovementItem", 'String'>
@@ -62702,6 +62779,7 @@ export namespace Prisma {
     id: 'id',
     transportNumber: 'transportNumber',
     transportDate: 'transportDate',
+    ownerName: 'ownerName',
     shipmentId: 'shipmentId',
     remarks: 'remarks',
     isLocked: 'isLocked',
@@ -62720,7 +62798,6 @@ export namespace Prisma {
     itemDate: 'itemDate',
     itemType: 'itemType',
     name: 'name',
-    ownerName: 'ownerName',
     frontPlateNumber: 'frontPlateNumber',
     backPlateNumber: 'backPlateNumber',
     containerName: 'containerName',
@@ -62762,6 +62839,8 @@ export namespace Prisma {
     transitNumber: 'transitNumber',
     transitDate: 'transitDate',
     direction: 'direction',
+    clientId: 'clientId',
+    clientName: 'clientName',
     shipmentId: 'shipmentId',
     remarks: 'remarks',
     isLocked: 'isLocked',
@@ -62779,7 +62858,6 @@ export namespace Prisma {
     itemDate: 'itemDate',
     itemType: 'itemType',
     name: 'name',
-    clientName: 'clientName',
     frontPlateNumber: 'frontPlateNumber',
     backPlateNumber: 'backPlateNumber',
     containerName: 'containerName',
@@ -65105,6 +65183,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFilter<"Client"> | Date | string
     allocations?: AllocationListRelationFilter
     shipments?: ShipmentListRelationFilter
+    transitMovements?: TransitMovementListRelationFilter
     documents?: DocumentListRelationFilter
   }
 
@@ -65129,6 +65208,7 @@ export namespace Prisma {
     updatedAt?: SortOrder
     allocations?: AllocationOrderByRelationAggregateInput
     shipments?: ShipmentOrderByRelationAggregateInput
+    transitMovements?: TransitMovementOrderByRelationAggregateInput
     documents?: DocumentOrderByRelationAggregateInput
   }
 
@@ -65156,6 +65236,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFilter<"Client"> | Date | string
     allocations?: AllocationListRelationFilter
     shipments?: ShipmentListRelationFilter
+    transitMovements?: TransitMovementListRelationFilter
     documents?: DocumentListRelationFilter
   }, "id" | "clientCode">
 
@@ -67464,6 +67545,7 @@ export namespace Prisma {
     id?: StringFilter<"Transport"> | string
     transportNumber?: StringFilter<"Transport"> | string
     transportDate?: DateTimeFilter<"Transport"> | Date | string
+    ownerName?: StringFilter<"Transport"> | string
     shipmentId?: StringNullableFilter<"Transport"> | string | null
     remarks?: StringNullableFilter<"Transport"> | string | null
     isLocked?: BoolFilter<"Transport"> | boolean
@@ -67480,6 +67562,7 @@ export namespace Prisma {
     id?: SortOrder
     transportNumber?: SortOrder
     transportDate?: SortOrder
+    ownerName?: SortOrder
     shipmentId?: SortOrderInput | SortOrder
     remarks?: SortOrderInput | SortOrder
     isLocked?: SortOrder
@@ -67499,6 +67582,7 @@ export namespace Prisma {
     OR?: TransportWhereInput[]
     NOT?: TransportWhereInput | TransportWhereInput[]
     transportDate?: DateTimeFilter<"Transport"> | Date | string
+    ownerName?: StringFilter<"Transport"> | string
     shipmentId?: StringNullableFilter<"Transport"> | string | null
     remarks?: StringNullableFilter<"Transport"> | string | null
     isLocked?: BoolFilter<"Transport"> | boolean
@@ -67515,6 +67599,7 @@ export namespace Prisma {
     id?: SortOrder
     transportNumber?: SortOrder
     transportDate?: SortOrder
+    ownerName?: SortOrder
     shipmentId?: SortOrderInput | SortOrder
     remarks?: SortOrderInput | SortOrder
     isLocked?: SortOrder
@@ -67534,6 +67619,7 @@ export namespace Prisma {
     id?: StringWithAggregatesFilter<"Transport"> | string
     transportNumber?: StringWithAggregatesFilter<"Transport"> | string
     transportDate?: DateTimeWithAggregatesFilter<"Transport"> | Date | string
+    ownerName?: StringWithAggregatesFilter<"Transport"> | string
     shipmentId?: StringNullableWithAggregatesFilter<"Transport"> | string | null
     remarks?: StringNullableWithAggregatesFilter<"Transport"> | string | null
     isLocked?: BoolWithAggregatesFilter<"Transport"> | boolean
@@ -67552,7 +67638,6 @@ export namespace Prisma {
     itemDate?: DateTimeFilter<"TransportItem"> | Date | string
     itemType?: EnumTransportItemTypeFilter<"TransportItem"> | $Enums.TransportItemType
     name?: StringNullableFilter<"TransportItem"> | string | null
-    ownerName?: StringFilter<"TransportItem"> | string
     frontPlateNumber?: StringNullableFilter<"TransportItem"> | string | null
     backPlateNumber?: StringNullableFilter<"TransportItem"> | string | null
     containerName?: StringNullableFilter<"TransportItem"> | string | null
@@ -67576,7 +67661,6 @@ export namespace Prisma {
     itemDate?: SortOrder
     itemType?: SortOrder
     name?: SortOrderInput | SortOrder
-    ownerName?: SortOrder
     frontPlateNumber?: SortOrderInput | SortOrder
     backPlateNumber?: SortOrderInput | SortOrder
     containerName?: SortOrderInput | SortOrder
@@ -67603,7 +67687,6 @@ export namespace Prisma {
     itemDate?: DateTimeFilter<"TransportItem"> | Date | string
     itemType?: EnumTransportItemTypeFilter<"TransportItem"> | $Enums.TransportItemType
     name?: StringNullableFilter<"TransportItem"> | string | null
-    ownerName?: StringFilter<"TransportItem"> | string
     frontPlateNumber?: StringNullableFilter<"TransportItem"> | string | null
     backPlateNumber?: StringNullableFilter<"TransportItem"> | string | null
     containerName?: StringNullableFilter<"TransportItem"> | string | null
@@ -67627,7 +67710,6 @@ export namespace Prisma {
     itemDate?: SortOrder
     itemType?: SortOrder
     name?: SortOrderInput | SortOrder
-    ownerName?: SortOrder
     frontPlateNumber?: SortOrderInput | SortOrder
     backPlateNumber?: SortOrderInput | SortOrder
     containerName?: SortOrderInput | SortOrder
@@ -67657,7 +67739,6 @@ export namespace Prisma {
     itemDate?: DateTimeWithAggregatesFilter<"TransportItem"> | Date | string
     itemType?: EnumTransportItemTypeWithAggregatesFilter<"TransportItem"> | $Enums.TransportItemType
     name?: StringNullableWithAggregatesFilter<"TransportItem"> | string | null
-    ownerName?: StringWithAggregatesFilter<"TransportItem"> | string
     frontPlateNumber?: StringNullableWithAggregatesFilter<"TransportItem"> | string | null
     backPlateNumber?: StringNullableWithAggregatesFilter<"TransportItem"> | string | null
     containerName?: StringNullableWithAggregatesFilter<"TransportItem"> | string | null
@@ -67776,12 +67857,15 @@ export namespace Prisma {
     transitNumber?: StringFilter<"TransitMovement"> | string
     transitDate?: DateTimeFilter<"TransitMovement"> | Date | string
     direction?: EnumTransitDirectionFilter<"TransitMovement"> | $Enums.TransitDirection
+    clientId?: StringNullableFilter<"TransitMovement"> | string | null
+    clientName?: StringFilter<"TransitMovement"> | string
     shipmentId?: StringNullableFilter<"TransitMovement"> | string | null
     remarks?: StringNullableFilter<"TransitMovement"> | string | null
     isLocked?: BoolFilter<"TransitMovement"> | boolean
     lockedAt?: DateTimeNullableFilter<"TransitMovement"> | Date | string | null
     createdAt?: DateTimeFilter<"TransitMovement"> | Date | string
     updatedAt?: DateTimeFilter<"TransitMovement"> | Date | string
+    client?: XOR<ClientNullableScalarRelationFilter, ClientWhereInput> | null
     shipment?: XOR<ShipmentNullableScalarRelationFilter, ShipmentWhereInput> | null
     items?: TransitMovementItemListRelationFilter
   }
@@ -67791,12 +67875,15 @@ export namespace Prisma {
     transitNumber?: SortOrder
     transitDate?: SortOrder
     direction?: SortOrder
+    clientId?: SortOrderInput | SortOrder
+    clientName?: SortOrder
     shipmentId?: SortOrderInput | SortOrder
     remarks?: SortOrderInput | SortOrder
     isLocked?: SortOrder
     lockedAt?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    client?: ClientOrderByWithRelationInput
     shipment?: ShipmentOrderByWithRelationInput
     items?: TransitMovementItemOrderByRelationAggregateInput
   }
@@ -67809,12 +67896,15 @@ export namespace Prisma {
     NOT?: TransitMovementWhereInput | TransitMovementWhereInput[]
     transitDate?: DateTimeFilter<"TransitMovement"> | Date | string
     direction?: EnumTransitDirectionFilter<"TransitMovement"> | $Enums.TransitDirection
+    clientId?: StringNullableFilter<"TransitMovement"> | string | null
+    clientName?: StringFilter<"TransitMovement"> | string
     shipmentId?: StringNullableFilter<"TransitMovement"> | string | null
     remarks?: StringNullableFilter<"TransitMovement"> | string | null
     isLocked?: BoolFilter<"TransitMovement"> | boolean
     lockedAt?: DateTimeNullableFilter<"TransitMovement"> | Date | string | null
     createdAt?: DateTimeFilter<"TransitMovement"> | Date | string
     updatedAt?: DateTimeFilter<"TransitMovement"> | Date | string
+    client?: XOR<ClientNullableScalarRelationFilter, ClientWhereInput> | null
     shipment?: XOR<ShipmentNullableScalarRelationFilter, ShipmentWhereInput> | null
     items?: TransitMovementItemListRelationFilter
   }, "id" | "transitNumber">
@@ -67824,6 +67914,8 @@ export namespace Prisma {
     transitNumber?: SortOrder
     transitDate?: SortOrder
     direction?: SortOrder
+    clientId?: SortOrderInput | SortOrder
+    clientName?: SortOrder
     shipmentId?: SortOrderInput | SortOrder
     remarks?: SortOrderInput | SortOrder
     isLocked?: SortOrder
@@ -67843,6 +67935,8 @@ export namespace Prisma {
     transitNumber?: StringWithAggregatesFilter<"TransitMovement"> | string
     transitDate?: DateTimeWithAggregatesFilter<"TransitMovement"> | Date | string
     direction?: EnumTransitDirectionWithAggregatesFilter<"TransitMovement"> | $Enums.TransitDirection
+    clientId?: StringNullableWithAggregatesFilter<"TransitMovement"> | string | null
+    clientName?: StringWithAggregatesFilter<"TransitMovement"> | string
     shipmentId?: StringNullableWithAggregatesFilter<"TransitMovement"> | string | null
     remarks?: StringNullableWithAggregatesFilter<"TransitMovement"> | string | null
     isLocked?: BoolWithAggregatesFilter<"TransitMovement"> | boolean
@@ -67860,7 +67954,6 @@ export namespace Prisma {
     itemDate?: DateTimeFilter<"TransitMovementItem"> | Date | string
     itemType?: EnumTransportItemTypeFilter<"TransitMovementItem"> | $Enums.TransportItemType
     name?: StringNullableFilter<"TransitMovementItem"> | string | null
-    clientName?: StringFilter<"TransitMovementItem"> | string
     frontPlateNumber?: StringNullableFilter<"TransitMovementItem"> | string | null
     backPlateNumber?: StringNullableFilter<"TransitMovementItem"> | string | null
     containerName?: StringNullableFilter<"TransitMovementItem"> | string | null
@@ -67884,7 +67977,6 @@ export namespace Prisma {
     itemDate?: SortOrder
     itemType?: SortOrder
     name?: SortOrderInput | SortOrder
-    clientName?: SortOrder
     frontPlateNumber?: SortOrderInput | SortOrder
     backPlateNumber?: SortOrderInput | SortOrder
     containerName?: SortOrderInput | SortOrder
@@ -67911,7 +68003,6 @@ export namespace Prisma {
     itemDate?: DateTimeFilter<"TransitMovementItem"> | Date | string
     itemType?: EnumTransportItemTypeFilter<"TransitMovementItem"> | $Enums.TransportItemType
     name?: StringNullableFilter<"TransitMovementItem"> | string | null
-    clientName?: StringFilter<"TransitMovementItem"> | string
     frontPlateNumber?: StringNullableFilter<"TransitMovementItem"> | string | null
     backPlateNumber?: StringNullableFilter<"TransitMovementItem"> | string | null
     containerName?: StringNullableFilter<"TransitMovementItem"> | string | null
@@ -67935,7 +68026,6 @@ export namespace Prisma {
     itemDate?: SortOrder
     itemType?: SortOrder
     name?: SortOrderInput | SortOrder
-    clientName?: SortOrder
     frontPlateNumber?: SortOrderInput | SortOrder
     backPlateNumber?: SortOrderInput | SortOrder
     containerName?: SortOrderInput | SortOrder
@@ -67965,7 +68055,6 @@ export namespace Prisma {
     itemDate?: DateTimeWithAggregatesFilter<"TransitMovementItem"> | Date | string
     itemType?: EnumTransportItemTypeWithAggregatesFilter<"TransitMovementItem"> | $Enums.TransportItemType
     name?: StringNullableWithAggregatesFilter<"TransitMovementItem"> | string | null
-    clientName?: StringWithAggregatesFilter<"TransitMovementItem"> | string
     frontPlateNumber?: StringNullableWithAggregatesFilter<"TransitMovementItem"> | string | null
     backPlateNumber?: StringNullableWithAggregatesFilter<"TransitMovementItem"> | string | null
     containerName?: StringNullableWithAggregatesFilter<"TransitMovementItem"> | string | null
@@ -70184,6 +70273,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     allocations?: AllocationCreateNestedManyWithoutClientInput
     shipments?: ShipmentCreateNestedManyWithoutClientInput
+    transitMovements?: TransitMovementCreateNestedManyWithoutClientInput
     documents?: DocumentCreateNestedManyWithoutClientInput
   }
 
@@ -70208,6 +70298,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     allocations?: AllocationUncheckedCreateNestedManyWithoutClientInput
     shipments?: ShipmentUncheckedCreateNestedManyWithoutClientInput
+    transitMovements?: TransitMovementUncheckedCreateNestedManyWithoutClientInput
     documents?: DocumentUncheckedCreateNestedManyWithoutClientInput
   }
 
@@ -70232,6 +70323,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     allocations?: AllocationUpdateManyWithoutClientNestedInput
     shipments?: ShipmentUpdateManyWithoutClientNestedInput
+    transitMovements?: TransitMovementUpdateManyWithoutClientNestedInput
     documents?: DocumentUpdateManyWithoutClientNestedInput
   }
 
@@ -70256,6 +70348,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     allocations?: AllocationUncheckedUpdateManyWithoutClientNestedInput
     shipments?: ShipmentUncheckedUpdateManyWithoutClientNestedInput
+    transitMovements?: TransitMovementUncheckedUpdateManyWithoutClientNestedInput
     documents?: DocumentUncheckedUpdateManyWithoutClientNestedInput
   }
 
@@ -72783,6 +72876,7 @@ export namespace Prisma {
     id?: string
     transportNumber: string
     transportDate: Date | string
+    ownerName: string
     remarks?: string | null
     isLocked?: boolean
     lockedAt?: Date | string | null
@@ -72797,6 +72891,7 @@ export namespace Prisma {
     id?: string
     transportNumber: string
     transportDate: Date | string
+    ownerName: string
     shipmentId?: string | null
     remarks?: string | null
     isLocked?: boolean
@@ -72811,6 +72906,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     transportNumber?: StringFieldUpdateOperationsInput | string
     transportDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    ownerName?: StringFieldUpdateOperationsInput | string
     remarks?: NullableStringFieldUpdateOperationsInput | string | null
     isLocked?: BoolFieldUpdateOperationsInput | boolean
     lockedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -72825,6 +72921,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     transportNumber?: StringFieldUpdateOperationsInput | string
     transportDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    ownerName?: StringFieldUpdateOperationsInput | string
     shipmentId?: NullableStringFieldUpdateOperationsInput | string | null
     remarks?: NullableStringFieldUpdateOperationsInput | string | null
     isLocked?: BoolFieldUpdateOperationsInput | boolean
@@ -72839,6 +72936,7 @@ export namespace Prisma {
     id?: string
     transportNumber: string
     transportDate: Date | string
+    ownerName: string
     shipmentId?: string | null
     remarks?: string | null
     isLocked?: boolean
@@ -72852,6 +72950,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     transportNumber?: StringFieldUpdateOperationsInput | string
     transportDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    ownerName?: StringFieldUpdateOperationsInput | string
     remarks?: NullableStringFieldUpdateOperationsInput | string | null
     isLocked?: BoolFieldUpdateOperationsInput | boolean
     lockedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -72863,6 +72962,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     transportNumber?: StringFieldUpdateOperationsInput | string
     transportDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    ownerName?: StringFieldUpdateOperationsInput | string
     shipmentId?: NullableStringFieldUpdateOperationsInput | string | null
     remarks?: NullableStringFieldUpdateOperationsInput | string | null
     isLocked?: BoolFieldUpdateOperationsInput | boolean
@@ -72877,7 +72977,6 @@ export namespace Prisma {
     itemDate: Date | string
     itemType: $Enums.TransportItemType
     name?: string | null
-    ownerName: string
     frontPlateNumber?: string | null
     backPlateNumber?: string | null
     containerName?: string | null
@@ -72901,7 +73000,6 @@ export namespace Prisma {
     itemDate: Date | string
     itemType: $Enums.TransportItemType
     name?: string | null
-    ownerName: string
     frontPlateNumber?: string | null
     backPlateNumber?: string | null
     containerName?: string | null
@@ -72923,7 +73021,6 @@ export namespace Prisma {
     itemDate?: DateTimeFieldUpdateOperationsInput | Date | string
     itemType?: EnumTransportItemTypeFieldUpdateOperationsInput | $Enums.TransportItemType
     name?: NullableStringFieldUpdateOperationsInput | string | null
-    ownerName?: StringFieldUpdateOperationsInput | string
     frontPlateNumber?: NullableStringFieldUpdateOperationsInput | string | null
     backPlateNumber?: NullableStringFieldUpdateOperationsInput | string | null
     containerName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -72947,7 +73044,6 @@ export namespace Prisma {
     itemDate?: DateTimeFieldUpdateOperationsInput | Date | string
     itemType?: EnumTransportItemTypeFieldUpdateOperationsInput | $Enums.TransportItemType
     name?: NullableStringFieldUpdateOperationsInput | string | null
-    ownerName?: StringFieldUpdateOperationsInput | string
     frontPlateNumber?: NullableStringFieldUpdateOperationsInput | string | null
     backPlateNumber?: NullableStringFieldUpdateOperationsInput | string | null
     containerName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -72970,7 +73066,6 @@ export namespace Prisma {
     itemDate: Date | string
     itemType: $Enums.TransportItemType
     name?: string | null
-    ownerName: string
     frontPlateNumber?: string | null
     backPlateNumber?: string | null
     containerName?: string | null
@@ -72991,7 +73086,6 @@ export namespace Prisma {
     itemDate?: DateTimeFieldUpdateOperationsInput | Date | string
     itemType?: EnumTransportItemTypeFieldUpdateOperationsInput | $Enums.TransportItemType
     name?: NullableStringFieldUpdateOperationsInput | string | null
-    ownerName?: StringFieldUpdateOperationsInput | string
     frontPlateNumber?: NullableStringFieldUpdateOperationsInput | string | null
     backPlateNumber?: NullableStringFieldUpdateOperationsInput | string | null
     containerName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -73013,7 +73107,6 @@ export namespace Prisma {
     itemDate?: DateTimeFieldUpdateOperationsInput | Date | string
     itemType?: EnumTransportItemTypeFieldUpdateOperationsInput | $Enums.TransportItemType
     name?: NullableStringFieldUpdateOperationsInput | string | null
-    ownerName?: StringFieldUpdateOperationsInput | string
     frontPlateNumber?: NullableStringFieldUpdateOperationsInput | string | null
     backPlateNumber?: NullableStringFieldUpdateOperationsInput | string | null
     containerName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -73137,11 +73230,13 @@ export namespace Prisma {
     transitNumber: string
     transitDate: Date | string
     direction: $Enums.TransitDirection
+    clientName: string
     remarks?: string | null
     isLocked?: boolean
     lockedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
+    client?: ClientCreateNestedOneWithoutTransitMovementsInput
     shipment?: ShipmentCreateNestedOneWithoutTransitMovementsInput
     items?: TransitMovementItemCreateNestedManyWithoutTransitMovementInput
   }
@@ -73151,6 +73246,8 @@ export namespace Prisma {
     transitNumber: string
     transitDate: Date | string
     direction: $Enums.TransitDirection
+    clientId?: string | null
+    clientName: string
     shipmentId?: string | null
     remarks?: string | null
     isLocked?: boolean
@@ -73165,11 +73262,13 @@ export namespace Prisma {
     transitNumber?: StringFieldUpdateOperationsInput | string
     transitDate?: DateTimeFieldUpdateOperationsInput | Date | string
     direction?: EnumTransitDirectionFieldUpdateOperationsInput | $Enums.TransitDirection
+    clientName?: StringFieldUpdateOperationsInput | string
     remarks?: NullableStringFieldUpdateOperationsInput | string | null
     isLocked?: BoolFieldUpdateOperationsInput | boolean
     lockedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    client?: ClientUpdateOneWithoutTransitMovementsNestedInput
     shipment?: ShipmentUpdateOneWithoutTransitMovementsNestedInput
     items?: TransitMovementItemUpdateManyWithoutTransitMovementNestedInput
   }
@@ -73179,6 +73278,8 @@ export namespace Prisma {
     transitNumber?: StringFieldUpdateOperationsInput | string
     transitDate?: DateTimeFieldUpdateOperationsInput | Date | string
     direction?: EnumTransitDirectionFieldUpdateOperationsInput | $Enums.TransitDirection
+    clientId?: NullableStringFieldUpdateOperationsInput | string | null
+    clientName?: StringFieldUpdateOperationsInput | string
     shipmentId?: NullableStringFieldUpdateOperationsInput | string | null
     remarks?: NullableStringFieldUpdateOperationsInput | string | null
     isLocked?: BoolFieldUpdateOperationsInput | boolean
@@ -73193,6 +73294,8 @@ export namespace Prisma {
     transitNumber: string
     transitDate: Date | string
     direction: $Enums.TransitDirection
+    clientId?: string | null
+    clientName: string
     shipmentId?: string | null
     remarks?: string | null
     isLocked?: boolean
@@ -73206,6 +73309,7 @@ export namespace Prisma {
     transitNumber?: StringFieldUpdateOperationsInput | string
     transitDate?: DateTimeFieldUpdateOperationsInput | Date | string
     direction?: EnumTransitDirectionFieldUpdateOperationsInput | $Enums.TransitDirection
+    clientName?: StringFieldUpdateOperationsInput | string
     remarks?: NullableStringFieldUpdateOperationsInput | string | null
     isLocked?: BoolFieldUpdateOperationsInput | boolean
     lockedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -73218,6 +73322,8 @@ export namespace Prisma {
     transitNumber?: StringFieldUpdateOperationsInput | string
     transitDate?: DateTimeFieldUpdateOperationsInput | Date | string
     direction?: EnumTransitDirectionFieldUpdateOperationsInput | $Enums.TransitDirection
+    clientId?: NullableStringFieldUpdateOperationsInput | string | null
+    clientName?: StringFieldUpdateOperationsInput | string
     shipmentId?: NullableStringFieldUpdateOperationsInput | string | null
     remarks?: NullableStringFieldUpdateOperationsInput | string | null
     isLocked?: BoolFieldUpdateOperationsInput | boolean
@@ -73231,7 +73337,6 @@ export namespace Prisma {
     itemDate: Date | string
     itemType: $Enums.TransportItemType
     name?: string | null
-    clientName: string
     frontPlateNumber?: string | null
     backPlateNumber?: string | null
     containerName?: string | null
@@ -73255,7 +73360,6 @@ export namespace Prisma {
     itemDate: Date | string
     itemType: $Enums.TransportItemType
     name?: string | null
-    clientName: string
     frontPlateNumber?: string | null
     backPlateNumber?: string | null
     containerName?: string | null
@@ -73277,7 +73381,6 @@ export namespace Prisma {
     itemDate?: DateTimeFieldUpdateOperationsInput | Date | string
     itemType?: EnumTransportItemTypeFieldUpdateOperationsInput | $Enums.TransportItemType
     name?: NullableStringFieldUpdateOperationsInput | string | null
-    clientName?: StringFieldUpdateOperationsInput | string
     frontPlateNumber?: NullableStringFieldUpdateOperationsInput | string | null
     backPlateNumber?: NullableStringFieldUpdateOperationsInput | string | null
     containerName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -73301,7 +73404,6 @@ export namespace Prisma {
     itemDate?: DateTimeFieldUpdateOperationsInput | Date | string
     itemType?: EnumTransportItemTypeFieldUpdateOperationsInput | $Enums.TransportItemType
     name?: NullableStringFieldUpdateOperationsInput | string | null
-    clientName?: StringFieldUpdateOperationsInput | string
     frontPlateNumber?: NullableStringFieldUpdateOperationsInput | string | null
     backPlateNumber?: NullableStringFieldUpdateOperationsInput | string | null
     containerName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -73324,7 +73426,6 @@ export namespace Prisma {
     itemDate: Date | string
     itemType: $Enums.TransportItemType
     name?: string | null
-    clientName: string
     frontPlateNumber?: string | null
     backPlateNumber?: string | null
     containerName?: string | null
@@ -73345,7 +73446,6 @@ export namespace Prisma {
     itemDate?: DateTimeFieldUpdateOperationsInput | Date | string
     itemType?: EnumTransportItemTypeFieldUpdateOperationsInput | $Enums.TransportItemType
     name?: NullableStringFieldUpdateOperationsInput | string | null
-    clientName?: StringFieldUpdateOperationsInput | string
     frontPlateNumber?: NullableStringFieldUpdateOperationsInput | string | null
     backPlateNumber?: NullableStringFieldUpdateOperationsInput | string | null
     containerName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -73367,7 +73467,6 @@ export namespace Prisma {
     itemDate?: DateTimeFieldUpdateOperationsInput | Date | string
     itemType?: EnumTransportItemTypeFieldUpdateOperationsInput | $Enums.TransportItemType
     name?: NullableStringFieldUpdateOperationsInput | string | null
-    clientName?: StringFieldUpdateOperationsInput | string
     frontPlateNumber?: NullableStringFieldUpdateOperationsInput | string | null
     backPlateNumber?: NullableStringFieldUpdateOperationsInput | string | null
     containerName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -77149,6 +77248,7 @@ export namespace Prisma {
     id?: SortOrder
     transportNumber?: SortOrder
     transportDate?: SortOrder
+    ownerName?: SortOrder
     shipmentId?: SortOrder
     remarks?: SortOrder
     isLocked?: SortOrder
@@ -77162,6 +77262,7 @@ export namespace Prisma {
     id?: SortOrder
     transportNumber?: SortOrder
     transportDate?: SortOrder
+    ownerName?: SortOrder
     shipmentId?: SortOrder
     remarks?: SortOrder
     isLocked?: SortOrder
@@ -77175,6 +77276,7 @@ export namespace Prisma {
     id?: SortOrder
     transportNumber?: SortOrder
     transportDate?: SortOrder
+    ownerName?: SortOrder
     shipmentId?: SortOrder
     remarks?: SortOrder
     isLocked?: SortOrder
@@ -77217,7 +77319,6 @@ export namespace Prisma {
     itemDate?: SortOrder
     itemType?: SortOrder
     name?: SortOrder
-    ownerName?: SortOrder
     frontPlateNumber?: SortOrder
     backPlateNumber?: SortOrder
     containerName?: SortOrder
@@ -77243,7 +77344,6 @@ export namespace Prisma {
     itemDate?: SortOrder
     itemType?: SortOrder
     name?: SortOrder
-    ownerName?: SortOrder
     frontPlateNumber?: SortOrder
     backPlateNumber?: SortOrder
     containerName?: SortOrder
@@ -77264,7 +77364,6 @@ export namespace Prisma {
     itemDate?: SortOrder
     itemType?: SortOrder
     name?: SortOrder
-    ownerName?: SortOrder
     frontPlateNumber?: SortOrder
     backPlateNumber?: SortOrder
     containerName?: SortOrder
@@ -77400,6 +77499,8 @@ export namespace Prisma {
     transitNumber?: SortOrder
     transitDate?: SortOrder
     direction?: SortOrder
+    clientId?: SortOrder
+    clientName?: SortOrder
     shipmentId?: SortOrder
     remarks?: SortOrder
     isLocked?: SortOrder
@@ -77413,6 +77514,8 @@ export namespace Prisma {
     transitNumber?: SortOrder
     transitDate?: SortOrder
     direction?: SortOrder
+    clientId?: SortOrder
+    clientName?: SortOrder
     shipmentId?: SortOrder
     remarks?: SortOrder
     isLocked?: SortOrder
@@ -77426,6 +77529,8 @@ export namespace Prisma {
     transitNumber?: SortOrder
     transitDate?: SortOrder
     direction?: SortOrder
+    clientId?: SortOrder
+    clientName?: SortOrder
     shipmentId?: SortOrder
     remarks?: SortOrder
     isLocked?: SortOrder
@@ -77455,7 +77560,6 @@ export namespace Prisma {
     itemDate?: SortOrder
     itemType?: SortOrder
     name?: SortOrder
-    clientName?: SortOrder
     frontPlateNumber?: SortOrder
     backPlateNumber?: SortOrder
     containerName?: SortOrder
@@ -77481,7 +77585,6 @@ export namespace Prisma {
     itemDate?: SortOrder
     itemType?: SortOrder
     name?: SortOrder
-    clientName?: SortOrder
     frontPlateNumber?: SortOrder
     backPlateNumber?: SortOrder
     containerName?: SortOrder
@@ -77502,7 +77605,6 @@ export namespace Prisma {
     itemDate?: SortOrder
     itemType?: SortOrder
     name?: SortOrder
-    clientName?: SortOrder
     frontPlateNumber?: SortOrder
     backPlateNumber?: SortOrder
     containerName?: SortOrder
@@ -79903,6 +80005,13 @@ export namespace Prisma {
     connect?: ShipmentWhereUniqueInput | ShipmentWhereUniqueInput[]
   }
 
+  export type TransitMovementCreateNestedManyWithoutClientInput = {
+    create?: XOR<TransitMovementCreateWithoutClientInput, TransitMovementUncheckedCreateWithoutClientInput> | TransitMovementCreateWithoutClientInput[] | TransitMovementUncheckedCreateWithoutClientInput[]
+    connectOrCreate?: TransitMovementCreateOrConnectWithoutClientInput | TransitMovementCreateOrConnectWithoutClientInput[]
+    createMany?: TransitMovementCreateManyClientInputEnvelope
+    connect?: TransitMovementWhereUniqueInput | TransitMovementWhereUniqueInput[]
+  }
+
   export type DocumentCreateNestedManyWithoutClientInput = {
     create?: XOR<DocumentCreateWithoutClientInput, DocumentUncheckedCreateWithoutClientInput> | DocumentCreateWithoutClientInput[] | DocumentUncheckedCreateWithoutClientInput[]
     connectOrCreate?: DocumentCreateOrConnectWithoutClientInput | DocumentCreateOrConnectWithoutClientInput[]
@@ -79922,6 +80031,13 @@ export namespace Prisma {
     connectOrCreate?: ShipmentCreateOrConnectWithoutClientInput | ShipmentCreateOrConnectWithoutClientInput[]
     createMany?: ShipmentCreateManyClientInputEnvelope
     connect?: ShipmentWhereUniqueInput | ShipmentWhereUniqueInput[]
+  }
+
+  export type TransitMovementUncheckedCreateNestedManyWithoutClientInput = {
+    create?: XOR<TransitMovementCreateWithoutClientInput, TransitMovementUncheckedCreateWithoutClientInput> | TransitMovementCreateWithoutClientInput[] | TransitMovementUncheckedCreateWithoutClientInput[]
+    connectOrCreate?: TransitMovementCreateOrConnectWithoutClientInput | TransitMovementCreateOrConnectWithoutClientInput[]
+    createMany?: TransitMovementCreateManyClientInputEnvelope
+    connect?: TransitMovementWhereUniqueInput | TransitMovementWhereUniqueInput[]
   }
 
   export type DocumentUncheckedCreateNestedManyWithoutClientInput = {
@@ -79961,6 +80077,20 @@ export namespace Prisma {
     update?: ShipmentUpdateWithWhereUniqueWithoutClientInput | ShipmentUpdateWithWhereUniqueWithoutClientInput[]
     updateMany?: ShipmentUpdateManyWithWhereWithoutClientInput | ShipmentUpdateManyWithWhereWithoutClientInput[]
     deleteMany?: ShipmentScalarWhereInput | ShipmentScalarWhereInput[]
+  }
+
+  export type TransitMovementUpdateManyWithoutClientNestedInput = {
+    create?: XOR<TransitMovementCreateWithoutClientInput, TransitMovementUncheckedCreateWithoutClientInput> | TransitMovementCreateWithoutClientInput[] | TransitMovementUncheckedCreateWithoutClientInput[]
+    connectOrCreate?: TransitMovementCreateOrConnectWithoutClientInput | TransitMovementCreateOrConnectWithoutClientInput[]
+    upsert?: TransitMovementUpsertWithWhereUniqueWithoutClientInput | TransitMovementUpsertWithWhereUniqueWithoutClientInput[]
+    createMany?: TransitMovementCreateManyClientInputEnvelope
+    set?: TransitMovementWhereUniqueInput | TransitMovementWhereUniqueInput[]
+    disconnect?: TransitMovementWhereUniqueInput | TransitMovementWhereUniqueInput[]
+    delete?: TransitMovementWhereUniqueInput | TransitMovementWhereUniqueInput[]
+    connect?: TransitMovementWhereUniqueInput | TransitMovementWhereUniqueInput[]
+    update?: TransitMovementUpdateWithWhereUniqueWithoutClientInput | TransitMovementUpdateWithWhereUniqueWithoutClientInput[]
+    updateMany?: TransitMovementUpdateManyWithWhereWithoutClientInput | TransitMovementUpdateManyWithWhereWithoutClientInput[]
+    deleteMany?: TransitMovementScalarWhereInput | TransitMovementScalarWhereInput[]
   }
 
   export type DocumentUpdateManyWithoutClientNestedInput = {
@@ -80003,6 +80133,20 @@ export namespace Prisma {
     update?: ShipmentUpdateWithWhereUniqueWithoutClientInput | ShipmentUpdateWithWhereUniqueWithoutClientInput[]
     updateMany?: ShipmentUpdateManyWithWhereWithoutClientInput | ShipmentUpdateManyWithWhereWithoutClientInput[]
     deleteMany?: ShipmentScalarWhereInput | ShipmentScalarWhereInput[]
+  }
+
+  export type TransitMovementUncheckedUpdateManyWithoutClientNestedInput = {
+    create?: XOR<TransitMovementCreateWithoutClientInput, TransitMovementUncheckedCreateWithoutClientInput> | TransitMovementCreateWithoutClientInput[] | TransitMovementUncheckedCreateWithoutClientInput[]
+    connectOrCreate?: TransitMovementCreateOrConnectWithoutClientInput | TransitMovementCreateOrConnectWithoutClientInput[]
+    upsert?: TransitMovementUpsertWithWhereUniqueWithoutClientInput | TransitMovementUpsertWithWhereUniqueWithoutClientInput[]
+    createMany?: TransitMovementCreateManyClientInputEnvelope
+    set?: TransitMovementWhereUniqueInput | TransitMovementWhereUniqueInput[]
+    disconnect?: TransitMovementWhereUniqueInput | TransitMovementWhereUniqueInput[]
+    delete?: TransitMovementWhereUniqueInput | TransitMovementWhereUniqueInput[]
+    connect?: TransitMovementWhereUniqueInput | TransitMovementWhereUniqueInput[]
+    update?: TransitMovementUpdateWithWhereUniqueWithoutClientInput | TransitMovementUpdateWithWhereUniqueWithoutClientInput[]
+    updateMany?: TransitMovementUpdateManyWithWhereWithoutClientInput | TransitMovementUpdateManyWithWhereWithoutClientInput[]
+    deleteMany?: TransitMovementScalarWhereInput | TransitMovementScalarWhereInput[]
   }
 
   export type DocumentUncheckedUpdateManyWithoutClientNestedInput = {
@@ -82382,6 +82526,12 @@ export namespace Prisma {
     update?: XOR<XOR<UserUpdateToOneWithWhereWithoutTransportPaymentsInput, UserUpdateWithoutTransportPaymentsInput>, UserUncheckedUpdateWithoutTransportPaymentsInput>
   }
 
+  export type ClientCreateNestedOneWithoutTransitMovementsInput = {
+    create?: XOR<ClientCreateWithoutTransitMovementsInput, ClientUncheckedCreateWithoutTransitMovementsInput>
+    connectOrCreate?: ClientCreateOrConnectWithoutTransitMovementsInput
+    connect?: ClientWhereUniqueInput
+  }
+
   export type ShipmentCreateNestedOneWithoutTransitMovementsInput = {
     create?: XOR<ShipmentCreateWithoutTransitMovementsInput, ShipmentUncheckedCreateWithoutTransitMovementsInput>
     connectOrCreate?: ShipmentCreateOrConnectWithoutTransitMovementsInput
@@ -82404,6 +82554,16 @@ export namespace Prisma {
 
   export type EnumTransitDirectionFieldUpdateOperationsInput = {
     set?: $Enums.TransitDirection
+  }
+
+  export type ClientUpdateOneWithoutTransitMovementsNestedInput = {
+    create?: XOR<ClientCreateWithoutTransitMovementsInput, ClientUncheckedCreateWithoutTransitMovementsInput>
+    connectOrCreate?: ClientCreateOrConnectWithoutTransitMovementsInput
+    upsert?: ClientUpsertWithoutTransitMovementsInput
+    disconnect?: ClientWhereInput | boolean
+    delete?: ClientWhereInput | boolean
+    connect?: ClientWhereUniqueInput
+    update?: XOR<XOR<ClientUpdateToOneWithWhereWithoutTransitMovementsInput, ClientUpdateWithoutTransitMovementsInput>, ClientUncheckedUpdateWithoutTransitMovementsInput>
   }
 
   export type ShipmentUpdateOneWithoutTransitMovementsNestedInput = {
@@ -84262,6 +84422,7 @@ export namespace Prisma {
     id?: string
     transportNumber: string
     transportDate: Date | string
+    ownerName: string
     remarks?: string | null
     isLocked?: boolean
     lockedAt?: Date | string | null
@@ -84275,6 +84436,7 @@ export namespace Prisma {
     id?: string
     transportNumber: string
     transportDate: Date | string
+    ownerName: string
     shipmentId?: string | null
     remarks?: string | null
     isLocked?: boolean
@@ -84868,6 +85030,7 @@ export namespace Prisma {
     id?: StringFilter<"Transport"> | string
     transportNumber?: StringFilter<"Transport"> | string
     transportDate?: DateTimeFilter<"Transport"> | Date | string
+    ownerName?: StringFilter<"Transport"> | string
     shipmentId?: StringNullableFilter<"Transport"> | string | null
     remarks?: StringNullableFilter<"Transport"> | string | null
     isLocked?: BoolFilter<"Transport"> | boolean
@@ -86115,6 +86278,7 @@ export namespace Prisma {
     id?: string
     transportNumber: string
     transportDate: Date | string
+    ownerName: string
     remarks?: string | null
     isLocked?: boolean
     lockedAt?: Date | string | null
@@ -86128,6 +86292,7 @@ export namespace Prisma {
     id?: string
     transportNumber: string
     transportDate: Date | string
+    ownerName: string
     remarks?: string | null
     isLocked?: boolean
     lockedAt?: Date | string | null
@@ -86317,6 +86482,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     allocations?: AllocationCreateNestedManyWithoutClientInput
+    transitMovements?: TransitMovementCreateNestedManyWithoutClientInput
     documents?: DocumentCreateNestedManyWithoutClientInput
   }
 
@@ -86340,6 +86506,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     allocations?: AllocationUncheckedCreateNestedManyWithoutClientInput
+    transitMovements?: TransitMovementUncheckedCreateNestedManyWithoutClientInput
     documents?: DocumentUncheckedCreateNestedManyWithoutClientInput
   }
 
@@ -86544,11 +86711,13 @@ export namespace Prisma {
     transitNumber: string
     transitDate: Date | string
     direction: $Enums.TransitDirection
+    clientName: string
     remarks?: string | null
     isLocked?: boolean
     lockedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
+    client?: ClientCreateNestedOneWithoutTransitMovementsInput
     items?: TransitMovementItemCreateNestedManyWithoutTransitMovementInput
   }
 
@@ -86557,6 +86726,8 @@ export namespace Prisma {
     transitNumber: string
     transitDate: Date | string
     direction: $Enums.TransitDirection
+    clientId?: string | null
+    clientName: string
     remarks?: string | null
     isLocked?: boolean
     lockedAt?: Date | string | null
@@ -86885,6 +87056,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     allocations?: AllocationUpdateManyWithoutClientNestedInput
+    transitMovements?: TransitMovementUpdateManyWithoutClientNestedInput
     documents?: DocumentUpdateManyWithoutClientNestedInput
   }
 
@@ -86908,6 +87080,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     allocations?: AllocationUncheckedUpdateManyWithoutClientNestedInput
+    transitMovements?: TransitMovementUncheckedUpdateManyWithoutClientNestedInput
     documents?: DocumentUncheckedUpdateManyWithoutClientNestedInput
   }
 
@@ -87132,6 +87305,8 @@ export namespace Prisma {
     transitNumber?: StringFilter<"TransitMovement"> | string
     transitDate?: DateTimeFilter<"TransitMovement"> | Date | string
     direction?: EnumTransitDirectionFilter<"TransitMovement"> | $Enums.TransitDirection
+    clientId?: StringNullableFilter<"TransitMovement"> | string | null
+    clientName?: StringFilter<"TransitMovement"> | string
     shipmentId?: StringNullableFilter<"TransitMovement"> | string | null
     remarks?: StringNullableFilter<"TransitMovement"> | string | null
     isLocked?: BoolFilter<"TransitMovement"> | boolean
@@ -89119,6 +89294,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     shipments?: ShipmentCreateNestedManyWithoutClientInput
+    transitMovements?: TransitMovementCreateNestedManyWithoutClientInput
     documents?: DocumentCreateNestedManyWithoutClientInput
   }
 
@@ -89142,6 +89318,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     shipments?: ShipmentUncheckedCreateNestedManyWithoutClientInput
+    transitMovements?: TransitMovementUncheckedCreateNestedManyWithoutClientInput
     documents?: DocumentUncheckedCreateNestedManyWithoutClientInput
   }
 
@@ -89639,6 +89816,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     shipments?: ShipmentUpdateManyWithoutClientNestedInput
+    transitMovements?: TransitMovementUpdateManyWithoutClientNestedInput
     documents?: DocumentUpdateManyWithoutClientNestedInput
   }
 
@@ -89662,6 +89840,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     shipments?: ShipmentUncheckedUpdateManyWithoutClientNestedInput
+    transitMovements?: TransitMovementUncheckedUpdateManyWithoutClientNestedInput
     documents?: DocumentUncheckedUpdateManyWithoutClientNestedInput
   }
 
@@ -90135,6 +90314,46 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type TransitMovementCreateWithoutClientInput = {
+    id?: string
+    transitNumber: string
+    transitDate: Date | string
+    direction: $Enums.TransitDirection
+    clientName: string
+    remarks?: string | null
+    isLocked?: boolean
+    lockedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    shipment?: ShipmentCreateNestedOneWithoutTransitMovementsInput
+    items?: TransitMovementItemCreateNestedManyWithoutTransitMovementInput
+  }
+
+  export type TransitMovementUncheckedCreateWithoutClientInput = {
+    id?: string
+    transitNumber: string
+    transitDate: Date | string
+    direction: $Enums.TransitDirection
+    clientName: string
+    shipmentId?: string | null
+    remarks?: string | null
+    isLocked?: boolean
+    lockedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    items?: TransitMovementItemUncheckedCreateNestedManyWithoutTransitMovementInput
+  }
+
+  export type TransitMovementCreateOrConnectWithoutClientInput = {
+    where: TransitMovementWhereUniqueInput
+    create: XOR<TransitMovementCreateWithoutClientInput, TransitMovementUncheckedCreateWithoutClientInput>
+  }
+
+  export type TransitMovementCreateManyClientInputEnvelope = {
+    data: TransitMovementCreateManyClientInput | TransitMovementCreateManyClientInput[]
+    skipDuplicates?: boolean
+  }
+
   export type DocumentCreateWithoutClientInput = {
     id?: string
     type: $Enums.DocumentType
@@ -90221,6 +90440,22 @@ export namespace Prisma {
     data: XOR<ShipmentUpdateManyMutationInput, ShipmentUncheckedUpdateManyWithoutClientInput>
   }
 
+  export type TransitMovementUpsertWithWhereUniqueWithoutClientInput = {
+    where: TransitMovementWhereUniqueInput
+    update: XOR<TransitMovementUpdateWithoutClientInput, TransitMovementUncheckedUpdateWithoutClientInput>
+    create: XOR<TransitMovementCreateWithoutClientInput, TransitMovementUncheckedCreateWithoutClientInput>
+  }
+
+  export type TransitMovementUpdateWithWhereUniqueWithoutClientInput = {
+    where: TransitMovementWhereUniqueInput
+    data: XOR<TransitMovementUpdateWithoutClientInput, TransitMovementUncheckedUpdateWithoutClientInput>
+  }
+
+  export type TransitMovementUpdateManyWithWhereWithoutClientInput = {
+    where: TransitMovementScalarWhereInput
+    data: XOR<TransitMovementUpdateManyMutationInput, TransitMovementUncheckedUpdateManyWithoutClientInput>
+  }
+
   export type DocumentUpsertWithWhereUniqueWithoutClientInput = {
     where: DocumentWhereUniqueInput
     update: XOR<DocumentUpdateWithoutClientInput, DocumentUncheckedUpdateWithoutClientInput>
@@ -90258,6 +90493,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     allocations?: AllocationCreateNestedManyWithoutClientInput
     shipments?: ShipmentCreateNestedManyWithoutClientInput
+    transitMovements?: TransitMovementCreateNestedManyWithoutClientInput
   }
 
   export type ClientUncheckedCreateWithoutDocumentsInput = {
@@ -90281,6 +90517,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     allocations?: AllocationUncheckedCreateNestedManyWithoutClientInput
     shipments?: ShipmentUncheckedCreateNestedManyWithoutClientInput
+    transitMovements?: TransitMovementUncheckedCreateNestedManyWithoutClientInput
   }
 
   export type ClientCreateOrConnectWithoutDocumentsInput = {
@@ -90778,6 +91015,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     allocations?: AllocationUpdateManyWithoutClientNestedInput
     shipments?: ShipmentUpdateManyWithoutClientNestedInput
+    transitMovements?: TransitMovementUpdateManyWithoutClientNestedInput
   }
 
   export type ClientUncheckedUpdateWithoutDocumentsInput = {
@@ -90801,6 +91039,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     allocations?: AllocationUncheckedUpdateManyWithoutClientNestedInput
     shipments?: ShipmentUncheckedUpdateManyWithoutClientNestedInput
+    transitMovements?: TransitMovementUncheckedUpdateManyWithoutClientNestedInput
   }
 
   export type ExporterUpsertWithoutDocumentsInput = {
@@ -98436,7 +98675,6 @@ export namespace Prisma {
     itemDate: Date | string
     itemType: $Enums.TransportItemType
     name?: string | null
-    ownerName: string
     frontPlateNumber?: string | null
     backPlateNumber?: string | null
     containerName?: string | null
@@ -98458,7 +98696,6 @@ export namespace Prisma {
     itemDate: Date | string
     itemType: $Enums.TransportItemType
     name?: string | null
-    ownerName: string
     frontPlateNumber?: string | null
     backPlateNumber?: string | null
     containerName?: string | null
@@ -98666,7 +98903,6 @@ export namespace Prisma {
     itemDate?: DateTimeFilter<"TransportItem"> | Date | string
     itemType?: EnumTransportItemTypeFilter<"TransportItem"> | $Enums.TransportItemType
     name?: StringNullableFilter<"TransportItem"> | string | null
-    ownerName?: StringFilter<"TransportItem"> | string
     frontPlateNumber?: StringNullableFilter<"TransportItem"> | string | null
     backPlateNumber?: StringNullableFilter<"TransportItem"> | string | null
     containerName?: StringNullableFilter<"TransportItem"> | string | null
@@ -98686,6 +98922,7 @@ export namespace Prisma {
     id?: string
     transportNumber: string
     transportDate: Date | string
+    ownerName: string
     remarks?: string | null
     isLocked?: boolean
     lockedAt?: Date | string | null
@@ -98699,6 +98936,7 @@ export namespace Prisma {
     id?: string
     transportNumber: string
     transportDate: Date | string
+    ownerName: string
     shipmentId?: string | null
     remarks?: string | null
     isLocked?: boolean
@@ -98766,6 +99004,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     transportNumber?: StringFieldUpdateOperationsInput | string
     transportDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    ownerName?: StringFieldUpdateOperationsInput | string
     remarks?: NullableStringFieldUpdateOperationsInput | string | null
     isLocked?: BoolFieldUpdateOperationsInput | boolean
     lockedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -98779,6 +99018,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     transportNumber?: StringFieldUpdateOperationsInput | string
     transportDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    ownerName?: StringFieldUpdateOperationsInput | string
     shipmentId?: NullableStringFieldUpdateOperationsInput | string | null
     remarks?: NullableStringFieldUpdateOperationsInput | string | null
     isLocked?: BoolFieldUpdateOperationsInput | boolean
@@ -98809,7 +99049,6 @@ export namespace Prisma {
     itemDate: Date | string
     itemType: $Enums.TransportItemType
     name?: string | null
-    ownerName: string
     frontPlateNumber?: string | null
     backPlateNumber?: string | null
     containerName?: string | null
@@ -98832,7 +99071,6 @@ export namespace Prisma {
     itemDate: Date | string
     itemType: $Enums.TransportItemType
     name?: string | null
-    ownerName: string
     frontPlateNumber?: string | null
     backPlateNumber?: string | null
     containerName?: string | null
@@ -98936,7 +99174,6 @@ export namespace Prisma {
     itemDate?: DateTimeFieldUpdateOperationsInput | Date | string
     itemType?: EnumTransportItemTypeFieldUpdateOperationsInput | $Enums.TransportItemType
     name?: NullableStringFieldUpdateOperationsInput | string | null
-    ownerName?: StringFieldUpdateOperationsInput | string
     frontPlateNumber?: NullableStringFieldUpdateOperationsInput | string | null
     backPlateNumber?: NullableStringFieldUpdateOperationsInput | string | null
     containerName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -98959,7 +99196,6 @@ export namespace Prisma {
     itemDate?: DateTimeFieldUpdateOperationsInput | Date | string
     itemType?: EnumTransportItemTypeFieldUpdateOperationsInput | $Enums.TransportItemType
     name?: NullableStringFieldUpdateOperationsInput | string | null
-    ownerName?: StringFieldUpdateOperationsInput | string
     frontPlateNumber?: NullableStringFieldUpdateOperationsInput | string | null
     backPlateNumber?: NullableStringFieldUpdateOperationsInput | string | null
     containerName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -99048,6 +99284,59 @@ export namespace Prisma {
     transitMovementColumnLocks?: TransitMovementItemColumnLockUncheckedUpdateManyWithoutLockedByNestedInput
   }
 
+  export type ClientCreateWithoutTransitMovementsInput = {
+    id?: string
+    clientCode: string
+    companyName: string
+    clientType?: $Enums.ClientType
+    contactPerson?: string | null
+    email?: string | null
+    phone?: string | null
+    alternatePhone?: string | null
+    address?: string | null
+    city?: string | null
+    state?: string | null
+    country?: string | null
+    website?: string | null
+    taxNumber?: string | null
+    remarks?: string | null
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    allocations?: AllocationCreateNestedManyWithoutClientInput
+    shipments?: ShipmentCreateNestedManyWithoutClientInput
+    documents?: DocumentCreateNestedManyWithoutClientInput
+  }
+
+  export type ClientUncheckedCreateWithoutTransitMovementsInput = {
+    id?: string
+    clientCode: string
+    companyName: string
+    clientType?: $Enums.ClientType
+    contactPerson?: string | null
+    email?: string | null
+    phone?: string | null
+    alternatePhone?: string | null
+    address?: string | null
+    city?: string | null
+    state?: string | null
+    country?: string | null
+    website?: string | null
+    taxNumber?: string | null
+    remarks?: string | null
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    allocations?: AllocationUncheckedCreateNestedManyWithoutClientInput
+    shipments?: ShipmentUncheckedCreateNestedManyWithoutClientInput
+    documents?: DocumentUncheckedCreateNestedManyWithoutClientInput
+  }
+
+  export type ClientCreateOrConnectWithoutTransitMovementsInput = {
+    where: ClientWhereUniqueInput
+    create: XOR<ClientCreateWithoutTransitMovementsInput, ClientUncheckedCreateWithoutTransitMovementsInput>
+  }
+
   export type ShipmentCreateWithoutTransitMovementsInput = {
     id?: string
     shipmentNumber: string
@@ -99130,7 +99419,6 @@ export namespace Prisma {
     itemDate: Date | string
     itemType: $Enums.TransportItemType
     name?: string | null
-    clientName: string
     frontPlateNumber?: string | null
     backPlateNumber?: string | null
     containerName?: string | null
@@ -99152,7 +99440,6 @@ export namespace Prisma {
     itemDate: Date | string
     itemType: $Enums.TransportItemType
     name?: string | null
-    clientName: string
     frontPlateNumber?: string | null
     backPlateNumber?: string | null
     containerName?: string | null
@@ -99177,6 +99464,65 @@ export namespace Prisma {
   export type TransitMovementItemCreateManyTransitMovementInputEnvelope = {
     data: TransitMovementItemCreateManyTransitMovementInput | TransitMovementItemCreateManyTransitMovementInput[]
     skipDuplicates?: boolean
+  }
+
+  export type ClientUpsertWithoutTransitMovementsInput = {
+    update: XOR<ClientUpdateWithoutTransitMovementsInput, ClientUncheckedUpdateWithoutTransitMovementsInput>
+    create: XOR<ClientCreateWithoutTransitMovementsInput, ClientUncheckedCreateWithoutTransitMovementsInput>
+    where?: ClientWhereInput
+  }
+
+  export type ClientUpdateToOneWithWhereWithoutTransitMovementsInput = {
+    where?: ClientWhereInput
+    data: XOR<ClientUpdateWithoutTransitMovementsInput, ClientUncheckedUpdateWithoutTransitMovementsInput>
+  }
+
+  export type ClientUpdateWithoutTransitMovementsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    clientCode?: StringFieldUpdateOperationsInput | string
+    companyName?: StringFieldUpdateOperationsInput | string
+    clientType?: EnumClientTypeFieldUpdateOperationsInput | $Enums.ClientType
+    contactPerson?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    alternatePhone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    city?: NullableStringFieldUpdateOperationsInput | string | null
+    state?: NullableStringFieldUpdateOperationsInput | string | null
+    country?: NullableStringFieldUpdateOperationsInput | string | null
+    website?: NullableStringFieldUpdateOperationsInput | string | null
+    taxNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    remarks?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    allocations?: AllocationUpdateManyWithoutClientNestedInput
+    shipments?: ShipmentUpdateManyWithoutClientNestedInput
+    documents?: DocumentUpdateManyWithoutClientNestedInput
+  }
+
+  export type ClientUncheckedUpdateWithoutTransitMovementsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    clientCode?: StringFieldUpdateOperationsInput | string
+    companyName?: StringFieldUpdateOperationsInput | string
+    clientType?: EnumClientTypeFieldUpdateOperationsInput | $Enums.ClientType
+    contactPerson?: NullableStringFieldUpdateOperationsInput | string | null
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    alternatePhone?: NullableStringFieldUpdateOperationsInput | string | null
+    address?: NullableStringFieldUpdateOperationsInput | string | null
+    city?: NullableStringFieldUpdateOperationsInput | string | null
+    state?: NullableStringFieldUpdateOperationsInput | string | null
+    country?: NullableStringFieldUpdateOperationsInput | string | null
+    website?: NullableStringFieldUpdateOperationsInput | string | null
+    taxNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    remarks?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    allocations?: AllocationUncheckedUpdateManyWithoutClientNestedInput
+    shipments?: ShipmentUncheckedUpdateManyWithoutClientNestedInput
+    documents?: DocumentUncheckedUpdateManyWithoutClientNestedInput
   }
 
   export type ShipmentUpsertWithoutTransitMovementsInput = {
@@ -99287,7 +99633,6 @@ export namespace Prisma {
     itemDate?: DateTimeFilter<"TransitMovementItem"> | Date | string
     itemType?: EnumTransportItemTypeFilter<"TransitMovementItem"> | $Enums.TransportItemType
     name?: StringNullableFilter<"TransitMovementItem"> | string | null
-    clientName?: StringFilter<"TransitMovementItem"> | string
     frontPlateNumber?: StringNullableFilter<"TransitMovementItem"> | string | null
     backPlateNumber?: StringNullableFilter<"TransitMovementItem"> | string | null
     containerName?: StringNullableFilter<"TransitMovementItem"> | string | null
@@ -99308,11 +99653,13 @@ export namespace Prisma {
     transitNumber: string
     transitDate: Date | string
     direction: $Enums.TransitDirection
+    clientName: string
     remarks?: string | null
     isLocked?: boolean
     lockedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
+    client?: ClientCreateNestedOneWithoutTransitMovementsInput
     shipment?: ShipmentCreateNestedOneWithoutTransitMovementsInput
   }
 
@@ -99321,6 +99668,8 @@ export namespace Prisma {
     transitNumber: string
     transitDate: Date | string
     direction: $Enums.TransitDirection
+    clientId?: string | null
+    clientName: string
     shipmentId?: string | null
     remarks?: string | null
     isLocked?: boolean
@@ -99388,11 +99737,13 @@ export namespace Prisma {
     transitNumber?: StringFieldUpdateOperationsInput | string
     transitDate?: DateTimeFieldUpdateOperationsInput | Date | string
     direction?: EnumTransitDirectionFieldUpdateOperationsInput | $Enums.TransitDirection
+    clientName?: StringFieldUpdateOperationsInput | string
     remarks?: NullableStringFieldUpdateOperationsInput | string | null
     isLocked?: BoolFieldUpdateOperationsInput | boolean
     lockedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    client?: ClientUpdateOneWithoutTransitMovementsNestedInput
     shipment?: ShipmentUpdateOneWithoutTransitMovementsNestedInput
   }
 
@@ -99401,6 +99752,8 @@ export namespace Prisma {
     transitNumber?: StringFieldUpdateOperationsInput | string
     transitDate?: DateTimeFieldUpdateOperationsInput | Date | string
     direction?: EnumTransitDirectionFieldUpdateOperationsInput | $Enums.TransitDirection
+    clientId?: NullableStringFieldUpdateOperationsInput | string | null
+    clientName?: StringFieldUpdateOperationsInput | string
     shipmentId?: NullableStringFieldUpdateOperationsInput | string | null
     remarks?: NullableStringFieldUpdateOperationsInput | string | null
     isLocked?: BoolFieldUpdateOperationsInput | boolean
@@ -99430,7 +99783,6 @@ export namespace Prisma {
     itemDate: Date | string
     itemType: $Enums.TransportItemType
     name?: string | null
-    clientName: string
     frontPlateNumber?: string | null
     backPlateNumber?: string | null
     containerName?: string | null
@@ -99453,7 +99805,6 @@ export namespace Prisma {
     itemDate: Date | string
     itemType: $Enums.TransportItemType
     name?: string | null
-    clientName: string
     frontPlateNumber?: string | null
     backPlateNumber?: string | null
     containerName?: string | null
@@ -99557,7 +99908,6 @@ export namespace Prisma {
     itemDate?: DateTimeFieldUpdateOperationsInput | Date | string
     itemType?: EnumTransportItemTypeFieldUpdateOperationsInput | $Enums.TransportItemType
     name?: NullableStringFieldUpdateOperationsInput | string | null
-    clientName?: StringFieldUpdateOperationsInput | string
     frontPlateNumber?: NullableStringFieldUpdateOperationsInput | string | null
     backPlateNumber?: NullableStringFieldUpdateOperationsInput | string | null
     containerName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -99580,7 +99930,6 @@ export namespace Prisma {
     itemDate?: DateTimeFieldUpdateOperationsInput | Date | string
     itemType?: EnumTransportItemTypeFieldUpdateOperationsInput | $Enums.TransportItemType
     name?: NullableStringFieldUpdateOperationsInput | string | null
-    clientName?: StringFieldUpdateOperationsInput | string
     frontPlateNumber?: NullableStringFieldUpdateOperationsInput | string | null
     backPlateNumber?: NullableStringFieldUpdateOperationsInput | string | null
     containerName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -100264,6 +100613,7 @@ export namespace Prisma {
     id?: string
     transportNumber: string
     transportDate: Date | string
+    ownerName: string
     shipmentId?: string | null
     remarks?: string | null
     isLocked?: boolean
@@ -101285,6 +101635,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     transportNumber?: StringFieldUpdateOperationsInput | string
     transportDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    ownerName?: StringFieldUpdateOperationsInput | string
     remarks?: NullableStringFieldUpdateOperationsInput | string | null
     isLocked?: BoolFieldUpdateOperationsInput | boolean
     lockedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -101298,6 +101649,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     transportNumber?: StringFieldUpdateOperationsInput | string
     transportDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    ownerName?: StringFieldUpdateOperationsInput | string
     shipmentId?: NullableStringFieldUpdateOperationsInput | string | null
     remarks?: NullableStringFieldUpdateOperationsInput | string | null
     isLocked?: BoolFieldUpdateOperationsInput | boolean
@@ -101311,6 +101663,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     transportNumber?: StringFieldUpdateOperationsInput | string
     transportDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    ownerName?: StringFieldUpdateOperationsInput | string
     shipmentId?: NullableStringFieldUpdateOperationsInput | string | null
     remarks?: NullableStringFieldUpdateOperationsInput | string | null
     isLocked?: BoolFieldUpdateOperationsInput | boolean
@@ -102310,6 +102663,7 @@ export namespace Prisma {
     id?: string
     transportNumber: string
     transportDate: Date | string
+    ownerName: string
     remarks?: string | null
     isLocked?: boolean
     lockedAt?: Date | string | null
@@ -102343,6 +102697,8 @@ export namespace Prisma {
     transitNumber: string
     transitDate: Date | string
     direction: $Enums.TransitDirection
+    clientId?: string | null
+    clientName: string
     remarks?: string | null
     isLocked?: boolean
     lockedAt?: Date | string | null
@@ -102567,6 +102923,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     transportNumber?: StringFieldUpdateOperationsInput | string
     transportDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    ownerName?: StringFieldUpdateOperationsInput | string
     remarks?: NullableStringFieldUpdateOperationsInput | string | null
     isLocked?: BoolFieldUpdateOperationsInput | boolean
     lockedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -102580,6 +102937,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     transportNumber?: StringFieldUpdateOperationsInput | string
     transportDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    ownerName?: StringFieldUpdateOperationsInput | string
     remarks?: NullableStringFieldUpdateOperationsInput | string | null
     isLocked?: BoolFieldUpdateOperationsInput | boolean
     lockedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -102593,6 +102951,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     transportNumber?: StringFieldUpdateOperationsInput | string
     transportDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    ownerName?: StringFieldUpdateOperationsInput | string
     remarks?: NullableStringFieldUpdateOperationsInput | string | null
     isLocked?: BoolFieldUpdateOperationsInput | boolean
     lockedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -102668,11 +103027,13 @@ export namespace Prisma {
     transitNumber?: StringFieldUpdateOperationsInput | string
     transitDate?: DateTimeFieldUpdateOperationsInput | Date | string
     direction?: EnumTransitDirectionFieldUpdateOperationsInput | $Enums.TransitDirection
+    clientName?: StringFieldUpdateOperationsInput | string
     remarks?: NullableStringFieldUpdateOperationsInput | string | null
     isLocked?: BoolFieldUpdateOperationsInput | boolean
     lockedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    client?: ClientUpdateOneWithoutTransitMovementsNestedInput
     items?: TransitMovementItemUpdateManyWithoutTransitMovementNestedInput
   }
 
@@ -102681,6 +103042,8 @@ export namespace Prisma {
     transitNumber?: StringFieldUpdateOperationsInput | string
     transitDate?: DateTimeFieldUpdateOperationsInput | Date | string
     direction?: EnumTransitDirectionFieldUpdateOperationsInput | $Enums.TransitDirection
+    clientId?: NullableStringFieldUpdateOperationsInput | string | null
+    clientName?: StringFieldUpdateOperationsInput | string
     remarks?: NullableStringFieldUpdateOperationsInput | string | null
     isLocked?: BoolFieldUpdateOperationsInput | boolean
     lockedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -102694,6 +103057,8 @@ export namespace Prisma {
     transitNumber?: StringFieldUpdateOperationsInput | string
     transitDate?: DateTimeFieldUpdateOperationsInput | Date | string
     direction?: EnumTransitDirectionFieldUpdateOperationsInput | $Enums.TransitDirection
+    clientId?: NullableStringFieldUpdateOperationsInput | string | null
+    clientName?: StringFieldUpdateOperationsInput | string
     remarks?: NullableStringFieldUpdateOperationsInput | string | null
     isLocked?: BoolFieldUpdateOperationsInput | boolean
     lockedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -103762,6 +104127,20 @@ export namespace Prisma {
     updatedAt?: Date | string
   }
 
+  export type TransitMovementCreateManyClientInput = {
+    id?: string
+    transitNumber: string
+    transitDate: Date | string
+    direction: $Enums.TransitDirection
+    clientName: string
+    shipmentId?: string | null
+    remarks?: string | null
+    isLocked?: boolean
+    lockedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
   export type DocumentCreateManyClientInput = {
     id?: string
     type: $Enums.DocumentType
@@ -104037,6 +104416,50 @@ export namespace Prisma {
     consigneeId?: StringFieldUpdateOperationsInput | string
     createdById?: StringFieldUpdateOperationsInput | string
     allocationId?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type TransitMovementUpdateWithoutClientInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    transitNumber?: StringFieldUpdateOperationsInput | string
+    transitDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    direction?: EnumTransitDirectionFieldUpdateOperationsInput | $Enums.TransitDirection
+    clientName?: StringFieldUpdateOperationsInput | string
+    remarks?: NullableStringFieldUpdateOperationsInput | string | null
+    isLocked?: BoolFieldUpdateOperationsInput | boolean
+    lockedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    shipment?: ShipmentUpdateOneWithoutTransitMovementsNestedInput
+    items?: TransitMovementItemUpdateManyWithoutTransitMovementNestedInput
+  }
+
+  export type TransitMovementUncheckedUpdateWithoutClientInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    transitNumber?: StringFieldUpdateOperationsInput | string
+    transitDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    direction?: EnumTransitDirectionFieldUpdateOperationsInput | $Enums.TransitDirection
+    clientName?: StringFieldUpdateOperationsInput | string
+    shipmentId?: NullableStringFieldUpdateOperationsInput | string | null
+    remarks?: NullableStringFieldUpdateOperationsInput | string | null
+    isLocked?: BoolFieldUpdateOperationsInput | boolean
+    lockedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    items?: TransitMovementItemUncheckedUpdateManyWithoutTransitMovementNestedInput
+  }
+
+  export type TransitMovementUncheckedUpdateManyWithoutClientInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    transitNumber?: StringFieldUpdateOperationsInput | string
+    transitDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    direction?: EnumTransitDirectionFieldUpdateOperationsInput | $Enums.TransitDirection
+    clientName?: StringFieldUpdateOperationsInput | string
+    shipmentId?: NullableStringFieldUpdateOperationsInput | string | null
+    remarks?: NullableStringFieldUpdateOperationsInput | string | null
+    isLocked?: BoolFieldUpdateOperationsInput | boolean
+    lockedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -106048,7 +106471,6 @@ export namespace Prisma {
     itemDate: Date | string
     itemType: $Enums.TransportItemType
     name?: string | null
-    ownerName: string
     frontPlateNumber?: string | null
     backPlateNumber?: string | null
     containerName?: string | null
@@ -106069,7 +106491,6 @@ export namespace Prisma {
     itemDate?: DateTimeFieldUpdateOperationsInput | Date | string
     itemType?: EnumTransportItemTypeFieldUpdateOperationsInput | $Enums.TransportItemType
     name?: NullableStringFieldUpdateOperationsInput | string | null
-    ownerName?: StringFieldUpdateOperationsInput | string
     frontPlateNumber?: NullableStringFieldUpdateOperationsInput | string | null
     backPlateNumber?: NullableStringFieldUpdateOperationsInput | string | null
     containerName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -106091,7 +106512,6 @@ export namespace Prisma {
     itemDate?: DateTimeFieldUpdateOperationsInput | Date | string
     itemType?: EnumTransportItemTypeFieldUpdateOperationsInput | $Enums.TransportItemType
     name?: NullableStringFieldUpdateOperationsInput | string | null
-    ownerName?: StringFieldUpdateOperationsInput | string
     frontPlateNumber?: NullableStringFieldUpdateOperationsInput | string | null
     backPlateNumber?: NullableStringFieldUpdateOperationsInput | string | null
     containerName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -106113,7 +106533,6 @@ export namespace Prisma {
     itemDate?: DateTimeFieldUpdateOperationsInput | Date | string
     itemType?: EnumTransportItemTypeFieldUpdateOperationsInput | $Enums.TransportItemType
     name?: NullableStringFieldUpdateOperationsInput | string | null
-    ownerName?: StringFieldUpdateOperationsInput | string
     frontPlateNumber?: NullableStringFieldUpdateOperationsInput | string | null
     backPlateNumber?: NullableStringFieldUpdateOperationsInput | string | null
     containerName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -106190,7 +106609,6 @@ export namespace Prisma {
     itemDate: Date | string
     itemType: $Enums.TransportItemType
     name?: string | null
-    clientName: string
     frontPlateNumber?: string | null
     backPlateNumber?: string | null
     containerName?: string | null
@@ -106211,7 +106629,6 @@ export namespace Prisma {
     itemDate?: DateTimeFieldUpdateOperationsInput | Date | string
     itemType?: EnumTransportItemTypeFieldUpdateOperationsInput | $Enums.TransportItemType
     name?: NullableStringFieldUpdateOperationsInput | string | null
-    clientName?: StringFieldUpdateOperationsInput | string
     frontPlateNumber?: NullableStringFieldUpdateOperationsInput | string | null
     backPlateNumber?: NullableStringFieldUpdateOperationsInput | string | null
     containerName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -106233,7 +106650,6 @@ export namespace Prisma {
     itemDate?: DateTimeFieldUpdateOperationsInput | Date | string
     itemType?: EnumTransportItemTypeFieldUpdateOperationsInput | $Enums.TransportItemType
     name?: NullableStringFieldUpdateOperationsInput | string | null
-    clientName?: StringFieldUpdateOperationsInput | string
     frontPlateNumber?: NullableStringFieldUpdateOperationsInput | string | null
     backPlateNumber?: NullableStringFieldUpdateOperationsInput | string | null
     containerName?: NullableStringFieldUpdateOperationsInput | string | null
@@ -106255,7 +106671,6 @@ export namespace Prisma {
     itemDate?: DateTimeFieldUpdateOperationsInput | Date | string
     itemType?: EnumTransportItemTypeFieldUpdateOperationsInput | $Enums.TransportItemType
     name?: NullableStringFieldUpdateOperationsInput | string | null
-    clientName?: StringFieldUpdateOperationsInput | string
     frontPlateNumber?: NullableStringFieldUpdateOperationsInput | string | null
     backPlateNumber?: NullableStringFieldUpdateOperationsInput | string | null
     containerName?: NullableStringFieldUpdateOperationsInput | string | null

@@ -396,31 +396,22 @@ async update(
      DELETE TRANSPORT
   =========================================== */
 
-  async delete(id: string) {
-    const transport = await this.findById(id);
+async delete(id: string) {
+  const transport = await this.findById(id);
 
-    // Parent-level lock.
-    if (transport.isLocked) {
-      throw new ApiError(
-        400,
-        "This transport record is locked and cannot be deleted."
-      );
-    }
-
-    // Protect financial history.
-    const hasPayments = transport.items.some(
-      (item) => item.payments.length > 0
+  // Preserve the existing parent-level lock protection.
+  if (transport.isLocked) {
+    throw new ApiError(
+      400,
+      "This transport record is locked and cannot be deleted.",
     );
-
-    if (hasPayments) {
-      throw new ApiError(
-        400,
-        "This transport cannot be deleted because one or more items have payment history."
-      );
-    }
-
-    return transportRepository.delete(id);
   }
+
+  // Payment history is removed by the repository transaction before
+  // its items and parent are deleted. Do not reject solely because
+  // payments exist.
+  return transportRepository.delete(id);
+}
 /* ===========================================
    GET COLUMN LOCKS
 =========================================== */

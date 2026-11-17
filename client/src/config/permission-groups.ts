@@ -266,36 +266,70 @@ export const permissionGroups: PermissionGroup[] = [
     ],
   },
   {
-  title: "Transport",
-  permissions: [
-    {
-      key: PERMISSIONS.VIEW_TRANSPORTS,
-      label: "View Transports",
-    },
-    {
-      key: PERMISSIONS.CREATE_TRANSPORT,
-      label: "Create Transports",
-    },
-    {
-      key: PERMISSIONS.EDIT_TRANSPORT,
-      label: "Edit Transports",
-    },
-    {
-      key: PERMISSIONS.DELETE_TRANSPORT,
-      label: "Delete Transports",
-    },
-    {
-      key: PERMISSIONS.LOCK_TRANSPORT_ITEMS,
-      label: "Lock Transport Items",
-    },
-    {
-      key: PERMISSIONS.LOCK_TRANSPORT_COLUMNS,
-      label: "Manage Transport Column Locks",
-    },
-    {
-      key: PERMISSIONS.MANAGE_TRANSPORT_PAYMENTS,
-      label: "Manage Transport Payments",
-    },
-  ],
-},
+    title: "Transport",
+    permissions: [
+      {
+        key: PERMISSIONS.VIEW_TRANSPORTS,
+        label: "View Transports",
+      },
+      {
+        key: PERMISSIONS.CREATE_TRANSPORT,
+        label: "Create Transports",
+      },
+      {
+        key: PERMISSIONS.EDIT_TRANSPORT,
+        label: "Edit Transports",
+      },
+      {
+        key: PERMISSIONS.DELETE_TRANSPORT,
+        label: "Delete Transports",
+      },
+      {
+        key: PERMISSIONS.LOCK_TRANSPORT_ITEMS,
+        label: "Lock Transport Items",
+      },
+      {
+        key: PERMISSIONS.LOCK_TRANSPORT_COLUMNS,
+        label: "Manage Transport Column Locks",
+      },
+      {
+        key: PERMISSIONS.MANAGE_TRANSPORT_PAYMENTS,
+        label: "Manage Transport Payments",
+      },
+    ],
+  },
+
+  {
+    title: "Transit Movements",
+    permissions: [
+      {
+        key: PERMISSIONS.VIEW_TRANSIT_MOVEMENTS,
+        label: "View Transit Movements",
+      },
+      {
+        key: PERMISSIONS.CREATE_TRANSIT_MOVEMENT,
+        label: "Create Transit Movements",
+      },
+      {
+        key: PERMISSIONS.EDIT_TRANSIT_MOVEMENT,
+        label: "Edit Transit Movements",
+      },
+      {
+        key: PERMISSIONS.DELETE_TRANSIT_MOVEMENT,
+        label: "Delete Transit Movements",
+      },
+      {
+        key: PERMISSIONS.LOCK_TRANSIT_MOVEMENT_ITEMS,
+        label: "Lock Transit Movement Items",
+      },
+      {
+        key: PERMISSIONS.LOCK_TRANSIT_MOVEMENT_COLUMNS,
+        label: "Manage Transit Movement Column Locks",
+      },
+      {
+        key: PERMISSIONS.MANAGE_TRANSIT_MOVEMENT_PAYMENTS,
+        label: "Manage Transit Movement Payments",
+      },
+    ],
+  },
 ];

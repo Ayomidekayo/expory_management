@@ -15,7 +15,8 @@ export type InvoiceStatus =
   | "SENT"
   | "APPROVED"
   | "PAID"
-  | "CANCELLED";
+  | "CANCELLED"
+  | "PARTIALLY_PAID";
 
 export type PaymentTerms =
   | "CASH"

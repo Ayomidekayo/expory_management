@@ -1,9 +1,5 @@
-
 import { useEffect } from "react";
-import {
-  useFieldArray,
-  useForm,
-} from "react-hook-form";
+import { useFieldArray, useForm } from "react-hook-form";
 import {
   Plus,
   Trash2,
@@ -12,9 +8,6 @@ import {
   Save,
   Loader2,
 } from "lucide-react";
-
-
-
 
 import type {
   Transport,
@@ -26,9 +19,11 @@ import type {
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import { useShipments } from "../../hooks/shipments/useShipments";
+import { toInputDate } from "../../utils/date";
 
 type TransportFormValues = {
   transportDate: string;
+  ownerName: string;
   shipmentId: string;
   remarks: string;
   items: {
@@ -36,7 +31,6 @@ type TransportFormValues = {
     itemDate: string;
     itemType: TransportItemType;
     name: string;
-    ownerName: string;
     frontPlateNumber: string;
     backPlateNumber: string;
     containerName: string;
@@ -50,43 +44,37 @@ type TransportFormValues = {
 interface Props {
   initialData?: Transport;
   onSubmit: (
-    data: CreateTransportPayload | UpdateTransportPayload
+    data: CreateTransportPayload | UpdateTransportPayload,
   ) => void;
   isSubmitting?: boolean;
   submitLabel?: string;
 }
 
 function getToday() {
-  return new Date().toISOString().split("T")[0];
+  const now = new Date();
+  const localDate = new Date(
+    now.getTime() - now.getTimezoneOffset() * 60_000,
+  );
+  return localDate.toISOString().slice(0, 10);
 }
 
-function getInitialValues(
-  transport?: Transport
-): TransportFormValues {
+function getInitialValues(transport?: Transport): TransportFormValues {
   return {
-    transportDate: transport?.transportDate
-      ? new Date(transport.transportDate)
-          .toISOString()
-          .split("T")[0]
-      : getToday(),
-
+    transportDate: toInputDate(transport?.transportDate) || getToday(),
+    ownerName: transport?.ownerName ?? "",
     shipmentId: transport?.shipmentId ?? "",
     remarks: transport?.remarks ?? "",
-
     items: transport?.items?.length
       ? transport.items.map((item) => ({
           id: item.id,
-          itemDate: new Date(item.itemDate)
-            .toISOString()
-            .split("T")[0],
+          itemDate: toInputDate(item.itemDate) || getToday(),
           itemType: item.itemType,
           name: item.name ?? "",
-          ownerName: item.ownerName,
           frontPlateNumber: item.frontPlateNumber ?? "",
           backPlateNumber: item.backPlateNumber ?? "",
           containerName: item.containerName ?? "",
           containerNumber: item.containerNumber ?? "",
-          chargeAmount: Number(item.chargeAmount),
+          chargeAmount: Number(item.chargeAmount ?? 0),
           chargeCurrency: item.chargeCurrency,
           remarks: item.remarks ?? "",
         }))
@@ -95,7 +83,6 @@ function getInitialValues(
             itemDate: getToday(),
             itemType: "TRUCK" as TransportItemType,
             name: "",
-            ownerName: "",
             frontPlateNumber: "",
             backPlateNumber: "",
             containerName: "",
@@ -124,21 +111,16 @@ export default function TransportForm({
   } = useForm<TransportFormValues>({
     defaultValues: getInitialValues(initialData),
   });
-const {
-  data: shipmentResponse,
-  isLoading: isLoadingShipments,
-  isError: isShipmentError,
-} = useShipments({
-  page: 1,
-  limit: 100,
-});
 
-const shipments = shipmentResponse?.data ?? [];
   const {
-    fields,
-    append,
-    remove,
-  } = useFieldArray({
+    data: shipmentResponse,
+    isLoading: isLoadingShipments,
+    isError: isShipmentError,
+  } = useShipments({ page: 1, limit: 100 });
+
+  const shipments = shipmentResponse?.data ?? [];
+
+  const { fields, append, remove } = useFieldArray({
     control,
     name: "items",
   });
@@ -154,7 +136,6 @@ const shipments = shipmentResponse?.data ?? [];
       itemDate: getToday(),
       itemType: type,
       name: "",
-      ownerName: "",
       frontPlateNumber: "",
       backPlateNumber: "",
       containerName: "",
@@ -171,7 +152,6 @@ const shipments = shipmentResponse?.data ?? [];
       itemDate: item.itemDate,
       itemType: item.itemType,
       name: item.name.trim() || undefined,
-      ownerName: item.ownerName.trim(),
       frontPlateNumber:
         item.itemType === "TRUCK"
           ? item.frontPlateNumber.trim()
@@ -194,6 +174,7 @@ const shipments = shipmentResponse?.data ?? [];
     }));
 
     const payload = {
+      ownerName: values.ownerName.trim(),
       transportDate: values.transportDate,
       shipmentId: values.shipmentId.trim() || null,
       remarks: values.remarks.trim() || undefined,
@@ -204,16 +185,11 @@ const shipments = shipmentResponse?.data ?? [];
   }
 
   return (
-    <form
-      onSubmit={handleSubmit(submit)}
-      className="space-y-6"
-    >
+    <form onSubmit={handleSubmit(submit)} className="space-y-6">
       {/* TRANSPORT INFORMATION */}
       <section className="rounded-xl border bg-white p-6 shadow-sm">
         <div className="mb-6">
-          <h2 className="text-lg font-semibold">
-            Transport Information
-          </h2>
+          <h2 className="text-lg font-semibold">Transport Information</h2>
           <p className="text-sm text-muted-foreground">
             Enter the general details for this transport record.
           </p>
@@ -221,17 +197,16 @@ const shipments = shipmentResponse?.data ?? [];
 
         <div className="grid gap-5 md:grid-cols-2">
           <div className="space-y-2">
-            <label className="text-sm font-medium">
+            <label htmlFor="transportDate" className="text-sm font-medium">
               Transport Date <span className="text-red-500">*</span>
             </label>
-
             <Input
+              id="transportDate"
               type="date"
               {...register("transportDate", {
-                required: "Transport date is required",
+                required: "Transport date is required.",
               })}
             />
-
             {errors.transportDate && (
               <p className="text-xs text-red-500">
                 {errors.transportDate.message}
@@ -239,71 +214,89 @@ const shipments = shipmentResponse?.data ?? [];
             )}
           </div>
 
-         <div className="space-y-2">
-  <label className="text-sm font-medium">
-    Link to Shipment
-  </label>
-
-  <select
-    {...register("shipmentId")}
-    disabled={isLoadingShipments}
-    className="h-11 w-full rounded-lg border border-slate-300 bg-white px-3 text-sm outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 disabled:cursor-not-allowed disabled:bg-slate-100"
-  >
-    <option value="">
-      {isLoadingShipments
-        ? "Loading shipments..."
-        : "Independent Transport (No Shipment)"}
-    </option>
-
-    {/* Preserve the existing shipment when editing,
-        even if it is not in the first 100 results. */}
-    {initialData?.shipment &&
-      !shipments.some(
-        (shipment) =>
-          shipment.id === initialData.shipment?.id,
-      ) && (
-        <option value={initialData.shipment.id}>
-          {initialData.shipment.shipmentNumber}
-        </option>
-      )}
-
-    {shipments.map((shipment) => (
-      <option key={shipment.id} value={shipment.id}>
-        {shipment.shipmentNumber}
-        {shipment.client?.companyName
-          ? ` — ${shipment.client.companyName}`
-          : ""}
-      </option>
-    ))}
-  </select>
-
-  {isShipmentError && (
-    <p className="text-xs text-red-500">
-      Unable to load shipments. Please refresh and try again.
-    </p>
-  )}
-
-  {!isLoadingShipments &&
-    !isShipmentError &&
-    shipments.length === 0 &&
-    !initialData?.shipment && (
-      <p className="text-xs text-muted-foreground">
-        No shipments available. You can still create an independent transport.
-      </p>
-    )}
-
-  <p className="text-xs text-muted-foreground">
-    Select a shipment to associate this transport with it.
-    Leave empty to create an independent transport.
-  </p>
-</div>
+          <div className="space-y-2">
+            <label htmlFor="ownerName" className="text-sm font-medium">
+              Owner Name <span className="text-red-500">*</span>
+            </label>
+            <Input
+              id="ownerName"
+              placeholder="Enter transport owner name"
+              {...register("ownerName", {
+                required: "Owner name is required.",
+                validate: (value) =>
+                  value.trim().length > 0 || "Owner name is required.",
+              })}
+            />
+            {errors.ownerName && (
+              <p className="text-xs text-red-500">
+                {errors.ownerName.message}
+              </p>
+            )}
+          </div>
 
           <div className="space-y-2 md:col-span-2">
-            <label className="text-sm font-medium">
+            <label htmlFor="shipmentId" className="text-sm font-medium">
+              Link to Shipment
+            </label>
+            <select
+              id="shipmentId"
+              {...register("shipmentId")}
+              disabled={isLoadingShipments}
+              className="h-11 w-full rounded-lg border border-slate-300 bg-white px-3 text-sm outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 disabled:cursor-not-allowed disabled:bg-slate-100"
+            >
+              <option value="">
+                {isLoadingShipments
+                  ? "Loading shipments..."
+                  : "Independent Transport (No Shipment)"}
+              </option>
+
+              {initialData?.shipment &&
+                !shipments.some(
+                  (shipment) => shipment.id === initialData.shipment?.id,
+                ) && (
+                  <option value={initialData.shipment.id}>
+                    {initialData.shipment.shipmentNumber}
+                  </option>
+                )}
+
+              {shipments.map((shipment) => (
+                <option key={shipment.id} value={shipment.id}>
+                  {shipment.shipmentNumber}
+                  {shipment.client?.companyName
+                    ? ` — ${shipment.client.companyName}`
+                    : ""}
+                </option>
+              ))}
+            </select>
+
+            {isShipmentError && (
+              <p className="text-xs text-red-500">
+                Unable to load shipments. Please refresh and try again.
+              </p>
+            )}
+
+            {!isLoadingShipments &&
+              !isShipmentError &&
+              shipments.length === 0 &&
+              !initialData?.shipment && (
+                <p className="text-xs text-muted-foreground">
+                  No shipments available. You can still create an independent
+                  transport.
+                </p>
+              )}
+
+            <p className="text-xs text-muted-foreground">
+              Select a shipment to associate this transport with it. Leave
+              empty to create an independent transport.
+            </p>
+          </div>
+
+          <div className="space-y-2 md:col-span-2">
+            <label htmlFor="transportRemarks" className="text-sm font-medium">
               Remarks
             </label>
-
             <textarea
+              id="transportRemarks"
               rows={3}
               placeholder="Additional transport information..."
               className="flex w-full rounded-md border border-input bg-background px-3 py-2 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring"
@@ -317,25 +310,18 @@ const shipments = shipmentResponse?.data ?? [];
       <section className="rounded-xl border bg-white p-6 shadow-sm">
         <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h2 className="text-lg font-semibold">
-              Transport Items
-            </h2>
-
+            <h2 className="text-lg font-semibold">Transport Items</h2>
             <p className="text-sm text-muted-foreground">
-              Add the trucks and containers involved.
+              Add the trucks and containers involved. The owner is shared by
+              all items in this transport.
             </p>
           </div>
 
           <div className="flex flex-wrap gap-2">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => addItem("TRUCK")}
-            >
+            <Button type="button" variant="outline" onClick={() => addItem("TRUCK")}>
               <Truck className="mr-2 h-4 w-4" />
               Add Truck
             </Button>
-
             <Button
               type="button"
               variant="outline"
@@ -362,7 +348,6 @@ const shipments = shipmentResponse?.data ?? [];
                   ) : (
                     <Package className="h-5 w-5 text-emerald-600" />
                   )}
-
                   <h3 className="font-semibold">
                     Item {index + 1} — {itemType}
                   </h3>
@@ -373,7 +358,7 @@ const shipments = shipmentResponse?.data ?? [];
                   size="icon"
                   variant="ghost"
                   className="text-red-600 hover:bg-red-50 hover:text-red-700"
-                  disabled={fields.length === 1}
+                  disabled={fields.length === 1 || isSubmitting}
                   onClick={() => remove(index)}
                   title="Remove item"
                 >
@@ -381,161 +366,106 @@ const shipments = shipmentResponse?.data ?? [];
                 </Button>
               </div>
 
-              <input
-                type="hidden"
-                {...register(`items.${index}.id`)}
-              />
-
+              <input type="hidden" {...register(`items.${index}.id`)} />
               <input
                 type="hidden"
                 {...register(`items.${index}.itemType`)}
               />
 
               <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-                {/* ITEM DATE */}
                 <div className="space-y-2">
-                  <label className="text-sm font-medium">
-                    Item Date *
-                  </label>
-
+                  <label className="text-sm font-medium">Item Date *</label>
                   <Input
                     type="date"
                     {...register(`items.${index}.itemDate`, {
-                      required: "Item date is required",
+                      required: "Item date is required.",
                     })}
                   />
                 </div>
 
-                {/* OWNER */}
                 <div className="space-y-2">
-                  <label className="text-sm font-medium">
-                    Owner Name *
-                  </label>
-
-                  <Input
-                    placeholder="Enter owner name"
-                    {...register(`items.${index}.ownerName`, {
-                      required: "Owner name is required",
-                    })}
-                  />
-                </div>
-
-                {/* ITEM NAME */}
-                <div className="space-y-2">
-                  <label className="text-sm font-medium">
-                    Item Name
-                  </label>
-
+                  <label className="text-sm font-medium">Item Name</label>
                   <Input
                     placeholder="Optional item name"
                     {...register(`items.${index}.name`)}
                   />
                 </div>
 
-                {/* TRUCK FIELDS */}
                 {itemType === "TRUCK" && (
                   <>
                     <div className="space-y-2">
                       <label className="text-sm font-medium">
                         Front Plate Number *
                       </label>
-
                       <Input
                         placeholder="e.g. AAA-123-BB"
-                        {...register(
-                          `items.${index}.frontPlateNumber`,
-                          {
-                            required: "Front plate number is required",
-                          }
-                        )}
+                        {...register(`items.${index}.frontPlateNumber`, {
+                          required: "Front plate number is required.",
+                        })}
                       />
                     </div>
-
                     <div className="space-y-2">
                       <label className="text-sm font-medium">
                         Back Plate Number *
                       </label>
-
                       <Input
                         placeholder="Enter back plate number"
-                        {...register(
-                          `items.${index}.backPlateNumber`,
-                          {
-                            required: "Back plate number is required",
-                          }
-                        )}
+                        {...register(`items.${index}.backPlateNumber`, {
+                          required: "Back plate number is required.",
+                        })}
                       />
                     </div>
                   </>
                 )}
 
-                {/* CONTAINER FIELDS */}
                 {itemType === "CONTAINER" && (
                   <>
                     <div className="space-y-2">
                       <label className="text-sm font-medium">
                         Container Name *
                       </label>
-
                       <Input
                         placeholder="Enter container name"
-                        {...register(
-                          `items.${index}.containerName`,
-                          {
-                            required: "Container name is required",
-                          }
-                        )}
+                        {...register(`items.${index}.containerName`, {
+                          required: "Container name is required.",
+                        })}
                       />
                     </div>
-
                     <div className="space-y-2">
                       <label className="text-sm font-medium">
                         Container Number *
                       </label>
-
                       <Input
                         placeholder="Enter container number"
-                        {...register(
-                          `items.${index}.containerNumber`,
-                          {
-                            required: "Container number is required",
-                          }
-                        )}
+                        {...register(`items.${index}.containerNumber`, {
+                          required: "Container number is required.",
+                        })}
                       />
                     </div>
                   </>
                 )}
 
-                {/* CHARGE */}
                 <div className="space-y-2">
                   <label className="text-sm font-medium">
                     Charge Amount *
                   </label>
-
                   <Input
                     type="number"
                     min="0"
                     step="0.01"
-                    {...register(
-                      `items.${index}.chargeAmount`,
-                      {
-                        valueAsNumber: true,
-                        required: "Charge amount is required",
-                        min: {
-                          value: 0,
-                          message: "Charge cannot be negative",
-                        },
-                      }
-                    )}
+                    {...register(`items.${index}.chargeAmount`, {
+                      valueAsNumber: true,
+                      required: "Charge amount is required.",
+                      min: {
+                        value: 0,
+                        message: "Charge cannot be negative.",
+                      },
+                    })}
                   />
                 </div>
 
-                {/* CURRENCY */}
                 <div className="space-y-2">
-                  <label className="text-sm font-medium">
-                    Currency *
-                  </label>
-
+                  <label className="text-sm font-medium">Currency *</label>
                   <select
                     className="flex h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
                     {...register(`items.${index}.chargeCurrency`)}
@@ -547,12 +477,8 @@ const shipments = shipmentResponse?.data ?? [];
                   </select>
                 </div>
 
-                {/* ITEM REMARKS */}
                 <div className="space-y-2 md:col-span-2 xl:col-span-3">
-                  <label className="text-sm font-medium">
-                    Item Remarks
-                  </label>
-
+                  <label className="text-sm font-medium">Item Remarks</label>
                   <textarea
                     rows={2}
                     placeholder="Additional information..."
@@ -569,11 +495,11 @@ const shipments = shipmentResponse?.data ?? [];
           <p className="text-sm text-muted-foreground">
             {fields.length} transport item(s)
           </p>
-
           <Button
             type="button"
             variant="outline"
             onClick={() => addItem("TRUCK")}
+            disabled={isSubmitting}
           >
             <Plus className="mr-2 h-4 w-4" />
             Add Another Truck
@@ -591,17 +517,12 @@ const shipments = shipmentResponse?.data ?? [];
         >
           Cancel
         </Button>
-
-        <Button
-          type="submit"
-          disabled={isSubmitting}
-        >
+        <Button type="submit" disabled={isSubmitting}>
           {isSubmitting ? (
             <Loader2 className="mr-2 h-4 w-4 animate-spin" />
           ) : (
             <Save className="mr-2 h-4 w-4" />
           )}
-
           {isSubmitting ? "Saving..." : submitLabel}
         </Button>
       </div>

@@ -404,6 +404,7 @@ model Client {
   updatedAt      DateTime     @updatedAt
   allocations    Allocation[]
   shipments      Shipment[]
+  transitMovements TransitMovement[]
   documents      Document[]
 }
 
@@ -1404,7 +1405,7 @@ model Transport {
   id              String   @id @default(cuid())
   transportNumber String   @unique
   transportDate   DateTime
-
+  ownerName       String
   shipmentId String?
   shipment   Shipment? @relation(fields: [shipmentId], references: [id], onDelete: SetNull)
 
@@ -1431,7 +1432,7 @@ model TransportItem {
   itemDate  DateTime
   itemType  TransportItemType
   name      String?
-  ownerName String
+
 
   // Truck details
   frontPlateNumber String?
@@ -1493,6 +1494,11 @@ model TransitMovement {
   transitNumber String           @unique
   transitDate   DateTime
   direction     TransitDirection
+  clientId String?
+  client   Client? @relation(fields: [clientId], references: [id], onDelete: SetNull)
+
+  clientName  String
+
 
   shipmentId String?
   shipment   Shipment? @relation(fields: [shipmentId], references: [id], onDelete: SetNull)
@@ -1520,7 +1526,7 @@ model TransitMovementItem {
   itemDate   DateTime
   itemType   TransportItemType
   name       String?
-  clientName String
+
 
   // Truck details
   frontPlateNumber String?

@@ -93,16 +93,13 @@ private buildWhere(
     });
   }
 
-  // FILTER BY CLIENT NAME
+  // FILTER BY PARENT MOVEMENT CLIENT NAME.
+  // Client name is stored on TransitMovement, not TransitMovementItem.
   if (clientName?.trim()) {
     conditions.push({
-      items: {
-        some: {
-          clientName: {
-            contains: clientName.trim(),
-            mode: "insensitive",
-          },
-        },
+      clientName: {
+        contains: clientName.trim(),
+        mode: "insensitive",
       },
     });
   }
@@ -113,6 +110,14 @@ private buildWhere(
 
     conditions.push({
       OR: [
+        // Parent movement client name
+        {
+          clientName: {
+            contains: searchTerm,
+            mode: "insensitive",
+          },
+        },
+
         // Movement number
         {
           transitNumber: {
@@ -149,17 +154,6 @@ private buildWhere(
           },
         },
 
-        // Movement item client name
-        {
-          items: {
-            some: {
-              clientName: {
-                contains: searchTerm,
-                mode: "insensitive",
-              },
-            },
-          },
-        },
 
         // Item name
         {
@@ -237,6 +231,8 @@ private buildWhere(
   ========================================= */
 
   private readonly listInclude = {
+    // Prisma returns all scalar fields of TransitMovement by default,
+    // including the parent-level clientName used by the list table.
     shipment: {
       select: {
         id: true,
@@ -374,6 +370,7 @@ async create(
   const {
     items,
     transitDate,
+    clientName,
     direction,
     shipmentId,
     remarks,
@@ -388,6 +385,7 @@ async create(
           transitDate: new Date(transitDate),
           direction,
           shipmentId: shipmentId ?? null,
+          clientName: clientName ?? null,
           remarks: remarks ?? null,
 
           items: {
@@ -521,6 +519,7 @@ async findAll(query: TransitMovementQuery) {
       transitDate,
       shipmentId,
       remarks,
+      clientName,
     } = data;
 
     return prisma.$transaction(async (tx) => {
@@ -539,6 +538,10 @@ async findAll(query: TransitMovementQuery) {
 
           ...(remarks !== undefined && {
             remarks,
+          }),
+
+          ...(clientName !== undefined && {
+            clientName: clientName.trim(),
           }),
         },
       });
@@ -634,12 +637,42 @@ async findAll(query: TransitMovementQuery) {
      DELETE MOVEMENT
   ========================================= */
 
-  async delete(id: string) {
-    return prisma.transitMovement.delete({
+ async delete(id: string) {
+  return prisma.$transaction(async (tx) => {
+    // Fetch the record before deletion so the existing response shape is preserved.
+    const movement = await tx.transitMovement.findUnique({
       where: { id },
       include: this.detailsInclude,
     });
-  }
+
+    if (!movement) {
+      throw new Error("TRANSIT_MOVEMENT_NOT_FOUND");
+    }
+
+    const itemIds = movement.items.map((item) => item.id);
+
+    // The payment FK uses Restrict, so remove dependent payments first.
+    if (itemIds.length > 0) {
+      await tx.transitMovementPayment.deleteMany({
+        where: {
+          transitMovementItemId: { in: itemIds },
+        },
+      });
+
+      // Then remove the child items.
+      await tx.transitMovementItem.deleteMany({
+        where: { transitMovementId: id },
+      });
+    }
+
+    // Finally remove the parent TransitMovement record.
+    await tx.transitMovement.delete({
+      where: { id },
+    });
+
+    return movement;
+  });
+}
 
   /* =========================================
      DELETE INDIVIDUAL ITEM

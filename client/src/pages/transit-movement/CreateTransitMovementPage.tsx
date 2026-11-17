@@ -1,53 +1,59 @@
-
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
 import { toast } from "sonner";
 
-
 import { useCreateTransitMovement } from "../../hooks/transit-movement/useTransitMovements";
-
-import type {
-  CreateTransitMovementPayload,
-} from "../../types/transit-movement";
+import type { CreateTransitMovementPayload } from "../../types/transit-movement";
+import type { TransitMovementFormValues } from "../../validations/transit-movement-form.schema";
 import { TransitMovementForm } from "../../components/transit-movement/TransitMovementForm";
+
+interface ApiError {
+  response?: {
+    data?: {
+      message?: string;
+    };
+  };
+}
 
 export default function CreateTransitMovementPage() {
   const navigate = useNavigate();
   const createMutation = useCreateTransitMovement();
 
-  const handleSubmit = async (values: any) => {
+  const handleSubmit = async (values: TransitMovementFormValues) => {
     try {
       const payload: CreateTransitMovementPayload = {
         transitDate: values.transitDate,
         direction: values.direction,
-        shipmentId: values.shipmentId || undefined,
-        remarks: values.remarks || undefined,
 
-        items: values.items.map((item: any) => ({
+        // Client name belongs to the parent TransitMovement record.
+        // This was missing from the previous payload mapping.
+        clientName: values.clientName.trim(),
+
+        shipmentId: values.shipmentId || null,
+        remarks: values.remarks?.trim() || undefined,
+
+        // Item payloads contain truck/container details only.
+        items: values.items.map((item) => ({
           itemDate: item.itemDate,
           itemType: item.itemType,
           name: item.name,
-          clientName: item.clientName,
-          frontPlateNumber: item.frontPlateNumber || undefined,
-          backPlateNumber: item.backPlateNumber || undefined,
-          containerName: item.containerName || undefined,
-          containerNumber: item.containerNumber || undefined,
+          frontPlateNumber: item.frontPlateNumber?.trim() || undefined,
+          backPlateNumber: item.backPlateNumber?.trim() || undefined,
+          containerName: item.containerName?.trim() || undefined,
+          containerNumber: item.containerNumber?.trim() || undefined,
           chargeAmount: Number(item.chargeAmount),
           chargeCurrency: item.chargeCurrency,
-          remarks: item.remarks || undefined,
+          remarks: item.remarks?.trim() || undefined,
         })),
       };
 
       const result = await createMutation.mutateAsync(payload);
 
       toast.success("Transit movement created successfully.");
-
       navigate(`/transit-movements/${result.id}`);
-    } catch (error: any) {
-      toast.error(
-        error?.response?.data?.message ||
-          "Failed to create transit movement.",
-      );
+    } catch (error: unknown) {
+      const message = (error as ApiError)?.response?.data?.message;
+      toast.error(message || "Failed to create transit movement.");
     }
   };
 

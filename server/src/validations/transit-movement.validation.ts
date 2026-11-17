@@ -53,11 +53,7 @@ const commonItemFields = {
 
   name: optionalText,
 
-  clientName: z
-    .string()
-    .trim()
-    .min(2, "Client name must contain at least 2 characters.")
-    .max(150, "Client name cannot exceed 150 characters."),
+
 
   chargeAmount: chargeAmount.default(0),
 
@@ -140,7 +136,11 @@ export const createTransitMovementSchema = z.object({
   }),
 
   shipmentId: nullableShipmentId,
-
+  clientName: z
+    .string()
+    .trim()
+    .min(2, "Client name must contain at least 2 characters.")
+    .max(150, "Client name cannot exceed 150 characters."),
   remarks: optionalText,
 
   items: z
@@ -158,7 +158,11 @@ export const updateTransitMovementSchema = z.object({
 
   // Direction is intentionally immutable after creation.
   shipmentId: nullableShipmentId,
-
+  clientName: z
+    .string()
+    .trim()
+    .min(2, "Client name must contain at least 2 characters.")
+    .max(150, "Client name cannot exceed 150 characters."),
   remarks: optionalText,
 
   items: z
@@ -191,7 +195,6 @@ const commonItemSchema = z.object({
   id: z.string().optional(),
   itemDate: z.string().min(1, "Item date is required"),
   name: z.string().trim().min(1, "Name is required"),
-  clientName: z.string().trim().min(1, "Client name is required"),
   chargeAmount: z.coerce.number<number>()
     .finite()
     .min(0, "Charge cannot be negative"),

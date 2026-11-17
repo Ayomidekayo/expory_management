@@ -17,8 +17,8 @@ import {
   Plus,
   RefreshCw,
   ShieldCheck,
-  Truck,
   Trash2,
+  Truck,
   Unlock,
   Wallet,
   X,
@@ -37,6 +37,7 @@ import {
 import type {
   TransitMovementItem,
   TransitMovementPaymentPayload,
+
 } from "../../types/transit-movement";
 
 const currencyFormatter = (amount: number, currency: string) =>
@@ -143,7 +144,7 @@ export default function TransitMovementDetailsPage() {
 
   const [paymentItem, setPaymentItem] =
     useState<TransitMovementItem | null>(null);
-  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
 
   const [paymentAmount, setPaymentAmount] = useState("");
   const [paymentType, setPaymentType] =
@@ -181,24 +182,6 @@ export default function TransitMovementDetailsPage() {
     },
   });
 
-  const deleteMutation = useMutation({
-    mutationFn: (movementId: string) => deleteTransitMovement(movementId),
-    onSuccess: async () => {
-      toast.success("Transit movement deleted successfully.");
-      setIsDeleteModalOpen(false);
-      await queryClient.invalidateQueries({
-        queryKey: ["transit-movements"],
-      });
-      navigate("/transit-movements", { replace: true });
-    },
-    onError: (error: any) => {
-      toast.error(
-        error?.response?.data?.message ??
-          "Unable to delete this transit movement.",
-      );
-    },
-  });
-
   const itemLockMutation = useMutation({
     mutationFn: ({
       itemId,
@@ -219,6 +202,28 @@ export default function TransitMovementDetailsPage() {
     onError: (error: any) => {
       toast.error(
         error?.response?.data?.message ?? "Unable to update item lock.",
+      );
+    },
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: (movementId: string) => deleteTransitMovement(movementId),
+
+    onSuccess: async () => {
+      toast.success("Transit movement deleted successfully.");
+      setShowDeleteConfirmation(false);
+
+      await queryClient.invalidateQueries({
+        queryKey: ["transit-movements"],
+      });
+
+      navigate("/transit-movements", { replace: true });
+    },
+
+    onError: (error: any) => {
+      toast.error(
+        error?.response?.data?.message ??
+          "Unable to delete transit movement.",
       );
     },
   });
@@ -400,7 +405,6 @@ export default function TransitMovementDetailsPage() {
 
           <div className="flex flex-wrap gap-3">
             <button
-              type="button"
               onClick={() => movementQuery.refetch()}
               className="inline-flex items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 shadow-sm hover:bg-slate-50"
             >
@@ -409,18 +413,6 @@ export default function TransitMovementDetailsPage() {
             </button>
 
             <button
-              type="button"
-              disabled={movement.isLocked || deleteMutation.isPending}
-              onClick={() => setIsDeleteModalOpen(true)}
-              title={movement.isLocked ? "Unlock this movement before deleting it" : "Delete movement"}
-              className="inline-flex items-center justify-center gap-2 rounded-xl border border-red-200 bg-white px-4 py-2.5 text-sm font-semibold text-red-600 shadow-sm transition hover:bg-red-50 disabled:cursor-not-allowed disabled:opacity-50"
-            >
-              <Trash2 size={16} />
-              Delete
-            </button>
-
-            <button
-              type="button"
               disabled={movement.isLocked}
               onClick={() =>
                 navigate(`/transit-movements/${movement.id}/edit`)
@@ -429,6 +421,16 @@ export default function TransitMovementDetailsPage() {
             >
               <Pencil size={16} />
               Edit Movement
+            </button>
+
+            <button
+              type="button"
+              disabled={movement.isLocked || deleteMutation.isPending}
+              onClick={() => setShowDeleteConfirmation(true)}
+              className="inline-flex items-center justify-center gap-2 rounded-xl border border-red-200 bg-white px-5 py-2.5 text-sm font-semibold text-red-600 shadow-sm transition hover:bg-red-50 disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              <Trash2 size={16} />
+              Delete Movement
             </button>
           </div>
         </div>
@@ -518,6 +520,11 @@ export default function TransitMovementDetailsPage() {
             <InfoField
               label="Shipment Number"
               value={movement.shipment?.shipmentNumber ?? "Independent movement"}
+            />
+
+            <InfoField
+              label="Client Name"
+              value={movement.clientName || "—"}
             />
 
             <InfoField
@@ -657,7 +664,7 @@ export default function TransitMovementDetailsPage() {
                         <div>
                           <div className="flex flex-wrap items-center gap-2">
                             <h3 className="font-bold text-slate-900">
-                              S/N {index + 1} · {item.name}
+                              Item {index + 1}: {item.name}
                             </h3>
 
                             <span className="rounded-full bg-slate-200 px-2.5 py-1 text-[10px] font-bold uppercase text-slate-700">
@@ -672,9 +679,6 @@ export default function TransitMovementDetailsPage() {
                             )}
                           </div>
 
-                          <p className="mt-1 text-xs text-slate-500">
-                            {item.clientName}
-                          </p>
                         </div>
                       </div>
 
@@ -716,10 +720,6 @@ export default function TransitMovementDetailsPage() {
                           value={formatDate(item.itemDate)}
                         />
 
-                        <InfoField
-                          label="Client"
-                          value={item.clientName}
-                        />
 
                         {item.itemType === "TRUCK" ? (
                           <>
@@ -911,110 +911,6 @@ export default function TransitMovementDetailsPage() {
           )}
         </section>
 
-        {/* DELETE CONFIRMATION MODAL */}
-        {isDeleteModalOpen && (
-          <div
-            className="fixed inset-0 z-[60] flex items-center justify-center bg-slate-950/60 p-4 backdrop-blur-sm"
-            role="presentation"
-            onMouseDown={(event) => {
-              if (event.target === event.currentTarget && !deleteMutation.isPending) {
-                setIsDeleteModalOpen(false);
-              }
-            }}
-          >
-            <div
-              role="dialog"
-              aria-modal="true"
-              aria-labelledby="delete-transit-title"
-              className="w-full max-w-md overflow-hidden rounded-2xl bg-white shadow-2xl"
-            >
-              <div className="flex items-start gap-4 border-b border-red-100 bg-red-50 p-5">
-                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-red-100 text-red-600">
-                  <Trash2 size={23} />
-                </div>
-                <div className="min-w-0 flex-1">
-                  <h3 id="delete-transit-title" className="text-lg font-bold text-slate-900">
-                    Delete Transit Movement?
-                  </h3>
-                  <p className="mt-1 text-sm text-slate-600">
-                    You are about to delete{" "}
-                    <span className="font-bold text-slate-900">
-                      {movement.transitNumber}
-                    </span>.
-                  </p>
-                </div>
-                <button
-                  type="button"
-                  disabled={deleteMutation.isPending}
-                  onClick={() => setIsDeleteModalOpen(false)}
-                  aria-label="Close delete confirmation"
-                  className="rounded-lg p-2 text-slate-400 transition hover:bg-white hover:text-slate-700 disabled:opacity-50"
-                >
-                  <X size={19} />
-                </button>
-              </div>
-
-              <div className="space-y-4 p-5">
-                <p className="text-sm leading-6 text-slate-600">
-                  This action will permanently remove this transit movement and
-                  its associated records, if permitted by the server. This
-                  operation cannot be undone.
-                </p>
-
-                <div className="rounded-xl border border-slate-200 bg-slate-50 p-3">
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="text-slate-500">Transit number</span>
-                    <span className="font-semibold text-slate-900">
-                      {movement.transitNumber}
-                    </span>
-                  </div>
-                  <div className="mt-2 flex items-center justify-between text-sm">
-                    <span className="text-slate-500">Items</span>
-                    <span className="font-semibold text-slate-900">
-                      {totalItems}
-                    </span>
-                  </div>
-                  <div className="mt-2 flex items-center justify-between text-sm">
-                    <span className="text-slate-500">Direction</span>
-                    <span className="font-semibold text-slate-900">
-                      {movement.direction === "IN" ? "Inbound" : "Outbound"}
-                    </span>
-                  </div>
-                </div>
-
-                <div className="flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
-                  <button
-                    type="button"
-                    disabled={deleteMutation.isPending}
-                    onClick={() => setIsDeleteModalOpen(false)}
-                    className="rounded-xl border border-slate-200 px-5 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 disabled:opacity-50"
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    type="button"
-                    disabled={deleteMutation.isPending}
-                    onClick={handleDeleteMovement}
-                    className="inline-flex items-center justify-center gap-2 rounded-xl bg-red-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-60"
-                  >
-                    {deleteMutation.isPending ? (
-                      <>
-                        <RefreshCw size={16} className="animate-spin" />
-                        Deleting...
-                      </>
-                    ) : (
-                      <>
-                        <Trash2 size={16} />
-                        Yes, Delete Movement
-                      </>
-                    )}
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
-
         {/* RECORD PAYMENT MODAL */}
         {paymentItem && (
           <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-slate-950/50 p-4 backdrop-blur-sm">
@@ -1178,6 +1074,76 @@ export default function TransitMovementDetailsPage() {
                   </button>
                 </div>
               </form>
+            </div>
+          </div>
+        )}
+
+        {/* DELETE MOVEMENT CONFIRMATION */}
+        {showDeleteConfirmation && (
+          <div
+            className="fixed inset-0 z-[60] flex items-center justify-center bg-slate-950/50 p-4 backdrop-blur-sm"
+            role="presentation"
+            onMouseDown={(event) => {
+              if (
+                event.target === event.currentTarget &&
+                !deleteMutation.isPending
+              ) {
+                setShowDeleteConfirmation(false);
+              }
+            }}
+          >
+            <div
+              role="alertdialog"
+              aria-modal="true"
+              aria-labelledby="delete-transit-title"
+              aria-describedby="delete-transit-description"
+              className="w-full max-w-md space-y-5 rounded-2xl bg-white p-6 shadow-2xl"
+            >
+              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-red-50 text-red-600">
+                <Trash2 size={22} />
+              </div>
+
+              <div>
+                <h2
+                  id="delete-transit-title"
+                  className="text-lg font-bold text-slate-900"
+                >
+                  Delete transit movement?
+                </h2>
+                <p
+                  id="delete-transit-description"
+                  className="mt-2 text-sm leading-6 text-slate-600"
+                >
+                  You are about to delete movement{" "}
+                  <strong className="text-slate-900">
+                    {movement.transitNumber}
+                  </strong>
+                  . This action cannot be undone.
+                </p>
+              </div>
+
+              <div className="flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
+                <button
+                  type="button"
+                  disabled={deleteMutation.isPending}
+                  onClick={() => setShowDeleteConfirmation(false)}
+                  className="rounded-xl border border-slate-200 px-5 py-2.5 text-sm font-semibold text-slate-600 transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50"
+                >
+                  Cancel
+                </button>
+
+                <button
+                  type="button"
+                  disabled={deleteMutation.isPending || movement.isLocked}
+                  onClick={handleDeleteMovement}
+                  className="inline-flex items-center justify-center gap-2 rounded-xl bg-red-600 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-60"
+                >
+                  {deleteMutation.isPending && (
+                    <RefreshCw size={15} className="animate-spin" />
+                  )}
+                  {deleteMutation.isPending ? "Deleting..." : "Delete Movement"}
+                </button>
+              </div>
             </div>
           </div>
         )}
