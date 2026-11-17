@@ -102,11 +102,23 @@ export function TransitMovementForm({
   const handleFormSubmit = form.handleSubmit(async (values) => {
     if (isLocked || isSubmitting) return;
 
+    // The form type currently allows clientName to be undefined.
+    // Validate and narrow it before trimming or submitting the values.
+    const clientName = values.clientName?.trim();
+
+    if (!clientName) {
+      form.setError("clientName", {
+        type: "manual",
+        message: "Client name is required.",
+      });
+      return;
+    }
+
     // clientName belongs to the parent TransitMovement record.
-    // The item schema must not contain clientName.
+    // It is not copied onto individual movement items.
     await onSubmit({
       ...values,
-      clientName: values.clientName.trim(),
+      clientName,
     });
   });
 

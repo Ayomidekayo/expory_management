@@ -1,912 +1,356 @@
-// // import { Link } from "react-router-dom";
-// // import { Loader2, Plus } from "lucide-react";
-// // import {
-// //   useEffect,
-// //   useMemo,
-// //   useState,
-// // } from "react";
-
-// // import { Button } from "../../components/ui/button";
-
-// // import { useClients } from "../../hooks/client/useClients";
-
-// // import ClientFilters from "../../components/client/ClientFilters";
-// // import ClientTable from "../../components/client/ClientTable";
-// // import ClientSummaryCards from "../../components/client/ClientSummaryCards";
-
-// // export default function ClientListPage() {
-// //   const [currentPage, setCurrentPage] =
-// //     useState(1);
-
-// //   const pageLimit = 10;
-
-// //   const [search, setSearch] =
-// //     useState("");
-
-// //   const [clientType, setClientType] =
-// //     useState("all");
-
-// //   const [status, setStatus] =
-// //     useState("all");
-
-// //   const [country, setCountry] =
-// //     useState("all");
-
-// //   const {
-// //     data,
-// //     isLoading,
-// //     isFetching,
-// //     isError,
-// //   } = useClients();
-
-// //   const allClients = data?.data ?? [];
-
-// //   /*
-// //    * Dynamic country options
-// //    */
-// //   const countries = useMemo(() => {
-// //     return Array.from(
-// //       new Set(
-// //         allClients
-// //           .map((client) => client.country)
-// //           .filter(
-// //             (country): country is string =>
-// //               Boolean(country)
-// //           )
-// //       )
-// //     ).sort();
-// //   }, [allClients]);
-
-// //   /*
-// //    * Filtering
-// //    */
-// //   const filteredClients = useMemo(() => {
-// //     const searchValue =
-// //       search.trim().toLowerCase();
-
-// //     return allClients.filter((client) => {
-// //       const matchesSearch =
-// //         !searchValue ||
-// //         client.clientCode
-// //           ?.toLowerCase()
-// //           .includes(searchValue) ||
-// //         client.companyName
-// //           ?.toLowerCase()
-// //           .includes(searchValue) ||
-// //         client.contactPerson
-// //           ?.toLowerCase()
-// //           .includes(searchValue) ||
-// //         client.email
-// //           ?.toLowerCase()
-// //           .includes(searchValue);
-
-// //       const matchesType =
-// //         clientType === "all" ||
-// //         client.clientType === clientType;
-
-// //       const matchesStatus =
-// //         status === "all" ||
-// //         (status === "active" &&
-// //           client.isActive === true) ||
-// //         (status === "inactive" &&
-// //           client.isActive === false);
-
-// //       const matchesCountry =
-// //         country === "all" ||
-// //         client.country === country;
-
-// //       return (
-// //         matchesSearch &&
-// //         matchesType &&
-// //         matchesStatus &&
-// //         matchesCountry
-// //       );
-// //     });
-// //   }, [
-// //     allClients,
-// //     search,
-// //     clientType,
-// //     status,
-// //     country,
-// //   ]);
-
-// //   /*
-// //    * Earliest -> latest
-// //    */
-// //   const sortedClients = useMemo(() => {
-// //     return [...filteredClients].sort(
-// //       (a, b) =>
-// //         new Date(a.createdAt).getTime() -
-// //         new Date(b.createdAt).getTime()
-// //     );
-// //   }, [filteredClients]);
-
-// //   /*
-// //    * Pagination
-// //    */
-// //   const total = sortedClients.length;
-
-// //   const totalPages = Math.max(
-// //     Math.ceil(total / pageLimit),
-// //     1
-// //   );
-
-// //   const safeCurrentPage = Math.min(
-// //     currentPage,
-// //     totalPages
-// //   );
-
-// //   const startIndex =
-// //     (safeCurrentPage - 1) * pageLimit;
-
-// //   const paginatedClients =
-// //     sortedClients.slice(
-// //       startIndex,
-// //       startIndex + pageLimit
-// //     );
-
-// //   const hasPreviousPage =
-// //     safeCurrentPage > 1;
-
-// //   const hasNextPage =
-// //     safeCurrentPage < totalPages;
-
-// //   /*
-// //    * Reset page whenever filters change.
-// //    */
-// //   useEffect(() => {
-// //     setCurrentPage(1);
-// //   }, [
-// //     search,
-// //     clientType,
-// //     status,
-// //     country,
-// //   ]);
-
-// //   function handlePrevious() {
-// //     if (
-// //       !hasPreviousPage ||
-// //       isFetching
-// //     ) {
-// //       return;
-// //     }
-
-// //     setCurrentPage((prev) =>
-// //       Math.max(prev - 1, 1)
-// //     );
-// //   }
-
-// //   function handleNext() {
-// //     if (
-// //       !hasNextPage ||
-// //       isFetching
-// //     ) {
-// //       return;
-// //     }
-
-// //     setCurrentPage((prev) =>
-// //       Math.min(
-// //         prev + 1,
-// //         totalPages
-// //       )
-// //     );
-// //   }
-
-// //   return (
-// //     <div className="space-y-6">
-
-// //       {/* Header */}
-
-// //       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-// //         <div>
-// //           <h1 className="text-3xl font-bold">
-// //             Clients
-// //           </h1>
-
-// //           <p className="text-muted-foreground">
-// //             Manage registered clients.
-// //           </p>
-// //         </div>
-
-// //         <Button asChild>
-// //           <Link to="/clients/new">
-// //             <Plus className="mr-2 h-4 w-4" />
-// //             New Client
-// //           </Link>
-// //         </Button>
-// //       </div>
-
-// //       {/* Filters */}
-
-// //       <ClientFilters
-// //         search={search}
-// //         clientType={clientType}
-// //         status={status}
-// //         country={country}
-// //         countries={countries}
-// //         onSearchChange={setSearch}
-// //         onClientTypeChange={setClientType}
-// //         onStatusChange={setStatus}
-// //         onCountryChange={setCountry}
-// //       />
-
-// //       {/* Summary */}
-
-// //       {!isLoading && !isError && (
-// //         <ClientSummaryCards
-// //           clients={filteredClients}
-// //         />
-// //       )}
-
-// //       {/* Refreshing */}
-
-// //       {isFetching && !isLoading && (
-// //         <div className="flex items-center gap-2 text-sm text-muted-foreground">
-// //           <Loader2 className="h-4 w-4 animate-spin" />
-// //           Refreshing clients...
-// //         </div>
-// //       )}
-
-// //       {/* Error */}
-
-// //       {isError ? (
-// //         <div className="rounded-xl border border-red-200 bg-red-50 p-6 text-center">
-// //           <h3 className="font-semibold text-red-800">
-// //             Unable to load clients
-// //           </h3>
-
-// //           <p className="mt-1 text-sm text-red-600">
-// //             Please try again.
-// //           </p>
-// //         </div>
-// //       ) : (
-// //         <ClientTable
-// //           clients={paginatedClients}
-// //           isLoading={isLoading}
-// //           currentPage={safeCurrentPage}
-// //           pageLimit={pageLimit}
-// //         />
-// //       )}
-
-// //       {/* Pagination */}
-
-// //       {!isLoading &&
-// //         !isError &&
-// //         total > 0 && (
-// //           <div className="flex flex-col gap-4 rounded-xl border bg-white p-4 shadow-sm sm:flex-row sm:items-center sm:justify-between">
-
-// //             <div className="flex items-center gap-2 text-sm text-muted-foreground">
-// //               <span>
-// //                 Page{" "}
-// //                 <strong className="text-foreground">
-// //                   {safeCurrentPage}
-// //                 </strong>{" "}
-// //                 of{" "}
-// //                 <strong className="text-foreground">
-// //                   {totalPages}
-// //                 </strong>
-// //               </span>
-
-// //               <span className="text-slate-300">
-// //                 •
-// //               </span>
-
-// //               <span>
-// //                 {total} total
-// //               </span>
-// //             </div>
-
-// //             <div className="flex gap-2">
-// //               <Button
-// //                 type="button"
-// //                 variant="outline"
-// //                 disabled={
-// //                   !hasPreviousPage ||
-// //                   isFetching
-// //                 }
-// //                 onClick={handlePrevious}
-// //               >
-// //                 Previous
-// //               </Button>
-
-// //               <Button
-// //                 type="button"
-// //                 variant="outline"
-// //                 disabled={
-// //                   !hasNextPage ||
-// //                   isFetching
-// //                 }
-// //                 onClick={handleNext}
-// //               >
-// //                 Next
-// //               </Button>
-// //             </div>
-
-// //           </div>
-// //         )}
-
-// //     </div>
-// //   );
-// // }
-
-
-// import { Link } from "react-router-dom";
-// import { Loader2, Plus } from "lucide-react";
-// import { useEffect, useMemo, useState } from "react";
-
-// import { Button } from "../../components/ui/button";
-// import { useClients } from "../../hooks/client/useClients";
-
-// import ClientFilters from "../../components/client/ClientFilters";
-// import ClientTable from "../../components/client/ClientTable";
-// import ClientSummaryCards from "../../components/client/ClientSummaryCards";
-
-// export default function ClientListPage() {
-//   const [currentPage, setCurrentPage] = useState(1);
-//   const pageLimit = 10;
-
-//   const [search, setSearch] = useState("");
-//   const [clientType, setClientType] = useState("all");
-//   const [status, setStatus] = useState("all");
-//   const [country, setCountry] = useState("all");
-
-//   const { data, isLoading, isFetching, isError } = useClients();
-//   const allClients = data?.data ?? [];
-
-//   /* Dynamic country options */
-//   const countries = useMemo(() => {
-//     return Array.from(
-//       new Set(
-//         allClients
-//           .map((client) => client.country)
-//           .filter((country): country is string => Boolean(country)),
-//       ),
-//     ).sort();
-//   }, [allClients]);
-
-//   /* Filtering */
-//   const filteredClients = useMemo(() => {
-//     const searchValue = search.trim().toLowerCase();
-
-//     return allClients.filter((client) => {
-//       const matchesSearch =
-//         !searchValue ||
-//         client.clientCode?.toLowerCase().includes(searchValue) ||
-//         client.companyName?.toLowerCase().includes(searchValue) ||
-//         client.contactPerson?.toLowerCase().includes(searchValue) ||
-//         client.email?.toLowerCase().includes(searchValue);
-
-//       const matchesType =
-//         clientType === "all" || client.clientType === clientType;
-
-//       const matchesStatus =
-//         status === "all" ||
-//         (status === "active" && client.isActive === true) ||
-//         (status === "inactive" && client.isActive === false);
-
-//       const matchesCountry = country === "all" || client.country === country;
-
-//       return matchesSearch && matchesType && matchesStatus && matchesCountry;
-//     });
-//   }, [allClients, search, clientType, status, country]);
-
-//   /* Earliest -> latest */
-//   const sortedClients = useMemo(() => {
-//     return [...filteredClients].sort(
-//       (a, b) =>
-//         new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(),
-//     );
-//   }, [filteredClients]);
-
-//   /* Pagination */
-//   const total = sortedClients.length;
-//   const totalPages = Math.max(Math.ceil(total / pageLimit), 1);
-//   const safeCurrentPage = Math.min(currentPage, totalPages);
-//   const startIndex = (safeCurrentPage - 1) * pageLimit;
-//   const paginatedClients = sortedClients.slice(
-//     startIndex,
-//     startIndex + pageLimit,
-//   );
-
-//   const hasPreviousPage = safeCurrentPage > 1;
-//   const hasNextPage = safeCurrentPage < totalPages;
-
-//   /* Reset page whenever filters change. */
-//   useEffect(() => {
-//     setCurrentPage(1);
-//   }, [search, clientType, status, country]);
-
-//   function handlePrevious() {
-//     if (!hasPreviousPage || isFetching) return;
-//     setCurrentPage((prev) => Math.max(prev - 1, 1));
-//   }
-
-//   function handleNext() {
-//     if (!hasNextPage || isFetching) return;
-//     setCurrentPage((prev) => Math.min(prev + 1, totalPages));
-//   }
-
-//   return (
-//     <main className="mx-auto w-full min-w-0 max-w-full space-y-4 overflow-x-hidden px-3 py-4 sm:space-y-6 sm:px-5 sm:py-6 lg:px-6">
-//       {/* Header */}
-//       <header className="flex min-w-0 flex-col gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
-//         <div className="min-w-0">
-//           <h1 className="break-words text-2xl font-bold leading-tight sm:text-3xl">
-//             Clients
-//           </h1>
-//           <p className="mt-1 text-sm text-muted-foreground">
-//             Manage registered clients.
-//           </p>
-//         </div>
-
-//         <Button asChild className="w-full shrink-0 sm:w-auto">
-//           <Link to="/clients/new" className="inline-flex items-center justify-center">
-//             <Plus className="mr-2 h-4 w-4" />
-//             New Client
-//           </Link>
-//         </Button>
-//       </header>
-
-//       {/* Filters: constrain child controls to the viewport width. */}
-//       <section className="w-full min-w-0 max-w-full">
-//         <ClientFilters
-//           search={search}
-//           clientType={clientType}
-//           status={status}
-//           country={country}
-//           countries={countries}
-//           onSearchChange={setSearch}
-//           onClientTypeChange={setClientType}
-//           onStatusChange={setStatus}
-//           onCountryChange={setCountry}
-//         />
-//       </section>
-
-//       {/* Summary */}
-//       {!isLoading && !isError && (
-//         <section className="w-full min-w-0 max-w-full">
-//           <ClientSummaryCards clients={filteredClients} />
-//         </section>
-//       )}
-
-//       {/* Refreshing */}
-//       {isFetching && !isLoading && (
-//         <div className="flex min-w-0 items-center gap-2 text-sm text-muted-foreground">
-//           <Loader2 className="h-4 w-4 shrink-0 animate-spin" />
-//           <span>Refreshing clients...</span>
-//         </div>
-//       )}
-
-//       {/* Error */}
-//       {isError ? (
-//         <div className="w-full min-w-0 rounded-xl border border-red-200 bg-red-50 p-4 text-center sm:p-6">
-//           <h3 className="font-semibold text-red-800">Unable to load clients</h3>
-//           <p className="mt-1 text-sm text-red-600">Please try again.</p>
-//         </div>
-//       ) : (
-//         /* Keep the table's own content contained on narrow screens. */
-//         <section className="w-full min-w-0 max-w-full overflow-hidden rounded-xl">
-//           <div className="w-full min-w-0 max-w-full overflow-x-auto overscroll-x-contain [touch-action:pan-x_pan-y]">
-//             <ClientTable
-//               clients={paginatedClients}
-//               isLoading={isLoading}
-//               currentPage={safeCurrentPage}
-//               pageLimit={pageLimit}
-//             />
-//           </div>
-//         </section>
-//       )}
-
-//       {/* Pagination */}
-//       {!isLoading && !isError && total > 0 && (
-//         <nav
-//           aria-label="Client pagination"
-//           className="flex w-full min-w-0 flex-col gap-3 rounded-xl border bg-white p-3 shadow-sm sm:flex-row sm:items-center sm:justify-between sm:gap-4 sm:p-4"
-//         >
-//           <div className="flex min-w-0 flex-wrap items-center gap-x-2 gap-y-1 text-sm text-muted-foreground">
-//             <span>
-//               Page <strong className="text-foreground">{safeCurrentPage}</strong> of{" "}
-//               <strong className="text-foreground">{totalPages}</strong>
-//             </span>
-//             <span aria-hidden="true" className="text-slate-300">•</span>
-//             <span>{total.toLocaleString()} total</span>
-//           </div>
-
-//           <div className="grid w-full grid-cols-2 gap-2 sm:w-auto sm:flex sm:shrink-0">
-//             <Button
-//               type="button"
-//               variant="outline"
-//               className="w-full sm:w-auto"
-//               disabled={!hasPreviousPage || isFetching}
-//               onClick={handlePrevious}
-//             >
-//               Previous
-//             </Button>
-//             <Button
-//               type="button"
-//               variant="outline"
-//               className="w-full sm:w-auto"
-//               disabled={!hasNextPage || isFetching}
-//               onClick={handleNext}
-//             >
-//               Next
-//             </Button>
-//           </div>
-//         </nav>
-//       )}
-//     </main>
-//   );
-// }
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import {
+  ArrowRight,
   Building2,
-  CalendarDays,
   Loader2,
   Mail,
   MapPin,
   Phone,
   Plus,
+  Route,
+  Truck,
   UserRound,
 } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 
 import { Button } from "../../components/ui/button";
-import { useClients } from "../../hooks/client/useClients";
 
-import ClientFilters from "../../components/client/ClientFilters";
-import ClientTable from "../../components/client/ClientTable";
-import ClientSummaryCards from "../../components/client/ClientSummaryCards";
+import { useConsignees } from "../../hooks/consignee/useConsignees";
 
-function formatDate(value: string | Date | null | undefined): string {
-  if (!value) return "—";
+import ConsigneeSummaryCards from "../../components/consignee/ConsigneeSummaryCards";
+import ConsigneeTable from "../../components/consignee/ConsigneeTable";
+import ConsigneeFilters from "../../components/consignee/ConsigneeFilters";
+
+const PAGE_LIMIT = 10;
+
+function displayValue(value?: string | null) {
+  return value?.trim() || "Not provided";
+}
+
+function formatDate(value?: string | Date | null) {
+  if (!value) return "Not available";
 
   const date = new Date(value);
-  if (Number.isNaN(date.getTime())) return "—";
+  if (Number.isNaN(date.getTime())) return "Not available";
 
-  return new Intl.DateTimeFormat("en-NG", {
-    day: "numeric",
+  return new Intl.DateTimeFormat("en-GB", {
+    day: "2-digit",
     month: "short",
     year: "numeric",
   }).format(date);
 }
 
-export default function ClientListPage() {
+export default function ConsigneeListPage() {
+  const [searchParams] = useSearchParams();
   const [currentPage, setCurrentPage] = useState(1);
-  const pageLimit = 10;
 
-  const [search, setSearch] = useState("");
-  const [clientType, setClientType] = useState("all");
-  const [status, setStatus] = useState("all");
-  const [country, setCountry] = useState("all");
+  const {
+    data,
+    isLoading,
+    isFetching,
+    isError,
+  } = useConsignees();
 
-  const { data, isLoading, isFetching, isError } = useClients();
-  const allClients = data?.data ?? [];
+  const allConsignees = data?.data ?? [];
 
-  /* Dynamic country options */
-  const countries = useMemo(() => {
-    return Array.from(
-      new Set(
-        allClients
-          .map((client) => client.country)
-          .filter((country): country is string => Boolean(country)),
-      ),
-    ).sort();
-  }, [allClients]);
+  // Search and status filters are read from the URL and applied to the
+  // complete list returned by useConsignees, before local pagination.
+  const search = searchParams.get("search")?.trim().toLocaleLowerCase() ?? "";
+  const activeFilter = searchParams.get("isActive") ?? "";
 
-  /* Filtering */
-  const filteredClients = useMemo(() => {
-    const searchValue = search.trim().toLowerCase();
+  const filteredConsignees = useMemo(() => {
+    return allConsignees.filter((consignee) => {
+      const searchableValues = [
+        consignee.name,
+        consignee.contactPerson,
+        consignee.email,
+        consignee.phone,
+        consignee.address,
+        consignee.transporter,
+        consignee.placeOfLoading,
+        consignee.transitRoute,
+        consignee.portOfDischarge,
+        consignee.transportMode,
+      ];
 
-    return allClients.filter((client) => {
       const matchesSearch =
-        !searchValue ||
-        client.clientCode?.toLowerCase().includes(searchValue) ||
-        client.companyName?.toLowerCase().includes(searchValue) ||
-        client.contactPerson?.toLowerCase().includes(searchValue) ||
-        client.email?.toLowerCase().includes(searchValue);
+        !search ||
+        searchableValues.some((value) =>
+          value?.toLocaleLowerCase().includes(search),
+        );
 
-      const matchesType =
-        clientType === "all" || client.clientType === clientType;
-
+      // Retains the existing URL filter behaviour. If the API record does
+      // not include isActive, an active/inactive filter will not match it.
       const matchesStatus =
-        status === "all" ||
-        (status === "active" && client.isActive === true) ||
-        (status === "inactive" && client.isActive === false);
+        !activeFilter || String(consignee.isActive) === activeFilter;
 
-      const matchesCountry = country === "all" || client.country === country;
-
-      return matchesSearch && matchesType && matchesStatus && matchesCountry;
+      return matchesSearch && matchesStatus;
     });
-  }, [allClients, search, clientType, status, country]);
+  }, [allConsignees, search, activeFilter]);
 
-  /* Earliest -> latest */
-  const sortedClients = useMemo(() => {
-    return [...filteredClients].sort(
-      (a, b) =>
-        new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(),
-    );
-  }, [filteredClients]);
+  // Preserve the original earliest-to-latest ordering.
+  const sortedConsignees = useMemo(() => {
+    return [...filteredConsignees].sort((a, b) => {
+      const aTime = a.createdAt ? new Date(a.createdAt).getTime() : 0;
+      const bTime = b.createdAt ? new Date(b.createdAt).getTime() : 0;
+      return aTime - bTime;
+    });
+  }, [filteredConsignees]);
 
-  /* Pagination */
-  const total = sortedClients.length;
-  const totalPages = Math.max(Math.ceil(total / pageLimit), 1);
+  const total = sortedConsignees.length;
+  const totalPages = Math.max(Math.ceil(total / PAGE_LIMIT), 1);
   const safeCurrentPage = Math.min(currentPage, totalPages);
-  const startIndex = (safeCurrentPage - 1) * pageLimit;
-  const paginatedClients = sortedClients.slice(
+  const startIndex = (safeCurrentPage - 1) * PAGE_LIMIT;
+
+  const paginatedConsignees = sortedConsignees.slice(
     startIndex,
-    startIndex + pageLimit,
+    startIndex + PAGE_LIMIT,
   );
 
   const hasPreviousPage = safeCurrentPage > 1;
   const hasNextPage = safeCurrentPage < totalPages;
 
-  /* Reset page whenever filters change. */
+  // Return to the first page whenever search or status filters change.
   useEffect(() => {
     setCurrentPage(1);
-  }, [search, clientType, status, country]);
+  }, [search, activeFilter]);
 
   function handlePrevious() {
     if (!hasPreviousPage || isFetching) return;
-    setCurrentPage((prev) => Math.max(prev - 1, 1));
+    setCurrentPage((previous) => Math.max(previous - 1, 1));
   }
 
   function handleNext() {
     if (!hasNextPage || isFetching) return;
-    setCurrentPage((prev) => Math.min(prev + 1, totalPages));
+    setCurrentPage((previous) => Math.min(previous + 1, totalPages));
   }
 
   return (
-    <main className="mx-auto w-full min-w-0 max-w-screen-2xl space-y-5 overflow-x-hidden px-3 py-4 sm:space-y-6 sm:px-5 sm:py-6 lg:px-6">
-      {/* Header */}
+    <main className="mx-auto w-full min-w-0 max-w-screen-2xl space-y-5 px-3 py-4 sm:space-y-6 sm:px-5 sm:py-6 lg:px-6">
+      {/* PAGE HEADER */}
       <header className="flex min-w-0 flex-col gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
         <div className="min-w-0">
-          <h1 className="break-words text-2xl font-bold leading-tight sm:text-3xl">
-            Clients
+          <h1 className="text-2xl font-bold leading-tight tracking-tight text-slate-900 sm:text-3xl">
+            Consignees
           </h1>
-          <p className="mt-1 text-sm text-muted-foreground">
-            Manage registered clients.
+          <p className="mt-1 text-sm text-muted-foreground sm:text-base">
+            Manage registered consignees and their transport details.
           </p>
         </div>
 
-        <Button
-          asChild
-          className="w-full shrink-0 bg-emerald-600 text-white hover:bg-emerald-700 focus-visible:ring-emerald-600 sm:w-auto"
-        >
-          <Link to="/clients/new" className="inline-flex items-center justify-center">
+        <Button asChild className="w-full shrink-0 bg-green-600 text-white hover:bg-green-700 sm:w-auto">
+          <Link to="/consignees/new" className="inline-flex items-center justify-center">
             <Plus className="mr-2 h-4 w-4" />
-            New Client
+            New Consignee
           </Link>
         </Button>
       </header>
 
-      {/* Filters */}
-      <section className="w-full min-w-0 max-w-full">
-        <ClientFilters
-          search={search}
-          clientType={clientType}
-          status={status}
-          country={country}
-          countries={countries}
-          onSearchChange={setSearch}
-          onClientTypeChange={setClientType}
-          onStatusChange={setStatus}
-          onCountryChange={setCountry}
-        />
-      </section>
-
-      {/* Summary */}
+      {/* SUMMARY */}
       {!isLoading && !isError && (
-        <section className="w-full min-w-0 max-w-full" aria-label="Client summary">
-          <ClientSummaryCards clients={filteredClients} />
+        <section className="w-full min-w-0" aria-label="Consignee summary">
+          <ConsigneeSummaryCards consignees={filteredConsignees} />
         </section>
       )}
 
-      {/* Refreshing */}
+      {/* SEARCH AND FILTERS. The existing filter component continues to own
+          the URL query parameters, so bookmarks and filter behaviour remain. */}
+      <section className="w-full min-w-0" aria-label="Consignee search and filters">
+        <ConsigneeFilters />
+      </section>
+
+      {/* FETCHING */}
       {isFetching && !isLoading && (
         <div
-          className="flex min-w-0 items-center gap-2 rounded-lg border bg-muted/30 px-3 py-2 text-xs text-muted-foreground sm:text-sm"
+          className="flex min-w-0 items-center gap-2 text-sm text-muted-foreground"
           role="status"
           aria-live="polite"
         >
           <Loader2 className="h-4 w-4 shrink-0 animate-spin" />
-          <span>Refreshing clients...</span>
+          <span>Refreshing consignees...</span>
         </div>
       )}
 
-      {/* Error */}
+      {/* ERROR */}
       {isError ? (
-        <div
-          className="w-full min-w-0 rounded-xl border border-red-200 bg-red-50 p-4 text-center sm:p-6"
-          role="alert"
-        >
-          <h3 className="font-semibold text-red-800">Unable to load clients</h3>
-          <p className="mt-1 text-sm text-red-600">Please try again.</p>
+        <div className="w-full min-w-0 rounded-xl border border-red-200 bg-red-50 p-4 text-center sm:p-6" role="alert">
+          <h3 className="font-semibold text-red-800">Unable to load consignees</h3>
+          <p className="mt-1 text-sm text-red-600">Please check your connection and try again.</p>
+        </div>
+      ) : isLoading ? (
+        <div className="flex justify-center rounded-xl border bg-white py-16" role="status" aria-label="Loading consignees">
+          <Loader2 className="h-8 w-8 animate-spin text-green-600" />
+        </div>
+      ) : total === 0 ? (
+        <div className="w-full min-w-0 rounded-xl border border-dashed bg-white px-4 py-14 text-center sm:py-20">
+          <Building2 className="mx-auto mb-3 h-10 w-10 text-slate-300" />
+          <h2 className="text-lg font-semibold text-slate-900">No consignees found</h2>
+          <p className="mx-auto mt-1 max-w-md text-sm text-muted-foreground">
+            {search || activeFilter
+              ? "Try adjusting your search or filters."
+              : "Add your first consignee to get started."}
+          </p>
+          {!search && !activeFilter && (
+            <Button asChild className="mt-5 bg-green-600 text-white hover:bg-green-700">
+              <Link to="/consignees/new">
+                <Plus className="mr-2 h-4 w-4" />
+                New Consignee
+              </Link>
+            </Button>
+          )}
         </div>
       ) : (
-        <section className="w-full min-w-0 max-w-full" aria-label="Client records">
-          {/* Mobile: display each client as a responsive card. */}
-          <div className="grid min-w-0 grid-cols-1 gap-3 sm:grid-cols-2 md:hidden">
-            {isLoading ? (
-              <div className="col-span-full flex min-h-36 items-center justify-center rounded-xl border bg-white p-6 text-sm text-muted-foreground">
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Loading clients...
-              </div>
-            ) : paginatedClients.length === 0 ? (
-              <div className="col-span-full rounded-xl border border-dashed bg-white px-4 py-10 text-center">
-                <Building2 className="mx-auto h-8 w-8 text-muted-foreground/60" />
-                <h3 className="mt-3 text-sm font-semibold text-foreground">
-                  No clients found
-                </h3>
-                <p className="mt-1 text-xs text-muted-foreground">
-                  Try adjusting your search or filters.
-                </p>
-              </div>
-            ) : (
-              paginatedClients.map((client) => {
-                const location = [
-                  client.address,
-                  client.city,
-                  client.state,
-                  client.country,
-                ]
-                  .filter(Boolean)
-                  .join(", ");
+        <>
+          {/* MOBILE CARDS: visible below the desktop table breakpoint. A full
+              card link opens the matching consignee detail page. */}
+          <section className="grid min-w-0 grid-cols-1 gap-3 sm:gap-4 md:hidden" aria-label="Consignee cards">
+            {paginatedConsignees.map((consignee) => (
+              <article
+                key={consignee.id}
+                className="relative isolate min-w-0 overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm transition duration-200 hover:-translate-y-0.5 hover:border-green-300 hover:shadow-md"
+              >
+                <Link
+                  to={`/consignees/${consignee.id}`}
+                  aria-label={`View details for ${displayValue(consignee.name)}`}
+                  className="absolute inset-0 z-0 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-green-600"
+                />
 
-                return (
-                  <article
-                    key={client.id}
-                    className="min-w-0 overflow-hidden rounded-xl border bg-white shadow-sm"
+                <div className="pointer-events-none relative z-10 flex min-w-0 items-start justify-between gap-3 border-b border-slate-100 p-4">
+                  <div className="flex min-w-0 items-start gap-3">
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-green-50 text-green-700">
+                      <Building2 className="h-5 w-5" />
+                    </div>
+                    <div className="min-w-0">
+                      <h2 className="break-words text-sm font-semibold leading-5 text-slate-900 sm:text-base">
+                        {displayValue(consignee.name)}
+                      </h2>
+                      <p className="mt-1 break-words text-xs text-slate-500">
+                        {consignee.contactPerson
+                          ? `Contact: ${consignee.contactPerson}`
+                          : "Contact person not provided"}
+                      </p>
+                    </div>
+                  </div>
+
+                  {typeof consignee.isActive === "boolean" && (
+                    <span
+                      className={`shrink-0 rounded-full px-2.5 py-1 text-[11px] font-medium ${
+                        consignee.isActive
+                          ? "bg-green-50 text-green-700"
+                          : "bg-slate-100 text-slate-600"
+                      }`}
+                    >
+                      {consignee.isActive ? "Active" : "Inactive"}
+                    </span>
+                  )}
+                </div>
+
+                <div className="pointer-events-none relative z-10 grid min-w-0 grid-cols-1 gap-3 p-4 sm:grid-cols-2">
+                  <div className="flex min-w-0 items-start gap-2.5">
+                    <Mail className="mt-0.5 h-4 w-4 shrink-0 text-slate-400" />
+                    <div className="min-w-0">
+                      <p className="text-[11px] font-medium uppercase tracking-wide text-slate-400">Email</p>
+                      <p className="break-all text-sm text-slate-700">{displayValue(consignee.email)}</p>
+                    </div>
+                  </div>
+                  <div className="flex min-w-0 items-start gap-2.5">
+                    <Phone className="mt-0.5 h-4 w-4 shrink-0 text-slate-400" />
+                    <div className="min-w-0">
+                      <p className="text-[11px] font-medium uppercase tracking-wide text-slate-400">Phone</p>
+                      <p className="break-words text-sm text-slate-700">{displayValue(consignee.phone)}</p>
+                    </div>
+                  </div>
+                  <div className="flex min-w-0 items-start gap-2.5 sm:col-span-2">
+                    <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-slate-400" />
+                    <div className="min-w-0">
+                      <p className="text-[11px] font-medium uppercase tracking-wide text-slate-400">Address</p>
+                      <p className="break-words text-sm text-slate-700">{displayValue(consignee.address)}</p>
+                    </div>
+                  </div>
+                  <div className="flex min-w-0 items-start gap-2.5">
+                    <Truck className="mt-0.5 h-4 w-4 shrink-0 text-slate-400" />
+                    <div className="min-w-0">
+                      <p className="text-[11px] font-medium uppercase tracking-wide text-slate-400">Transport mode</p>
+                      <p className="break-words text-sm text-slate-700">{displayValue(consignee.transportMode)}</p>
+                    </div>
+                  </div>
+                  <div className="flex min-w-0 items-start gap-2.5">
+                    <UserRound className="mt-0.5 h-4 w-4 shrink-0 text-slate-400" />
+                    <div className="min-w-0">
+                      <p className="text-[11px] font-medium uppercase tracking-wide text-slate-400">Transporter</p>
+                      <p className="break-words text-sm text-slate-700">{displayValue(consignee.transporter)}</p>
+                    </div>
+                  </div>
+                  <div className="flex min-w-0 items-start gap-2.5">
+                    <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-slate-400" />
+                    <div className="min-w-0">
+                      <p className="text-[11px] font-medium uppercase tracking-wide text-slate-400">Place of loading</p>
+                      <p className="break-words text-sm text-slate-700">{displayValue(consignee.placeOfLoading)}</p>
+                    </div>
+                  </div>
+                  <div className="flex min-w-0 items-start gap-2.5">
+                    <Route className="mt-0.5 h-4 w-4 shrink-0 text-slate-400" />
+                    <div className="min-w-0">
+                      <p className="text-[11px] font-medium uppercase tracking-wide text-slate-400">Transit route</p>
+                      <p className="break-words text-sm text-slate-700">{displayValue(consignee.transitRoute)}</p>
+                    </div>
+                  </div>
+                  <div className="flex min-w-0 items-start gap-2.5">
+                    <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-slate-400" />
+                    <div className="min-w-0">
+                      <p className="text-[11px] font-medium uppercase tracking-wide text-slate-400">Port of discharge</p>
+                      <p className="break-words text-sm text-slate-700">{displayValue(consignee.portOfDischarge)}</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="relative z-20 flex items-center justify-between gap-3 border-t border-slate-100 bg-slate-50/70 px-4 py-3">
+                  <span className="text-xs text-slate-500">Added {formatDate(consignee.createdAt)}</span>
+                  <Link
+                    to={`/consignees/${consignee.id}`}
+                    className="inline-flex min-h-9 items-center gap-1.5 rounded-md px-2 text-sm font-semibold text-green-700 hover:bg-green-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green-600"
                   >
-                    <div className="flex min-w-0 items-start gap-3 border-b bg-muted/20 p-4">
-                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-emerald-50 text-emerald-700">
-                        <Building2 className="h-5 w-5" />
-                      </div>
+                    View details
+                    <ArrowRight className="h-4 w-4" />
+                  </Link>
+                </div>
+              </article>
+            ))}
+          </section>
 
-                      <div className="min-w-0 flex-1">
-                        <div className="flex min-w-0 flex-wrap items-center gap-2">
-                          <h2 className="min-w-0 break-words text-sm font-semibold leading-5 text-foreground">
-                            {client.companyName || "Unnamed client"}
-                          </h2>
-                          <span
-                            className={`inline-flex shrink-0 items-center rounded-full px-2 py-0.5 text-[10px] font-semibold ${
-                              client.isActive
-                                ? "bg-emerald-50 text-emerald-700"
-                                : "bg-slate-100 text-slate-600"
-                            }`}
-                          >
-                            {client.isActive ? "Active" : "Inactive"}
-                          </span>
-                        </div>
-                        <p className="mt-1 break-all text-xs text-muted-foreground">
-                          {client.clientCode || "No client code"}
-                        </p>
-                      </div>
-                    </div>
-
-                    <div className="grid min-w-0 gap-3 p-4">
-                      <div className="flex min-w-0 items-start gap-2.5 text-sm">
-                        <UserRound className="mt-0.5 h-4 w-4 shrink-0 text-muted-foreground" />
-                        <div className="min-w-0">
-                          <p className="text-[11px] font-medium uppercase tracking-wide text-muted-foreground">
-                            Contact person
-                          </p>
-                          <p className="break-words text-foreground">
-                            {client.contactPerson || "Not provided"}
-                          </p>
-                        </div>
-                      </div>
-
-                      <div className="flex min-w-0 items-start gap-2.5 text-sm">
-                        <Mail className="mt-0.5 h-4 w-4 shrink-0 text-muted-foreground" />
-                        <div className="min-w-0">
-                          <p className="text-[11px] font-medium uppercase tracking-wide text-muted-foreground">
-                            Email
-                          </p>
-                          {client.email ? (
-                            <a
-                              href={`mailto:${client.email}`}
-                              className="break-all text-foreground hover:text-emerald-700"
-                            >
-                              {client.email}
-                            </a>
-                          ) : (
-                            <p className="text-muted-foreground">Not provided</p>
-                          )}
-                        </div>
-                      </div>
-
-                      <div className="flex min-w-0 items-start gap-2.5 text-sm">
-                        <Phone className="mt-0.5 h-4 w-4 shrink-0 text-muted-foreground" />
-                        <div className="min-w-0">
-                          <p className="text-[11px] font-medium uppercase tracking-wide text-muted-foreground">
-                            Phone
-                          </p>
-                          {client.phone ? (
-                            <a
-                              href={`tel:${client.phone}`}
-                              className="break-all text-foreground hover:text-emerald-700"
-                            >
-                              {client.phone}
-                            </a>
-                          ) : (
-                            <p className="text-muted-foreground">Not provided</p>
-                          )}
-                        </div>
-                      </div>
-
-                      <div className="flex min-w-0 items-start gap-2.5 text-sm">
-                        <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-muted-foreground" />
-                        <div className="min-w-0">
-                          <p className="text-[11px] font-medium uppercase tracking-wide text-muted-foreground">
-                            Location
-                          </p>
-                          <p className="break-words text-foreground">
-                            {location || "No address provided"}
-                          </p>
-                        </div>
-                      </div>
-
-                      <div className="flex min-w-0 items-center justify-between gap-3 border-t pt-3 text-xs">
-                        <span className="rounded-md bg-slate-100 px-2 py-1 font-medium text-slate-700">
-                          {client.clientType === "INDIVIDUAL" ? "Individual" : "Company"}
-                        </span>
-                        <span className="flex items-center gap-1.5 text-muted-foreground">
-                          <CalendarDays className="h-3.5 w-3.5 shrink-0" />
-                          Added {formatDate(client.createdAt)}
-                        </span>
-                      </div>
-                    </div>
-
-                    <div className="grid grid-cols-2 gap-2 border-t p-3">
-                      <Button asChild variant="outline" size="sm" className="w-full">
-                        <Link to={`/clients/${client.id}`}>View details</Link>
-                      </Button>
-                      <Button
-                        asChild
-                        size="sm"
-                        className="w-full bg-emerald-600 text-white hover:bg-emerald-700 focus-visible:ring-emerald-600"
-                      >
-                        <Link to={`/clients/${client.id}/edit`}>Edit client</Link>
-                      </Button>
-                    </div>
-                  </article>
-                );
-              })
-            )}
-          </div>
-
-          {/* Tablet / desktop: retain the existing table and its row actions. */}
-          <div className="hidden w-full min-w-0 overflow-x-auto overscroll-x-contain md:block">
-            <div className="min-w-0">
-              <ClientTable
-                clients={paginatedClients}
+          {/* TABLE: preserved for tablet/desktop, with its own horizontal
+              overflow boundary to prevent page-wide horizontal scrolling. */}
+          <section className="hidden w-full min-w-0 overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm md:block" aria-label="Consignee table">
+            <div className="w-full min-w-0 overflow-x-auto">
+              <ConsigneeTable
+                consignees={paginatedConsignees}
                 isLoading={isLoading}
                 currentPage={safeCurrentPage}
-                pageLimit={pageLimit}
+                pageLimit={PAGE_LIMIT}
               />
             </div>
-          </div>
-        </section>
+          </section>
+        </>
       )}
 
-      {/* Pagination */}
+      {/* PAGINATION */}
       {!isLoading && !isError && total > 0 && (
         <nav
-          aria-label="Client pagination"
-          className="flex w-full min-w-0 flex-col gap-3 rounded-xl border bg-white p-3 shadow-sm sm:flex-row sm:items-center sm:justify-between sm:gap-4 sm:p-4"
+          className="flex w-full min-w-0 flex-col gap-3 rounded-xl border border-slate-200 bg-white p-3 shadow-sm sm:flex-row sm:items-center sm:justify-between sm:gap-4 sm:p-4"
+          aria-label="Consignee pagination"
         >
-          <div className="flex min-w-0 flex-wrap items-center gap-x-2 gap-y-1 text-xs text-muted-foreground sm:text-sm">
+          <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-muted-foreground">
             <span>
               Page <strong className="text-foreground">{safeCurrentPage}</strong> of{" "}
               <strong className="text-foreground">{totalPages}</strong>
             </span>
-            <span aria-hidden="true" className="hidden text-slate-300 sm:inline">
-              •
+            <span className="text-slate-300" aria-hidden="true">•</span>
+            <span>
+              Showing {startIndex + 1}–{Math.min(startIndex + PAGE_LIMIT, total)} of {total.toLocaleString()}
             </span>
-            <span>{total.toLocaleString()} total</span>
           </div>
 
-          <div className="grid w-full grid-cols-2 gap-2 sm:w-auto sm:flex sm:shrink-0">
+          <div className="grid w-full grid-cols-2 gap-2 sm:flex sm:w-auto">
             <Button
               type="button"
               variant="outline"

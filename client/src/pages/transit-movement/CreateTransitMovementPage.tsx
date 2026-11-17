@@ -20,19 +20,23 @@ export default function CreateTransitMovementPage() {
   const createMutation = useCreateTransitMovement();
 
   const handleSubmit = async (values: TransitMovementFormValues) => {
+    // Validate the optional form value before using it.
+    const clientName = values.clientName?.trim();
+
+    if (!clientName) {
+      toast.error("Client name is required.");
+      return;
+    }
+
     try {
       const payload: CreateTransitMovementPayload = {
         transitDate: values.transitDate,
         direction: values.direction,
-
-        // Client name belongs to the parent TransitMovement record.
-        // This was missing from the previous payload mapping.
-        clientName: values.clientName.trim(),
-
+        clientName,
         shipmentId: values.shipmentId || null,
         remarks: values.remarks?.trim() || undefined,
 
-        // Item payloads contain truck/container details only.
+        // Client name belongs to the parent record, not individual items.
         items: values.items.map((item) => ({
           itemDate: item.itemDate,
           itemType: item.itemType,
@@ -60,7 +64,6 @@ export default function CreateTransitMovementPage() {
   return (
     <div className="min-h-screen bg-slate-50 p-4 md:p-6">
       <div className="mx-auto max-w-7xl space-y-6">
-        {/* Header */}
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <button
@@ -82,7 +85,6 @@ export default function CreateTransitMovementPage() {
           </div>
         </div>
 
-        {/* Form */}
         <div className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm md:p-6">
           <TransitMovementForm
             mode="create"

@@ -269,6 +269,7 @@ export interface CreateTransitMovementItemPayload {
   itemDate: string;
   itemType: TransitMovementItemType;
   name: string;
+  clientName?: string;
   frontPlateNumber?: string;
   backPlateNumber?: string;
   containerName?: string;

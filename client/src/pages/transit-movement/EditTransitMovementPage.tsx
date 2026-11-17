@@ -19,10 +19,6 @@ import type {
   TransitMovementFormValues,
 } from "../../validations/transit-movement-form.schema";
 
-/**
- * Convert an API TransitMovement into the form's parent/item structure.
- * clientName is a parent-level field; it must not be copied onto items.
- */
 function mapMovementToForm(
   movement: TransitMovement,
 ): TransitMovementFormValues {
@@ -102,13 +98,22 @@ export default function EditTransitMovementPage() {
   }
 
   async function handleUpdate(values: TransitMovementFormValues) {
+    // Validate the optional form value before using it.
+    const clientName = values.clientName?.trim();
+
+    if (!clientName) {
+      toast.error("Client name is required.");
+      return;
+    }
+
     try {
       const payload: UpdateTransitMovementPayload = {
         transitDate: values.transitDate,
-        // Client name belongs to the parent TransitMovement record.
-        clientName: values.clientName.trim(),
+        clientName,
         shipmentId: values.shipmentId ?? null,
         remarks: values.remarks?.trim() || undefined,
+
+        // Client name remains on the parent record.
         items: values.items.map((item) => ({
           ...(item.id ? { id: item.id } : {}),
           itemDate: item.itemDate,
@@ -131,7 +136,7 @@ export default function EditTransitMovementPage() {
 
       toast.success("Transit movement updated successfully");
       navigate(`/transit-movements/${movementId}`);
-    } catch (error) {
+    } catch (error: unknown) {
       const apiMessage =
         (error as { response?: { data?: { message?: string } } })
           ?.response?.data?.message;
