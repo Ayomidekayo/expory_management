@@ -860,6 +860,68 @@ exports.Prisma.TransportItemColumnLockScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
+exports.Prisma.TransporterItemColumnLockScalarFieldEnum = {
+  id: 'id',
+  columnKey: 'columnKey',
+  isLocked: 'isLocked',
+  lockedAt: 'lockedAt',
+  lockedById: 'lockedById',
+  lockReason: 'lockReason',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.TransporterScalarFieldEnum = {
+  id: 'id',
+  transportNumber: 'transportNumber',
+  transportDate: 'transportDate',
+  truckOwnerName: 'truckOwnerName',
+  shipmentId: 'shipmentId',
+  remarks: 'remarks',
+  isLocked: 'isLocked',
+  lockedAt: 'lockedAt',
+  updatedById: 'updatedById',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.TransporterItemScalarFieldEnum = {
+  id: 'id',
+  transporterId: 'transporterId',
+  itemDate: 'itemDate',
+  itemType: 'itemType',
+  name: 'name',
+  frontPlateNumber: 'frontPlateNumber',
+  backPlateNumber: 'backPlateNumber',
+  containerName: 'containerName',
+  containerNumber: 'containerNumber',
+  status: 'status',
+  chargeAmount: 'chargeAmount',
+  chargeCurrency: 'chargeCurrency',
+  paymentStatus: 'paymentStatus',
+  remarks: 'remarks',
+  isLocked: 'isLocked',
+  lockedFields: 'lockedFields',
+  lockedAt: 'lockedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.TransporterPaymentScalarFieldEnum = {
+  id: 'id',
+  transportItemId: 'transportItemId',
+  recordedById: 'recordedById',
+  amount: 'amount',
+  paymentType: 'paymentType',
+  paymentDate: 'paymentDate',
+  paymentMethod: 'paymentMethod',
+  reference: 'reference',
+  description: 'description',
+  notes: 'notes',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -1096,6 +1158,11 @@ exports.Permission = exports.$Enums.Permission = {
   EDIT_TRANSPORT: 'EDIT_TRANSPORT',
   DELETE_TRANSPORT: 'DELETE_TRANSPORT',
   MANAGE_TRANSPORT_PAYMENTS: 'MANAGE_TRANSPORT_PAYMENTS',
+  VIEW_TRANSPORTERS: 'VIEW_TRANSPORTERS',
+  CREATE_TRANSPORTER: 'CREATE_TRANSPORTER',
+  EDIT_TRANSPORTER: 'EDIT_TRANSPORTER',
+  DELETE_TRANSPORTER: 'DELETE_TRANSPORTER',
+  MANAGE_TRANSPORTER_PAYMENTS: 'MANAGE_TRANSPORTER_PAYMENTS',
   VIEW_TRANSIT_MOVEMENTS: 'VIEW_TRANSIT_MOVEMENTS',
   CREATE_TRANSIT_MOVEMENT: 'CREATE_TRANSIT_MOVEMENT',
   EDIT_TRANSIT_MOVEMENT: 'EDIT_TRANSIT_MOVEMENT',
@@ -1223,6 +1290,15 @@ exports.TransitDirection = exports.$Enums.TransitDirection = {
   OUT: 'OUT'
 };
 
+exports.TransporterStatus = exports.$Enums.TransporterStatus = {
+  PENDING: 'PENDING',
+  LOADING: 'LOADING',
+  IN_TRANSIT: 'IN_TRANSIT',
+  OFFLOADING: 'OFFLOADING',
+  COMPLETED: 'COMPLETED',
+  CANCELLED: 'CANCELLED'
+};
+
 exports.Prisma.ModelName = {
   User: 'User',
   AllocationDocument: 'AllocationDocument',
@@ -1266,7 +1342,11 @@ exports.Prisma.ModelName = {
   TransitMovementItem: 'TransitMovementItem',
   TransitMovementPayment: 'TransitMovementPayment',
   TransitMovementItemColumnLock: 'TransitMovementItemColumnLock',
-  TransportItemColumnLock: 'TransportItemColumnLock'
+  TransportItemColumnLock: 'TransportItemColumnLock',
+  TransporterItemColumnLock: 'TransporterItemColumnLock',
+  Transporter: 'Transporter',
+  TransporterItem: 'TransporterItem',
+  TransporterPayment: 'TransporterPayment'
 };
 
 /**

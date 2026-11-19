@@ -29,6 +29,9 @@ import rateCardRoutes from "../features/pricing/rate-cards/rate-card.routes"
 import quotationRoutes   from "../features/quotation/quotation.routes"
 import transportRoutes from "./transport.routes";
 import transitMovementRoutes from "./transit-movement.routes";
+import transporterRoutes from "./transporter.routes";
+
+
 const router = Router();
 
 router.use("/auth", authRoutes);
@@ -53,6 +56,10 @@ router.use(
 
 router.use("/transports", transportRoutes);
 router.use("/transit-movements", transitMovementRoutes);
+router.use(
+  "/transporters",
+  transporterRoutes
+);
 
 router.use(
   "/packing-lists",

@@ -45,6 +45,11 @@ model User {
   // Transit Movement
   transitMovementPayments    TransitMovementPayment[]        @relation("TransitMovementPaymentRecorder")
   transitMovementColumnLocks TransitMovementItemColumnLock[] @relation("TransitMovementColumnLockUser")
+
+  // Transport
+  transporterPayments    TransporterPayment[]        @relation("TransporterPaymentRecorder")
+  transporterColumnLocks TransporterItemColumnLock[] @relation("TransporterColumnLockUser")
+  updatedTransporters    Transporter[]               @relation("TransporterUpdatedBy")
 }
 
 model AllocationDocument {
@@ -143,6 +148,7 @@ model Shipment {
   documents         Document[]
   invoices          Invoice[]
   transports        Transport[]
+  transporters      Transporter[]
 
   packingList      PackingList?
   allocation       Allocation?       @relation(fields: [allocationId], references: [id])
@@ -694,6 +700,13 @@ enum Permission {
   EDIT_TRANSPORT
   DELETE_TRANSPORT
   MANAGE_TRANSPORT_PAYMENTS
+
+  // Transporter permissions
+  VIEW_TRANSPORTERS
+  CREATE_TRANSPORTER
+  EDIT_TRANSPORTER
+  DELETE_TRANSPORTER
+  MANAGE_TRANSPORTER_PAYMENTS
 
   // Transit Movement permissions
   VIEW_TRANSIT_MOVEMENTS
@@ -1614,4 +1627,119 @@ model TransportItemColumnLock {
 
   @@index([isLocked])
   @@index([lockedById])
+}
+
+model TransporterItemColumnLock {
+  id         String    @id @default(cuid())
+  columnKey  String    @unique
+  isLocked   Boolean   @default(false)
+  lockedAt   DateTime?
+  lockedById String?
+  lockReason String?
+
+  lockedBy User? @relation("TransporterColumnLockUser", fields: [lockedById], references: [id], onDelete: SetNull)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([isLocked])
+  @@index([lockedById])
+}
+
+enum TransporterStatus {
+  PENDING
+  LOADING
+  IN_TRANSIT
+  OFFLOADING
+  COMPLETED
+  CANCELLED
+}
+
+model Transporter {
+  id              String   @id @default(cuid())
+  transportNumber String   @unique
+  transportDate   DateTime
+  truckOwnerName  String
+
+  shipmentId String?
+  shipment   Shipment? @relation(fields: [shipmentId], references: [id], onDelete: SetNull)
+
+  remarks  String?
+  isLocked Boolean   @default(false)
+  lockedAt DateTime?
+
+  updatedById String?
+  updatedBy   User?   @relation("TransporterUpdatedBy", fields: [updatedById], references: [id], onDelete: SetNull)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  items TransporterItem[]
+
+  @@index([shipmentId])
+  @@index([transportDate])
+  @@index([createdAt])
+}
+
+model TransporterItem {
+  id            String @id @default(cuid())
+  transporterId String
+
+  itemDate DateTime
+  itemType TransportItemType
+
+  name             String?
+  frontPlateNumber String?
+  backPlateNumber  String?
+
+  containerName   String?
+  containerNumber String?
+
+  status TransporterStatus @default(PENDING)
+
+  chargeAmount   Decimal       @default(0) @db.Decimal(18, 2)
+  chargeCurrency Currency      @default(NGN)
+  paymentStatus  PaymentStatus @default(UNPAID)
+
+  remarks String?
+
+  isLocked     Boolean   @default(false)
+  lockedFields String[]  @default([])
+  lockedAt     DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  transporter Transporter          @relation(fields: [transporterId], references: [id], onDelete: Cascade)
+  payments    TransporterPayment[]
+
+  @@index([transporterId])
+  @@index([itemDate])
+  @@index([itemType])
+  @@index([status])
+  @@index([paymentStatus])
+}
+
+model TransporterPayment {
+  id              String @id @default(cuid())
+  transportItemId String
+
+  recordedById String?
+  amount       Decimal         @db.Decimal(18, 2)
+  paymentType  ItemPaymentType
+  paymentDate  DateTime        @default(now())
+
+  paymentMethod String?
+  reference     String?
+  description   String?
+  notes         String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  transporterItem TransporterItem @relation(fields: [transportItemId], references: [id], onDelete: Cascade)
+  recordedBy      User?           @relation("TransporterPaymentRecorder", fields: [recordedById], references: [id], onDelete: SetNull)
+
+  @@index([transportItemId])
+  @@index([paymentDate])
 }

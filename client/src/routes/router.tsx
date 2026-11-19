@@ -94,6 +94,7 @@ import EditTransitMovementPage from "../pages/transit-movement/EditTransitMoveme
 import TransitMovementDetailsPage from "../pages/transit-movement/TransitMovementDetailsPage";
 import CreateTransitMovementPage from "../pages/transit-movement/CreateTransitMovementPage";
 import TransitMovementsPage from "../pages/transit-movement/TransitMovementsPage";
+import { CreateTransporterPage, EditTransporterPage, TransporterDetailsPage, TransportersPage } from "../features/transpoter/pages/transporter";
 
 
 
@@ -821,7 +822,38 @@ export const router = createBrowserRouter([
 //   ),
 // },
 
-
+{
+  path: "/transporters",
+  element: (
+    <PermissionRoute permission="VIEW_TRANSPORTERS">
+      <TransportersPage />
+    </PermissionRoute>
+  ),
+},
+{
+  path: "/transporters/new",
+  element: (
+    <PermissionRoute permission="CREATE_TRANSPORTER">
+      <CreateTransporterPage />
+    </PermissionRoute>
+  ),
+},
+{
+  path: "/transporters/:id",
+  element: (
+    <PermissionRoute permission="VIEW_TRANSPORTERS">
+      <TransporterDetailsPage />
+    </PermissionRoute>
+  ),
+},
+{
+  path: "/transporters/:id/edit",
+  element: (
+    <PermissionRoute permission="EDIT_TRANSPORTER">
+      <EditTransporterPage />
+    </PermissionRoute>
+  ),
+},
 
           // ================================
           // SETTINGS

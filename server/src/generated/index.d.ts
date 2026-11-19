@@ -228,6 +228,26 @@ export type TransitMovementItemColumnLock = $Result.DefaultSelection<Prisma.$Tra
  * 
  */
 export type TransportItemColumnLock = $Result.DefaultSelection<Prisma.$TransportItemColumnLockPayload>
+/**
+ * Model TransporterItemColumnLock
+ * 
+ */
+export type TransporterItemColumnLock = $Result.DefaultSelection<Prisma.$TransporterItemColumnLockPayload>
+/**
+ * Model Transporter
+ * 
+ */
+export type Transporter = $Result.DefaultSelection<Prisma.$TransporterPayload>
+/**
+ * Model TransporterItem
+ * 
+ */
+export type TransporterItem = $Result.DefaultSelection<Prisma.$TransporterItemPayload>
+/**
+ * Model TransporterPayment
+ * 
+ */
+export type TransporterPayment = $Result.DefaultSelection<Prisma.$TransporterPaymentPayload>
 
 /**
  * Enums
@@ -515,6 +535,11 @@ export const Permission: {
   EDIT_TRANSPORT: 'EDIT_TRANSPORT',
   DELETE_TRANSPORT: 'DELETE_TRANSPORT',
   MANAGE_TRANSPORT_PAYMENTS: 'MANAGE_TRANSPORT_PAYMENTS',
+  VIEW_TRANSPORTERS: 'VIEW_TRANSPORTERS',
+  CREATE_TRANSPORTER: 'CREATE_TRANSPORTER',
+  EDIT_TRANSPORTER: 'EDIT_TRANSPORTER',
+  DELETE_TRANSPORTER: 'DELETE_TRANSPORTER',
+  MANAGE_TRANSPORTER_PAYMENTS: 'MANAGE_TRANSPORTER_PAYMENTS',
   VIEW_TRANSIT_MOVEMENTS: 'VIEW_TRANSIT_MOVEMENTS',
   CREATE_TRANSIT_MOVEMENT: 'CREATE_TRANSIT_MOVEMENT',
   EDIT_TRANSIT_MOVEMENT: 'EDIT_TRANSIT_MOVEMENT',
@@ -669,6 +694,18 @@ export const ItemPaymentType: {
 
 export type ItemPaymentType = (typeof ItemPaymentType)[keyof typeof ItemPaymentType]
 
+
+export const TransporterStatus: {
+  PENDING: 'PENDING',
+  LOADING: 'LOADING',
+  IN_TRANSIT: 'IN_TRANSIT',
+  OFFLOADING: 'OFFLOADING',
+  COMPLETED: 'COMPLETED',
+  CANCELLED: 'CANCELLED'
+};
+
+export type TransporterStatus = (typeof TransporterStatus)[keyof typeof TransporterStatus]
+
 }
 
 export type TransitDirection = $Enums.TransitDirection
@@ -802,6 +839,10 @@ export const PaymentStatus: typeof $Enums.PaymentStatus
 export type ItemPaymentType = $Enums.ItemPaymentType
 
 export const ItemPaymentType: typeof $Enums.ItemPaymentType
+
+export type TransporterStatus = $Enums.TransporterStatus
+
+export const TransporterStatus: typeof $Enums.TransporterStatus
 
 /**
  * ##  Prisma Client ʲˢ
@@ -1353,6 +1394,46 @@ export class PrismaClient<
     * ```
     */
   get transportItemColumnLock(): Prisma.TransportItemColumnLockDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.transporterItemColumnLock`: Exposes CRUD operations for the **TransporterItemColumnLock** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more TransporterItemColumnLocks
+    * const transporterItemColumnLocks = await prisma.transporterItemColumnLock.findMany()
+    * ```
+    */
+  get transporterItemColumnLock(): Prisma.TransporterItemColumnLockDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.transporter`: Exposes CRUD operations for the **Transporter** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Transporters
+    * const transporters = await prisma.transporter.findMany()
+    * ```
+    */
+  get transporter(): Prisma.TransporterDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.transporterItem`: Exposes CRUD operations for the **TransporterItem** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more TransporterItems
+    * const transporterItems = await prisma.transporterItem.findMany()
+    * ```
+    */
+  get transporterItem(): Prisma.TransporterItemDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.transporterPayment`: Exposes CRUD operations for the **TransporterPayment** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more TransporterPayments
+    * const transporterPayments = await prisma.transporterPayment.findMany()
+    * ```
+    */
+  get transporterPayment(): Prisma.TransporterPaymentDelegate<ExtArgs, ClientOptions>;
 }
 
 export namespace Prisma {
@@ -1829,7 +1910,11 @@ export namespace Prisma {
     TransitMovementItem: 'TransitMovementItem',
     TransitMovementPayment: 'TransitMovementPayment',
     TransitMovementItemColumnLock: 'TransitMovementItemColumnLock',
-    TransportItemColumnLock: 'TransportItemColumnLock'
+    TransportItemColumnLock: 'TransportItemColumnLock',
+    TransporterItemColumnLock: 'TransporterItemColumnLock',
+    Transporter: 'Transporter',
+    TransporterItem: 'TransporterItem',
+    TransporterPayment: 'TransporterPayment'
   };
 
   export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -1845,7 +1930,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "user" | "allocationDocument" | "exporter" | "consignee" | "shipment" | "invoice" | "container" | "invoiceItem" | "packingList" | "packingListItem" | "transit" | "allocation" | "client" | "document" | "userPermission" | "invoicePayment" | "gateMovement" | "rateCard" | "rateComponent" | "rateCardNote" | "quote" | "weightSlab" | "weightSlabRate" | "quoteItem" | "quoteSubmission" | "quoteSubmissionItem" | "quoteMessage" | "quoteAttachment" | "quoteNotification" | "quoteAuditEvent" | "rateCardConfiguration" | "rateCardAirline" | "quoteSegment" | "rateCardOption" | "rateCardPricingSection" | "transport" | "transportItem" | "transportPayment" | "transitMovement" | "transitMovementItem" | "transitMovementPayment" | "transitMovementItemColumnLock" | "transportItemColumnLock"
+      modelProps: "user" | "allocationDocument" | "exporter" | "consignee" | "shipment" | "invoice" | "container" | "invoiceItem" | "packingList" | "packingListItem" | "transit" | "allocation" | "client" | "document" | "userPermission" | "invoicePayment" | "gateMovement" | "rateCard" | "rateComponent" | "rateCardNote" | "quote" | "weightSlab" | "weightSlabRate" | "quoteItem" | "quoteSubmission" | "quoteSubmissionItem" | "quoteMessage" | "quoteAttachment" | "quoteNotification" | "quoteAuditEvent" | "rateCardConfiguration" | "rateCardAirline" | "quoteSegment" | "rateCardOption" | "rateCardPricingSection" | "transport" | "transportItem" | "transportPayment" | "transitMovement" | "transitMovementItem" | "transitMovementPayment" | "transitMovementItemColumnLock" | "transportItemColumnLock" | "transporterItemColumnLock" | "transporter" | "transporterItem" | "transporterPayment"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -5031,6 +5116,302 @@ export namespace Prisma {
           }
         }
       }
+      TransporterItemColumnLock: {
+        payload: Prisma.$TransporterItemColumnLockPayload<ExtArgs>
+        fields: Prisma.TransporterItemColumnLockFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.TransporterItemColumnLockFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TransporterItemColumnLockPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.TransporterItemColumnLockFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TransporterItemColumnLockPayload>
+          }
+          findFirst: {
+            args: Prisma.TransporterItemColumnLockFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TransporterItemColumnLockPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.TransporterItemColumnLockFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TransporterItemColumnLockPayload>
+          }
+          findMany: {
+            args: Prisma.TransporterItemColumnLockFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TransporterItemColumnLockPayload>[]
+          }
+          create: {
+            args: Prisma.TransporterItemColumnLockCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TransporterItemColumnLockPayload>
+          }
+          createMany: {
+            args: Prisma.TransporterItemColumnLockCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.TransporterItemColumnLockCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TransporterItemColumnLockPayload>[]
+          }
+          delete: {
+            args: Prisma.TransporterItemColumnLockDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TransporterItemColumnLockPayload>
+          }
+          update: {
+            args: Prisma.TransporterItemColumnLockUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TransporterItemColumnLockPayload>
+          }
+          deleteMany: {
+            args: Prisma.TransporterItemColumnLockDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.TransporterItemColumnLockUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.TransporterItemColumnLockUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TransporterItemColumnLockPayload>[]
+          }
+          upsert: {
+            args: Prisma.TransporterItemColumnLockUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TransporterItemColumnLockPayload>
+          }
+          aggregate: {
+            args: Prisma.TransporterItemColumnLockAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateTransporterItemColumnLock>
+          }
+          groupBy: {
+            args: Prisma.TransporterItemColumnLockGroupByArgs<ExtArgs>
+            result: $Utils.Optional<TransporterItemColumnLockGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.TransporterItemColumnLockCountArgs<ExtArgs>
+            result: $Utils.Optional<TransporterItemColumnLockCountAggregateOutputType> | number
+          }
+        }
+      }
+      Transporter: {
+        payload: Prisma.$TransporterPayload<ExtArgs>
+        fields: Prisma.TransporterFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.TransporterFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TransporterPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.TransporterFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TransporterPayload>
+          }
+          findFirst: {
+            args: Prisma.TransporterFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TransporterPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.TransporterFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TransporterPayload>
+          }
+          findMany: {
+            args: Prisma.TransporterFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TransporterPayload>[]
+          }
+          create: {
+            args: Prisma.TransporterCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TransporterPayload>
+          }
+          createMany: {
+            args: Prisma.TransporterCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.TransporterCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TransporterPayload>[]
+          }
+          delete: {
+            args: Prisma.TransporterDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TransporterPayload>
+          }
+          update: {
+            args: Prisma.TransporterUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TransporterPayload>
+          }
+          deleteMany: {
+            args: Prisma.TransporterDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.TransporterUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.TransporterUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TransporterPayload>[]
+          }
+          upsert: {
+            args: Prisma.TransporterUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TransporterPayload>
+          }
+          aggregate: {
+            args: Prisma.TransporterAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateTransporter>
+          }
+          groupBy: {
+            args: Prisma.TransporterGroupByArgs<ExtArgs>
+            result: $Utils.Optional<TransporterGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.TransporterCountArgs<ExtArgs>
+            result: $Utils.Optional<TransporterCountAggregateOutputType> | number
+          }
+        }
+      }
+      TransporterItem: {
+        payload: Prisma.$TransporterItemPayload<ExtArgs>
+        fields: Prisma.TransporterItemFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.TransporterItemFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TransporterItemPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.TransporterItemFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TransporterItemPayload>
+          }
+          findFirst: {
+            args: Prisma.TransporterItemFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TransporterItemPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.TransporterItemFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TransporterItemPayload>
+          }
+          findMany: {
+            args: Prisma.TransporterItemFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TransporterItemPayload>[]
+          }
+          create: {
+            args: Prisma.TransporterItemCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TransporterItemPayload>
+          }
+          createMany: {
+            args: Prisma.TransporterItemCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.TransporterItemCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TransporterItemPayload>[]
+          }
+          delete: {
+            args: Prisma.TransporterItemDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TransporterItemPayload>
+          }
+          update: {
+            args: Prisma.TransporterItemUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TransporterItemPayload>
+          }
+          deleteMany: {
+            args: Prisma.TransporterItemDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.TransporterItemUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.TransporterItemUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TransporterItemPayload>[]
+          }
+          upsert: {
+            args: Prisma.TransporterItemUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TransporterItemPayload>
+          }
+          aggregate: {
+            args: Prisma.TransporterItemAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateTransporterItem>
+          }
+          groupBy: {
+            args: Prisma.TransporterItemGroupByArgs<ExtArgs>
+            result: $Utils.Optional<TransporterItemGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.TransporterItemCountArgs<ExtArgs>
+            result: $Utils.Optional<TransporterItemCountAggregateOutputType> | number
+          }
+        }
+      }
+      TransporterPayment: {
+        payload: Prisma.$TransporterPaymentPayload<ExtArgs>
+        fields: Prisma.TransporterPaymentFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.TransporterPaymentFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TransporterPaymentPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.TransporterPaymentFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TransporterPaymentPayload>
+          }
+          findFirst: {
+            args: Prisma.TransporterPaymentFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TransporterPaymentPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.TransporterPaymentFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TransporterPaymentPayload>
+          }
+          findMany: {
+            args: Prisma.TransporterPaymentFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TransporterPaymentPayload>[]
+          }
+          create: {
+            args: Prisma.TransporterPaymentCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TransporterPaymentPayload>
+          }
+          createMany: {
+            args: Prisma.TransporterPaymentCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.TransporterPaymentCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TransporterPaymentPayload>[]
+          }
+          delete: {
+            args: Prisma.TransporterPaymentDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TransporterPaymentPayload>
+          }
+          update: {
+            args: Prisma.TransporterPaymentUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TransporterPaymentPayload>
+          }
+          deleteMany: {
+            args: Prisma.TransporterPaymentDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.TransporterPaymentUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.TransporterPaymentUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TransporterPaymentPayload>[]
+          }
+          upsert: {
+            args: Prisma.TransporterPaymentUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TransporterPaymentPayload>
+          }
+          aggregate: {
+            args: Prisma.TransporterPaymentAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateTransporterPayment>
+          }
+          groupBy: {
+            args: Prisma.TransporterPaymentGroupByArgs<ExtArgs>
+            result: $Utils.Optional<TransporterPaymentGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.TransporterPaymentCountArgs<ExtArgs>
+            result: $Utils.Optional<TransporterPaymentCountAggregateOutputType> | number
+          }
+        }
+      }
     }
   } & {
     other: {
@@ -5182,6 +5563,10 @@ export namespace Prisma {
     transitMovementPayment?: TransitMovementPaymentOmit
     transitMovementItemColumnLock?: TransitMovementItemColumnLockOmit
     transportItemColumnLock?: TransportItemColumnLockOmit
+    transporterItemColumnLock?: TransporterItemColumnLockOmit
+    transporter?: TransporterOmit
+    transporterItem?: TransporterItemOmit
+    transporterPayment?: TransporterPaymentOmit
   }
 
   /* Types for Logging */
@@ -5279,6 +5664,9 @@ export namespace Prisma {
     updatedTransports: number
     transitMovementPayments: number
     transitMovementColumnLocks: number
+    transporterPayments: number
+    transporterColumnLocks: number
+    updatedTransporters: number
   }
 
   export type UserCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -5299,6 +5687,9 @@ export namespace Prisma {
     updatedTransports?: boolean | UserCountOutputTypeCountUpdatedTransportsArgs
     transitMovementPayments?: boolean | UserCountOutputTypeCountTransitMovementPaymentsArgs
     transitMovementColumnLocks?: boolean | UserCountOutputTypeCountTransitMovementColumnLocksArgs
+    transporterPayments?: boolean | UserCountOutputTypeCountTransporterPaymentsArgs
+    transporterColumnLocks?: boolean | UserCountOutputTypeCountTransporterColumnLocksArgs
+    updatedTransporters?: boolean | UserCountOutputTypeCountUpdatedTransportersArgs
   }
 
   // Custom InputTypes
@@ -5431,6 +5822,27 @@ export namespace Prisma {
     where?: TransitMovementItemColumnLockWhereInput
   }
 
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountTransporterPaymentsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: TransporterPaymentWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountTransporterColumnLocksArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: TransporterItemColumnLockWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountUpdatedTransportersArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: TransporterWhereInput
+  }
+
 
   /**
    * Count Type ExporterCountOutputType
@@ -5539,6 +5951,7 @@ export namespace Prisma {
     documents: number
     invoices: number
     transports: number
+    transporters: number
     transits: number
     transitMovements: number
   }
@@ -5548,6 +5961,7 @@ export namespace Prisma {
     documents?: boolean | ShipmentCountOutputTypeCountDocumentsArgs
     invoices?: boolean | ShipmentCountOutputTypeCountInvoicesArgs
     transports?: boolean | ShipmentCountOutputTypeCountTransportsArgs
+    transporters?: boolean | ShipmentCountOutputTypeCountTransportersArgs
     transits?: boolean | ShipmentCountOutputTypeCountTransitsArgs
     transitMovements?: boolean | ShipmentCountOutputTypeCountTransitMovementsArgs
   }
@@ -5589,6 +6003,13 @@ export namespace Prisma {
    */
   export type ShipmentCountOutputTypeCountTransportsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: TransportWhereInput
+  }
+
+  /**
+   * ShipmentCountOutputType without action
+   */
+  export type ShipmentCountOutputTypeCountTransportersArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: TransporterWhereInput
   }
 
   /**
@@ -6568,6 +6989,68 @@ export namespace Prisma {
 
 
   /**
+   * Count Type TransporterCountOutputType
+   */
+
+  export type TransporterCountOutputType = {
+    items: number
+  }
+
+  export type TransporterCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    items?: boolean | TransporterCountOutputTypeCountItemsArgs
+  }
+
+  // Custom InputTypes
+  /**
+   * TransporterCountOutputType without action
+   */
+  export type TransporterCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TransporterCountOutputType
+     */
+    select?: TransporterCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * TransporterCountOutputType without action
+   */
+  export type TransporterCountOutputTypeCountItemsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: TransporterItemWhereInput
+  }
+
+
+  /**
+   * Count Type TransporterItemCountOutputType
+   */
+
+  export type TransporterItemCountOutputType = {
+    payments: number
+  }
+
+  export type TransporterItemCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    payments?: boolean | TransporterItemCountOutputTypeCountPaymentsArgs
+  }
+
+  // Custom InputTypes
+  /**
+   * TransporterItemCountOutputType without action
+   */
+  export type TransporterItemCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TransporterItemCountOutputType
+     */
+    select?: TransporterItemCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * TransporterItemCountOutputType without action
+   */
+  export type TransporterItemCountOutputTypeCountPaymentsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: TransporterPaymentWhereInput
+  }
+
+
+  /**
    * Models
    */
 
@@ -6808,6 +7291,9 @@ export namespace Prisma {
     updatedTransports?: boolean | User$updatedTransportsArgs<ExtArgs>
     transitMovementPayments?: boolean | User$transitMovementPaymentsArgs<ExtArgs>
     transitMovementColumnLocks?: boolean | User$transitMovementColumnLocksArgs<ExtArgs>
+    transporterPayments?: boolean | User$transporterPaymentsArgs<ExtArgs>
+    transporterColumnLocks?: boolean | User$transporterColumnLocksArgs<ExtArgs>
+    updatedTransporters?: boolean | User$updatedTransportersArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["user"]>
 
@@ -6875,6 +7361,9 @@ export namespace Prisma {
     updatedTransports?: boolean | User$updatedTransportsArgs<ExtArgs>
     transitMovementPayments?: boolean | User$transitMovementPaymentsArgs<ExtArgs>
     transitMovementColumnLocks?: boolean | User$transitMovementColumnLocksArgs<ExtArgs>
+    transporterPayments?: boolean | User$transporterPaymentsArgs<ExtArgs>
+    transporterColumnLocks?: boolean | User$transporterColumnLocksArgs<ExtArgs>
+    updatedTransporters?: boolean | User$updatedTransportersArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type UserIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
@@ -6900,6 +7389,9 @@ export namespace Prisma {
       updatedTransports: Prisma.$TransportPayload<ExtArgs>[]
       transitMovementPayments: Prisma.$TransitMovementPaymentPayload<ExtArgs>[]
       transitMovementColumnLocks: Prisma.$TransitMovementItemColumnLockPayload<ExtArgs>[]
+      transporterPayments: Prisma.$TransporterPaymentPayload<ExtArgs>[]
+      transporterColumnLocks: Prisma.$TransporterItemColumnLockPayload<ExtArgs>[]
+      updatedTransporters: Prisma.$TransporterPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -7325,6 +7817,9 @@ export namespace Prisma {
     updatedTransports<T extends User$updatedTransportsArgs<ExtArgs> = {}>(args?: Subset<T, User$updatedTransportsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TransportPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     transitMovementPayments<T extends User$transitMovementPaymentsArgs<ExtArgs> = {}>(args?: Subset<T, User$transitMovementPaymentsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TransitMovementPaymentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     transitMovementColumnLocks<T extends User$transitMovementColumnLocksArgs<ExtArgs> = {}>(args?: Subset<T, User$transitMovementColumnLocksArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TransitMovementItemColumnLockPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    transporterPayments<T extends User$transporterPaymentsArgs<ExtArgs> = {}>(args?: Subset<T, User$transporterPaymentsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TransporterPaymentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    transporterColumnLocks<T extends User$transporterColumnLocksArgs<ExtArgs> = {}>(args?: Subset<T, User$transporterColumnLocksArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TransporterItemColumnLockPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    updatedTransporters<T extends User$updatedTransportersArgs<ExtArgs> = {}>(args?: Subset<T, User$updatedTransportersArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TransporterPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -8164,6 +8659,78 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: TransitMovementItemColumnLockScalarFieldEnum | TransitMovementItemColumnLockScalarFieldEnum[]
+  }
+
+  /**
+   * User.transporterPayments
+   */
+  export type User$transporterPaymentsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TransporterPayment
+     */
+    select?: TransporterPaymentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TransporterPayment
+     */
+    omit?: TransporterPaymentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TransporterPaymentInclude<ExtArgs> | null
+    where?: TransporterPaymentWhereInput
+    orderBy?: TransporterPaymentOrderByWithRelationInput | TransporterPaymentOrderByWithRelationInput[]
+    cursor?: TransporterPaymentWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: TransporterPaymentScalarFieldEnum | TransporterPaymentScalarFieldEnum[]
+  }
+
+  /**
+   * User.transporterColumnLocks
+   */
+  export type User$transporterColumnLocksArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TransporterItemColumnLock
+     */
+    select?: TransporterItemColumnLockSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TransporterItemColumnLock
+     */
+    omit?: TransporterItemColumnLockOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TransporterItemColumnLockInclude<ExtArgs> | null
+    where?: TransporterItemColumnLockWhereInput
+    orderBy?: TransporterItemColumnLockOrderByWithRelationInput | TransporterItemColumnLockOrderByWithRelationInput[]
+    cursor?: TransporterItemColumnLockWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: TransporterItemColumnLockScalarFieldEnum | TransporterItemColumnLockScalarFieldEnum[]
+  }
+
+  /**
+   * User.updatedTransporters
+   */
+  export type User$updatedTransportersArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Transporter
+     */
+    select?: TransporterSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Transporter
+     */
+    omit?: TransporterOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TransporterInclude<ExtArgs> | null
+    where?: TransporterWhereInput
+    orderBy?: TransporterOrderByWithRelationInput | TransporterOrderByWithRelationInput[]
+    cursor?: TransporterWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: TransporterScalarFieldEnum | TransporterScalarFieldEnum[]
   }
 
   /**
@@ -12175,6 +12742,7 @@ export namespace Prisma {
     documents?: boolean | Shipment$documentsArgs<ExtArgs>
     invoices?: boolean | Shipment$invoicesArgs<ExtArgs>
     transports?: boolean | Shipment$transportsArgs<ExtArgs>
+    transporters?: boolean | Shipment$transportersArgs<ExtArgs>
     packingList?: boolean | Shipment$packingListArgs<ExtArgs>
     allocation?: boolean | Shipment$allocationArgs<ExtArgs>
     client?: boolean | ClientDefaultArgs<ExtArgs>
@@ -12292,6 +12860,7 @@ export namespace Prisma {
     documents?: boolean | Shipment$documentsArgs<ExtArgs>
     invoices?: boolean | Shipment$invoicesArgs<ExtArgs>
     transports?: boolean | Shipment$transportsArgs<ExtArgs>
+    transporters?: boolean | Shipment$transportersArgs<ExtArgs>
     packingList?: boolean | Shipment$packingListArgs<ExtArgs>
     allocation?: boolean | Shipment$allocationArgs<ExtArgs>
     client?: boolean | ClientDefaultArgs<ExtArgs>
@@ -12324,6 +12893,7 @@ export namespace Prisma {
       documents: Prisma.$DocumentPayload<ExtArgs>[]
       invoices: Prisma.$InvoicePayload<ExtArgs>[]
       transports: Prisma.$TransportPayload<ExtArgs>[]
+      transporters: Prisma.$TransporterPayload<ExtArgs>[]
       packingList: Prisma.$PackingListPayload<ExtArgs> | null
       allocation: Prisma.$AllocationPayload<ExtArgs> | null
       client: Prisma.$ClientPayload<ExtArgs>
@@ -12759,6 +13329,7 @@ export namespace Prisma {
     documents<T extends Shipment$documentsArgs<ExtArgs> = {}>(args?: Subset<T, Shipment$documentsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$DocumentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     invoices<T extends Shipment$invoicesArgs<ExtArgs> = {}>(args?: Subset<T, Shipment$invoicesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$InvoicePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     transports<T extends Shipment$transportsArgs<ExtArgs> = {}>(args?: Subset<T, Shipment$transportsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TransportPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    transporters<T extends Shipment$transportersArgs<ExtArgs> = {}>(args?: Subset<T, Shipment$transportersArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TransporterPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     packingList<T extends Shipment$packingListArgs<ExtArgs> = {}>(args?: Subset<T, Shipment$packingListArgs<ExtArgs>>): Prisma__PackingListClient<$Result.GetResult<Prisma.$PackingListPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     allocation<T extends Shipment$allocationArgs<ExtArgs> = {}>(args?: Subset<T, Shipment$allocationArgs<ExtArgs>>): Prisma__AllocationClient<$Result.GetResult<Prisma.$AllocationPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     client<T extends ClientDefaultArgs<ExtArgs> = {}>(args?: Subset<T, ClientDefaultArgs<ExtArgs>>): Prisma__ClientClient<$Result.GetResult<Prisma.$ClientPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
@@ -13317,6 +13888,30 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: TransportScalarFieldEnum | TransportScalarFieldEnum[]
+  }
+
+  /**
+   * Shipment.transporters
+   */
+  export type Shipment$transportersArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Transporter
+     */
+    select?: TransporterSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Transporter
+     */
+    omit?: TransporterOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TransporterInclude<ExtArgs> | null
+    where?: TransporterWhereInput
+    orderBy?: TransporterOrderByWithRelationInput | TransporterOrderByWithRelationInput[]
+    cursor?: TransporterWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: TransporterScalarFieldEnum | TransporterScalarFieldEnum[]
   }
 
   /**
@@ -62040,6 +62635,4864 @@ export namespace Prisma {
 
 
   /**
+   * Model TransporterItemColumnLock
+   */
+
+  export type AggregateTransporterItemColumnLock = {
+    _count: TransporterItemColumnLockCountAggregateOutputType | null
+    _min: TransporterItemColumnLockMinAggregateOutputType | null
+    _max: TransporterItemColumnLockMaxAggregateOutputType | null
+  }
+
+  export type TransporterItemColumnLockMinAggregateOutputType = {
+    id: string | null
+    columnKey: string | null
+    isLocked: boolean | null
+    lockedAt: Date | null
+    lockedById: string | null
+    lockReason: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type TransporterItemColumnLockMaxAggregateOutputType = {
+    id: string | null
+    columnKey: string | null
+    isLocked: boolean | null
+    lockedAt: Date | null
+    lockedById: string | null
+    lockReason: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type TransporterItemColumnLockCountAggregateOutputType = {
+    id: number
+    columnKey: number
+    isLocked: number
+    lockedAt: number
+    lockedById: number
+    lockReason: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type TransporterItemColumnLockMinAggregateInputType = {
+    id?: true
+    columnKey?: true
+    isLocked?: true
+    lockedAt?: true
+    lockedById?: true
+    lockReason?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type TransporterItemColumnLockMaxAggregateInputType = {
+    id?: true
+    columnKey?: true
+    isLocked?: true
+    lockedAt?: true
+    lockedById?: true
+    lockReason?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type TransporterItemColumnLockCountAggregateInputType = {
+    id?: true
+    columnKey?: true
+    isLocked?: true
+    lockedAt?: true
+    lockedById?: true
+    lockReason?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type TransporterItemColumnLockAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which TransporterItemColumnLock to aggregate.
+     */
+    where?: TransporterItemColumnLockWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of TransporterItemColumnLocks to fetch.
+     */
+    orderBy?: TransporterItemColumnLockOrderByWithRelationInput | TransporterItemColumnLockOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: TransporterItemColumnLockWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` TransporterItemColumnLocks from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` TransporterItemColumnLocks.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned TransporterItemColumnLocks
+    **/
+    _count?: true | TransporterItemColumnLockCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: TransporterItemColumnLockMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: TransporterItemColumnLockMaxAggregateInputType
+  }
+
+  export type GetTransporterItemColumnLockAggregateType<T extends TransporterItemColumnLockAggregateArgs> = {
+        [P in keyof T & keyof AggregateTransporterItemColumnLock]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateTransporterItemColumnLock[P]>
+      : GetScalarType<T[P], AggregateTransporterItemColumnLock[P]>
+  }
+
+
+
+
+  export type TransporterItemColumnLockGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: TransporterItemColumnLockWhereInput
+    orderBy?: TransporterItemColumnLockOrderByWithAggregationInput | TransporterItemColumnLockOrderByWithAggregationInput[]
+    by: TransporterItemColumnLockScalarFieldEnum[] | TransporterItemColumnLockScalarFieldEnum
+    having?: TransporterItemColumnLockScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: TransporterItemColumnLockCountAggregateInputType | true
+    _min?: TransporterItemColumnLockMinAggregateInputType
+    _max?: TransporterItemColumnLockMaxAggregateInputType
+  }
+
+  export type TransporterItemColumnLockGroupByOutputType = {
+    id: string
+    columnKey: string
+    isLocked: boolean
+    lockedAt: Date | null
+    lockedById: string | null
+    lockReason: string | null
+    createdAt: Date
+    updatedAt: Date
+    _count: TransporterItemColumnLockCountAggregateOutputType | null
+    _min: TransporterItemColumnLockMinAggregateOutputType | null
+    _max: TransporterItemColumnLockMaxAggregateOutputType | null
+  }
+
+  type GetTransporterItemColumnLockGroupByPayload<T extends TransporterItemColumnLockGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<TransporterItemColumnLockGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof TransporterItemColumnLockGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], TransporterItemColumnLockGroupByOutputType[P]>
+            : GetScalarType<T[P], TransporterItemColumnLockGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type TransporterItemColumnLockSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    columnKey?: boolean
+    isLocked?: boolean
+    lockedAt?: boolean
+    lockedById?: boolean
+    lockReason?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    lockedBy?: boolean | TransporterItemColumnLock$lockedByArgs<ExtArgs>
+  }, ExtArgs["result"]["transporterItemColumnLock"]>
+
+  export type TransporterItemColumnLockSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    columnKey?: boolean
+    isLocked?: boolean
+    lockedAt?: boolean
+    lockedById?: boolean
+    lockReason?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    lockedBy?: boolean | TransporterItemColumnLock$lockedByArgs<ExtArgs>
+  }, ExtArgs["result"]["transporterItemColumnLock"]>
+
+  export type TransporterItemColumnLockSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    columnKey?: boolean
+    isLocked?: boolean
+    lockedAt?: boolean
+    lockedById?: boolean
+    lockReason?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    lockedBy?: boolean | TransporterItemColumnLock$lockedByArgs<ExtArgs>
+  }, ExtArgs["result"]["transporterItemColumnLock"]>
+
+  export type TransporterItemColumnLockSelectScalar = {
+    id?: boolean
+    columnKey?: boolean
+    isLocked?: boolean
+    lockedAt?: boolean
+    lockedById?: boolean
+    lockReason?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type TransporterItemColumnLockOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "columnKey" | "isLocked" | "lockedAt" | "lockedById" | "lockReason" | "createdAt" | "updatedAt", ExtArgs["result"]["transporterItemColumnLock"]>
+  export type TransporterItemColumnLockInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    lockedBy?: boolean | TransporterItemColumnLock$lockedByArgs<ExtArgs>
+  }
+  export type TransporterItemColumnLockIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    lockedBy?: boolean | TransporterItemColumnLock$lockedByArgs<ExtArgs>
+  }
+  export type TransporterItemColumnLockIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    lockedBy?: boolean | TransporterItemColumnLock$lockedByArgs<ExtArgs>
+  }
+
+  export type $TransporterItemColumnLockPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "TransporterItemColumnLock"
+    objects: {
+      lockedBy: Prisma.$UserPayload<ExtArgs> | null
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      columnKey: string
+      isLocked: boolean
+      lockedAt: Date | null
+      lockedById: string | null
+      lockReason: string | null
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["transporterItemColumnLock"]>
+    composites: {}
+  }
+
+  type TransporterItemColumnLockGetPayload<S extends boolean | null | undefined | TransporterItemColumnLockDefaultArgs> = $Result.GetResult<Prisma.$TransporterItemColumnLockPayload, S>
+
+  type TransporterItemColumnLockCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<TransporterItemColumnLockFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: TransporterItemColumnLockCountAggregateInputType | true
+    }
+
+  export interface TransporterItemColumnLockDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['TransporterItemColumnLock'], meta: { name: 'TransporterItemColumnLock' } }
+    /**
+     * Find zero or one TransporterItemColumnLock that matches the filter.
+     * @param {TransporterItemColumnLockFindUniqueArgs} args - Arguments to find a TransporterItemColumnLock
+     * @example
+     * // Get one TransporterItemColumnLock
+     * const transporterItemColumnLock = await prisma.transporterItemColumnLock.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends TransporterItemColumnLockFindUniqueArgs>(args: SelectSubset<T, TransporterItemColumnLockFindUniqueArgs<ExtArgs>>): Prisma__TransporterItemColumnLockClient<$Result.GetResult<Prisma.$TransporterItemColumnLockPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one TransporterItemColumnLock that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {TransporterItemColumnLockFindUniqueOrThrowArgs} args - Arguments to find a TransporterItemColumnLock
+     * @example
+     * // Get one TransporterItemColumnLock
+     * const transporterItemColumnLock = await prisma.transporterItemColumnLock.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends TransporterItemColumnLockFindUniqueOrThrowArgs>(args: SelectSubset<T, TransporterItemColumnLockFindUniqueOrThrowArgs<ExtArgs>>): Prisma__TransporterItemColumnLockClient<$Result.GetResult<Prisma.$TransporterItemColumnLockPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first TransporterItemColumnLock that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TransporterItemColumnLockFindFirstArgs} args - Arguments to find a TransporterItemColumnLock
+     * @example
+     * // Get one TransporterItemColumnLock
+     * const transporterItemColumnLock = await prisma.transporterItemColumnLock.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends TransporterItemColumnLockFindFirstArgs>(args?: SelectSubset<T, TransporterItemColumnLockFindFirstArgs<ExtArgs>>): Prisma__TransporterItemColumnLockClient<$Result.GetResult<Prisma.$TransporterItemColumnLockPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first TransporterItemColumnLock that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TransporterItemColumnLockFindFirstOrThrowArgs} args - Arguments to find a TransporterItemColumnLock
+     * @example
+     * // Get one TransporterItemColumnLock
+     * const transporterItemColumnLock = await prisma.transporterItemColumnLock.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends TransporterItemColumnLockFindFirstOrThrowArgs>(args?: SelectSubset<T, TransporterItemColumnLockFindFirstOrThrowArgs<ExtArgs>>): Prisma__TransporterItemColumnLockClient<$Result.GetResult<Prisma.$TransporterItemColumnLockPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more TransporterItemColumnLocks that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TransporterItemColumnLockFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all TransporterItemColumnLocks
+     * const transporterItemColumnLocks = await prisma.transporterItemColumnLock.findMany()
+     * 
+     * // Get first 10 TransporterItemColumnLocks
+     * const transporterItemColumnLocks = await prisma.transporterItemColumnLock.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const transporterItemColumnLockWithIdOnly = await prisma.transporterItemColumnLock.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends TransporterItemColumnLockFindManyArgs>(args?: SelectSubset<T, TransporterItemColumnLockFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TransporterItemColumnLockPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a TransporterItemColumnLock.
+     * @param {TransporterItemColumnLockCreateArgs} args - Arguments to create a TransporterItemColumnLock.
+     * @example
+     * // Create one TransporterItemColumnLock
+     * const TransporterItemColumnLock = await prisma.transporterItemColumnLock.create({
+     *   data: {
+     *     // ... data to create a TransporterItemColumnLock
+     *   }
+     * })
+     * 
+     */
+    create<T extends TransporterItemColumnLockCreateArgs>(args: SelectSubset<T, TransporterItemColumnLockCreateArgs<ExtArgs>>): Prisma__TransporterItemColumnLockClient<$Result.GetResult<Prisma.$TransporterItemColumnLockPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many TransporterItemColumnLocks.
+     * @param {TransporterItemColumnLockCreateManyArgs} args - Arguments to create many TransporterItemColumnLocks.
+     * @example
+     * // Create many TransporterItemColumnLocks
+     * const transporterItemColumnLock = await prisma.transporterItemColumnLock.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends TransporterItemColumnLockCreateManyArgs>(args?: SelectSubset<T, TransporterItemColumnLockCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many TransporterItemColumnLocks and returns the data saved in the database.
+     * @param {TransporterItemColumnLockCreateManyAndReturnArgs} args - Arguments to create many TransporterItemColumnLocks.
+     * @example
+     * // Create many TransporterItemColumnLocks
+     * const transporterItemColumnLock = await prisma.transporterItemColumnLock.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many TransporterItemColumnLocks and only return the `id`
+     * const transporterItemColumnLockWithIdOnly = await prisma.transporterItemColumnLock.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends TransporterItemColumnLockCreateManyAndReturnArgs>(args?: SelectSubset<T, TransporterItemColumnLockCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TransporterItemColumnLockPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a TransporterItemColumnLock.
+     * @param {TransporterItemColumnLockDeleteArgs} args - Arguments to delete one TransporterItemColumnLock.
+     * @example
+     * // Delete one TransporterItemColumnLock
+     * const TransporterItemColumnLock = await prisma.transporterItemColumnLock.delete({
+     *   where: {
+     *     // ... filter to delete one TransporterItemColumnLock
+     *   }
+     * })
+     * 
+     */
+    delete<T extends TransporterItemColumnLockDeleteArgs>(args: SelectSubset<T, TransporterItemColumnLockDeleteArgs<ExtArgs>>): Prisma__TransporterItemColumnLockClient<$Result.GetResult<Prisma.$TransporterItemColumnLockPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one TransporterItemColumnLock.
+     * @param {TransporterItemColumnLockUpdateArgs} args - Arguments to update one TransporterItemColumnLock.
+     * @example
+     * // Update one TransporterItemColumnLock
+     * const transporterItemColumnLock = await prisma.transporterItemColumnLock.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends TransporterItemColumnLockUpdateArgs>(args: SelectSubset<T, TransporterItemColumnLockUpdateArgs<ExtArgs>>): Prisma__TransporterItemColumnLockClient<$Result.GetResult<Prisma.$TransporterItemColumnLockPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more TransporterItemColumnLocks.
+     * @param {TransporterItemColumnLockDeleteManyArgs} args - Arguments to filter TransporterItemColumnLocks to delete.
+     * @example
+     * // Delete a few TransporterItemColumnLocks
+     * const { count } = await prisma.transporterItemColumnLock.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends TransporterItemColumnLockDeleteManyArgs>(args?: SelectSubset<T, TransporterItemColumnLockDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more TransporterItemColumnLocks.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TransporterItemColumnLockUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many TransporterItemColumnLocks
+     * const transporterItemColumnLock = await prisma.transporterItemColumnLock.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends TransporterItemColumnLockUpdateManyArgs>(args: SelectSubset<T, TransporterItemColumnLockUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more TransporterItemColumnLocks and returns the data updated in the database.
+     * @param {TransporterItemColumnLockUpdateManyAndReturnArgs} args - Arguments to update many TransporterItemColumnLocks.
+     * @example
+     * // Update many TransporterItemColumnLocks
+     * const transporterItemColumnLock = await prisma.transporterItemColumnLock.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more TransporterItemColumnLocks and only return the `id`
+     * const transporterItemColumnLockWithIdOnly = await prisma.transporterItemColumnLock.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends TransporterItemColumnLockUpdateManyAndReturnArgs>(args: SelectSubset<T, TransporterItemColumnLockUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TransporterItemColumnLockPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one TransporterItemColumnLock.
+     * @param {TransporterItemColumnLockUpsertArgs} args - Arguments to update or create a TransporterItemColumnLock.
+     * @example
+     * // Update or create a TransporterItemColumnLock
+     * const transporterItemColumnLock = await prisma.transporterItemColumnLock.upsert({
+     *   create: {
+     *     // ... data to create a TransporterItemColumnLock
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the TransporterItemColumnLock we want to update
+     *   }
+     * })
+     */
+    upsert<T extends TransporterItemColumnLockUpsertArgs>(args: SelectSubset<T, TransporterItemColumnLockUpsertArgs<ExtArgs>>): Prisma__TransporterItemColumnLockClient<$Result.GetResult<Prisma.$TransporterItemColumnLockPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of TransporterItemColumnLocks.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TransporterItemColumnLockCountArgs} args - Arguments to filter TransporterItemColumnLocks to count.
+     * @example
+     * // Count the number of TransporterItemColumnLocks
+     * const count = await prisma.transporterItemColumnLock.count({
+     *   where: {
+     *     // ... the filter for the TransporterItemColumnLocks we want to count
+     *   }
+     * })
+    **/
+    count<T extends TransporterItemColumnLockCountArgs>(
+      args?: Subset<T, TransporterItemColumnLockCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], TransporterItemColumnLockCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a TransporterItemColumnLock.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TransporterItemColumnLockAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends TransporterItemColumnLockAggregateArgs>(args: Subset<T, TransporterItemColumnLockAggregateArgs>): Prisma.PrismaPromise<GetTransporterItemColumnLockAggregateType<T>>
+
+    /**
+     * Group by TransporterItemColumnLock.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TransporterItemColumnLockGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends TransporterItemColumnLockGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: TransporterItemColumnLockGroupByArgs['orderBy'] }
+        : { orderBy?: TransporterItemColumnLockGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, TransporterItemColumnLockGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetTransporterItemColumnLockGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the TransporterItemColumnLock model
+   */
+  readonly fields: TransporterItemColumnLockFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for TransporterItemColumnLock.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__TransporterItemColumnLockClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    lockedBy<T extends TransporterItemColumnLock$lockedByArgs<ExtArgs> = {}>(args?: Subset<T, TransporterItemColumnLock$lockedByArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the TransporterItemColumnLock model
+   */
+  interface TransporterItemColumnLockFieldRefs {
+    readonly id: FieldRef<"TransporterItemColumnLock", 'String'>
+    readonly columnKey: FieldRef<"TransporterItemColumnLock", 'String'>
+    readonly isLocked: FieldRef<"TransporterItemColumnLock", 'Boolean'>
+    readonly lockedAt: FieldRef<"TransporterItemColumnLock", 'DateTime'>
+    readonly lockedById: FieldRef<"TransporterItemColumnLock", 'String'>
+    readonly lockReason: FieldRef<"TransporterItemColumnLock", 'String'>
+    readonly createdAt: FieldRef<"TransporterItemColumnLock", 'DateTime'>
+    readonly updatedAt: FieldRef<"TransporterItemColumnLock", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * TransporterItemColumnLock findUnique
+   */
+  export type TransporterItemColumnLockFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TransporterItemColumnLock
+     */
+    select?: TransporterItemColumnLockSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TransporterItemColumnLock
+     */
+    omit?: TransporterItemColumnLockOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TransporterItemColumnLockInclude<ExtArgs> | null
+    /**
+     * Filter, which TransporterItemColumnLock to fetch.
+     */
+    where: TransporterItemColumnLockWhereUniqueInput
+  }
+
+  /**
+   * TransporterItemColumnLock findUniqueOrThrow
+   */
+  export type TransporterItemColumnLockFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TransporterItemColumnLock
+     */
+    select?: TransporterItemColumnLockSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TransporterItemColumnLock
+     */
+    omit?: TransporterItemColumnLockOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TransporterItemColumnLockInclude<ExtArgs> | null
+    /**
+     * Filter, which TransporterItemColumnLock to fetch.
+     */
+    where: TransporterItemColumnLockWhereUniqueInput
+  }
+
+  /**
+   * TransporterItemColumnLock findFirst
+   */
+  export type TransporterItemColumnLockFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TransporterItemColumnLock
+     */
+    select?: TransporterItemColumnLockSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TransporterItemColumnLock
+     */
+    omit?: TransporterItemColumnLockOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TransporterItemColumnLockInclude<ExtArgs> | null
+    /**
+     * Filter, which TransporterItemColumnLock to fetch.
+     */
+    where?: TransporterItemColumnLockWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of TransporterItemColumnLocks to fetch.
+     */
+    orderBy?: TransporterItemColumnLockOrderByWithRelationInput | TransporterItemColumnLockOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for TransporterItemColumnLocks.
+     */
+    cursor?: TransporterItemColumnLockWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` TransporterItemColumnLocks from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` TransporterItemColumnLocks.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of TransporterItemColumnLocks.
+     */
+    distinct?: TransporterItemColumnLockScalarFieldEnum | TransporterItemColumnLockScalarFieldEnum[]
+  }
+
+  /**
+   * TransporterItemColumnLock findFirstOrThrow
+   */
+  export type TransporterItemColumnLockFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TransporterItemColumnLock
+     */
+    select?: TransporterItemColumnLockSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TransporterItemColumnLock
+     */
+    omit?: TransporterItemColumnLockOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TransporterItemColumnLockInclude<ExtArgs> | null
+    /**
+     * Filter, which TransporterItemColumnLock to fetch.
+     */
+    where?: TransporterItemColumnLockWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of TransporterItemColumnLocks to fetch.
+     */
+    orderBy?: TransporterItemColumnLockOrderByWithRelationInput | TransporterItemColumnLockOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for TransporterItemColumnLocks.
+     */
+    cursor?: TransporterItemColumnLockWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` TransporterItemColumnLocks from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` TransporterItemColumnLocks.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of TransporterItemColumnLocks.
+     */
+    distinct?: TransporterItemColumnLockScalarFieldEnum | TransporterItemColumnLockScalarFieldEnum[]
+  }
+
+  /**
+   * TransporterItemColumnLock findMany
+   */
+  export type TransporterItemColumnLockFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TransporterItemColumnLock
+     */
+    select?: TransporterItemColumnLockSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TransporterItemColumnLock
+     */
+    omit?: TransporterItemColumnLockOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TransporterItemColumnLockInclude<ExtArgs> | null
+    /**
+     * Filter, which TransporterItemColumnLocks to fetch.
+     */
+    where?: TransporterItemColumnLockWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of TransporterItemColumnLocks to fetch.
+     */
+    orderBy?: TransporterItemColumnLockOrderByWithRelationInput | TransporterItemColumnLockOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing TransporterItemColumnLocks.
+     */
+    cursor?: TransporterItemColumnLockWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` TransporterItemColumnLocks from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` TransporterItemColumnLocks.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of TransporterItemColumnLocks.
+     */
+    distinct?: TransporterItemColumnLockScalarFieldEnum | TransporterItemColumnLockScalarFieldEnum[]
+  }
+
+  /**
+   * TransporterItemColumnLock create
+   */
+  export type TransporterItemColumnLockCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TransporterItemColumnLock
+     */
+    select?: TransporterItemColumnLockSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TransporterItemColumnLock
+     */
+    omit?: TransporterItemColumnLockOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TransporterItemColumnLockInclude<ExtArgs> | null
+    /**
+     * The data needed to create a TransporterItemColumnLock.
+     */
+    data: XOR<TransporterItemColumnLockCreateInput, TransporterItemColumnLockUncheckedCreateInput>
+  }
+
+  /**
+   * TransporterItemColumnLock createMany
+   */
+  export type TransporterItemColumnLockCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many TransporterItemColumnLocks.
+     */
+    data: TransporterItemColumnLockCreateManyInput | TransporterItemColumnLockCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * TransporterItemColumnLock createManyAndReturn
+   */
+  export type TransporterItemColumnLockCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TransporterItemColumnLock
+     */
+    select?: TransporterItemColumnLockSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the TransporterItemColumnLock
+     */
+    omit?: TransporterItemColumnLockOmit<ExtArgs> | null
+    /**
+     * The data used to create many TransporterItemColumnLocks.
+     */
+    data: TransporterItemColumnLockCreateManyInput | TransporterItemColumnLockCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TransporterItemColumnLockIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * TransporterItemColumnLock update
+   */
+  export type TransporterItemColumnLockUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TransporterItemColumnLock
+     */
+    select?: TransporterItemColumnLockSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TransporterItemColumnLock
+     */
+    omit?: TransporterItemColumnLockOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TransporterItemColumnLockInclude<ExtArgs> | null
+    /**
+     * The data needed to update a TransporterItemColumnLock.
+     */
+    data: XOR<TransporterItemColumnLockUpdateInput, TransporterItemColumnLockUncheckedUpdateInput>
+    /**
+     * Choose, which TransporterItemColumnLock to update.
+     */
+    where: TransporterItemColumnLockWhereUniqueInput
+  }
+
+  /**
+   * TransporterItemColumnLock updateMany
+   */
+  export type TransporterItemColumnLockUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update TransporterItemColumnLocks.
+     */
+    data: XOR<TransporterItemColumnLockUpdateManyMutationInput, TransporterItemColumnLockUncheckedUpdateManyInput>
+    /**
+     * Filter which TransporterItemColumnLocks to update
+     */
+    where?: TransporterItemColumnLockWhereInput
+    /**
+     * Limit how many TransporterItemColumnLocks to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * TransporterItemColumnLock updateManyAndReturn
+   */
+  export type TransporterItemColumnLockUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TransporterItemColumnLock
+     */
+    select?: TransporterItemColumnLockSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the TransporterItemColumnLock
+     */
+    omit?: TransporterItemColumnLockOmit<ExtArgs> | null
+    /**
+     * The data used to update TransporterItemColumnLocks.
+     */
+    data: XOR<TransporterItemColumnLockUpdateManyMutationInput, TransporterItemColumnLockUncheckedUpdateManyInput>
+    /**
+     * Filter which TransporterItemColumnLocks to update
+     */
+    where?: TransporterItemColumnLockWhereInput
+    /**
+     * Limit how many TransporterItemColumnLocks to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TransporterItemColumnLockIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * TransporterItemColumnLock upsert
+   */
+  export type TransporterItemColumnLockUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TransporterItemColumnLock
+     */
+    select?: TransporterItemColumnLockSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TransporterItemColumnLock
+     */
+    omit?: TransporterItemColumnLockOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TransporterItemColumnLockInclude<ExtArgs> | null
+    /**
+     * The filter to search for the TransporterItemColumnLock to update in case it exists.
+     */
+    where: TransporterItemColumnLockWhereUniqueInput
+    /**
+     * In case the TransporterItemColumnLock found by the `where` argument doesn't exist, create a new TransporterItemColumnLock with this data.
+     */
+    create: XOR<TransporterItemColumnLockCreateInput, TransporterItemColumnLockUncheckedCreateInput>
+    /**
+     * In case the TransporterItemColumnLock was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<TransporterItemColumnLockUpdateInput, TransporterItemColumnLockUncheckedUpdateInput>
+  }
+
+  /**
+   * TransporterItemColumnLock delete
+   */
+  export type TransporterItemColumnLockDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TransporterItemColumnLock
+     */
+    select?: TransporterItemColumnLockSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TransporterItemColumnLock
+     */
+    omit?: TransporterItemColumnLockOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TransporterItemColumnLockInclude<ExtArgs> | null
+    /**
+     * Filter which TransporterItemColumnLock to delete.
+     */
+    where: TransporterItemColumnLockWhereUniqueInput
+  }
+
+  /**
+   * TransporterItemColumnLock deleteMany
+   */
+  export type TransporterItemColumnLockDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which TransporterItemColumnLocks to delete
+     */
+    where?: TransporterItemColumnLockWhereInput
+    /**
+     * Limit how many TransporterItemColumnLocks to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * TransporterItemColumnLock.lockedBy
+   */
+  export type TransporterItemColumnLock$lockedByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the User
+     */
+    select?: UserSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the User
+     */
+    omit?: UserOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserInclude<ExtArgs> | null
+    where?: UserWhereInput
+  }
+
+  /**
+   * TransporterItemColumnLock without action
+   */
+  export type TransporterItemColumnLockDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TransporterItemColumnLock
+     */
+    select?: TransporterItemColumnLockSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TransporterItemColumnLock
+     */
+    omit?: TransporterItemColumnLockOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TransporterItemColumnLockInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model Transporter
+   */
+
+  export type AggregateTransporter = {
+    _count: TransporterCountAggregateOutputType | null
+    _min: TransporterMinAggregateOutputType | null
+    _max: TransporterMaxAggregateOutputType | null
+  }
+
+  export type TransporterMinAggregateOutputType = {
+    id: string | null
+    transportNumber: string | null
+    transportDate: Date | null
+    truckOwnerName: string | null
+    shipmentId: string | null
+    remarks: string | null
+    isLocked: boolean | null
+    lockedAt: Date | null
+    updatedById: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type TransporterMaxAggregateOutputType = {
+    id: string | null
+    transportNumber: string | null
+    transportDate: Date | null
+    truckOwnerName: string | null
+    shipmentId: string | null
+    remarks: string | null
+    isLocked: boolean | null
+    lockedAt: Date | null
+    updatedById: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type TransporterCountAggregateOutputType = {
+    id: number
+    transportNumber: number
+    transportDate: number
+    truckOwnerName: number
+    shipmentId: number
+    remarks: number
+    isLocked: number
+    lockedAt: number
+    updatedById: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type TransporterMinAggregateInputType = {
+    id?: true
+    transportNumber?: true
+    transportDate?: true
+    truckOwnerName?: true
+    shipmentId?: true
+    remarks?: true
+    isLocked?: true
+    lockedAt?: true
+    updatedById?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type TransporterMaxAggregateInputType = {
+    id?: true
+    transportNumber?: true
+    transportDate?: true
+    truckOwnerName?: true
+    shipmentId?: true
+    remarks?: true
+    isLocked?: true
+    lockedAt?: true
+    updatedById?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type TransporterCountAggregateInputType = {
+    id?: true
+    transportNumber?: true
+    transportDate?: true
+    truckOwnerName?: true
+    shipmentId?: true
+    remarks?: true
+    isLocked?: true
+    lockedAt?: true
+    updatedById?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type TransporterAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Transporter to aggregate.
+     */
+    where?: TransporterWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Transporters to fetch.
+     */
+    orderBy?: TransporterOrderByWithRelationInput | TransporterOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: TransporterWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Transporters from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Transporters.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned Transporters
+    **/
+    _count?: true | TransporterCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: TransporterMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: TransporterMaxAggregateInputType
+  }
+
+  export type GetTransporterAggregateType<T extends TransporterAggregateArgs> = {
+        [P in keyof T & keyof AggregateTransporter]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateTransporter[P]>
+      : GetScalarType<T[P], AggregateTransporter[P]>
+  }
+
+
+
+
+  export type TransporterGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: TransporterWhereInput
+    orderBy?: TransporterOrderByWithAggregationInput | TransporterOrderByWithAggregationInput[]
+    by: TransporterScalarFieldEnum[] | TransporterScalarFieldEnum
+    having?: TransporterScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: TransporterCountAggregateInputType | true
+    _min?: TransporterMinAggregateInputType
+    _max?: TransporterMaxAggregateInputType
+  }
+
+  export type TransporterGroupByOutputType = {
+    id: string
+    transportNumber: string
+    transportDate: Date
+    truckOwnerName: string
+    shipmentId: string | null
+    remarks: string | null
+    isLocked: boolean
+    lockedAt: Date | null
+    updatedById: string | null
+    createdAt: Date
+    updatedAt: Date
+    _count: TransporterCountAggregateOutputType | null
+    _min: TransporterMinAggregateOutputType | null
+    _max: TransporterMaxAggregateOutputType | null
+  }
+
+  type GetTransporterGroupByPayload<T extends TransporterGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<TransporterGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof TransporterGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], TransporterGroupByOutputType[P]>
+            : GetScalarType<T[P], TransporterGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type TransporterSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    transportNumber?: boolean
+    transportDate?: boolean
+    truckOwnerName?: boolean
+    shipmentId?: boolean
+    remarks?: boolean
+    isLocked?: boolean
+    lockedAt?: boolean
+    updatedById?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    shipment?: boolean | Transporter$shipmentArgs<ExtArgs>
+    updatedBy?: boolean | Transporter$updatedByArgs<ExtArgs>
+    items?: boolean | Transporter$itemsArgs<ExtArgs>
+    _count?: boolean | TransporterCountOutputTypeDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["transporter"]>
+
+  export type TransporterSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    transportNumber?: boolean
+    transportDate?: boolean
+    truckOwnerName?: boolean
+    shipmentId?: boolean
+    remarks?: boolean
+    isLocked?: boolean
+    lockedAt?: boolean
+    updatedById?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    shipment?: boolean | Transporter$shipmentArgs<ExtArgs>
+    updatedBy?: boolean | Transporter$updatedByArgs<ExtArgs>
+  }, ExtArgs["result"]["transporter"]>
+
+  export type TransporterSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    transportNumber?: boolean
+    transportDate?: boolean
+    truckOwnerName?: boolean
+    shipmentId?: boolean
+    remarks?: boolean
+    isLocked?: boolean
+    lockedAt?: boolean
+    updatedById?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    shipment?: boolean | Transporter$shipmentArgs<ExtArgs>
+    updatedBy?: boolean | Transporter$updatedByArgs<ExtArgs>
+  }, ExtArgs["result"]["transporter"]>
+
+  export type TransporterSelectScalar = {
+    id?: boolean
+    transportNumber?: boolean
+    transportDate?: boolean
+    truckOwnerName?: boolean
+    shipmentId?: boolean
+    remarks?: boolean
+    isLocked?: boolean
+    lockedAt?: boolean
+    updatedById?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type TransporterOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "transportNumber" | "transportDate" | "truckOwnerName" | "shipmentId" | "remarks" | "isLocked" | "lockedAt" | "updatedById" | "createdAt" | "updatedAt", ExtArgs["result"]["transporter"]>
+  export type TransporterInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    shipment?: boolean | Transporter$shipmentArgs<ExtArgs>
+    updatedBy?: boolean | Transporter$updatedByArgs<ExtArgs>
+    items?: boolean | Transporter$itemsArgs<ExtArgs>
+    _count?: boolean | TransporterCountOutputTypeDefaultArgs<ExtArgs>
+  }
+  export type TransporterIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    shipment?: boolean | Transporter$shipmentArgs<ExtArgs>
+    updatedBy?: boolean | Transporter$updatedByArgs<ExtArgs>
+  }
+  export type TransporterIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    shipment?: boolean | Transporter$shipmentArgs<ExtArgs>
+    updatedBy?: boolean | Transporter$updatedByArgs<ExtArgs>
+  }
+
+  export type $TransporterPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "Transporter"
+    objects: {
+      shipment: Prisma.$ShipmentPayload<ExtArgs> | null
+      updatedBy: Prisma.$UserPayload<ExtArgs> | null
+      items: Prisma.$TransporterItemPayload<ExtArgs>[]
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      transportNumber: string
+      transportDate: Date
+      truckOwnerName: string
+      shipmentId: string | null
+      remarks: string | null
+      isLocked: boolean
+      lockedAt: Date | null
+      updatedById: string | null
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["transporter"]>
+    composites: {}
+  }
+
+  type TransporterGetPayload<S extends boolean | null | undefined | TransporterDefaultArgs> = $Result.GetResult<Prisma.$TransporterPayload, S>
+
+  type TransporterCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<TransporterFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: TransporterCountAggregateInputType | true
+    }
+
+  export interface TransporterDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['Transporter'], meta: { name: 'Transporter' } }
+    /**
+     * Find zero or one Transporter that matches the filter.
+     * @param {TransporterFindUniqueArgs} args - Arguments to find a Transporter
+     * @example
+     * // Get one Transporter
+     * const transporter = await prisma.transporter.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends TransporterFindUniqueArgs>(args: SelectSubset<T, TransporterFindUniqueArgs<ExtArgs>>): Prisma__TransporterClient<$Result.GetResult<Prisma.$TransporterPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one Transporter that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {TransporterFindUniqueOrThrowArgs} args - Arguments to find a Transporter
+     * @example
+     * // Get one Transporter
+     * const transporter = await prisma.transporter.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends TransporterFindUniqueOrThrowArgs>(args: SelectSubset<T, TransporterFindUniqueOrThrowArgs<ExtArgs>>): Prisma__TransporterClient<$Result.GetResult<Prisma.$TransporterPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Transporter that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TransporterFindFirstArgs} args - Arguments to find a Transporter
+     * @example
+     * // Get one Transporter
+     * const transporter = await prisma.transporter.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends TransporterFindFirstArgs>(args?: SelectSubset<T, TransporterFindFirstArgs<ExtArgs>>): Prisma__TransporterClient<$Result.GetResult<Prisma.$TransporterPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Transporter that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TransporterFindFirstOrThrowArgs} args - Arguments to find a Transporter
+     * @example
+     * // Get one Transporter
+     * const transporter = await prisma.transporter.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends TransporterFindFirstOrThrowArgs>(args?: SelectSubset<T, TransporterFindFirstOrThrowArgs<ExtArgs>>): Prisma__TransporterClient<$Result.GetResult<Prisma.$TransporterPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more Transporters that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TransporterFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all Transporters
+     * const transporters = await prisma.transporter.findMany()
+     * 
+     * // Get first 10 Transporters
+     * const transporters = await prisma.transporter.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const transporterWithIdOnly = await prisma.transporter.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends TransporterFindManyArgs>(args?: SelectSubset<T, TransporterFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TransporterPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a Transporter.
+     * @param {TransporterCreateArgs} args - Arguments to create a Transporter.
+     * @example
+     * // Create one Transporter
+     * const Transporter = await prisma.transporter.create({
+     *   data: {
+     *     // ... data to create a Transporter
+     *   }
+     * })
+     * 
+     */
+    create<T extends TransporterCreateArgs>(args: SelectSubset<T, TransporterCreateArgs<ExtArgs>>): Prisma__TransporterClient<$Result.GetResult<Prisma.$TransporterPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many Transporters.
+     * @param {TransporterCreateManyArgs} args - Arguments to create many Transporters.
+     * @example
+     * // Create many Transporters
+     * const transporter = await prisma.transporter.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends TransporterCreateManyArgs>(args?: SelectSubset<T, TransporterCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many Transporters and returns the data saved in the database.
+     * @param {TransporterCreateManyAndReturnArgs} args - Arguments to create many Transporters.
+     * @example
+     * // Create many Transporters
+     * const transporter = await prisma.transporter.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many Transporters and only return the `id`
+     * const transporterWithIdOnly = await prisma.transporter.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends TransporterCreateManyAndReturnArgs>(args?: SelectSubset<T, TransporterCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TransporterPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a Transporter.
+     * @param {TransporterDeleteArgs} args - Arguments to delete one Transporter.
+     * @example
+     * // Delete one Transporter
+     * const Transporter = await prisma.transporter.delete({
+     *   where: {
+     *     // ... filter to delete one Transporter
+     *   }
+     * })
+     * 
+     */
+    delete<T extends TransporterDeleteArgs>(args: SelectSubset<T, TransporterDeleteArgs<ExtArgs>>): Prisma__TransporterClient<$Result.GetResult<Prisma.$TransporterPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one Transporter.
+     * @param {TransporterUpdateArgs} args - Arguments to update one Transporter.
+     * @example
+     * // Update one Transporter
+     * const transporter = await prisma.transporter.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends TransporterUpdateArgs>(args: SelectSubset<T, TransporterUpdateArgs<ExtArgs>>): Prisma__TransporterClient<$Result.GetResult<Prisma.$TransporterPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more Transporters.
+     * @param {TransporterDeleteManyArgs} args - Arguments to filter Transporters to delete.
+     * @example
+     * // Delete a few Transporters
+     * const { count } = await prisma.transporter.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends TransporterDeleteManyArgs>(args?: SelectSubset<T, TransporterDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Transporters.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TransporterUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many Transporters
+     * const transporter = await prisma.transporter.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends TransporterUpdateManyArgs>(args: SelectSubset<T, TransporterUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Transporters and returns the data updated in the database.
+     * @param {TransporterUpdateManyAndReturnArgs} args - Arguments to update many Transporters.
+     * @example
+     * // Update many Transporters
+     * const transporter = await prisma.transporter.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more Transporters and only return the `id`
+     * const transporterWithIdOnly = await prisma.transporter.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends TransporterUpdateManyAndReturnArgs>(args: SelectSubset<T, TransporterUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TransporterPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one Transporter.
+     * @param {TransporterUpsertArgs} args - Arguments to update or create a Transporter.
+     * @example
+     * // Update or create a Transporter
+     * const transporter = await prisma.transporter.upsert({
+     *   create: {
+     *     // ... data to create a Transporter
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the Transporter we want to update
+     *   }
+     * })
+     */
+    upsert<T extends TransporterUpsertArgs>(args: SelectSubset<T, TransporterUpsertArgs<ExtArgs>>): Prisma__TransporterClient<$Result.GetResult<Prisma.$TransporterPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of Transporters.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TransporterCountArgs} args - Arguments to filter Transporters to count.
+     * @example
+     * // Count the number of Transporters
+     * const count = await prisma.transporter.count({
+     *   where: {
+     *     // ... the filter for the Transporters we want to count
+     *   }
+     * })
+    **/
+    count<T extends TransporterCountArgs>(
+      args?: Subset<T, TransporterCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], TransporterCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a Transporter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TransporterAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends TransporterAggregateArgs>(args: Subset<T, TransporterAggregateArgs>): Prisma.PrismaPromise<GetTransporterAggregateType<T>>
+
+    /**
+     * Group by Transporter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TransporterGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends TransporterGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: TransporterGroupByArgs['orderBy'] }
+        : { orderBy?: TransporterGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, TransporterGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetTransporterGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the Transporter model
+   */
+  readonly fields: TransporterFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for Transporter.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__TransporterClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    shipment<T extends Transporter$shipmentArgs<ExtArgs> = {}>(args?: Subset<T, Transporter$shipmentArgs<ExtArgs>>): Prisma__ShipmentClient<$Result.GetResult<Prisma.$ShipmentPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    updatedBy<T extends Transporter$updatedByArgs<ExtArgs> = {}>(args?: Subset<T, Transporter$updatedByArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    items<T extends Transporter$itemsArgs<ExtArgs> = {}>(args?: Subset<T, Transporter$itemsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TransporterItemPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the Transporter model
+   */
+  interface TransporterFieldRefs {
+    readonly id: FieldRef<"Transporter", 'String'>
+    readonly transportNumber: FieldRef<"Transporter", 'String'>
+    readonly transportDate: FieldRef<"Transporter", 'DateTime'>
+    readonly truckOwnerName: FieldRef<"Transporter", 'String'>
+    readonly shipmentId: FieldRef<"Transporter", 'String'>
+    readonly remarks: FieldRef<"Transporter", 'String'>
+    readonly isLocked: FieldRef<"Transporter", 'Boolean'>
+    readonly lockedAt: FieldRef<"Transporter", 'DateTime'>
+    readonly updatedById: FieldRef<"Transporter", 'String'>
+    readonly createdAt: FieldRef<"Transporter", 'DateTime'>
+    readonly updatedAt: FieldRef<"Transporter", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * Transporter findUnique
+   */
+  export type TransporterFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Transporter
+     */
+    select?: TransporterSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Transporter
+     */
+    omit?: TransporterOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TransporterInclude<ExtArgs> | null
+    /**
+     * Filter, which Transporter to fetch.
+     */
+    where: TransporterWhereUniqueInput
+  }
+
+  /**
+   * Transporter findUniqueOrThrow
+   */
+  export type TransporterFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Transporter
+     */
+    select?: TransporterSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Transporter
+     */
+    omit?: TransporterOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TransporterInclude<ExtArgs> | null
+    /**
+     * Filter, which Transporter to fetch.
+     */
+    where: TransporterWhereUniqueInput
+  }
+
+  /**
+   * Transporter findFirst
+   */
+  export type TransporterFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Transporter
+     */
+    select?: TransporterSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Transporter
+     */
+    omit?: TransporterOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TransporterInclude<ExtArgs> | null
+    /**
+     * Filter, which Transporter to fetch.
+     */
+    where?: TransporterWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Transporters to fetch.
+     */
+    orderBy?: TransporterOrderByWithRelationInput | TransporterOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Transporters.
+     */
+    cursor?: TransporterWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Transporters from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Transporters.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Transporters.
+     */
+    distinct?: TransporterScalarFieldEnum | TransporterScalarFieldEnum[]
+  }
+
+  /**
+   * Transporter findFirstOrThrow
+   */
+  export type TransporterFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Transporter
+     */
+    select?: TransporterSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Transporter
+     */
+    omit?: TransporterOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TransporterInclude<ExtArgs> | null
+    /**
+     * Filter, which Transporter to fetch.
+     */
+    where?: TransporterWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Transporters to fetch.
+     */
+    orderBy?: TransporterOrderByWithRelationInput | TransporterOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Transporters.
+     */
+    cursor?: TransporterWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Transporters from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Transporters.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Transporters.
+     */
+    distinct?: TransporterScalarFieldEnum | TransporterScalarFieldEnum[]
+  }
+
+  /**
+   * Transporter findMany
+   */
+  export type TransporterFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Transporter
+     */
+    select?: TransporterSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Transporter
+     */
+    omit?: TransporterOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TransporterInclude<ExtArgs> | null
+    /**
+     * Filter, which Transporters to fetch.
+     */
+    where?: TransporterWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Transporters to fetch.
+     */
+    orderBy?: TransporterOrderByWithRelationInput | TransporterOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing Transporters.
+     */
+    cursor?: TransporterWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Transporters from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Transporters.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Transporters.
+     */
+    distinct?: TransporterScalarFieldEnum | TransporterScalarFieldEnum[]
+  }
+
+  /**
+   * Transporter create
+   */
+  export type TransporterCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Transporter
+     */
+    select?: TransporterSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Transporter
+     */
+    omit?: TransporterOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TransporterInclude<ExtArgs> | null
+    /**
+     * The data needed to create a Transporter.
+     */
+    data: XOR<TransporterCreateInput, TransporterUncheckedCreateInput>
+  }
+
+  /**
+   * Transporter createMany
+   */
+  export type TransporterCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many Transporters.
+     */
+    data: TransporterCreateManyInput | TransporterCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * Transporter createManyAndReturn
+   */
+  export type TransporterCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Transporter
+     */
+    select?: TransporterSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the Transporter
+     */
+    omit?: TransporterOmit<ExtArgs> | null
+    /**
+     * The data used to create many Transporters.
+     */
+    data: TransporterCreateManyInput | TransporterCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TransporterIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * Transporter update
+   */
+  export type TransporterUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Transporter
+     */
+    select?: TransporterSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Transporter
+     */
+    omit?: TransporterOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TransporterInclude<ExtArgs> | null
+    /**
+     * The data needed to update a Transporter.
+     */
+    data: XOR<TransporterUpdateInput, TransporterUncheckedUpdateInput>
+    /**
+     * Choose, which Transporter to update.
+     */
+    where: TransporterWhereUniqueInput
+  }
+
+  /**
+   * Transporter updateMany
+   */
+  export type TransporterUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update Transporters.
+     */
+    data: XOR<TransporterUpdateManyMutationInput, TransporterUncheckedUpdateManyInput>
+    /**
+     * Filter which Transporters to update
+     */
+    where?: TransporterWhereInput
+    /**
+     * Limit how many Transporters to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * Transporter updateManyAndReturn
+   */
+  export type TransporterUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Transporter
+     */
+    select?: TransporterSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the Transporter
+     */
+    omit?: TransporterOmit<ExtArgs> | null
+    /**
+     * The data used to update Transporters.
+     */
+    data: XOR<TransporterUpdateManyMutationInput, TransporterUncheckedUpdateManyInput>
+    /**
+     * Filter which Transporters to update
+     */
+    where?: TransporterWhereInput
+    /**
+     * Limit how many Transporters to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TransporterIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * Transporter upsert
+   */
+  export type TransporterUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Transporter
+     */
+    select?: TransporterSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Transporter
+     */
+    omit?: TransporterOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TransporterInclude<ExtArgs> | null
+    /**
+     * The filter to search for the Transporter to update in case it exists.
+     */
+    where: TransporterWhereUniqueInput
+    /**
+     * In case the Transporter found by the `where` argument doesn't exist, create a new Transporter with this data.
+     */
+    create: XOR<TransporterCreateInput, TransporterUncheckedCreateInput>
+    /**
+     * In case the Transporter was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<TransporterUpdateInput, TransporterUncheckedUpdateInput>
+  }
+
+  /**
+   * Transporter delete
+   */
+  export type TransporterDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Transporter
+     */
+    select?: TransporterSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Transporter
+     */
+    omit?: TransporterOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TransporterInclude<ExtArgs> | null
+    /**
+     * Filter which Transporter to delete.
+     */
+    where: TransporterWhereUniqueInput
+  }
+
+  /**
+   * Transporter deleteMany
+   */
+  export type TransporterDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Transporters to delete
+     */
+    where?: TransporterWhereInput
+    /**
+     * Limit how many Transporters to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * Transporter.shipment
+   */
+  export type Transporter$shipmentArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Shipment
+     */
+    select?: ShipmentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Shipment
+     */
+    omit?: ShipmentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ShipmentInclude<ExtArgs> | null
+    where?: ShipmentWhereInput
+  }
+
+  /**
+   * Transporter.updatedBy
+   */
+  export type Transporter$updatedByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the User
+     */
+    select?: UserSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the User
+     */
+    omit?: UserOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserInclude<ExtArgs> | null
+    where?: UserWhereInput
+  }
+
+  /**
+   * Transporter.items
+   */
+  export type Transporter$itemsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TransporterItem
+     */
+    select?: TransporterItemSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TransporterItem
+     */
+    omit?: TransporterItemOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TransporterItemInclude<ExtArgs> | null
+    where?: TransporterItemWhereInput
+    orderBy?: TransporterItemOrderByWithRelationInput | TransporterItemOrderByWithRelationInput[]
+    cursor?: TransporterItemWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: TransporterItemScalarFieldEnum | TransporterItemScalarFieldEnum[]
+  }
+
+  /**
+   * Transporter without action
+   */
+  export type TransporterDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Transporter
+     */
+    select?: TransporterSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Transporter
+     */
+    omit?: TransporterOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TransporterInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model TransporterItem
+   */
+
+  export type AggregateTransporterItem = {
+    _count: TransporterItemCountAggregateOutputType | null
+    _avg: TransporterItemAvgAggregateOutputType | null
+    _sum: TransporterItemSumAggregateOutputType | null
+    _min: TransporterItemMinAggregateOutputType | null
+    _max: TransporterItemMaxAggregateOutputType | null
+  }
+
+  export type TransporterItemAvgAggregateOutputType = {
+    chargeAmount: Decimal | null
+  }
+
+  export type TransporterItemSumAggregateOutputType = {
+    chargeAmount: Decimal | null
+  }
+
+  export type TransporterItemMinAggregateOutputType = {
+    id: string | null
+    transporterId: string | null
+    itemDate: Date | null
+    itemType: $Enums.TransportItemType | null
+    name: string | null
+    frontPlateNumber: string | null
+    backPlateNumber: string | null
+    containerName: string | null
+    containerNumber: string | null
+    status: $Enums.TransporterStatus | null
+    chargeAmount: Decimal | null
+    chargeCurrency: $Enums.Currency | null
+    paymentStatus: $Enums.PaymentStatus | null
+    remarks: string | null
+    isLocked: boolean | null
+    lockedAt: Date | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type TransporterItemMaxAggregateOutputType = {
+    id: string | null
+    transporterId: string | null
+    itemDate: Date | null
+    itemType: $Enums.TransportItemType | null
+    name: string | null
+    frontPlateNumber: string | null
+    backPlateNumber: string | null
+    containerName: string | null
+    containerNumber: string | null
+    status: $Enums.TransporterStatus | null
+    chargeAmount: Decimal | null
+    chargeCurrency: $Enums.Currency | null
+    paymentStatus: $Enums.PaymentStatus | null
+    remarks: string | null
+    isLocked: boolean | null
+    lockedAt: Date | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type TransporterItemCountAggregateOutputType = {
+    id: number
+    transporterId: number
+    itemDate: number
+    itemType: number
+    name: number
+    frontPlateNumber: number
+    backPlateNumber: number
+    containerName: number
+    containerNumber: number
+    status: number
+    chargeAmount: number
+    chargeCurrency: number
+    paymentStatus: number
+    remarks: number
+    isLocked: number
+    lockedFields: number
+    lockedAt: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type TransporterItemAvgAggregateInputType = {
+    chargeAmount?: true
+  }
+
+  export type TransporterItemSumAggregateInputType = {
+    chargeAmount?: true
+  }
+
+  export type TransporterItemMinAggregateInputType = {
+    id?: true
+    transporterId?: true
+    itemDate?: true
+    itemType?: true
+    name?: true
+    frontPlateNumber?: true
+    backPlateNumber?: true
+    containerName?: true
+    containerNumber?: true
+    status?: true
+    chargeAmount?: true
+    chargeCurrency?: true
+    paymentStatus?: true
+    remarks?: true
+    isLocked?: true
+    lockedAt?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type TransporterItemMaxAggregateInputType = {
+    id?: true
+    transporterId?: true
+    itemDate?: true
+    itemType?: true
+    name?: true
+    frontPlateNumber?: true
+    backPlateNumber?: true
+    containerName?: true
+    containerNumber?: true
+    status?: true
+    chargeAmount?: true
+    chargeCurrency?: true
+    paymentStatus?: true
+    remarks?: true
+    isLocked?: true
+    lockedAt?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type TransporterItemCountAggregateInputType = {
+    id?: true
+    transporterId?: true
+    itemDate?: true
+    itemType?: true
+    name?: true
+    frontPlateNumber?: true
+    backPlateNumber?: true
+    containerName?: true
+    containerNumber?: true
+    status?: true
+    chargeAmount?: true
+    chargeCurrency?: true
+    paymentStatus?: true
+    remarks?: true
+    isLocked?: true
+    lockedFields?: true
+    lockedAt?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type TransporterItemAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which TransporterItem to aggregate.
+     */
+    where?: TransporterItemWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of TransporterItems to fetch.
+     */
+    orderBy?: TransporterItemOrderByWithRelationInput | TransporterItemOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: TransporterItemWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` TransporterItems from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` TransporterItems.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned TransporterItems
+    **/
+    _count?: true | TransporterItemCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: TransporterItemAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: TransporterItemSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: TransporterItemMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: TransporterItemMaxAggregateInputType
+  }
+
+  export type GetTransporterItemAggregateType<T extends TransporterItemAggregateArgs> = {
+        [P in keyof T & keyof AggregateTransporterItem]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateTransporterItem[P]>
+      : GetScalarType<T[P], AggregateTransporterItem[P]>
+  }
+
+
+
+
+  export type TransporterItemGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: TransporterItemWhereInput
+    orderBy?: TransporterItemOrderByWithAggregationInput | TransporterItemOrderByWithAggregationInput[]
+    by: TransporterItemScalarFieldEnum[] | TransporterItemScalarFieldEnum
+    having?: TransporterItemScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: TransporterItemCountAggregateInputType | true
+    _avg?: TransporterItemAvgAggregateInputType
+    _sum?: TransporterItemSumAggregateInputType
+    _min?: TransporterItemMinAggregateInputType
+    _max?: TransporterItemMaxAggregateInputType
+  }
+
+  export type TransporterItemGroupByOutputType = {
+    id: string
+    transporterId: string
+    itemDate: Date
+    itemType: $Enums.TransportItemType
+    name: string | null
+    frontPlateNumber: string | null
+    backPlateNumber: string | null
+    containerName: string | null
+    containerNumber: string | null
+    status: $Enums.TransporterStatus
+    chargeAmount: Decimal
+    chargeCurrency: $Enums.Currency
+    paymentStatus: $Enums.PaymentStatus
+    remarks: string | null
+    isLocked: boolean
+    lockedFields: string[]
+    lockedAt: Date | null
+    createdAt: Date
+    updatedAt: Date
+    _count: TransporterItemCountAggregateOutputType | null
+    _avg: TransporterItemAvgAggregateOutputType | null
+    _sum: TransporterItemSumAggregateOutputType | null
+    _min: TransporterItemMinAggregateOutputType | null
+    _max: TransporterItemMaxAggregateOutputType | null
+  }
+
+  type GetTransporterItemGroupByPayload<T extends TransporterItemGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<TransporterItemGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof TransporterItemGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], TransporterItemGroupByOutputType[P]>
+            : GetScalarType<T[P], TransporterItemGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type TransporterItemSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    transporterId?: boolean
+    itemDate?: boolean
+    itemType?: boolean
+    name?: boolean
+    frontPlateNumber?: boolean
+    backPlateNumber?: boolean
+    containerName?: boolean
+    containerNumber?: boolean
+    status?: boolean
+    chargeAmount?: boolean
+    chargeCurrency?: boolean
+    paymentStatus?: boolean
+    remarks?: boolean
+    isLocked?: boolean
+    lockedFields?: boolean
+    lockedAt?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    transporter?: boolean | TransporterDefaultArgs<ExtArgs>
+    payments?: boolean | TransporterItem$paymentsArgs<ExtArgs>
+    _count?: boolean | TransporterItemCountOutputTypeDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["transporterItem"]>
+
+  export type TransporterItemSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    transporterId?: boolean
+    itemDate?: boolean
+    itemType?: boolean
+    name?: boolean
+    frontPlateNumber?: boolean
+    backPlateNumber?: boolean
+    containerName?: boolean
+    containerNumber?: boolean
+    status?: boolean
+    chargeAmount?: boolean
+    chargeCurrency?: boolean
+    paymentStatus?: boolean
+    remarks?: boolean
+    isLocked?: boolean
+    lockedFields?: boolean
+    lockedAt?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    transporter?: boolean | TransporterDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["transporterItem"]>
+
+  export type TransporterItemSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    transporterId?: boolean
+    itemDate?: boolean
+    itemType?: boolean
+    name?: boolean
+    frontPlateNumber?: boolean
+    backPlateNumber?: boolean
+    containerName?: boolean
+    containerNumber?: boolean
+    status?: boolean
+    chargeAmount?: boolean
+    chargeCurrency?: boolean
+    paymentStatus?: boolean
+    remarks?: boolean
+    isLocked?: boolean
+    lockedFields?: boolean
+    lockedAt?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    transporter?: boolean | TransporterDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["transporterItem"]>
+
+  export type TransporterItemSelectScalar = {
+    id?: boolean
+    transporterId?: boolean
+    itemDate?: boolean
+    itemType?: boolean
+    name?: boolean
+    frontPlateNumber?: boolean
+    backPlateNumber?: boolean
+    containerName?: boolean
+    containerNumber?: boolean
+    status?: boolean
+    chargeAmount?: boolean
+    chargeCurrency?: boolean
+    paymentStatus?: boolean
+    remarks?: boolean
+    isLocked?: boolean
+    lockedFields?: boolean
+    lockedAt?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type TransporterItemOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "transporterId" | "itemDate" | "itemType" | "name" | "frontPlateNumber" | "backPlateNumber" | "containerName" | "containerNumber" | "status" | "chargeAmount" | "chargeCurrency" | "paymentStatus" | "remarks" | "isLocked" | "lockedFields" | "lockedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["transporterItem"]>
+  export type TransporterItemInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    transporter?: boolean | TransporterDefaultArgs<ExtArgs>
+    payments?: boolean | TransporterItem$paymentsArgs<ExtArgs>
+    _count?: boolean | TransporterItemCountOutputTypeDefaultArgs<ExtArgs>
+  }
+  export type TransporterItemIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    transporter?: boolean | TransporterDefaultArgs<ExtArgs>
+  }
+  export type TransporterItemIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    transporter?: boolean | TransporterDefaultArgs<ExtArgs>
+  }
+
+  export type $TransporterItemPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "TransporterItem"
+    objects: {
+      transporter: Prisma.$TransporterPayload<ExtArgs>
+      payments: Prisma.$TransporterPaymentPayload<ExtArgs>[]
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      transporterId: string
+      itemDate: Date
+      itemType: $Enums.TransportItemType
+      name: string | null
+      frontPlateNumber: string | null
+      backPlateNumber: string | null
+      containerName: string | null
+      containerNumber: string | null
+      status: $Enums.TransporterStatus
+      chargeAmount: Prisma.Decimal
+      chargeCurrency: $Enums.Currency
+      paymentStatus: $Enums.PaymentStatus
+      remarks: string | null
+      isLocked: boolean
+      lockedFields: string[]
+      lockedAt: Date | null
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["transporterItem"]>
+    composites: {}
+  }
+
+  type TransporterItemGetPayload<S extends boolean | null | undefined | TransporterItemDefaultArgs> = $Result.GetResult<Prisma.$TransporterItemPayload, S>
+
+  type TransporterItemCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<TransporterItemFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: TransporterItemCountAggregateInputType | true
+    }
+
+  export interface TransporterItemDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['TransporterItem'], meta: { name: 'TransporterItem' } }
+    /**
+     * Find zero or one TransporterItem that matches the filter.
+     * @param {TransporterItemFindUniqueArgs} args - Arguments to find a TransporterItem
+     * @example
+     * // Get one TransporterItem
+     * const transporterItem = await prisma.transporterItem.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends TransporterItemFindUniqueArgs>(args: SelectSubset<T, TransporterItemFindUniqueArgs<ExtArgs>>): Prisma__TransporterItemClient<$Result.GetResult<Prisma.$TransporterItemPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one TransporterItem that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {TransporterItemFindUniqueOrThrowArgs} args - Arguments to find a TransporterItem
+     * @example
+     * // Get one TransporterItem
+     * const transporterItem = await prisma.transporterItem.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends TransporterItemFindUniqueOrThrowArgs>(args: SelectSubset<T, TransporterItemFindUniqueOrThrowArgs<ExtArgs>>): Prisma__TransporterItemClient<$Result.GetResult<Prisma.$TransporterItemPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first TransporterItem that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TransporterItemFindFirstArgs} args - Arguments to find a TransporterItem
+     * @example
+     * // Get one TransporterItem
+     * const transporterItem = await prisma.transporterItem.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends TransporterItemFindFirstArgs>(args?: SelectSubset<T, TransporterItemFindFirstArgs<ExtArgs>>): Prisma__TransporterItemClient<$Result.GetResult<Prisma.$TransporterItemPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first TransporterItem that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TransporterItemFindFirstOrThrowArgs} args - Arguments to find a TransporterItem
+     * @example
+     * // Get one TransporterItem
+     * const transporterItem = await prisma.transporterItem.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends TransporterItemFindFirstOrThrowArgs>(args?: SelectSubset<T, TransporterItemFindFirstOrThrowArgs<ExtArgs>>): Prisma__TransporterItemClient<$Result.GetResult<Prisma.$TransporterItemPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more TransporterItems that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TransporterItemFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all TransporterItems
+     * const transporterItems = await prisma.transporterItem.findMany()
+     * 
+     * // Get first 10 TransporterItems
+     * const transporterItems = await prisma.transporterItem.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const transporterItemWithIdOnly = await prisma.transporterItem.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends TransporterItemFindManyArgs>(args?: SelectSubset<T, TransporterItemFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TransporterItemPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a TransporterItem.
+     * @param {TransporterItemCreateArgs} args - Arguments to create a TransporterItem.
+     * @example
+     * // Create one TransporterItem
+     * const TransporterItem = await prisma.transporterItem.create({
+     *   data: {
+     *     // ... data to create a TransporterItem
+     *   }
+     * })
+     * 
+     */
+    create<T extends TransporterItemCreateArgs>(args: SelectSubset<T, TransporterItemCreateArgs<ExtArgs>>): Prisma__TransporterItemClient<$Result.GetResult<Prisma.$TransporterItemPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many TransporterItems.
+     * @param {TransporterItemCreateManyArgs} args - Arguments to create many TransporterItems.
+     * @example
+     * // Create many TransporterItems
+     * const transporterItem = await prisma.transporterItem.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends TransporterItemCreateManyArgs>(args?: SelectSubset<T, TransporterItemCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many TransporterItems and returns the data saved in the database.
+     * @param {TransporterItemCreateManyAndReturnArgs} args - Arguments to create many TransporterItems.
+     * @example
+     * // Create many TransporterItems
+     * const transporterItem = await prisma.transporterItem.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many TransporterItems and only return the `id`
+     * const transporterItemWithIdOnly = await prisma.transporterItem.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends TransporterItemCreateManyAndReturnArgs>(args?: SelectSubset<T, TransporterItemCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TransporterItemPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a TransporterItem.
+     * @param {TransporterItemDeleteArgs} args - Arguments to delete one TransporterItem.
+     * @example
+     * // Delete one TransporterItem
+     * const TransporterItem = await prisma.transporterItem.delete({
+     *   where: {
+     *     // ... filter to delete one TransporterItem
+     *   }
+     * })
+     * 
+     */
+    delete<T extends TransporterItemDeleteArgs>(args: SelectSubset<T, TransporterItemDeleteArgs<ExtArgs>>): Prisma__TransporterItemClient<$Result.GetResult<Prisma.$TransporterItemPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one TransporterItem.
+     * @param {TransporterItemUpdateArgs} args - Arguments to update one TransporterItem.
+     * @example
+     * // Update one TransporterItem
+     * const transporterItem = await prisma.transporterItem.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends TransporterItemUpdateArgs>(args: SelectSubset<T, TransporterItemUpdateArgs<ExtArgs>>): Prisma__TransporterItemClient<$Result.GetResult<Prisma.$TransporterItemPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more TransporterItems.
+     * @param {TransporterItemDeleteManyArgs} args - Arguments to filter TransporterItems to delete.
+     * @example
+     * // Delete a few TransporterItems
+     * const { count } = await prisma.transporterItem.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends TransporterItemDeleteManyArgs>(args?: SelectSubset<T, TransporterItemDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more TransporterItems.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TransporterItemUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many TransporterItems
+     * const transporterItem = await prisma.transporterItem.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends TransporterItemUpdateManyArgs>(args: SelectSubset<T, TransporterItemUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more TransporterItems and returns the data updated in the database.
+     * @param {TransporterItemUpdateManyAndReturnArgs} args - Arguments to update many TransporterItems.
+     * @example
+     * // Update many TransporterItems
+     * const transporterItem = await prisma.transporterItem.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more TransporterItems and only return the `id`
+     * const transporterItemWithIdOnly = await prisma.transporterItem.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends TransporterItemUpdateManyAndReturnArgs>(args: SelectSubset<T, TransporterItemUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TransporterItemPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one TransporterItem.
+     * @param {TransporterItemUpsertArgs} args - Arguments to update or create a TransporterItem.
+     * @example
+     * // Update or create a TransporterItem
+     * const transporterItem = await prisma.transporterItem.upsert({
+     *   create: {
+     *     // ... data to create a TransporterItem
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the TransporterItem we want to update
+     *   }
+     * })
+     */
+    upsert<T extends TransporterItemUpsertArgs>(args: SelectSubset<T, TransporterItemUpsertArgs<ExtArgs>>): Prisma__TransporterItemClient<$Result.GetResult<Prisma.$TransporterItemPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of TransporterItems.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TransporterItemCountArgs} args - Arguments to filter TransporterItems to count.
+     * @example
+     * // Count the number of TransporterItems
+     * const count = await prisma.transporterItem.count({
+     *   where: {
+     *     // ... the filter for the TransporterItems we want to count
+     *   }
+     * })
+    **/
+    count<T extends TransporterItemCountArgs>(
+      args?: Subset<T, TransporterItemCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], TransporterItemCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a TransporterItem.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TransporterItemAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends TransporterItemAggregateArgs>(args: Subset<T, TransporterItemAggregateArgs>): Prisma.PrismaPromise<GetTransporterItemAggregateType<T>>
+
+    /**
+     * Group by TransporterItem.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TransporterItemGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends TransporterItemGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: TransporterItemGroupByArgs['orderBy'] }
+        : { orderBy?: TransporterItemGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, TransporterItemGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetTransporterItemGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the TransporterItem model
+   */
+  readonly fields: TransporterItemFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for TransporterItem.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__TransporterItemClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    transporter<T extends TransporterDefaultArgs<ExtArgs> = {}>(args?: Subset<T, TransporterDefaultArgs<ExtArgs>>): Prisma__TransporterClient<$Result.GetResult<Prisma.$TransporterPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    payments<T extends TransporterItem$paymentsArgs<ExtArgs> = {}>(args?: Subset<T, TransporterItem$paymentsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TransporterPaymentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the TransporterItem model
+   */
+  interface TransporterItemFieldRefs {
+    readonly id: FieldRef<"TransporterItem", 'String'>
+    readonly transporterId: FieldRef<"TransporterItem", 'String'>
+    readonly itemDate: FieldRef<"TransporterItem", 'DateTime'>
+    readonly itemType: FieldRef<"TransporterItem", 'TransportItemType'>
+    readonly name: FieldRef<"TransporterItem", 'String'>
+    readonly frontPlateNumber: FieldRef<"TransporterItem", 'String'>
+    readonly backPlateNumber: FieldRef<"TransporterItem", 'String'>
+    readonly containerName: FieldRef<"TransporterItem", 'String'>
+    readonly containerNumber: FieldRef<"TransporterItem", 'String'>
+    readonly status: FieldRef<"TransporterItem", 'TransporterStatus'>
+    readonly chargeAmount: FieldRef<"TransporterItem", 'Decimal'>
+    readonly chargeCurrency: FieldRef<"TransporterItem", 'Currency'>
+    readonly paymentStatus: FieldRef<"TransporterItem", 'PaymentStatus'>
+    readonly remarks: FieldRef<"TransporterItem", 'String'>
+    readonly isLocked: FieldRef<"TransporterItem", 'Boolean'>
+    readonly lockedFields: FieldRef<"TransporterItem", 'String[]'>
+    readonly lockedAt: FieldRef<"TransporterItem", 'DateTime'>
+    readonly createdAt: FieldRef<"TransporterItem", 'DateTime'>
+    readonly updatedAt: FieldRef<"TransporterItem", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * TransporterItem findUnique
+   */
+  export type TransporterItemFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TransporterItem
+     */
+    select?: TransporterItemSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TransporterItem
+     */
+    omit?: TransporterItemOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TransporterItemInclude<ExtArgs> | null
+    /**
+     * Filter, which TransporterItem to fetch.
+     */
+    where: TransporterItemWhereUniqueInput
+  }
+
+  /**
+   * TransporterItem findUniqueOrThrow
+   */
+  export type TransporterItemFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TransporterItem
+     */
+    select?: TransporterItemSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TransporterItem
+     */
+    omit?: TransporterItemOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TransporterItemInclude<ExtArgs> | null
+    /**
+     * Filter, which TransporterItem to fetch.
+     */
+    where: TransporterItemWhereUniqueInput
+  }
+
+  /**
+   * TransporterItem findFirst
+   */
+  export type TransporterItemFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TransporterItem
+     */
+    select?: TransporterItemSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TransporterItem
+     */
+    omit?: TransporterItemOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TransporterItemInclude<ExtArgs> | null
+    /**
+     * Filter, which TransporterItem to fetch.
+     */
+    where?: TransporterItemWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of TransporterItems to fetch.
+     */
+    orderBy?: TransporterItemOrderByWithRelationInput | TransporterItemOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for TransporterItems.
+     */
+    cursor?: TransporterItemWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` TransporterItems from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` TransporterItems.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of TransporterItems.
+     */
+    distinct?: TransporterItemScalarFieldEnum | TransporterItemScalarFieldEnum[]
+  }
+
+  /**
+   * TransporterItem findFirstOrThrow
+   */
+  export type TransporterItemFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TransporterItem
+     */
+    select?: TransporterItemSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TransporterItem
+     */
+    omit?: TransporterItemOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TransporterItemInclude<ExtArgs> | null
+    /**
+     * Filter, which TransporterItem to fetch.
+     */
+    where?: TransporterItemWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of TransporterItems to fetch.
+     */
+    orderBy?: TransporterItemOrderByWithRelationInput | TransporterItemOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for TransporterItems.
+     */
+    cursor?: TransporterItemWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` TransporterItems from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` TransporterItems.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of TransporterItems.
+     */
+    distinct?: TransporterItemScalarFieldEnum | TransporterItemScalarFieldEnum[]
+  }
+
+  /**
+   * TransporterItem findMany
+   */
+  export type TransporterItemFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TransporterItem
+     */
+    select?: TransporterItemSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TransporterItem
+     */
+    omit?: TransporterItemOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TransporterItemInclude<ExtArgs> | null
+    /**
+     * Filter, which TransporterItems to fetch.
+     */
+    where?: TransporterItemWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of TransporterItems to fetch.
+     */
+    orderBy?: TransporterItemOrderByWithRelationInput | TransporterItemOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing TransporterItems.
+     */
+    cursor?: TransporterItemWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` TransporterItems from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` TransporterItems.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of TransporterItems.
+     */
+    distinct?: TransporterItemScalarFieldEnum | TransporterItemScalarFieldEnum[]
+  }
+
+  /**
+   * TransporterItem create
+   */
+  export type TransporterItemCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TransporterItem
+     */
+    select?: TransporterItemSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TransporterItem
+     */
+    omit?: TransporterItemOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TransporterItemInclude<ExtArgs> | null
+    /**
+     * The data needed to create a TransporterItem.
+     */
+    data: XOR<TransporterItemCreateInput, TransporterItemUncheckedCreateInput>
+  }
+
+  /**
+   * TransporterItem createMany
+   */
+  export type TransporterItemCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many TransporterItems.
+     */
+    data: TransporterItemCreateManyInput | TransporterItemCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * TransporterItem createManyAndReturn
+   */
+  export type TransporterItemCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TransporterItem
+     */
+    select?: TransporterItemSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the TransporterItem
+     */
+    omit?: TransporterItemOmit<ExtArgs> | null
+    /**
+     * The data used to create many TransporterItems.
+     */
+    data: TransporterItemCreateManyInput | TransporterItemCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TransporterItemIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * TransporterItem update
+   */
+  export type TransporterItemUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TransporterItem
+     */
+    select?: TransporterItemSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TransporterItem
+     */
+    omit?: TransporterItemOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TransporterItemInclude<ExtArgs> | null
+    /**
+     * The data needed to update a TransporterItem.
+     */
+    data: XOR<TransporterItemUpdateInput, TransporterItemUncheckedUpdateInput>
+    /**
+     * Choose, which TransporterItem to update.
+     */
+    where: TransporterItemWhereUniqueInput
+  }
+
+  /**
+   * TransporterItem updateMany
+   */
+  export type TransporterItemUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update TransporterItems.
+     */
+    data: XOR<TransporterItemUpdateManyMutationInput, TransporterItemUncheckedUpdateManyInput>
+    /**
+     * Filter which TransporterItems to update
+     */
+    where?: TransporterItemWhereInput
+    /**
+     * Limit how many TransporterItems to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * TransporterItem updateManyAndReturn
+   */
+  export type TransporterItemUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TransporterItem
+     */
+    select?: TransporterItemSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the TransporterItem
+     */
+    omit?: TransporterItemOmit<ExtArgs> | null
+    /**
+     * The data used to update TransporterItems.
+     */
+    data: XOR<TransporterItemUpdateManyMutationInput, TransporterItemUncheckedUpdateManyInput>
+    /**
+     * Filter which TransporterItems to update
+     */
+    where?: TransporterItemWhereInput
+    /**
+     * Limit how many TransporterItems to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TransporterItemIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * TransporterItem upsert
+   */
+  export type TransporterItemUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TransporterItem
+     */
+    select?: TransporterItemSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TransporterItem
+     */
+    omit?: TransporterItemOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TransporterItemInclude<ExtArgs> | null
+    /**
+     * The filter to search for the TransporterItem to update in case it exists.
+     */
+    where: TransporterItemWhereUniqueInput
+    /**
+     * In case the TransporterItem found by the `where` argument doesn't exist, create a new TransporterItem with this data.
+     */
+    create: XOR<TransporterItemCreateInput, TransporterItemUncheckedCreateInput>
+    /**
+     * In case the TransporterItem was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<TransporterItemUpdateInput, TransporterItemUncheckedUpdateInput>
+  }
+
+  /**
+   * TransporterItem delete
+   */
+  export type TransporterItemDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TransporterItem
+     */
+    select?: TransporterItemSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TransporterItem
+     */
+    omit?: TransporterItemOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TransporterItemInclude<ExtArgs> | null
+    /**
+     * Filter which TransporterItem to delete.
+     */
+    where: TransporterItemWhereUniqueInput
+  }
+
+  /**
+   * TransporterItem deleteMany
+   */
+  export type TransporterItemDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which TransporterItems to delete
+     */
+    where?: TransporterItemWhereInput
+    /**
+     * Limit how many TransporterItems to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * TransporterItem.payments
+   */
+  export type TransporterItem$paymentsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TransporterPayment
+     */
+    select?: TransporterPaymentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TransporterPayment
+     */
+    omit?: TransporterPaymentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TransporterPaymentInclude<ExtArgs> | null
+    where?: TransporterPaymentWhereInput
+    orderBy?: TransporterPaymentOrderByWithRelationInput | TransporterPaymentOrderByWithRelationInput[]
+    cursor?: TransporterPaymentWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: TransporterPaymentScalarFieldEnum | TransporterPaymentScalarFieldEnum[]
+  }
+
+  /**
+   * TransporterItem without action
+   */
+  export type TransporterItemDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TransporterItem
+     */
+    select?: TransporterItemSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TransporterItem
+     */
+    omit?: TransporterItemOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TransporterItemInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model TransporterPayment
+   */
+
+  export type AggregateTransporterPayment = {
+    _count: TransporterPaymentCountAggregateOutputType | null
+    _avg: TransporterPaymentAvgAggregateOutputType | null
+    _sum: TransporterPaymentSumAggregateOutputType | null
+    _min: TransporterPaymentMinAggregateOutputType | null
+    _max: TransporterPaymentMaxAggregateOutputType | null
+  }
+
+  export type TransporterPaymentAvgAggregateOutputType = {
+    amount: Decimal | null
+  }
+
+  export type TransporterPaymentSumAggregateOutputType = {
+    amount: Decimal | null
+  }
+
+  export type TransporterPaymentMinAggregateOutputType = {
+    id: string | null
+    transportItemId: string | null
+    recordedById: string | null
+    amount: Decimal | null
+    paymentType: $Enums.ItemPaymentType | null
+    paymentDate: Date | null
+    paymentMethod: string | null
+    reference: string | null
+    description: string | null
+    notes: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type TransporterPaymentMaxAggregateOutputType = {
+    id: string | null
+    transportItemId: string | null
+    recordedById: string | null
+    amount: Decimal | null
+    paymentType: $Enums.ItemPaymentType | null
+    paymentDate: Date | null
+    paymentMethod: string | null
+    reference: string | null
+    description: string | null
+    notes: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type TransporterPaymentCountAggregateOutputType = {
+    id: number
+    transportItemId: number
+    recordedById: number
+    amount: number
+    paymentType: number
+    paymentDate: number
+    paymentMethod: number
+    reference: number
+    description: number
+    notes: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type TransporterPaymentAvgAggregateInputType = {
+    amount?: true
+  }
+
+  export type TransporterPaymentSumAggregateInputType = {
+    amount?: true
+  }
+
+  export type TransporterPaymentMinAggregateInputType = {
+    id?: true
+    transportItemId?: true
+    recordedById?: true
+    amount?: true
+    paymentType?: true
+    paymentDate?: true
+    paymentMethod?: true
+    reference?: true
+    description?: true
+    notes?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type TransporterPaymentMaxAggregateInputType = {
+    id?: true
+    transportItemId?: true
+    recordedById?: true
+    amount?: true
+    paymentType?: true
+    paymentDate?: true
+    paymentMethod?: true
+    reference?: true
+    description?: true
+    notes?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type TransporterPaymentCountAggregateInputType = {
+    id?: true
+    transportItemId?: true
+    recordedById?: true
+    amount?: true
+    paymentType?: true
+    paymentDate?: true
+    paymentMethod?: true
+    reference?: true
+    description?: true
+    notes?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type TransporterPaymentAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which TransporterPayment to aggregate.
+     */
+    where?: TransporterPaymentWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of TransporterPayments to fetch.
+     */
+    orderBy?: TransporterPaymentOrderByWithRelationInput | TransporterPaymentOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: TransporterPaymentWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` TransporterPayments from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` TransporterPayments.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned TransporterPayments
+    **/
+    _count?: true | TransporterPaymentCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: TransporterPaymentAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: TransporterPaymentSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: TransporterPaymentMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: TransporterPaymentMaxAggregateInputType
+  }
+
+  export type GetTransporterPaymentAggregateType<T extends TransporterPaymentAggregateArgs> = {
+        [P in keyof T & keyof AggregateTransporterPayment]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateTransporterPayment[P]>
+      : GetScalarType<T[P], AggregateTransporterPayment[P]>
+  }
+
+
+
+
+  export type TransporterPaymentGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: TransporterPaymentWhereInput
+    orderBy?: TransporterPaymentOrderByWithAggregationInput | TransporterPaymentOrderByWithAggregationInput[]
+    by: TransporterPaymentScalarFieldEnum[] | TransporterPaymentScalarFieldEnum
+    having?: TransporterPaymentScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: TransporterPaymentCountAggregateInputType | true
+    _avg?: TransporterPaymentAvgAggregateInputType
+    _sum?: TransporterPaymentSumAggregateInputType
+    _min?: TransporterPaymentMinAggregateInputType
+    _max?: TransporterPaymentMaxAggregateInputType
+  }
+
+  export type TransporterPaymentGroupByOutputType = {
+    id: string
+    transportItemId: string
+    recordedById: string | null
+    amount: Decimal
+    paymentType: $Enums.ItemPaymentType
+    paymentDate: Date
+    paymentMethod: string | null
+    reference: string | null
+    description: string | null
+    notes: string | null
+    createdAt: Date
+    updatedAt: Date
+    _count: TransporterPaymentCountAggregateOutputType | null
+    _avg: TransporterPaymentAvgAggregateOutputType | null
+    _sum: TransporterPaymentSumAggregateOutputType | null
+    _min: TransporterPaymentMinAggregateOutputType | null
+    _max: TransporterPaymentMaxAggregateOutputType | null
+  }
+
+  type GetTransporterPaymentGroupByPayload<T extends TransporterPaymentGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<TransporterPaymentGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof TransporterPaymentGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], TransporterPaymentGroupByOutputType[P]>
+            : GetScalarType<T[P], TransporterPaymentGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type TransporterPaymentSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    transportItemId?: boolean
+    recordedById?: boolean
+    amount?: boolean
+    paymentType?: boolean
+    paymentDate?: boolean
+    paymentMethod?: boolean
+    reference?: boolean
+    description?: boolean
+    notes?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    transporterItem?: boolean | TransporterItemDefaultArgs<ExtArgs>
+    recordedBy?: boolean | TransporterPayment$recordedByArgs<ExtArgs>
+  }, ExtArgs["result"]["transporterPayment"]>
+
+  export type TransporterPaymentSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    transportItemId?: boolean
+    recordedById?: boolean
+    amount?: boolean
+    paymentType?: boolean
+    paymentDate?: boolean
+    paymentMethod?: boolean
+    reference?: boolean
+    description?: boolean
+    notes?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    transporterItem?: boolean | TransporterItemDefaultArgs<ExtArgs>
+    recordedBy?: boolean | TransporterPayment$recordedByArgs<ExtArgs>
+  }, ExtArgs["result"]["transporterPayment"]>
+
+  export type TransporterPaymentSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    transportItemId?: boolean
+    recordedById?: boolean
+    amount?: boolean
+    paymentType?: boolean
+    paymentDate?: boolean
+    paymentMethod?: boolean
+    reference?: boolean
+    description?: boolean
+    notes?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    transporterItem?: boolean | TransporterItemDefaultArgs<ExtArgs>
+    recordedBy?: boolean | TransporterPayment$recordedByArgs<ExtArgs>
+  }, ExtArgs["result"]["transporterPayment"]>
+
+  export type TransporterPaymentSelectScalar = {
+    id?: boolean
+    transportItemId?: boolean
+    recordedById?: boolean
+    amount?: boolean
+    paymentType?: boolean
+    paymentDate?: boolean
+    paymentMethod?: boolean
+    reference?: boolean
+    description?: boolean
+    notes?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type TransporterPaymentOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "transportItemId" | "recordedById" | "amount" | "paymentType" | "paymentDate" | "paymentMethod" | "reference" | "description" | "notes" | "createdAt" | "updatedAt", ExtArgs["result"]["transporterPayment"]>
+  export type TransporterPaymentInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    transporterItem?: boolean | TransporterItemDefaultArgs<ExtArgs>
+    recordedBy?: boolean | TransporterPayment$recordedByArgs<ExtArgs>
+  }
+  export type TransporterPaymentIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    transporterItem?: boolean | TransporterItemDefaultArgs<ExtArgs>
+    recordedBy?: boolean | TransporterPayment$recordedByArgs<ExtArgs>
+  }
+  export type TransporterPaymentIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    transporterItem?: boolean | TransporterItemDefaultArgs<ExtArgs>
+    recordedBy?: boolean | TransporterPayment$recordedByArgs<ExtArgs>
+  }
+
+  export type $TransporterPaymentPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "TransporterPayment"
+    objects: {
+      transporterItem: Prisma.$TransporterItemPayload<ExtArgs>
+      recordedBy: Prisma.$UserPayload<ExtArgs> | null
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      transportItemId: string
+      recordedById: string | null
+      amount: Prisma.Decimal
+      paymentType: $Enums.ItemPaymentType
+      paymentDate: Date
+      paymentMethod: string | null
+      reference: string | null
+      description: string | null
+      notes: string | null
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["transporterPayment"]>
+    composites: {}
+  }
+
+  type TransporterPaymentGetPayload<S extends boolean | null | undefined | TransporterPaymentDefaultArgs> = $Result.GetResult<Prisma.$TransporterPaymentPayload, S>
+
+  type TransporterPaymentCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<TransporterPaymentFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: TransporterPaymentCountAggregateInputType | true
+    }
+
+  export interface TransporterPaymentDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['TransporterPayment'], meta: { name: 'TransporterPayment' } }
+    /**
+     * Find zero or one TransporterPayment that matches the filter.
+     * @param {TransporterPaymentFindUniqueArgs} args - Arguments to find a TransporterPayment
+     * @example
+     * // Get one TransporterPayment
+     * const transporterPayment = await prisma.transporterPayment.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends TransporterPaymentFindUniqueArgs>(args: SelectSubset<T, TransporterPaymentFindUniqueArgs<ExtArgs>>): Prisma__TransporterPaymentClient<$Result.GetResult<Prisma.$TransporterPaymentPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one TransporterPayment that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {TransporterPaymentFindUniqueOrThrowArgs} args - Arguments to find a TransporterPayment
+     * @example
+     * // Get one TransporterPayment
+     * const transporterPayment = await prisma.transporterPayment.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends TransporterPaymentFindUniqueOrThrowArgs>(args: SelectSubset<T, TransporterPaymentFindUniqueOrThrowArgs<ExtArgs>>): Prisma__TransporterPaymentClient<$Result.GetResult<Prisma.$TransporterPaymentPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first TransporterPayment that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TransporterPaymentFindFirstArgs} args - Arguments to find a TransporterPayment
+     * @example
+     * // Get one TransporterPayment
+     * const transporterPayment = await prisma.transporterPayment.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends TransporterPaymentFindFirstArgs>(args?: SelectSubset<T, TransporterPaymentFindFirstArgs<ExtArgs>>): Prisma__TransporterPaymentClient<$Result.GetResult<Prisma.$TransporterPaymentPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first TransporterPayment that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TransporterPaymentFindFirstOrThrowArgs} args - Arguments to find a TransporterPayment
+     * @example
+     * // Get one TransporterPayment
+     * const transporterPayment = await prisma.transporterPayment.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends TransporterPaymentFindFirstOrThrowArgs>(args?: SelectSubset<T, TransporterPaymentFindFirstOrThrowArgs<ExtArgs>>): Prisma__TransporterPaymentClient<$Result.GetResult<Prisma.$TransporterPaymentPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more TransporterPayments that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TransporterPaymentFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all TransporterPayments
+     * const transporterPayments = await prisma.transporterPayment.findMany()
+     * 
+     * // Get first 10 TransporterPayments
+     * const transporterPayments = await prisma.transporterPayment.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const transporterPaymentWithIdOnly = await prisma.transporterPayment.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends TransporterPaymentFindManyArgs>(args?: SelectSubset<T, TransporterPaymentFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TransporterPaymentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a TransporterPayment.
+     * @param {TransporterPaymentCreateArgs} args - Arguments to create a TransporterPayment.
+     * @example
+     * // Create one TransporterPayment
+     * const TransporterPayment = await prisma.transporterPayment.create({
+     *   data: {
+     *     // ... data to create a TransporterPayment
+     *   }
+     * })
+     * 
+     */
+    create<T extends TransporterPaymentCreateArgs>(args: SelectSubset<T, TransporterPaymentCreateArgs<ExtArgs>>): Prisma__TransporterPaymentClient<$Result.GetResult<Prisma.$TransporterPaymentPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many TransporterPayments.
+     * @param {TransporterPaymentCreateManyArgs} args - Arguments to create many TransporterPayments.
+     * @example
+     * // Create many TransporterPayments
+     * const transporterPayment = await prisma.transporterPayment.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends TransporterPaymentCreateManyArgs>(args?: SelectSubset<T, TransporterPaymentCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many TransporterPayments and returns the data saved in the database.
+     * @param {TransporterPaymentCreateManyAndReturnArgs} args - Arguments to create many TransporterPayments.
+     * @example
+     * // Create many TransporterPayments
+     * const transporterPayment = await prisma.transporterPayment.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many TransporterPayments and only return the `id`
+     * const transporterPaymentWithIdOnly = await prisma.transporterPayment.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends TransporterPaymentCreateManyAndReturnArgs>(args?: SelectSubset<T, TransporterPaymentCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TransporterPaymentPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a TransporterPayment.
+     * @param {TransporterPaymentDeleteArgs} args - Arguments to delete one TransporterPayment.
+     * @example
+     * // Delete one TransporterPayment
+     * const TransporterPayment = await prisma.transporterPayment.delete({
+     *   where: {
+     *     // ... filter to delete one TransporterPayment
+     *   }
+     * })
+     * 
+     */
+    delete<T extends TransporterPaymentDeleteArgs>(args: SelectSubset<T, TransporterPaymentDeleteArgs<ExtArgs>>): Prisma__TransporterPaymentClient<$Result.GetResult<Prisma.$TransporterPaymentPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one TransporterPayment.
+     * @param {TransporterPaymentUpdateArgs} args - Arguments to update one TransporterPayment.
+     * @example
+     * // Update one TransporterPayment
+     * const transporterPayment = await prisma.transporterPayment.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends TransporterPaymentUpdateArgs>(args: SelectSubset<T, TransporterPaymentUpdateArgs<ExtArgs>>): Prisma__TransporterPaymentClient<$Result.GetResult<Prisma.$TransporterPaymentPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more TransporterPayments.
+     * @param {TransporterPaymentDeleteManyArgs} args - Arguments to filter TransporterPayments to delete.
+     * @example
+     * // Delete a few TransporterPayments
+     * const { count } = await prisma.transporterPayment.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends TransporterPaymentDeleteManyArgs>(args?: SelectSubset<T, TransporterPaymentDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more TransporterPayments.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TransporterPaymentUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many TransporterPayments
+     * const transporterPayment = await prisma.transporterPayment.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends TransporterPaymentUpdateManyArgs>(args: SelectSubset<T, TransporterPaymentUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more TransporterPayments and returns the data updated in the database.
+     * @param {TransporterPaymentUpdateManyAndReturnArgs} args - Arguments to update many TransporterPayments.
+     * @example
+     * // Update many TransporterPayments
+     * const transporterPayment = await prisma.transporterPayment.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more TransporterPayments and only return the `id`
+     * const transporterPaymentWithIdOnly = await prisma.transporterPayment.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends TransporterPaymentUpdateManyAndReturnArgs>(args: SelectSubset<T, TransporterPaymentUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TransporterPaymentPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one TransporterPayment.
+     * @param {TransporterPaymentUpsertArgs} args - Arguments to update or create a TransporterPayment.
+     * @example
+     * // Update or create a TransporterPayment
+     * const transporterPayment = await prisma.transporterPayment.upsert({
+     *   create: {
+     *     // ... data to create a TransporterPayment
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the TransporterPayment we want to update
+     *   }
+     * })
+     */
+    upsert<T extends TransporterPaymentUpsertArgs>(args: SelectSubset<T, TransporterPaymentUpsertArgs<ExtArgs>>): Prisma__TransporterPaymentClient<$Result.GetResult<Prisma.$TransporterPaymentPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of TransporterPayments.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TransporterPaymentCountArgs} args - Arguments to filter TransporterPayments to count.
+     * @example
+     * // Count the number of TransporterPayments
+     * const count = await prisma.transporterPayment.count({
+     *   where: {
+     *     // ... the filter for the TransporterPayments we want to count
+     *   }
+     * })
+    **/
+    count<T extends TransporterPaymentCountArgs>(
+      args?: Subset<T, TransporterPaymentCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], TransporterPaymentCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a TransporterPayment.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TransporterPaymentAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends TransporterPaymentAggregateArgs>(args: Subset<T, TransporterPaymentAggregateArgs>): Prisma.PrismaPromise<GetTransporterPaymentAggregateType<T>>
+
+    /**
+     * Group by TransporterPayment.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TransporterPaymentGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends TransporterPaymentGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: TransporterPaymentGroupByArgs['orderBy'] }
+        : { orderBy?: TransporterPaymentGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, TransporterPaymentGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetTransporterPaymentGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the TransporterPayment model
+   */
+  readonly fields: TransporterPaymentFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for TransporterPayment.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__TransporterPaymentClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    transporterItem<T extends TransporterItemDefaultArgs<ExtArgs> = {}>(args?: Subset<T, TransporterItemDefaultArgs<ExtArgs>>): Prisma__TransporterItemClient<$Result.GetResult<Prisma.$TransporterItemPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    recordedBy<T extends TransporterPayment$recordedByArgs<ExtArgs> = {}>(args?: Subset<T, TransporterPayment$recordedByArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the TransporterPayment model
+   */
+  interface TransporterPaymentFieldRefs {
+    readonly id: FieldRef<"TransporterPayment", 'String'>
+    readonly transportItemId: FieldRef<"TransporterPayment", 'String'>
+    readonly recordedById: FieldRef<"TransporterPayment", 'String'>
+    readonly amount: FieldRef<"TransporterPayment", 'Decimal'>
+    readonly paymentType: FieldRef<"TransporterPayment", 'ItemPaymentType'>
+    readonly paymentDate: FieldRef<"TransporterPayment", 'DateTime'>
+    readonly paymentMethod: FieldRef<"TransporterPayment", 'String'>
+    readonly reference: FieldRef<"TransporterPayment", 'String'>
+    readonly description: FieldRef<"TransporterPayment", 'String'>
+    readonly notes: FieldRef<"TransporterPayment", 'String'>
+    readonly createdAt: FieldRef<"TransporterPayment", 'DateTime'>
+    readonly updatedAt: FieldRef<"TransporterPayment", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * TransporterPayment findUnique
+   */
+  export type TransporterPaymentFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TransporterPayment
+     */
+    select?: TransporterPaymentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TransporterPayment
+     */
+    omit?: TransporterPaymentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TransporterPaymentInclude<ExtArgs> | null
+    /**
+     * Filter, which TransporterPayment to fetch.
+     */
+    where: TransporterPaymentWhereUniqueInput
+  }
+
+  /**
+   * TransporterPayment findUniqueOrThrow
+   */
+  export type TransporterPaymentFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TransporterPayment
+     */
+    select?: TransporterPaymentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TransporterPayment
+     */
+    omit?: TransporterPaymentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TransporterPaymentInclude<ExtArgs> | null
+    /**
+     * Filter, which TransporterPayment to fetch.
+     */
+    where: TransporterPaymentWhereUniqueInput
+  }
+
+  /**
+   * TransporterPayment findFirst
+   */
+  export type TransporterPaymentFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TransporterPayment
+     */
+    select?: TransporterPaymentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TransporterPayment
+     */
+    omit?: TransporterPaymentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TransporterPaymentInclude<ExtArgs> | null
+    /**
+     * Filter, which TransporterPayment to fetch.
+     */
+    where?: TransporterPaymentWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of TransporterPayments to fetch.
+     */
+    orderBy?: TransporterPaymentOrderByWithRelationInput | TransporterPaymentOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for TransporterPayments.
+     */
+    cursor?: TransporterPaymentWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` TransporterPayments from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` TransporterPayments.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of TransporterPayments.
+     */
+    distinct?: TransporterPaymentScalarFieldEnum | TransporterPaymentScalarFieldEnum[]
+  }
+
+  /**
+   * TransporterPayment findFirstOrThrow
+   */
+  export type TransporterPaymentFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TransporterPayment
+     */
+    select?: TransporterPaymentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TransporterPayment
+     */
+    omit?: TransporterPaymentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TransporterPaymentInclude<ExtArgs> | null
+    /**
+     * Filter, which TransporterPayment to fetch.
+     */
+    where?: TransporterPaymentWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of TransporterPayments to fetch.
+     */
+    orderBy?: TransporterPaymentOrderByWithRelationInput | TransporterPaymentOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for TransporterPayments.
+     */
+    cursor?: TransporterPaymentWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` TransporterPayments from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` TransporterPayments.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of TransporterPayments.
+     */
+    distinct?: TransporterPaymentScalarFieldEnum | TransporterPaymentScalarFieldEnum[]
+  }
+
+  /**
+   * TransporterPayment findMany
+   */
+  export type TransporterPaymentFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TransporterPayment
+     */
+    select?: TransporterPaymentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TransporterPayment
+     */
+    omit?: TransporterPaymentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TransporterPaymentInclude<ExtArgs> | null
+    /**
+     * Filter, which TransporterPayments to fetch.
+     */
+    where?: TransporterPaymentWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of TransporterPayments to fetch.
+     */
+    orderBy?: TransporterPaymentOrderByWithRelationInput | TransporterPaymentOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing TransporterPayments.
+     */
+    cursor?: TransporterPaymentWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` TransporterPayments from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` TransporterPayments.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of TransporterPayments.
+     */
+    distinct?: TransporterPaymentScalarFieldEnum | TransporterPaymentScalarFieldEnum[]
+  }
+
+  /**
+   * TransporterPayment create
+   */
+  export type TransporterPaymentCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TransporterPayment
+     */
+    select?: TransporterPaymentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TransporterPayment
+     */
+    omit?: TransporterPaymentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TransporterPaymentInclude<ExtArgs> | null
+    /**
+     * The data needed to create a TransporterPayment.
+     */
+    data: XOR<TransporterPaymentCreateInput, TransporterPaymentUncheckedCreateInput>
+  }
+
+  /**
+   * TransporterPayment createMany
+   */
+  export type TransporterPaymentCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many TransporterPayments.
+     */
+    data: TransporterPaymentCreateManyInput | TransporterPaymentCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * TransporterPayment createManyAndReturn
+   */
+  export type TransporterPaymentCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TransporterPayment
+     */
+    select?: TransporterPaymentSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the TransporterPayment
+     */
+    omit?: TransporterPaymentOmit<ExtArgs> | null
+    /**
+     * The data used to create many TransporterPayments.
+     */
+    data: TransporterPaymentCreateManyInput | TransporterPaymentCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TransporterPaymentIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * TransporterPayment update
+   */
+  export type TransporterPaymentUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TransporterPayment
+     */
+    select?: TransporterPaymentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TransporterPayment
+     */
+    omit?: TransporterPaymentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TransporterPaymentInclude<ExtArgs> | null
+    /**
+     * The data needed to update a TransporterPayment.
+     */
+    data: XOR<TransporterPaymentUpdateInput, TransporterPaymentUncheckedUpdateInput>
+    /**
+     * Choose, which TransporterPayment to update.
+     */
+    where: TransporterPaymentWhereUniqueInput
+  }
+
+  /**
+   * TransporterPayment updateMany
+   */
+  export type TransporterPaymentUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update TransporterPayments.
+     */
+    data: XOR<TransporterPaymentUpdateManyMutationInput, TransporterPaymentUncheckedUpdateManyInput>
+    /**
+     * Filter which TransporterPayments to update
+     */
+    where?: TransporterPaymentWhereInput
+    /**
+     * Limit how many TransporterPayments to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * TransporterPayment updateManyAndReturn
+   */
+  export type TransporterPaymentUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TransporterPayment
+     */
+    select?: TransporterPaymentSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the TransporterPayment
+     */
+    omit?: TransporterPaymentOmit<ExtArgs> | null
+    /**
+     * The data used to update TransporterPayments.
+     */
+    data: XOR<TransporterPaymentUpdateManyMutationInput, TransporterPaymentUncheckedUpdateManyInput>
+    /**
+     * Filter which TransporterPayments to update
+     */
+    where?: TransporterPaymentWhereInput
+    /**
+     * Limit how many TransporterPayments to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TransporterPaymentIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * TransporterPayment upsert
+   */
+  export type TransporterPaymentUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TransporterPayment
+     */
+    select?: TransporterPaymentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TransporterPayment
+     */
+    omit?: TransporterPaymentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TransporterPaymentInclude<ExtArgs> | null
+    /**
+     * The filter to search for the TransporterPayment to update in case it exists.
+     */
+    where: TransporterPaymentWhereUniqueInput
+    /**
+     * In case the TransporterPayment found by the `where` argument doesn't exist, create a new TransporterPayment with this data.
+     */
+    create: XOR<TransporterPaymentCreateInput, TransporterPaymentUncheckedCreateInput>
+    /**
+     * In case the TransporterPayment was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<TransporterPaymentUpdateInput, TransporterPaymentUncheckedUpdateInput>
+  }
+
+  /**
+   * TransporterPayment delete
+   */
+  export type TransporterPaymentDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TransporterPayment
+     */
+    select?: TransporterPaymentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TransporterPayment
+     */
+    omit?: TransporterPaymentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TransporterPaymentInclude<ExtArgs> | null
+    /**
+     * Filter which TransporterPayment to delete.
+     */
+    where: TransporterPaymentWhereUniqueInput
+  }
+
+  /**
+   * TransporterPayment deleteMany
+   */
+  export type TransporterPaymentDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which TransporterPayments to delete
+     */
+    where?: TransporterPaymentWhereInput
+    /**
+     * Limit how many TransporterPayments to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * TransporterPayment.recordedBy
+   */
+  export type TransporterPayment$recordedByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the User
+     */
+    select?: UserSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the User
+     */
+    omit?: UserOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserInclude<ExtArgs> | null
+    where?: UserWhereInput
+  }
+
+  /**
+   * TransporterPayment without action
+   */
+  export type TransporterPaymentDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TransporterPayment
+     */
+    select?: TransporterPaymentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TransporterPayment
+     */
+    omit?: TransporterPaymentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TransporterPaymentInclude<ExtArgs> | null
+  }
+
+
+  /**
    * Enums
    */
 
@@ -62922,6 +68375,80 @@ export namespace Prisma {
   export type TransportItemColumnLockScalarFieldEnum = (typeof TransportItemColumnLockScalarFieldEnum)[keyof typeof TransportItemColumnLockScalarFieldEnum]
 
 
+  export const TransporterItemColumnLockScalarFieldEnum: {
+    id: 'id',
+    columnKey: 'columnKey',
+    isLocked: 'isLocked',
+    lockedAt: 'lockedAt',
+    lockedById: 'lockedById',
+    lockReason: 'lockReason',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type TransporterItemColumnLockScalarFieldEnum = (typeof TransporterItemColumnLockScalarFieldEnum)[keyof typeof TransporterItemColumnLockScalarFieldEnum]
+
+
+  export const TransporterScalarFieldEnum: {
+    id: 'id',
+    transportNumber: 'transportNumber',
+    transportDate: 'transportDate',
+    truckOwnerName: 'truckOwnerName',
+    shipmentId: 'shipmentId',
+    remarks: 'remarks',
+    isLocked: 'isLocked',
+    lockedAt: 'lockedAt',
+    updatedById: 'updatedById',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type TransporterScalarFieldEnum = (typeof TransporterScalarFieldEnum)[keyof typeof TransporterScalarFieldEnum]
+
+
+  export const TransporterItemScalarFieldEnum: {
+    id: 'id',
+    transporterId: 'transporterId',
+    itemDate: 'itemDate',
+    itemType: 'itemType',
+    name: 'name',
+    frontPlateNumber: 'frontPlateNumber',
+    backPlateNumber: 'backPlateNumber',
+    containerName: 'containerName',
+    containerNumber: 'containerNumber',
+    status: 'status',
+    chargeAmount: 'chargeAmount',
+    chargeCurrency: 'chargeCurrency',
+    paymentStatus: 'paymentStatus',
+    remarks: 'remarks',
+    isLocked: 'isLocked',
+    lockedFields: 'lockedFields',
+    lockedAt: 'lockedAt',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type TransporterItemScalarFieldEnum = (typeof TransporterItemScalarFieldEnum)[keyof typeof TransporterItemScalarFieldEnum]
+
+
+  export const TransporterPaymentScalarFieldEnum: {
+    id: 'id',
+    transportItemId: 'transportItemId',
+    recordedById: 'recordedById',
+    amount: 'amount',
+    paymentType: 'paymentType',
+    paymentDate: 'paymentDate',
+    paymentMethod: 'paymentMethod',
+    reference: 'reference',
+    description: 'description',
+    notes: 'notes',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type TransporterPaymentScalarFieldEnum = (typeof TransporterPaymentScalarFieldEnum)[keyof typeof TransporterPaymentScalarFieldEnum]
+
+
   export const SortOrder: {
     asc: 'asc',
     desc: 'desc'
@@ -63508,6 +69035,20 @@ export namespace Prisma {
 
 
   /**
+   * Reference to a field of type 'TransporterStatus'
+   */
+  export type EnumTransporterStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'TransporterStatus'>
+    
+
+
+  /**
+   * Reference to a field of type 'TransporterStatus[]'
+   */
+  export type ListEnumTransporterStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'TransporterStatus[]'>
+    
+
+
+  /**
    * Reference to a field of type 'Float'
    */
   export type FloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float'>
@@ -63557,6 +69098,9 @@ export namespace Prisma {
     updatedTransports?: TransportListRelationFilter
     transitMovementPayments?: TransitMovementPaymentListRelationFilter
     transitMovementColumnLocks?: TransitMovementItemColumnLockListRelationFilter
+    transporterPayments?: TransporterPaymentListRelationFilter
+    transporterColumnLocks?: TransporterItemColumnLockListRelationFilter
+    updatedTransporters?: TransporterListRelationFilter
   }
 
   export type UserOrderByWithRelationInput = {
@@ -63589,6 +69133,9 @@ export namespace Prisma {
     updatedTransports?: TransportOrderByRelationAggregateInput
     transitMovementPayments?: TransitMovementPaymentOrderByRelationAggregateInput
     transitMovementColumnLocks?: TransitMovementItemColumnLockOrderByRelationAggregateInput
+    transporterPayments?: TransporterPaymentOrderByRelationAggregateInput
+    transporterColumnLocks?: TransporterItemColumnLockOrderByRelationAggregateInput
+    updatedTransporters?: TransporterOrderByRelationAggregateInput
   }
 
   export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -63624,6 +69171,9 @@ export namespace Prisma {
     updatedTransports?: TransportListRelationFilter
     transitMovementPayments?: TransitMovementPaymentListRelationFilter
     transitMovementColumnLocks?: TransitMovementItemColumnLockListRelationFilter
+    transporterPayments?: TransporterPaymentListRelationFilter
+    transporterColumnLocks?: TransporterItemColumnLockListRelationFilter
+    updatedTransporters?: TransporterListRelationFilter
   }, "id" | "email">
 
   export type UserOrderByWithAggregationInput = {
@@ -63979,6 +69529,7 @@ export namespace Prisma {
     documents?: DocumentListRelationFilter
     invoices?: InvoiceListRelationFilter
     transports?: TransportListRelationFilter
+    transporters?: TransporterListRelationFilter
     packingList?: XOR<PackingListNullableScalarRelationFilter, PackingListWhereInput> | null
     allocation?: XOR<AllocationNullableScalarRelationFilter, AllocationWhereInput> | null
     client?: XOR<ClientScalarRelationFilter, ClientWhereInput>
@@ -64021,6 +69572,7 @@ export namespace Prisma {
     documents?: DocumentOrderByRelationAggregateInput
     invoices?: InvoiceOrderByRelationAggregateInput
     transports?: TransportOrderByRelationAggregateInput
+    transporters?: TransporterOrderByRelationAggregateInput
     packingList?: PackingListOrderByWithRelationInput
     allocation?: AllocationOrderByWithRelationInput
     client?: ClientOrderByWithRelationInput
@@ -64066,6 +69618,7 @@ export namespace Prisma {
     documents?: DocumentListRelationFilter
     invoices?: InvoiceListRelationFilter
     transports?: TransportListRelationFilter
+    transporters?: TransporterListRelationFilter
     packingList?: XOR<PackingListNullableScalarRelationFilter, PackingListWhereInput> | null
     allocation?: XOR<AllocationNullableScalarRelationFilter, AllocationWhereInput> | null
     client?: XOR<ClientScalarRelationFilter, ClientWhereInput>
@@ -68305,6 +73858,392 @@ export namespace Prisma {
     updatedAt?: DateTimeWithAggregatesFilter<"TransportItemColumnLock"> | Date | string
   }
 
+  export type TransporterItemColumnLockWhereInput = {
+    AND?: TransporterItemColumnLockWhereInput | TransporterItemColumnLockWhereInput[]
+    OR?: TransporterItemColumnLockWhereInput[]
+    NOT?: TransporterItemColumnLockWhereInput | TransporterItemColumnLockWhereInput[]
+    id?: StringFilter<"TransporterItemColumnLock"> | string
+    columnKey?: StringFilter<"TransporterItemColumnLock"> | string
+    isLocked?: BoolFilter<"TransporterItemColumnLock"> | boolean
+    lockedAt?: DateTimeNullableFilter<"TransporterItemColumnLock"> | Date | string | null
+    lockedById?: StringNullableFilter<"TransporterItemColumnLock"> | string | null
+    lockReason?: StringNullableFilter<"TransporterItemColumnLock"> | string | null
+    createdAt?: DateTimeFilter<"TransporterItemColumnLock"> | Date | string
+    updatedAt?: DateTimeFilter<"TransporterItemColumnLock"> | Date | string
+    lockedBy?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
+  }
+
+  export type TransporterItemColumnLockOrderByWithRelationInput = {
+    id?: SortOrder
+    columnKey?: SortOrder
+    isLocked?: SortOrder
+    lockedAt?: SortOrderInput | SortOrder
+    lockedById?: SortOrderInput | SortOrder
+    lockReason?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    lockedBy?: UserOrderByWithRelationInput
+  }
+
+  export type TransporterItemColumnLockWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    columnKey?: string
+    AND?: TransporterItemColumnLockWhereInput | TransporterItemColumnLockWhereInput[]
+    OR?: TransporterItemColumnLockWhereInput[]
+    NOT?: TransporterItemColumnLockWhereInput | TransporterItemColumnLockWhereInput[]
+    isLocked?: BoolFilter<"TransporterItemColumnLock"> | boolean
+    lockedAt?: DateTimeNullableFilter<"TransporterItemColumnLock"> | Date | string | null
+    lockedById?: StringNullableFilter<"TransporterItemColumnLock"> | string | null
+    lockReason?: StringNullableFilter<"TransporterItemColumnLock"> | string | null
+    createdAt?: DateTimeFilter<"TransporterItemColumnLock"> | Date | string
+    updatedAt?: DateTimeFilter<"TransporterItemColumnLock"> | Date | string
+    lockedBy?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
+  }, "id" | "columnKey">
+
+  export type TransporterItemColumnLockOrderByWithAggregationInput = {
+    id?: SortOrder
+    columnKey?: SortOrder
+    isLocked?: SortOrder
+    lockedAt?: SortOrderInput | SortOrder
+    lockedById?: SortOrderInput | SortOrder
+    lockReason?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: TransporterItemColumnLockCountOrderByAggregateInput
+    _max?: TransporterItemColumnLockMaxOrderByAggregateInput
+    _min?: TransporterItemColumnLockMinOrderByAggregateInput
+  }
+
+  export type TransporterItemColumnLockScalarWhereWithAggregatesInput = {
+    AND?: TransporterItemColumnLockScalarWhereWithAggregatesInput | TransporterItemColumnLockScalarWhereWithAggregatesInput[]
+    OR?: TransporterItemColumnLockScalarWhereWithAggregatesInput[]
+    NOT?: TransporterItemColumnLockScalarWhereWithAggregatesInput | TransporterItemColumnLockScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"TransporterItemColumnLock"> | string
+    columnKey?: StringWithAggregatesFilter<"TransporterItemColumnLock"> | string
+    isLocked?: BoolWithAggregatesFilter<"TransporterItemColumnLock"> | boolean
+    lockedAt?: DateTimeNullableWithAggregatesFilter<"TransporterItemColumnLock"> | Date | string | null
+    lockedById?: StringNullableWithAggregatesFilter<"TransporterItemColumnLock"> | string | null
+    lockReason?: StringNullableWithAggregatesFilter<"TransporterItemColumnLock"> | string | null
+    createdAt?: DateTimeWithAggregatesFilter<"TransporterItemColumnLock"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"TransporterItemColumnLock"> | Date | string
+  }
+
+  export type TransporterWhereInput = {
+    AND?: TransporterWhereInput | TransporterWhereInput[]
+    OR?: TransporterWhereInput[]
+    NOT?: TransporterWhereInput | TransporterWhereInput[]
+    id?: StringFilter<"Transporter"> | string
+    transportNumber?: StringFilter<"Transporter"> | string
+    transportDate?: DateTimeFilter<"Transporter"> | Date | string
+    truckOwnerName?: StringFilter<"Transporter"> | string
+    shipmentId?: StringNullableFilter<"Transporter"> | string | null
+    remarks?: StringNullableFilter<"Transporter"> | string | null
+    isLocked?: BoolFilter<"Transporter"> | boolean
+    lockedAt?: DateTimeNullableFilter<"Transporter"> | Date | string | null
+    updatedById?: StringNullableFilter<"Transporter"> | string | null
+    createdAt?: DateTimeFilter<"Transporter"> | Date | string
+    updatedAt?: DateTimeFilter<"Transporter"> | Date | string
+    shipment?: XOR<ShipmentNullableScalarRelationFilter, ShipmentWhereInput> | null
+    updatedBy?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
+    items?: TransporterItemListRelationFilter
+  }
+
+  export type TransporterOrderByWithRelationInput = {
+    id?: SortOrder
+    transportNumber?: SortOrder
+    transportDate?: SortOrder
+    truckOwnerName?: SortOrder
+    shipmentId?: SortOrderInput | SortOrder
+    remarks?: SortOrderInput | SortOrder
+    isLocked?: SortOrder
+    lockedAt?: SortOrderInput | SortOrder
+    updatedById?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    shipment?: ShipmentOrderByWithRelationInput
+    updatedBy?: UserOrderByWithRelationInput
+    items?: TransporterItemOrderByRelationAggregateInput
+  }
+
+  export type TransporterWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    transportNumber?: string
+    AND?: TransporterWhereInput | TransporterWhereInput[]
+    OR?: TransporterWhereInput[]
+    NOT?: TransporterWhereInput | TransporterWhereInput[]
+    transportDate?: DateTimeFilter<"Transporter"> | Date | string
+    truckOwnerName?: StringFilter<"Transporter"> | string
+    shipmentId?: StringNullableFilter<"Transporter"> | string | null
+    remarks?: StringNullableFilter<"Transporter"> | string | null
+    isLocked?: BoolFilter<"Transporter"> | boolean
+    lockedAt?: DateTimeNullableFilter<"Transporter"> | Date | string | null
+    updatedById?: StringNullableFilter<"Transporter"> | string | null
+    createdAt?: DateTimeFilter<"Transporter"> | Date | string
+    updatedAt?: DateTimeFilter<"Transporter"> | Date | string
+    shipment?: XOR<ShipmentNullableScalarRelationFilter, ShipmentWhereInput> | null
+    updatedBy?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
+    items?: TransporterItemListRelationFilter
+  }, "id" | "transportNumber">
+
+  export type TransporterOrderByWithAggregationInput = {
+    id?: SortOrder
+    transportNumber?: SortOrder
+    transportDate?: SortOrder
+    truckOwnerName?: SortOrder
+    shipmentId?: SortOrderInput | SortOrder
+    remarks?: SortOrderInput | SortOrder
+    isLocked?: SortOrder
+    lockedAt?: SortOrderInput | SortOrder
+    updatedById?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: TransporterCountOrderByAggregateInput
+    _max?: TransporterMaxOrderByAggregateInput
+    _min?: TransporterMinOrderByAggregateInput
+  }
+
+  export type TransporterScalarWhereWithAggregatesInput = {
+    AND?: TransporterScalarWhereWithAggregatesInput | TransporterScalarWhereWithAggregatesInput[]
+    OR?: TransporterScalarWhereWithAggregatesInput[]
+    NOT?: TransporterScalarWhereWithAggregatesInput | TransporterScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"Transporter"> | string
+    transportNumber?: StringWithAggregatesFilter<"Transporter"> | string
+    transportDate?: DateTimeWithAggregatesFilter<"Transporter"> | Date | string
+    truckOwnerName?: StringWithAggregatesFilter<"Transporter"> | string
+    shipmentId?: StringNullableWithAggregatesFilter<"Transporter"> | string | null
+    remarks?: StringNullableWithAggregatesFilter<"Transporter"> | string | null
+    isLocked?: BoolWithAggregatesFilter<"Transporter"> | boolean
+    lockedAt?: DateTimeNullableWithAggregatesFilter<"Transporter"> | Date | string | null
+    updatedById?: StringNullableWithAggregatesFilter<"Transporter"> | string | null
+    createdAt?: DateTimeWithAggregatesFilter<"Transporter"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"Transporter"> | Date | string
+  }
+
+  export type TransporterItemWhereInput = {
+    AND?: TransporterItemWhereInput | TransporterItemWhereInput[]
+    OR?: TransporterItemWhereInput[]
+    NOT?: TransporterItemWhereInput | TransporterItemWhereInput[]
+    id?: StringFilter<"TransporterItem"> | string
+    transporterId?: StringFilter<"TransporterItem"> | string
+    itemDate?: DateTimeFilter<"TransporterItem"> | Date | string
+    itemType?: EnumTransportItemTypeFilter<"TransporterItem"> | $Enums.TransportItemType
+    name?: StringNullableFilter<"TransporterItem"> | string | null
+    frontPlateNumber?: StringNullableFilter<"TransporterItem"> | string | null
+    backPlateNumber?: StringNullableFilter<"TransporterItem"> | string | null
+    containerName?: StringNullableFilter<"TransporterItem"> | string | null
+    containerNumber?: StringNullableFilter<"TransporterItem"> | string | null
+    status?: EnumTransporterStatusFilter<"TransporterItem"> | $Enums.TransporterStatus
+    chargeAmount?: DecimalFilter<"TransporterItem"> | Decimal | DecimalJsLike | number | string
+    chargeCurrency?: EnumCurrencyFilter<"TransporterItem"> | $Enums.Currency
+    paymentStatus?: EnumPaymentStatusFilter<"TransporterItem"> | $Enums.PaymentStatus
+    remarks?: StringNullableFilter<"TransporterItem"> | string | null
+    isLocked?: BoolFilter<"TransporterItem"> | boolean
+    lockedFields?: StringNullableListFilter<"TransporterItem">
+    lockedAt?: DateTimeNullableFilter<"TransporterItem"> | Date | string | null
+    createdAt?: DateTimeFilter<"TransporterItem"> | Date | string
+    updatedAt?: DateTimeFilter<"TransporterItem"> | Date | string
+    transporter?: XOR<TransporterScalarRelationFilter, TransporterWhereInput>
+    payments?: TransporterPaymentListRelationFilter
+  }
+
+  export type TransporterItemOrderByWithRelationInput = {
+    id?: SortOrder
+    transporterId?: SortOrder
+    itemDate?: SortOrder
+    itemType?: SortOrder
+    name?: SortOrderInput | SortOrder
+    frontPlateNumber?: SortOrderInput | SortOrder
+    backPlateNumber?: SortOrderInput | SortOrder
+    containerName?: SortOrderInput | SortOrder
+    containerNumber?: SortOrderInput | SortOrder
+    status?: SortOrder
+    chargeAmount?: SortOrder
+    chargeCurrency?: SortOrder
+    paymentStatus?: SortOrder
+    remarks?: SortOrderInput | SortOrder
+    isLocked?: SortOrder
+    lockedFields?: SortOrder
+    lockedAt?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    transporter?: TransporterOrderByWithRelationInput
+    payments?: TransporterPaymentOrderByRelationAggregateInput
+  }
+
+  export type TransporterItemWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: TransporterItemWhereInput | TransporterItemWhereInput[]
+    OR?: TransporterItemWhereInput[]
+    NOT?: TransporterItemWhereInput | TransporterItemWhereInput[]
+    transporterId?: StringFilter<"TransporterItem"> | string
+    itemDate?: DateTimeFilter<"TransporterItem"> | Date | string
+    itemType?: EnumTransportItemTypeFilter<"TransporterItem"> | $Enums.TransportItemType
+    name?: StringNullableFilter<"TransporterItem"> | string | null
+    frontPlateNumber?: StringNullableFilter<"TransporterItem"> | string | null
+    backPlateNumber?: StringNullableFilter<"TransporterItem"> | string | null
+    containerName?: StringNullableFilter<"TransporterItem"> | string | null
+    containerNumber?: StringNullableFilter<"TransporterItem"> | string | null
+    status?: EnumTransporterStatusFilter<"TransporterItem"> | $Enums.TransporterStatus
+    chargeAmount?: DecimalFilter<"TransporterItem"> | Decimal | DecimalJsLike | number | string
+    chargeCurrency?: EnumCurrencyFilter<"TransporterItem"> | $Enums.Currency
+    paymentStatus?: EnumPaymentStatusFilter<"TransporterItem"> | $Enums.PaymentStatus
+    remarks?: StringNullableFilter<"TransporterItem"> | string | null
+    isLocked?: BoolFilter<"TransporterItem"> | boolean
+    lockedFields?: StringNullableListFilter<"TransporterItem">
+    lockedAt?: DateTimeNullableFilter<"TransporterItem"> | Date | string | null
+    createdAt?: DateTimeFilter<"TransporterItem"> | Date | string
+    updatedAt?: DateTimeFilter<"TransporterItem"> | Date | string
+    transporter?: XOR<TransporterScalarRelationFilter, TransporterWhereInput>
+    payments?: TransporterPaymentListRelationFilter
+  }, "id">
+
+  export type TransporterItemOrderByWithAggregationInput = {
+    id?: SortOrder
+    transporterId?: SortOrder
+    itemDate?: SortOrder
+    itemType?: SortOrder
+    name?: SortOrderInput | SortOrder
+    frontPlateNumber?: SortOrderInput | SortOrder
+    backPlateNumber?: SortOrderInput | SortOrder
+    containerName?: SortOrderInput | SortOrder
+    containerNumber?: SortOrderInput | SortOrder
+    status?: SortOrder
+    chargeAmount?: SortOrder
+    chargeCurrency?: SortOrder
+    paymentStatus?: SortOrder
+    remarks?: SortOrderInput | SortOrder
+    isLocked?: SortOrder
+    lockedFields?: SortOrder
+    lockedAt?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: TransporterItemCountOrderByAggregateInput
+    _avg?: TransporterItemAvgOrderByAggregateInput
+    _max?: TransporterItemMaxOrderByAggregateInput
+    _min?: TransporterItemMinOrderByAggregateInput
+    _sum?: TransporterItemSumOrderByAggregateInput
+  }
+
+  export type TransporterItemScalarWhereWithAggregatesInput = {
+    AND?: TransporterItemScalarWhereWithAggregatesInput | TransporterItemScalarWhereWithAggregatesInput[]
+    OR?: TransporterItemScalarWhereWithAggregatesInput[]
+    NOT?: TransporterItemScalarWhereWithAggregatesInput | TransporterItemScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"TransporterItem"> | string
+    transporterId?: StringWithAggregatesFilter<"TransporterItem"> | string
+    itemDate?: DateTimeWithAggregatesFilter<"TransporterItem"> | Date | string
+    itemType?: EnumTransportItemTypeWithAggregatesFilter<"TransporterItem"> | $Enums.TransportItemType
+    name?: StringNullableWithAggregatesFilter<"TransporterItem"> | string | null
+    frontPlateNumber?: StringNullableWithAggregatesFilter<"TransporterItem"> | string | null
+    backPlateNumber?: StringNullableWithAggregatesFilter<"TransporterItem"> | string | null
+    containerName?: StringNullableWithAggregatesFilter<"TransporterItem"> | string | null
+    containerNumber?: StringNullableWithAggregatesFilter<"TransporterItem"> | string | null
+    status?: EnumTransporterStatusWithAggregatesFilter<"TransporterItem"> | $Enums.TransporterStatus
+    chargeAmount?: DecimalWithAggregatesFilter<"TransporterItem"> | Decimal | DecimalJsLike | number | string
+    chargeCurrency?: EnumCurrencyWithAggregatesFilter<"TransporterItem"> | $Enums.Currency
+    paymentStatus?: EnumPaymentStatusWithAggregatesFilter<"TransporterItem"> | $Enums.PaymentStatus
+    remarks?: StringNullableWithAggregatesFilter<"TransporterItem"> | string | null
+    isLocked?: BoolWithAggregatesFilter<"TransporterItem"> | boolean
+    lockedFields?: StringNullableListFilter<"TransporterItem">
+    lockedAt?: DateTimeNullableWithAggregatesFilter<"TransporterItem"> | Date | string | null
+    createdAt?: DateTimeWithAggregatesFilter<"TransporterItem"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"TransporterItem"> | Date | string
+  }
+
+  export type TransporterPaymentWhereInput = {
+    AND?: TransporterPaymentWhereInput | TransporterPaymentWhereInput[]
+    OR?: TransporterPaymentWhereInput[]
+    NOT?: TransporterPaymentWhereInput | TransporterPaymentWhereInput[]
+    id?: StringFilter<"TransporterPayment"> | string
+    transportItemId?: StringFilter<"TransporterPayment"> | string
+    recordedById?: StringNullableFilter<"TransporterPayment"> | string | null
+    amount?: DecimalFilter<"TransporterPayment"> | Decimal | DecimalJsLike | number | string
+    paymentType?: EnumItemPaymentTypeFilter<"TransporterPayment"> | $Enums.ItemPaymentType
+    paymentDate?: DateTimeFilter<"TransporterPayment"> | Date | string
+    paymentMethod?: StringNullableFilter<"TransporterPayment"> | string | null
+    reference?: StringNullableFilter<"TransporterPayment"> | string | null
+    description?: StringNullableFilter<"TransporterPayment"> | string | null
+    notes?: StringNullableFilter<"TransporterPayment"> | string | null
+    createdAt?: DateTimeFilter<"TransporterPayment"> | Date | string
+    updatedAt?: DateTimeFilter<"TransporterPayment"> | Date | string
+    transporterItem?: XOR<TransporterItemScalarRelationFilter, TransporterItemWhereInput>
+    recordedBy?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
+  }
+
+  export type TransporterPaymentOrderByWithRelationInput = {
+    id?: SortOrder
+    transportItemId?: SortOrder
+    recordedById?: SortOrderInput | SortOrder
+    amount?: SortOrder
+    paymentType?: SortOrder
+    paymentDate?: SortOrder
+    paymentMethod?: SortOrderInput | SortOrder
+    reference?: SortOrderInput | SortOrder
+    description?: SortOrderInput | SortOrder
+    notes?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    transporterItem?: TransporterItemOrderByWithRelationInput
+    recordedBy?: UserOrderByWithRelationInput
+  }
+
+  export type TransporterPaymentWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: TransporterPaymentWhereInput | TransporterPaymentWhereInput[]
+    OR?: TransporterPaymentWhereInput[]
+    NOT?: TransporterPaymentWhereInput | TransporterPaymentWhereInput[]
+    transportItemId?: StringFilter<"TransporterPayment"> | string
+    recordedById?: StringNullableFilter<"TransporterPayment"> | string | null
+    amount?: DecimalFilter<"TransporterPayment"> | Decimal | DecimalJsLike | number | string
+    paymentType?: EnumItemPaymentTypeFilter<"TransporterPayment"> | $Enums.ItemPaymentType
+    paymentDate?: DateTimeFilter<"TransporterPayment"> | Date | string
+    paymentMethod?: StringNullableFilter<"TransporterPayment"> | string | null
+    reference?: StringNullableFilter<"TransporterPayment"> | string | null
+    description?: StringNullableFilter<"TransporterPayment"> | string | null
+    notes?: StringNullableFilter<"TransporterPayment"> | string | null
+    createdAt?: DateTimeFilter<"TransporterPayment"> | Date | string
+    updatedAt?: DateTimeFilter<"TransporterPayment"> | Date | string
+    transporterItem?: XOR<TransporterItemScalarRelationFilter, TransporterItemWhereInput>
+    recordedBy?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
+  }, "id">
+
+  export type TransporterPaymentOrderByWithAggregationInput = {
+    id?: SortOrder
+    transportItemId?: SortOrder
+    recordedById?: SortOrderInput | SortOrder
+    amount?: SortOrder
+    paymentType?: SortOrder
+    paymentDate?: SortOrder
+    paymentMethod?: SortOrderInput | SortOrder
+    reference?: SortOrderInput | SortOrder
+    description?: SortOrderInput | SortOrder
+    notes?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: TransporterPaymentCountOrderByAggregateInput
+    _avg?: TransporterPaymentAvgOrderByAggregateInput
+    _max?: TransporterPaymentMaxOrderByAggregateInput
+    _min?: TransporterPaymentMinOrderByAggregateInput
+    _sum?: TransporterPaymentSumOrderByAggregateInput
+  }
+
+  export type TransporterPaymentScalarWhereWithAggregatesInput = {
+    AND?: TransporterPaymentScalarWhereWithAggregatesInput | TransporterPaymentScalarWhereWithAggregatesInput[]
+    OR?: TransporterPaymentScalarWhereWithAggregatesInput[]
+    NOT?: TransporterPaymentScalarWhereWithAggregatesInput | TransporterPaymentScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"TransporterPayment"> | string
+    transportItemId?: StringWithAggregatesFilter<"TransporterPayment"> | string
+    recordedById?: StringNullableWithAggregatesFilter<"TransporterPayment"> | string | null
+    amount?: DecimalWithAggregatesFilter<"TransporterPayment"> | Decimal | DecimalJsLike | number | string
+    paymentType?: EnumItemPaymentTypeWithAggregatesFilter<"TransporterPayment"> | $Enums.ItemPaymentType
+    paymentDate?: DateTimeWithAggregatesFilter<"TransporterPayment"> | Date | string
+    paymentMethod?: StringNullableWithAggregatesFilter<"TransporterPayment"> | string | null
+    reference?: StringNullableWithAggregatesFilter<"TransporterPayment"> | string | null
+    description?: StringNullableWithAggregatesFilter<"TransporterPayment"> | string | null
+    notes?: StringNullableWithAggregatesFilter<"TransporterPayment"> | string | null
+    createdAt?: DateTimeWithAggregatesFilter<"TransporterPayment"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"TransporterPayment"> | Date | string
+  }
+
   export type UserCreateInput = {
     id?: string
     name: string
@@ -68335,6 +74274,9 @@ export namespace Prisma {
     updatedTransports?: TransportCreateNestedManyWithoutUpdatedByInput
     transitMovementPayments?: TransitMovementPaymentCreateNestedManyWithoutRecordedByInput
     transitMovementColumnLocks?: TransitMovementItemColumnLockCreateNestedManyWithoutLockedByInput
+    transporterPayments?: TransporterPaymentCreateNestedManyWithoutRecordedByInput
+    transporterColumnLocks?: TransporterItemColumnLockCreateNestedManyWithoutLockedByInput
+    updatedTransporters?: TransporterCreateNestedManyWithoutUpdatedByInput
   }
 
   export type UserUncheckedCreateInput = {
@@ -68367,6 +74309,9 @@ export namespace Prisma {
     updatedTransports?: TransportUncheckedCreateNestedManyWithoutUpdatedByInput
     transitMovementPayments?: TransitMovementPaymentUncheckedCreateNestedManyWithoutRecordedByInput
     transitMovementColumnLocks?: TransitMovementItemColumnLockUncheckedCreateNestedManyWithoutLockedByInput
+    transporterPayments?: TransporterPaymentUncheckedCreateNestedManyWithoutRecordedByInput
+    transporterColumnLocks?: TransporterItemColumnLockUncheckedCreateNestedManyWithoutLockedByInput
+    updatedTransporters?: TransporterUncheckedCreateNestedManyWithoutUpdatedByInput
   }
 
   export type UserUpdateInput = {
@@ -68399,6 +74344,9 @@ export namespace Prisma {
     updatedTransports?: TransportUpdateManyWithoutUpdatedByNestedInput
     transitMovementPayments?: TransitMovementPaymentUpdateManyWithoutRecordedByNestedInput
     transitMovementColumnLocks?: TransitMovementItemColumnLockUpdateManyWithoutLockedByNestedInput
+    transporterPayments?: TransporterPaymentUpdateManyWithoutRecordedByNestedInput
+    transporterColumnLocks?: TransporterItemColumnLockUpdateManyWithoutLockedByNestedInput
+    updatedTransporters?: TransporterUpdateManyWithoutUpdatedByNestedInput
   }
 
   export type UserUncheckedUpdateInput = {
@@ -68431,6 +74379,9 @@ export namespace Prisma {
     updatedTransports?: TransportUncheckedUpdateManyWithoutUpdatedByNestedInput
     transitMovementPayments?: TransitMovementPaymentUncheckedUpdateManyWithoutRecordedByNestedInput
     transitMovementColumnLocks?: TransitMovementItemColumnLockUncheckedUpdateManyWithoutLockedByNestedInput
+    transporterPayments?: TransporterPaymentUncheckedUpdateManyWithoutRecordedByNestedInput
+    transporterColumnLocks?: TransporterItemColumnLockUncheckedUpdateManyWithoutLockedByNestedInput
+    updatedTransporters?: TransporterUncheckedUpdateManyWithoutUpdatedByNestedInput
   }
 
   export type UserCreateManyInput = {
@@ -68835,6 +74786,7 @@ export namespace Prisma {
     documents?: DocumentCreateNestedManyWithoutShipmentInput
     invoices?: InvoiceCreateNestedManyWithoutShipmentInput
     transports?: TransportCreateNestedManyWithoutShipmentInput
+    transporters?: TransporterCreateNestedManyWithoutShipmentInput
     packingList?: PackingListCreateNestedOneWithoutShipmentInput
     allocation?: AllocationCreateNestedOneWithoutShipmentInput
     client: ClientCreateNestedOneWithoutShipmentsInput
@@ -68877,6 +74829,7 @@ export namespace Prisma {
     documents?: DocumentUncheckedCreateNestedManyWithoutShipmentInput
     invoices?: InvoiceUncheckedCreateNestedManyWithoutShipmentInput
     transports?: TransportUncheckedCreateNestedManyWithoutShipmentInput
+    transporters?: TransporterUncheckedCreateNestedManyWithoutShipmentInput
     packingList?: PackingListUncheckedCreateNestedOneWithoutShipmentInput
     transits?: TransitUncheckedCreateNestedManyWithoutShipmentInput
     transitMovements?: TransitMovementUncheckedCreateNestedManyWithoutShipmentInput
@@ -68909,6 +74862,7 @@ export namespace Prisma {
     documents?: DocumentUpdateManyWithoutShipmentNestedInput
     invoices?: InvoiceUpdateManyWithoutShipmentNestedInput
     transports?: TransportUpdateManyWithoutShipmentNestedInput
+    transporters?: TransporterUpdateManyWithoutShipmentNestedInput
     packingList?: PackingListUpdateOneWithoutShipmentNestedInput
     allocation?: AllocationUpdateOneWithoutShipmentNestedInput
     client?: ClientUpdateOneRequiredWithoutShipmentsNestedInput
@@ -68951,6 +74905,7 @@ export namespace Prisma {
     documents?: DocumentUncheckedUpdateManyWithoutShipmentNestedInput
     invoices?: InvoiceUncheckedUpdateManyWithoutShipmentNestedInput
     transports?: TransportUncheckedUpdateManyWithoutShipmentNestedInput
+    transporters?: TransporterUncheckedUpdateManyWithoutShipmentNestedInput
     packingList?: PackingListUncheckedUpdateOneWithoutShipmentNestedInput
     transits?: TransitUncheckedUpdateManyWithoutShipmentNestedInput
     transitMovements?: TransitMovementUncheckedUpdateManyWithoutShipmentNestedInput
@@ -73737,6 +79692,442 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type TransporterItemColumnLockCreateInput = {
+    id?: string
+    columnKey: string
+    isLocked?: boolean
+    lockedAt?: Date | string | null
+    lockReason?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    lockedBy?: UserCreateNestedOneWithoutTransporterColumnLocksInput
+  }
+
+  export type TransporterItemColumnLockUncheckedCreateInput = {
+    id?: string
+    columnKey: string
+    isLocked?: boolean
+    lockedAt?: Date | string | null
+    lockedById?: string | null
+    lockReason?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type TransporterItemColumnLockUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    columnKey?: StringFieldUpdateOperationsInput | string
+    isLocked?: BoolFieldUpdateOperationsInput | boolean
+    lockedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lockReason?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    lockedBy?: UserUpdateOneWithoutTransporterColumnLocksNestedInput
+  }
+
+  export type TransporterItemColumnLockUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    columnKey?: StringFieldUpdateOperationsInput | string
+    isLocked?: BoolFieldUpdateOperationsInput | boolean
+    lockedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lockedById?: NullableStringFieldUpdateOperationsInput | string | null
+    lockReason?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type TransporterItemColumnLockCreateManyInput = {
+    id?: string
+    columnKey: string
+    isLocked?: boolean
+    lockedAt?: Date | string | null
+    lockedById?: string | null
+    lockReason?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type TransporterItemColumnLockUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    columnKey?: StringFieldUpdateOperationsInput | string
+    isLocked?: BoolFieldUpdateOperationsInput | boolean
+    lockedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lockReason?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type TransporterItemColumnLockUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    columnKey?: StringFieldUpdateOperationsInput | string
+    isLocked?: BoolFieldUpdateOperationsInput | boolean
+    lockedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lockedById?: NullableStringFieldUpdateOperationsInput | string | null
+    lockReason?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type TransporterCreateInput = {
+    id?: string
+    transportNumber: string
+    transportDate: Date | string
+    truckOwnerName: string
+    remarks?: string | null
+    isLocked?: boolean
+    lockedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    shipment?: ShipmentCreateNestedOneWithoutTransportersInput
+    updatedBy?: UserCreateNestedOneWithoutUpdatedTransportersInput
+    items?: TransporterItemCreateNestedManyWithoutTransporterInput
+  }
+
+  export type TransporterUncheckedCreateInput = {
+    id?: string
+    transportNumber: string
+    transportDate: Date | string
+    truckOwnerName: string
+    shipmentId?: string | null
+    remarks?: string | null
+    isLocked?: boolean
+    lockedAt?: Date | string | null
+    updatedById?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    items?: TransporterItemUncheckedCreateNestedManyWithoutTransporterInput
+  }
+
+  export type TransporterUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    transportNumber?: StringFieldUpdateOperationsInput | string
+    transportDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    truckOwnerName?: StringFieldUpdateOperationsInput | string
+    remarks?: NullableStringFieldUpdateOperationsInput | string | null
+    isLocked?: BoolFieldUpdateOperationsInput | boolean
+    lockedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    shipment?: ShipmentUpdateOneWithoutTransportersNestedInput
+    updatedBy?: UserUpdateOneWithoutUpdatedTransportersNestedInput
+    items?: TransporterItemUpdateManyWithoutTransporterNestedInput
+  }
+
+  export type TransporterUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    transportNumber?: StringFieldUpdateOperationsInput | string
+    transportDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    truckOwnerName?: StringFieldUpdateOperationsInput | string
+    shipmentId?: NullableStringFieldUpdateOperationsInput | string | null
+    remarks?: NullableStringFieldUpdateOperationsInput | string | null
+    isLocked?: BoolFieldUpdateOperationsInput | boolean
+    lockedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    updatedById?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    items?: TransporterItemUncheckedUpdateManyWithoutTransporterNestedInput
+  }
+
+  export type TransporterCreateManyInput = {
+    id?: string
+    transportNumber: string
+    transportDate: Date | string
+    truckOwnerName: string
+    shipmentId?: string | null
+    remarks?: string | null
+    isLocked?: boolean
+    lockedAt?: Date | string | null
+    updatedById?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type TransporterUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    transportNumber?: StringFieldUpdateOperationsInput | string
+    transportDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    truckOwnerName?: StringFieldUpdateOperationsInput | string
+    remarks?: NullableStringFieldUpdateOperationsInput | string | null
+    isLocked?: BoolFieldUpdateOperationsInput | boolean
+    lockedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type TransporterUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    transportNumber?: StringFieldUpdateOperationsInput | string
+    transportDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    truckOwnerName?: StringFieldUpdateOperationsInput | string
+    shipmentId?: NullableStringFieldUpdateOperationsInput | string | null
+    remarks?: NullableStringFieldUpdateOperationsInput | string | null
+    isLocked?: BoolFieldUpdateOperationsInput | boolean
+    lockedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    updatedById?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type TransporterItemCreateInput = {
+    id?: string
+    itemDate: Date | string
+    itemType: $Enums.TransportItemType
+    name?: string | null
+    frontPlateNumber?: string | null
+    backPlateNumber?: string | null
+    containerName?: string | null
+    containerNumber?: string | null
+    status?: $Enums.TransporterStatus
+    chargeAmount?: Decimal | DecimalJsLike | number | string
+    chargeCurrency?: $Enums.Currency
+    paymentStatus?: $Enums.PaymentStatus
+    remarks?: string | null
+    isLocked?: boolean
+    lockedFields?: TransporterItemCreatelockedFieldsInput | string[]
+    lockedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    transporter: TransporterCreateNestedOneWithoutItemsInput
+    payments?: TransporterPaymentCreateNestedManyWithoutTransporterItemInput
+  }
+
+  export type TransporterItemUncheckedCreateInput = {
+    id?: string
+    transporterId: string
+    itemDate: Date | string
+    itemType: $Enums.TransportItemType
+    name?: string | null
+    frontPlateNumber?: string | null
+    backPlateNumber?: string | null
+    containerName?: string | null
+    containerNumber?: string | null
+    status?: $Enums.TransporterStatus
+    chargeAmount?: Decimal | DecimalJsLike | number | string
+    chargeCurrency?: $Enums.Currency
+    paymentStatus?: $Enums.PaymentStatus
+    remarks?: string | null
+    isLocked?: boolean
+    lockedFields?: TransporterItemCreatelockedFieldsInput | string[]
+    lockedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    payments?: TransporterPaymentUncheckedCreateNestedManyWithoutTransporterItemInput
+  }
+
+  export type TransporterItemUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    itemDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    itemType?: EnumTransportItemTypeFieldUpdateOperationsInput | $Enums.TransportItemType
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    frontPlateNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    backPlateNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    containerName?: NullableStringFieldUpdateOperationsInput | string | null
+    containerNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumTransporterStatusFieldUpdateOperationsInput | $Enums.TransporterStatus
+    chargeAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    chargeCurrency?: EnumCurrencyFieldUpdateOperationsInput | $Enums.Currency
+    paymentStatus?: EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
+    remarks?: NullableStringFieldUpdateOperationsInput | string | null
+    isLocked?: BoolFieldUpdateOperationsInput | boolean
+    lockedFields?: TransporterItemUpdatelockedFieldsInput | string[]
+    lockedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    transporter?: TransporterUpdateOneRequiredWithoutItemsNestedInput
+    payments?: TransporterPaymentUpdateManyWithoutTransporterItemNestedInput
+  }
+
+  export type TransporterItemUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    transporterId?: StringFieldUpdateOperationsInput | string
+    itemDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    itemType?: EnumTransportItemTypeFieldUpdateOperationsInput | $Enums.TransportItemType
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    frontPlateNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    backPlateNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    containerName?: NullableStringFieldUpdateOperationsInput | string | null
+    containerNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumTransporterStatusFieldUpdateOperationsInput | $Enums.TransporterStatus
+    chargeAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    chargeCurrency?: EnumCurrencyFieldUpdateOperationsInput | $Enums.Currency
+    paymentStatus?: EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
+    remarks?: NullableStringFieldUpdateOperationsInput | string | null
+    isLocked?: BoolFieldUpdateOperationsInput | boolean
+    lockedFields?: TransporterItemUpdatelockedFieldsInput | string[]
+    lockedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    payments?: TransporterPaymentUncheckedUpdateManyWithoutTransporterItemNestedInput
+  }
+
+  export type TransporterItemCreateManyInput = {
+    id?: string
+    transporterId: string
+    itemDate: Date | string
+    itemType: $Enums.TransportItemType
+    name?: string | null
+    frontPlateNumber?: string | null
+    backPlateNumber?: string | null
+    containerName?: string | null
+    containerNumber?: string | null
+    status?: $Enums.TransporterStatus
+    chargeAmount?: Decimal | DecimalJsLike | number | string
+    chargeCurrency?: $Enums.Currency
+    paymentStatus?: $Enums.PaymentStatus
+    remarks?: string | null
+    isLocked?: boolean
+    lockedFields?: TransporterItemCreatelockedFieldsInput | string[]
+    lockedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type TransporterItemUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    itemDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    itemType?: EnumTransportItemTypeFieldUpdateOperationsInput | $Enums.TransportItemType
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    frontPlateNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    backPlateNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    containerName?: NullableStringFieldUpdateOperationsInput | string | null
+    containerNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumTransporterStatusFieldUpdateOperationsInput | $Enums.TransporterStatus
+    chargeAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    chargeCurrency?: EnumCurrencyFieldUpdateOperationsInput | $Enums.Currency
+    paymentStatus?: EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
+    remarks?: NullableStringFieldUpdateOperationsInput | string | null
+    isLocked?: BoolFieldUpdateOperationsInput | boolean
+    lockedFields?: TransporterItemUpdatelockedFieldsInput | string[]
+    lockedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type TransporterItemUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    transporterId?: StringFieldUpdateOperationsInput | string
+    itemDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    itemType?: EnumTransportItemTypeFieldUpdateOperationsInput | $Enums.TransportItemType
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    frontPlateNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    backPlateNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    containerName?: NullableStringFieldUpdateOperationsInput | string | null
+    containerNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumTransporterStatusFieldUpdateOperationsInput | $Enums.TransporterStatus
+    chargeAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    chargeCurrency?: EnumCurrencyFieldUpdateOperationsInput | $Enums.Currency
+    paymentStatus?: EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
+    remarks?: NullableStringFieldUpdateOperationsInput | string | null
+    isLocked?: BoolFieldUpdateOperationsInput | boolean
+    lockedFields?: TransporterItemUpdatelockedFieldsInput | string[]
+    lockedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type TransporterPaymentCreateInput = {
+    id?: string
+    amount: Decimal | DecimalJsLike | number | string
+    paymentType: $Enums.ItemPaymentType
+    paymentDate?: Date | string
+    paymentMethod?: string | null
+    reference?: string | null
+    description?: string | null
+    notes?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    transporterItem: TransporterItemCreateNestedOneWithoutPaymentsInput
+    recordedBy?: UserCreateNestedOneWithoutTransporterPaymentsInput
+  }
+
+  export type TransporterPaymentUncheckedCreateInput = {
+    id?: string
+    transportItemId: string
+    recordedById?: string | null
+    amount: Decimal | DecimalJsLike | number | string
+    paymentType: $Enums.ItemPaymentType
+    paymentDate?: Date | string
+    paymentMethod?: string | null
+    reference?: string | null
+    description?: string | null
+    notes?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type TransporterPaymentUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    paymentType?: EnumItemPaymentTypeFieldUpdateOperationsInput | $Enums.ItemPaymentType
+    paymentDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    paymentMethod?: NullableStringFieldUpdateOperationsInput | string | null
+    reference?: NullableStringFieldUpdateOperationsInput | string | null
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    transporterItem?: TransporterItemUpdateOneRequiredWithoutPaymentsNestedInput
+    recordedBy?: UserUpdateOneWithoutTransporterPaymentsNestedInput
+  }
+
+  export type TransporterPaymentUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    transportItemId?: StringFieldUpdateOperationsInput | string
+    recordedById?: NullableStringFieldUpdateOperationsInput | string | null
+    amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    paymentType?: EnumItemPaymentTypeFieldUpdateOperationsInput | $Enums.ItemPaymentType
+    paymentDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    paymentMethod?: NullableStringFieldUpdateOperationsInput | string | null
+    reference?: NullableStringFieldUpdateOperationsInput | string | null
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type TransporterPaymentCreateManyInput = {
+    id?: string
+    transportItemId: string
+    recordedById?: string | null
+    amount: Decimal | DecimalJsLike | number | string
+    paymentType: $Enums.ItemPaymentType
+    paymentDate?: Date | string
+    paymentMethod?: string | null
+    reference?: string | null
+    description?: string | null
+    notes?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type TransporterPaymentUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    paymentType?: EnumItemPaymentTypeFieldUpdateOperationsInput | $Enums.ItemPaymentType
+    paymentDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    paymentMethod?: NullableStringFieldUpdateOperationsInput | string | null
+    reference?: NullableStringFieldUpdateOperationsInput | string | null
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type TransporterPaymentUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    transportItemId?: StringFieldUpdateOperationsInput | string
+    recordedById?: NullableStringFieldUpdateOperationsInput | string | null
+    amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    paymentType?: EnumItemPaymentTypeFieldUpdateOperationsInput | $Enums.ItemPaymentType
+    paymentDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    paymentMethod?: NullableStringFieldUpdateOperationsInput | string | null
+    reference?: NullableStringFieldUpdateOperationsInput | string | null
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type StringFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel>
     in?: string[] | ListStringFieldRefInput<$PrismaModel>
@@ -73880,6 +80271,24 @@ export namespace Prisma {
     none?: TransitMovementItemColumnLockWhereInput
   }
 
+  export type TransporterPaymentListRelationFilter = {
+    every?: TransporterPaymentWhereInput
+    some?: TransporterPaymentWhereInput
+    none?: TransporterPaymentWhereInput
+  }
+
+  export type TransporterItemColumnLockListRelationFilter = {
+    every?: TransporterItemColumnLockWhereInput
+    some?: TransporterItemColumnLockWhereInput
+    none?: TransporterItemColumnLockWhereInput
+  }
+
+  export type TransporterListRelationFilter = {
+    every?: TransporterWhereInput
+    some?: TransporterWhereInput
+    none?: TransporterWhereInput
+  }
+
   export type SortOrderInput = {
     sort: SortOrder
     nulls?: NullsOrder
@@ -73942,6 +80351,18 @@ export namespace Prisma {
   }
 
   export type TransitMovementItemColumnLockOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type TransporterPaymentOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type TransporterItemColumnLockOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type TransporterOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -77747,6 +84168,243 @@ export namespace Prisma {
     updatedAt?: SortOrder
   }
 
+  export type TransporterItemColumnLockCountOrderByAggregateInput = {
+    id?: SortOrder
+    columnKey?: SortOrder
+    isLocked?: SortOrder
+    lockedAt?: SortOrder
+    lockedById?: SortOrder
+    lockReason?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type TransporterItemColumnLockMaxOrderByAggregateInput = {
+    id?: SortOrder
+    columnKey?: SortOrder
+    isLocked?: SortOrder
+    lockedAt?: SortOrder
+    lockedById?: SortOrder
+    lockReason?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type TransporterItemColumnLockMinOrderByAggregateInput = {
+    id?: SortOrder
+    columnKey?: SortOrder
+    isLocked?: SortOrder
+    lockedAt?: SortOrder
+    lockedById?: SortOrder
+    lockReason?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type TransporterItemListRelationFilter = {
+    every?: TransporterItemWhereInput
+    some?: TransporterItemWhereInput
+    none?: TransporterItemWhereInput
+  }
+
+  export type TransporterItemOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type TransporterCountOrderByAggregateInput = {
+    id?: SortOrder
+    transportNumber?: SortOrder
+    transportDate?: SortOrder
+    truckOwnerName?: SortOrder
+    shipmentId?: SortOrder
+    remarks?: SortOrder
+    isLocked?: SortOrder
+    lockedAt?: SortOrder
+    updatedById?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type TransporterMaxOrderByAggregateInput = {
+    id?: SortOrder
+    transportNumber?: SortOrder
+    transportDate?: SortOrder
+    truckOwnerName?: SortOrder
+    shipmentId?: SortOrder
+    remarks?: SortOrder
+    isLocked?: SortOrder
+    lockedAt?: SortOrder
+    updatedById?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type TransporterMinOrderByAggregateInput = {
+    id?: SortOrder
+    transportNumber?: SortOrder
+    transportDate?: SortOrder
+    truckOwnerName?: SortOrder
+    shipmentId?: SortOrder
+    remarks?: SortOrder
+    isLocked?: SortOrder
+    lockedAt?: SortOrder
+    updatedById?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type EnumTransporterStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.TransporterStatus | EnumTransporterStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.TransporterStatus[] | ListEnumTransporterStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.TransporterStatus[] | ListEnumTransporterStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumTransporterStatusFilter<$PrismaModel> | $Enums.TransporterStatus
+  }
+
+  export type TransporterScalarRelationFilter = {
+    is?: TransporterWhereInput
+    isNot?: TransporterWhereInput
+  }
+
+  export type TransporterItemCountOrderByAggregateInput = {
+    id?: SortOrder
+    transporterId?: SortOrder
+    itemDate?: SortOrder
+    itemType?: SortOrder
+    name?: SortOrder
+    frontPlateNumber?: SortOrder
+    backPlateNumber?: SortOrder
+    containerName?: SortOrder
+    containerNumber?: SortOrder
+    status?: SortOrder
+    chargeAmount?: SortOrder
+    chargeCurrency?: SortOrder
+    paymentStatus?: SortOrder
+    remarks?: SortOrder
+    isLocked?: SortOrder
+    lockedFields?: SortOrder
+    lockedAt?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type TransporterItemAvgOrderByAggregateInput = {
+    chargeAmount?: SortOrder
+  }
+
+  export type TransporterItemMaxOrderByAggregateInput = {
+    id?: SortOrder
+    transporterId?: SortOrder
+    itemDate?: SortOrder
+    itemType?: SortOrder
+    name?: SortOrder
+    frontPlateNumber?: SortOrder
+    backPlateNumber?: SortOrder
+    containerName?: SortOrder
+    containerNumber?: SortOrder
+    status?: SortOrder
+    chargeAmount?: SortOrder
+    chargeCurrency?: SortOrder
+    paymentStatus?: SortOrder
+    remarks?: SortOrder
+    isLocked?: SortOrder
+    lockedAt?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type TransporterItemMinOrderByAggregateInput = {
+    id?: SortOrder
+    transporterId?: SortOrder
+    itemDate?: SortOrder
+    itemType?: SortOrder
+    name?: SortOrder
+    frontPlateNumber?: SortOrder
+    backPlateNumber?: SortOrder
+    containerName?: SortOrder
+    containerNumber?: SortOrder
+    status?: SortOrder
+    chargeAmount?: SortOrder
+    chargeCurrency?: SortOrder
+    paymentStatus?: SortOrder
+    remarks?: SortOrder
+    isLocked?: SortOrder
+    lockedAt?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type TransporterItemSumOrderByAggregateInput = {
+    chargeAmount?: SortOrder
+  }
+
+  export type EnumTransporterStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.TransporterStatus | EnumTransporterStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.TransporterStatus[] | ListEnumTransporterStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.TransporterStatus[] | ListEnumTransporterStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumTransporterStatusWithAggregatesFilter<$PrismaModel> | $Enums.TransporterStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumTransporterStatusFilter<$PrismaModel>
+    _max?: NestedEnumTransporterStatusFilter<$PrismaModel>
+  }
+
+  export type TransporterItemScalarRelationFilter = {
+    is?: TransporterItemWhereInput
+    isNot?: TransporterItemWhereInput
+  }
+
+  export type TransporterPaymentCountOrderByAggregateInput = {
+    id?: SortOrder
+    transportItemId?: SortOrder
+    recordedById?: SortOrder
+    amount?: SortOrder
+    paymentType?: SortOrder
+    paymentDate?: SortOrder
+    paymentMethod?: SortOrder
+    reference?: SortOrder
+    description?: SortOrder
+    notes?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type TransporterPaymentAvgOrderByAggregateInput = {
+    amount?: SortOrder
+  }
+
+  export type TransporterPaymentMaxOrderByAggregateInput = {
+    id?: SortOrder
+    transportItemId?: SortOrder
+    recordedById?: SortOrder
+    amount?: SortOrder
+    paymentType?: SortOrder
+    paymentDate?: SortOrder
+    paymentMethod?: SortOrder
+    reference?: SortOrder
+    description?: SortOrder
+    notes?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type TransporterPaymentMinOrderByAggregateInput = {
+    id?: SortOrder
+    transportItemId?: SortOrder
+    recordedById?: SortOrder
+    amount?: SortOrder
+    paymentType?: SortOrder
+    paymentDate?: SortOrder
+    paymentMethod?: SortOrder
+    reference?: SortOrder
+    description?: SortOrder
+    notes?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type TransporterPaymentSumOrderByAggregateInput = {
+    amount?: SortOrder
+  }
+
   export type ShipmentCreateNestedManyWithoutCreatedByInput = {
     create?: XOR<ShipmentCreateWithoutCreatedByInput, ShipmentUncheckedCreateWithoutCreatedByInput> | ShipmentCreateWithoutCreatedByInput[] | ShipmentUncheckedCreateWithoutCreatedByInput[]
     connectOrCreate?: ShipmentCreateOrConnectWithoutCreatedByInput | ShipmentCreateOrConnectWithoutCreatedByInput[]
@@ -77866,6 +84524,27 @@ export namespace Prisma {
     connect?: TransitMovementItemColumnLockWhereUniqueInput | TransitMovementItemColumnLockWhereUniqueInput[]
   }
 
+  export type TransporterPaymentCreateNestedManyWithoutRecordedByInput = {
+    create?: XOR<TransporterPaymentCreateWithoutRecordedByInput, TransporterPaymentUncheckedCreateWithoutRecordedByInput> | TransporterPaymentCreateWithoutRecordedByInput[] | TransporterPaymentUncheckedCreateWithoutRecordedByInput[]
+    connectOrCreate?: TransporterPaymentCreateOrConnectWithoutRecordedByInput | TransporterPaymentCreateOrConnectWithoutRecordedByInput[]
+    createMany?: TransporterPaymentCreateManyRecordedByInputEnvelope
+    connect?: TransporterPaymentWhereUniqueInput | TransporterPaymentWhereUniqueInput[]
+  }
+
+  export type TransporterItemColumnLockCreateNestedManyWithoutLockedByInput = {
+    create?: XOR<TransporterItemColumnLockCreateWithoutLockedByInput, TransporterItemColumnLockUncheckedCreateWithoutLockedByInput> | TransporterItemColumnLockCreateWithoutLockedByInput[] | TransporterItemColumnLockUncheckedCreateWithoutLockedByInput[]
+    connectOrCreate?: TransporterItemColumnLockCreateOrConnectWithoutLockedByInput | TransporterItemColumnLockCreateOrConnectWithoutLockedByInput[]
+    createMany?: TransporterItemColumnLockCreateManyLockedByInputEnvelope
+    connect?: TransporterItemColumnLockWhereUniqueInput | TransporterItemColumnLockWhereUniqueInput[]
+  }
+
+  export type TransporterCreateNestedManyWithoutUpdatedByInput = {
+    create?: XOR<TransporterCreateWithoutUpdatedByInput, TransporterUncheckedCreateWithoutUpdatedByInput> | TransporterCreateWithoutUpdatedByInput[] | TransporterUncheckedCreateWithoutUpdatedByInput[]
+    connectOrCreate?: TransporterCreateOrConnectWithoutUpdatedByInput | TransporterCreateOrConnectWithoutUpdatedByInput[]
+    createMany?: TransporterCreateManyUpdatedByInputEnvelope
+    connect?: TransporterWhereUniqueInput | TransporterWhereUniqueInput[]
+  }
+
   export type ShipmentUncheckedCreateNestedManyWithoutCreatedByInput = {
     create?: XOR<ShipmentCreateWithoutCreatedByInput, ShipmentUncheckedCreateWithoutCreatedByInput> | ShipmentCreateWithoutCreatedByInput[] | ShipmentUncheckedCreateWithoutCreatedByInput[]
     connectOrCreate?: ShipmentCreateOrConnectWithoutCreatedByInput | ShipmentCreateOrConnectWithoutCreatedByInput[]
@@ -77983,6 +84662,27 @@ export namespace Prisma {
     connectOrCreate?: TransitMovementItemColumnLockCreateOrConnectWithoutLockedByInput | TransitMovementItemColumnLockCreateOrConnectWithoutLockedByInput[]
     createMany?: TransitMovementItemColumnLockCreateManyLockedByInputEnvelope
     connect?: TransitMovementItemColumnLockWhereUniqueInput | TransitMovementItemColumnLockWhereUniqueInput[]
+  }
+
+  export type TransporterPaymentUncheckedCreateNestedManyWithoutRecordedByInput = {
+    create?: XOR<TransporterPaymentCreateWithoutRecordedByInput, TransporterPaymentUncheckedCreateWithoutRecordedByInput> | TransporterPaymentCreateWithoutRecordedByInput[] | TransporterPaymentUncheckedCreateWithoutRecordedByInput[]
+    connectOrCreate?: TransporterPaymentCreateOrConnectWithoutRecordedByInput | TransporterPaymentCreateOrConnectWithoutRecordedByInput[]
+    createMany?: TransporterPaymentCreateManyRecordedByInputEnvelope
+    connect?: TransporterPaymentWhereUniqueInput | TransporterPaymentWhereUniqueInput[]
+  }
+
+  export type TransporterItemColumnLockUncheckedCreateNestedManyWithoutLockedByInput = {
+    create?: XOR<TransporterItemColumnLockCreateWithoutLockedByInput, TransporterItemColumnLockUncheckedCreateWithoutLockedByInput> | TransporterItemColumnLockCreateWithoutLockedByInput[] | TransporterItemColumnLockUncheckedCreateWithoutLockedByInput[]
+    connectOrCreate?: TransporterItemColumnLockCreateOrConnectWithoutLockedByInput | TransporterItemColumnLockCreateOrConnectWithoutLockedByInput[]
+    createMany?: TransporterItemColumnLockCreateManyLockedByInputEnvelope
+    connect?: TransporterItemColumnLockWhereUniqueInput | TransporterItemColumnLockWhereUniqueInput[]
+  }
+
+  export type TransporterUncheckedCreateNestedManyWithoutUpdatedByInput = {
+    create?: XOR<TransporterCreateWithoutUpdatedByInput, TransporterUncheckedCreateWithoutUpdatedByInput> | TransporterCreateWithoutUpdatedByInput[] | TransporterUncheckedCreateWithoutUpdatedByInput[]
+    connectOrCreate?: TransporterCreateOrConnectWithoutUpdatedByInput | TransporterCreateOrConnectWithoutUpdatedByInput[]
+    createMany?: TransporterCreateManyUpdatedByInputEnvelope
+    connect?: TransporterWhereUniqueInput | TransporterWhereUniqueInput[]
   }
 
   export type StringFieldUpdateOperationsInput = {
@@ -78243,6 +84943,48 @@ export namespace Prisma {
     deleteMany?: TransitMovementItemColumnLockScalarWhereInput | TransitMovementItemColumnLockScalarWhereInput[]
   }
 
+  export type TransporterPaymentUpdateManyWithoutRecordedByNestedInput = {
+    create?: XOR<TransporterPaymentCreateWithoutRecordedByInput, TransporterPaymentUncheckedCreateWithoutRecordedByInput> | TransporterPaymentCreateWithoutRecordedByInput[] | TransporterPaymentUncheckedCreateWithoutRecordedByInput[]
+    connectOrCreate?: TransporterPaymentCreateOrConnectWithoutRecordedByInput | TransporterPaymentCreateOrConnectWithoutRecordedByInput[]
+    upsert?: TransporterPaymentUpsertWithWhereUniqueWithoutRecordedByInput | TransporterPaymentUpsertWithWhereUniqueWithoutRecordedByInput[]
+    createMany?: TransporterPaymentCreateManyRecordedByInputEnvelope
+    set?: TransporterPaymentWhereUniqueInput | TransporterPaymentWhereUniqueInput[]
+    disconnect?: TransporterPaymentWhereUniqueInput | TransporterPaymentWhereUniqueInput[]
+    delete?: TransporterPaymentWhereUniqueInput | TransporterPaymentWhereUniqueInput[]
+    connect?: TransporterPaymentWhereUniqueInput | TransporterPaymentWhereUniqueInput[]
+    update?: TransporterPaymentUpdateWithWhereUniqueWithoutRecordedByInput | TransporterPaymentUpdateWithWhereUniqueWithoutRecordedByInput[]
+    updateMany?: TransporterPaymentUpdateManyWithWhereWithoutRecordedByInput | TransporterPaymentUpdateManyWithWhereWithoutRecordedByInput[]
+    deleteMany?: TransporterPaymentScalarWhereInput | TransporterPaymentScalarWhereInput[]
+  }
+
+  export type TransporterItemColumnLockUpdateManyWithoutLockedByNestedInput = {
+    create?: XOR<TransporterItemColumnLockCreateWithoutLockedByInput, TransporterItemColumnLockUncheckedCreateWithoutLockedByInput> | TransporterItemColumnLockCreateWithoutLockedByInput[] | TransporterItemColumnLockUncheckedCreateWithoutLockedByInput[]
+    connectOrCreate?: TransporterItemColumnLockCreateOrConnectWithoutLockedByInput | TransporterItemColumnLockCreateOrConnectWithoutLockedByInput[]
+    upsert?: TransporterItemColumnLockUpsertWithWhereUniqueWithoutLockedByInput | TransporterItemColumnLockUpsertWithWhereUniqueWithoutLockedByInput[]
+    createMany?: TransporterItemColumnLockCreateManyLockedByInputEnvelope
+    set?: TransporterItemColumnLockWhereUniqueInput | TransporterItemColumnLockWhereUniqueInput[]
+    disconnect?: TransporterItemColumnLockWhereUniqueInput | TransporterItemColumnLockWhereUniqueInput[]
+    delete?: TransporterItemColumnLockWhereUniqueInput | TransporterItemColumnLockWhereUniqueInput[]
+    connect?: TransporterItemColumnLockWhereUniqueInput | TransporterItemColumnLockWhereUniqueInput[]
+    update?: TransporterItemColumnLockUpdateWithWhereUniqueWithoutLockedByInput | TransporterItemColumnLockUpdateWithWhereUniqueWithoutLockedByInput[]
+    updateMany?: TransporterItemColumnLockUpdateManyWithWhereWithoutLockedByInput | TransporterItemColumnLockUpdateManyWithWhereWithoutLockedByInput[]
+    deleteMany?: TransporterItemColumnLockScalarWhereInput | TransporterItemColumnLockScalarWhereInput[]
+  }
+
+  export type TransporterUpdateManyWithoutUpdatedByNestedInput = {
+    create?: XOR<TransporterCreateWithoutUpdatedByInput, TransporterUncheckedCreateWithoutUpdatedByInput> | TransporterCreateWithoutUpdatedByInput[] | TransporterUncheckedCreateWithoutUpdatedByInput[]
+    connectOrCreate?: TransporterCreateOrConnectWithoutUpdatedByInput | TransporterCreateOrConnectWithoutUpdatedByInput[]
+    upsert?: TransporterUpsertWithWhereUniqueWithoutUpdatedByInput | TransporterUpsertWithWhereUniqueWithoutUpdatedByInput[]
+    createMany?: TransporterCreateManyUpdatedByInputEnvelope
+    set?: TransporterWhereUniqueInput | TransporterWhereUniqueInput[]
+    disconnect?: TransporterWhereUniqueInput | TransporterWhereUniqueInput[]
+    delete?: TransporterWhereUniqueInput | TransporterWhereUniqueInput[]
+    connect?: TransporterWhereUniqueInput | TransporterWhereUniqueInput[]
+    update?: TransporterUpdateWithWhereUniqueWithoutUpdatedByInput | TransporterUpdateWithWhereUniqueWithoutUpdatedByInput[]
+    updateMany?: TransporterUpdateManyWithWhereWithoutUpdatedByInput | TransporterUpdateManyWithWhereWithoutUpdatedByInput[]
+    deleteMany?: TransporterScalarWhereInput | TransporterScalarWhereInput[]
+  }
+
   export type ShipmentUncheckedUpdateManyWithoutCreatedByNestedInput = {
     create?: XOR<ShipmentCreateWithoutCreatedByInput, ShipmentUncheckedCreateWithoutCreatedByInput> | ShipmentCreateWithoutCreatedByInput[] | ShipmentUncheckedCreateWithoutCreatedByInput[]
     connectOrCreate?: ShipmentCreateOrConnectWithoutCreatedByInput | ShipmentCreateOrConnectWithoutCreatedByInput[]
@@ -78479,6 +85221,48 @@ export namespace Prisma {
     update?: TransitMovementItemColumnLockUpdateWithWhereUniqueWithoutLockedByInput | TransitMovementItemColumnLockUpdateWithWhereUniqueWithoutLockedByInput[]
     updateMany?: TransitMovementItemColumnLockUpdateManyWithWhereWithoutLockedByInput | TransitMovementItemColumnLockUpdateManyWithWhereWithoutLockedByInput[]
     deleteMany?: TransitMovementItemColumnLockScalarWhereInput | TransitMovementItemColumnLockScalarWhereInput[]
+  }
+
+  export type TransporterPaymentUncheckedUpdateManyWithoutRecordedByNestedInput = {
+    create?: XOR<TransporterPaymentCreateWithoutRecordedByInput, TransporterPaymentUncheckedCreateWithoutRecordedByInput> | TransporterPaymentCreateWithoutRecordedByInput[] | TransporterPaymentUncheckedCreateWithoutRecordedByInput[]
+    connectOrCreate?: TransporterPaymentCreateOrConnectWithoutRecordedByInput | TransporterPaymentCreateOrConnectWithoutRecordedByInput[]
+    upsert?: TransporterPaymentUpsertWithWhereUniqueWithoutRecordedByInput | TransporterPaymentUpsertWithWhereUniqueWithoutRecordedByInput[]
+    createMany?: TransporterPaymentCreateManyRecordedByInputEnvelope
+    set?: TransporterPaymentWhereUniqueInput | TransporterPaymentWhereUniqueInput[]
+    disconnect?: TransporterPaymentWhereUniqueInput | TransporterPaymentWhereUniqueInput[]
+    delete?: TransporterPaymentWhereUniqueInput | TransporterPaymentWhereUniqueInput[]
+    connect?: TransporterPaymentWhereUniqueInput | TransporterPaymentWhereUniqueInput[]
+    update?: TransporterPaymentUpdateWithWhereUniqueWithoutRecordedByInput | TransporterPaymentUpdateWithWhereUniqueWithoutRecordedByInput[]
+    updateMany?: TransporterPaymentUpdateManyWithWhereWithoutRecordedByInput | TransporterPaymentUpdateManyWithWhereWithoutRecordedByInput[]
+    deleteMany?: TransporterPaymentScalarWhereInput | TransporterPaymentScalarWhereInput[]
+  }
+
+  export type TransporterItemColumnLockUncheckedUpdateManyWithoutLockedByNestedInput = {
+    create?: XOR<TransporterItemColumnLockCreateWithoutLockedByInput, TransporterItemColumnLockUncheckedCreateWithoutLockedByInput> | TransporterItemColumnLockCreateWithoutLockedByInput[] | TransporterItemColumnLockUncheckedCreateWithoutLockedByInput[]
+    connectOrCreate?: TransporterItemColumnLockCreateOrConnectWithoutLockedByInput | TransporterItemColumnLockCreateOrConnectWithoutLockedByInput[]
+    upsert?: TransporterItemColumnLockUpsertWithWhereUniqueWithoutLockedByInput | TransporterItemColumnLockUpsertWithWhereUniqueWithoutLockedByInput[]
+    createMany?: TransporterItemColumnLockCreateManyLockedByInputEnvelope
+    set?: TransporterItemColumnLockWhereUniqueInput | TransporterItemColumnLockWhereUniqueInput[]
+    disconnect?: TransporterItemColumnLockWhereUniqueInput | TransporterItemColumnLockWhereUniqueInput[]
+    delete?: TransporterItemColumnLockWhereUniqueInput | TransporterItemColumnLockWhereUniqueInput[]
+    connect?: TransporterItemColumnLockWhereUniqueInput | TransporterItemColumnLockWhereUniqueInput[]
+    update?: TransporterItemColumnLockUpdateWithWhereUniqueWithoutLockedByInput | TransporterItemColumnLockUpdateWithWhereUniqueWithoutLockedByInput[]
+    updateMany?: TransporterItemColumnLockUpdateManyWithWhereWithoutLockedByInput | TransporterItemColumnLockUpdateManyWithWhereWithoutLockedByInput[]
+    deleteMany?: TransporterItemColumnLockScalarWhereInput | TransporterItemColumnLockScalarWhereInput[]
+  }
+
+  export type TransporterUncheckedUpdateManyWithoutUpdatedByNestedInput = {
+    create?: XOR<TransporterCreateWithoutUpdatedByInput, TransporterUncheckedCreateWithoutUpdatedByInput> | TransporterCreateWithoutUpdatedByInput[] | TransporterUncheckedCreateWithoutUpdatedByInput[]
+    connectOrCreate?: TransporterCreateOrConnectWithoutUpdatedByInput | TransporterCreateOrConnectWithoutUpdatedByInput[]
+    upsert?: TransporterUpsertWithWhereUniqueWithoutUpdatedByInput | TransporterUpsertWithWhereUniqueWithoutUpdatedByInput[]
+    createMany?: TransporterCreateManyUpdatedByInputEnvelope
+    set?: TransporterWhereUniqueInput | TransporterWhereUniqueInput[]
+    disconnect?: TransporterWhereUniqueInput | TransporterWhereUniqueInput[]
+    delete?: TransporterWhereUniqueInput | TransporterWhereUniqueInput[]
+    connect?: TransporterWhereUniqueInput | TransporterWhereUniqueInput[]
+    update?: TransporterUpdateWithWhereUniqueWithoutUpdatedByInput | TransporterUpdateWithWhereUniqueWithoutUpdatedByInput[]
+    updateMany?: TransporterUpdateManyWithWhereWithoutUpdatedByInput | TransporterUpdateManyWithWhereWithoutUpdatedByInput[]
+    deleteMany?: TransporterScalarWhereInput | TransporterScalarWhereInput[]
   }
 
   export type AllocationCreateNestedOneWithoutDocumentsInput = {
@@ -78807,6 +85591,13 @@ export namespace Prisma {
     connect?: TransportWhereUniqueInput | TransportWhereUniqueInput[]
   }
 
+  export type TransporterCreateNestedManyWithoutShipmentInput = {
+    create?: XOR<TransporterCreateWithoutShipmentInput, TransporterUncheckedCreateWithoutShipmentInput> | TransporterCreateWithoutShipmentInput[] | TransporterUncheckedCreateWithoutShipmentInput[]
+    connectOrCreate?: TransporterCreateOrConnectWithoutShipmentInput | TransporterCreateOrConnectWithoutShipmentInput[]
+    createMany?: TransporterCreateManyShipmentInputEnvelope
+    connect?: TransporterWhereUniqueInput | TransporterWhereUniqueInput[]
+  }
+
   export type PackingListCreateNestedOneWithoutShipmentInput = {
     create?: XOR<PackingListCreateWithoutShipmentInput, PackingListUncheckedCreateWithoutShipmentInput>
     connectOrCreate?: PackingListCreateOrConnectWithoutShipmentInput
@@ -78883,6 +85674,13 @@ export namespace Prisma {
     connectOrCreate?: TransportCreateOrConnectWithoutShipmentInput | TransportCreateOrConnectWithoutShipmentInput[]
     createMany?: TransportCreateManyShipmentInputEnvelope
     connect?: TransportWhereUniqueInput | TransportWhereUniqueInput[]
+  }
+
+  export type TransporterUncheckedCreateNestedManyWithoutShipmentInput = {
+    create?: XOR<TransporterCreateWithoutShipmentInput, TransporterUncheckedCreateWithoutShipmentInput> | TransporterCreateWithoutShipmentInput[] | TransporterUncheckedCreateWithoutShipmentInput[]
+    connectOrCreate?: TransporterCreateOrConnectWithoutShipmentInput | TransporterCreateOrConnectWithoutShipmentInput[]
+    createMany?: TransporterCreateManyShipmentInputEnvelope
+    connect?: TransporterWhereUniqueInput | TransporterWhereUniqueInput[]
   }
 
   export type PackingListUncheckedCreateNestedOneWithoutShipmentInput = {
@@ -78967,6 +85765,20 @@ export namespace Prisma {
     update?: TransportUpdateWithWhereUniqueWithoutShipmentInput | TransportUpdateWithWhereUniqueWithoutShipmentInput[]
     updateMany?: TransportUpdateManyWithWhereWithoutShipmentInput | TransportUpdateManyWithWhereWithoutShipmentInput[]
     deleteMany?: TransportScalarWhereInput | TransportScalarWhereInput[]
+  }
+
+  export type TransporterUpdateManyWithoutShipmentNestedInput = {
+    create?: XOR<TransporterCreateWithoutShipmentInput, TransporterUncheckedCreateWithoutShipmentInput> | TransporterCreateWithoutShipmentInput[] | TransporterUncheckedCreateWithoutShipmentInput[]
+    connectOrCreate?: TransporterCreateOrConnectWithoutShipmentInput | TransporterCreateOrConnectWithoutShipmentInput[]
+    upsert?: TransporterUpsertWithWhereUniqueWithoutShipmentInput | TransporterUpsertWithWhereUniqueWithoutShipmentInput[]
+    createMany?: TransporterCreateManyShipmentInputEnvelope
+    set?: TransporterWhereUniqueInput | TransporterWhereUniqueInput[]
+    disconnect?: TransporterWhereUniqueInput | TransporterWhereUniqueInput[]
+    delete?: TransporterWhereUniqueInput | TransporterWhereUniqueInput[]
+    connect?: TransporterWhereUniqueInput | TransporterWhereUniqueInput[]
+    update?: TransporterUpdateWithWhereUniqueWithoutShipmentInput | TransporterUpdateWithWhereUniqueWithoutShipmentInput[]
+    updateMany?: TransporterUpdateManyWithWhereWithoutShipmentInput | TransporterUpdateManyWithWhereWithoutShipmentInput[]
+    deleteMany?: TransporterScalarWhereInput | TransporterScalarWhereInput[]
   }
 
   export type PackingListUpdateOneWithoutShipmentNestedInput = {
@@ -79103,6 +85915,20 @@ export namespace Prisma {
     update?: TransportUpdateWithWhereUniqueWithoutShipmentInput | TransportUpdateWithWhereUniqueWithoutShipmentInput[]
     updateMany?: TransportUpdateManyWithWhereWithoutShipmentInput | TransportUpdateManyWithWhereWithoutShipmentInput[]
     deleteMany?: TransportScalarWhereInput | TransportScalarWhereInput[]
+  }
+
+  export type TransporterUncheckedUpdateManyWithoutShipmentNestedInput = {
+    create?: XOR<TransporterCreateWithoutShipmentInput, TransporterUncheckedCreateWithoutShipmentInput> | TransporterCreateWithoutShipmentInput[] | TransporterUncheckedCreateWithoutShipmentInput[]
+    connectOrCreate?: TransporterCreateOrConnectWithoutShipmentInput | TransporterCreateOrConnectWithoutShipmentInput[]
+    upsert?: TransporterUpsertWithWhereUniqueWithoutShipmentInput | TransporterUpsertWithWhereUniqueWithoutShipmentInput[]
+    createMany?: TransporterCreateManyShipmentInputEnvelope
+    set?: TransporterWhereUniqueInput | TransporterWhereUniqueInput[]
+    disconnect?: TransporterWhereUniqueInput | TransporterWhereUniqueInput[]
+    delete?: TransporterWhereUniqueInput | TransporterWhereUniqueInput[]
+    connect?: TransporterWhereUniqueInput | TransporterWhereUniqueInput[]
+    update?: TransporterUpdateWithWhereUniqueWithoutShipmentInput | TransporterUpdateWithWhereUniqueWithoutShipmentInput[]
+    updateMany?: TransporterUpdateManyWithWhereWithoutShipmentInput | TransporterUpdateManyWithWhereWithoutShipmentInput[]
+    deleteMany?: TransporterScalarWhereInput | TransporterScalarWhereInput[]
   }
 
   export type PackingListUncheckedUpdateOneWithoutShipmentNestedInput = {
@@ -82731,6 +89557,195 @@ export namespace Prisma {
     update?: XOR<XOR<UserUpdateToOneWithWhereWithoutTransportColumnLocksInput, UserUpdateWithoutTransportColumnLocksInput>, UserUncheckedUpdateWithoutTransportColumnLocksInput>
   }
 
+  export type UserCreateNestedOneWithoutTransporterColumnLocksInput = {
+    create?: XOR<UserCreateWithoutTransporterColumnLocksInput, UserUncheckedCreateWithoutTransporterColumnLocksInput>
+    connectOrCreate?: UserCreateOrConnectWithoutTransporterColumnLocksInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type UserUpdateOneWithoutTransporterColumnLocksNestedInput = {
+    create?: XOR<UserCreateWithoutTransporterColumnLocksInput, UserUncheckedCreateWithoutTransporterColumnLocksInput>
+    connectOrCreate?: UserCreateOrConnectWithoutTransporterColumnLocksInput
+    upsert?: UserUpsertWithoutTransporterColumnLocksInput
+    disconnect?: UserWhereInput | boolean
+    delete?: UserWhereInput | boolean
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutTransporterColumnLocksInput, UserUpdateWithoutTransporterColumnLocksInput>, UserUncheckedUpdateWithoutTransporterColumnLocksInput>
+  }
+
+  export type ShipmentCreateNestedOneWithoutTransportersInput = {
+    create?: XOR<ShipmentCreateWithoutTransportersInput, ShipmentUncheckedCreateWithoutTransportersInput>
+    connectOrCreate?: ShipmentCreateOrConnectWithoutTransportersInput
+    connect?: ShipmentWhereUniqueInput
+  }
+
+  export type UserCreateNestedOneWithoutUpdatedTransportersInput = {
+    create?: XOR<UserCreateWithoutUpdatedTransportersInput, UserUncheckedCreateWithoutUpdatedTransportersInput>
+    connectOrCreate?: UserCreateOrConnectWithoutUpdatedTransportersInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type TransporterItemCreateNestedManyWithoutTransporterInput = {
+    create?: XOR<TransporterItemCreateWithoutTransporterInput, TransporterItemUncheckedCreateWithoutTransporterInput> | TransporterItemCreateWithoutTransporterInput[] | TransporterItemUncheckedCreateWithoutTransporterInput[]
+    connectOrCreate?: TransporterItemCreateOrConnectWithoutTransporterInput | TransporterItemCreateOrConnectWithoutTransporterInput[]
+    createMany?: TransporterItemCreateManyTransporterInputEnvelope
+    connect?: TransporterItemWhereUniqueInput | TransporterItemWhereUniqueInput[]
+  }
+
+  export type TransporterItemUncheckedCreateNestedManyWithoutTransporterInput = {
+    create?: XOR<TransporterItemCreateWithoutTransporterInput, TransporterItemUncheckedCreateWithoutTransporterInput> | TransporterItemCreateWithoutTransporterInput[] | TransporterItemUncheckedCreateWithoutTransporterInput[]
+    connectOrCreate?: TransporterItemCreateOrConnectWithoutTransporterInput | TransporterItemCreateOrConnectWithoutTransporterInput[]
+    createMany?: TransporterItemCreateManyTransporterInputEnvelope
+    connect?: TransporterItemWhereUniqueInput | TransporterItemWhereUniqueInput[]
+  }
+
+  export type ShipmentUpdateOneWithoutTransportersNestedInput = {
+    create?: XOR<ShipmentCreateWithoutTransportersInput, ShipmentUncheckedCreateWithoutTransportersInput>
+    connectOrCreate?: ShipmentCreateOrConnectWithoutTransportersInput
+    upsert?: ShipmentUpsertWithoutTransportersInput
+    disconnect?: ShipmentWhereInput | boolean
+    delete?: ShipmentWhereInput | boolean
+    connect?: ShipmentWhereUniqueInput
+    update?: XOR<XOR<ShipmentUpdateToOneWithWhereWithoutTransportersInput, ShipmentUpdateWithoutTransportersInput>, ShipmentUncheckedUpdateWithoutTransportersInput>
+  }
+
+  export type UserUpdateOneWithoutUpdatedTransportersNestedInput = {
+    create?: XOR<UserCreateWithoutUpdatedTransportersInput, UserUncheckedCreateWithoutUpdatedTransportersInput>
+    connectOrCreate?: UserCreateOrConnectWithoutUpdatedTransportersInput
+    upsert?: UserUpsertWithoutUpdatedTransportersInput
+    disconnect?: UserWhereInput | boolean
+    delete?: UserWhereInput | boolean
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutUpdatedTransportersInput, UserUpdateWithoutUpdatedTransportersInput>, UserUncheckedUpdateWithoutUpdatedTransportersInput>
+  }
+
+  export type TransporterItemUpdateManyWithoutTransporterNestedInput = {
+    create?: XOR<TransporterItemCreateWithoutTransporterInput, TransporterItemUncheckedCreateWithoutTransporterInput> | TransporterItemCreateWithoutTransporterInput[] | TransporterItemUncheckedCreateWithoutTransporterInput[]
+    connectOrCreate?: TransporterItemCreateOrConnectWithoutTransporterInput | TransporterItemCreateOrConnectWithoutTransporterInput[]
+    upsert?: TransporterItemUpsertWithWhereUniqueWithoutTransporterInput | TransporterItemUpsertWithWhereUniqueWithoutTransporterInput[]
+    createMany?: TransporterItemCreateManyTransporterInputEnvelope
+    set?: TransporterItemWhereUniqueInput | TransporterItemWhereUniqueInput[]
+    disconnect?: TransporterItemWhereUniqueInput | TransporterItemWhereUniqueInput[]
+    delete?: TransporterItemWhereUniqueInput | TransporterItemWhereUniqueInput[]
+    connect?: TransporterItemWhereUniqueInput | TransporterItemWhereUniqueInput[]
+    update?: TransporterItemUpdateWithWhereUniqueWithoutTransporterInput | TransporterItemUpdateWithWhereUniqueWithoutTransporterInput[]
+    updateMany?: TransporterItemUpdateManyWithWhereWithoutTransporterInput | TransporterItemUpdateManyWithWhereWithoutTransporterInput[]
+    deleteMany?: TransporterItemScalarWhereInput | TransporterItemScalarWhereInput[]
+  }
+
+  export type TransporterItemUncheckedUpdateManyWithoutTransporterNestedInput = {
+    create?: XOR<TransporterItemCreateWithoutTransporterInput, TransporterItemUncheckedCreateWithoutTransporterInput> | TransporterItemCreateWithoutTransporterInput[] | TransporterItemUncheckedCreateWithoutTransporterInput[]
+    connectOrCreate?: TransporterItemCreateOrConnectWithoutTransporterInput | TransporterItemCreateOrConnectWithoutTransporterInput[]
+    upsert?: TransporterItemUpsertWithWhereUniqueWithoutTransporterInput | TransporterItemUpsertWithWhereUniqueWithoutTransporterInput[]
+    createMany?: TransporterItemCreateManyTransporterInputEnvelope
+    set?: TransporterItemWhereUniqueInput | TransporterItemWhereUniqueInput[]
+    disconnect?: TransporterItemWhereUniqueInput | TransporterItemWhereUniqueInput[]
+    delete?: TransporterItemWhereUniqueInput | TransporterItemWhereUniqueInput[]
+    connect?: TransporterItemWhereUniqueInput | TransporterItemWhereUniqueInput[]
+    update?: TransporterItemUpdateWithWhereUniqueWithoutTransporterInput | TransporterItemUpdateWithWhereUniqueWithoutTransporterInput[]
+    updateMany?: TransporterItemUpdateManyWithWhereWithoutTransporterInput | TransporterItemUpdateManyWithWhereWithoutTransporterInput[]
+    deleteMany?: TransporterItemScalarWhereInput | TransporterItemScalarWhereInput[]
+  }
+
+  export type TransporterItemCreatelockedFieldsInput = {
+    set: string[]
+  }
+
+  export type TransporterCreateNestedOneWithoutItemsInput = {
+    create?: XOR<TransporterCreateWithoutItemsInput, TransporterUncheckedCreateWithoutItemsInput>
+    connectOrCreate?: TransporterCreateOrConnectWithoutItemsInput
+    connect?: TransporterWhereUniqueInput
+  }
+
+  export type TransporterPaymentCreateNestedManyWithoutTransporterItemInput = {
+    create?: XOR<TransporterPaymentCreateWithoutTransporterItemInput, TransporterPaymentUncheckedCreateWithoutTransporterItemInput> | TransporterPaymentCreateWithoutTransporterItemInput[] | TransporterPaymentUncheckedCreateWithoutTransporterItemInput[]
+    connectOrCreate?: TransporterPaymentCreateOrConnectWithoutTransporterItemInput | TransporterPaymentCreateOrConnectWithoutTransporterItemInput[]
+    createMany?: TransporterPaymentCreateManyTransporterItemInputEnvelope
+    connect?: TransporterPaymentWhereUniqueInput | TransporterPaymentWhereUniqueInput[]
+  }
+
+  export type TransporterPaymentUncheckedCreateNestedManyWithoutTransporterItemInput = {
+    create?: XOR<TransporterPaymentCreateWithoutTransporterItemInput, TransporterPaymentUncheckedCreateWithoutTransporterItemInput> | TransporterPaymentCreateWithoutTransporterItemInput[] | TransporterPaymentUncheckedCreateWithoutTransporterItemInput[]
+    connectOrCreate?: TransporterPaymentCreateOrConnectWithoutTransporterItemInput | TransporterPaymentCreateOrConnectWithoutTransporterItemInput[]
+    createMany?: TransporterPaymentCreateManyTransporterItemInputEnvelope
+    connect?: TransporterPaymentWhereUniqueInput | TransporterPaymentWhereUniqueInput[]
+  }
+
+  export type EnumTransporterStatusFieldUpdateOperationsInput = {
+    set?: $Enums.TransporterStatus
+  }
+
+  export type TransporterItemUpdatelockedFieldsInput = {
+    set?: string[]
+    push?: string | string[]
+  }
+
+  export type TransporterUpdateOneRequiredWithoutItemsNestedInput = {
+    create?: XOR<TransporterCreateWithoutItemsInput, TransporterUncheckedCreateWithoutItemsInput>
+    connectOrCreate?: TransporterCreateOrConnectWithoutItemsInput
+    upsert?: TransporterUpsertWithoutItemsInput
+    connect?: TransporterWhereUniqueInput
+    update?: XOR<XOR<TransporterUpdateToOneWithWhereWithoutItemsInput, TransporterUpdateWithoutItemsInput>, TransporterUncheckedUpdateWithoutItemsInput>
+  }
+
+  export type TransporterPaymentUpdateManyWithoutTransporterItemNestedInput = {
+    create?: XOR<TransporterPaymentCreateWithoutTransporterItemInput, TransporterPaymentUncheckedCreateWithoutTransporterItemInput> | TransporterPaymentCreateWithoutTransporterItemInput[] | TransporterPaymentUncheckedCreateWithoutTransporterItemInput[]
+    connectOrCreate?: TransporterPaymentCreateOrConnectWithoutTransporterItemInput | TransporterPaymentCreateOrConnectWithoutTransporterItemInput[]
+    upsert?: TransporterPaymentUpsertWithWhereUniqueWithoutTransporterItemInput | TransporterPaymentUpsertWithWhereUniqueWithoutTransporterItemInput[]
+    createMany?: TransporterPaymentCreateManyTransporterItemInputEnvelope
+    set?: TransporterPaymentWhereUniqueInput | TransporterPaymentWhereUniqueInput[]
+    disconnect?: TransporterPaymentWhereUniqueInput | TransporterPaymentWhereUniqueInput[]
+    delete?: TransporterPaymentWhereUniqueInput | TransporterPaymentWhereUniqueInput[]
+    connect?: TransporterPaymentWhereUniqueInput | TransporterPaymentWhereUniqueInput[]
+    update?: TransporterPaymentUpdateWithWhereUniqueWithoutTransporterItemInput | TransporterPaymentUpdateWithWhereUniqueWithoutTransporterItemInput[]
+    updateMany?: TransporterPaymentUpdateManyWithWhereWithoutTransporterItemInput | TransporterPaymentUpdateManyWithWhereWithoutTransporterItemInput[]
+    deleteMany?: TransporterPaymentScalarWhereInput | TransporterPaymentScalarWhereInput[]
+  }
+
+  export type TransporterPaymentUncheckedUpdateManyWithoutTransporterItemNestedInput = {
+    create?: XOR<TransporterPaymentCreateWithoutTransporterItemInput, TransporterPaymentUncheckedCreateWithoutTransporterItemInput> | TransporterPaymentCreateWithoutTransporterItemInput[] | TransporterPaymentUncheckedCreateWithoutTransporterItemInput[]
+    connectOrCreate?: TransporterPaymentCreateOrConnectWithoutTransporterItemInput | TransporterPaymentCreateOrConnectWithoutTransporterItemInput[]
+    upsert?: TransporterPaymentUpsertWithWhereUniqueWithoutTransporterItemInput | TransporterPaymentUpsertWithWhereUniqueWithoutTransporterItemInput[]
+    createMany?: TransporterPaymentCreateManyTransporterItemInputEnvelope
+    set?: TransporterPaymentWhereUniqueInput | TransporterPaymentWhereUniqueInput[]
+    disconnect?: TransporterPaymentWhereUniqueInput | TransporterPaymentWhereUniqueInput[]
+    delete?: TransporterPaymentWhereUniqueInput | TransporterPaymentWhereUniqueInput[]
+    connect?: TransporterPaymentWhereUniqueInput | TransporterPaymentWhereUniqueInput[]
+    update?: TransporterPaymentUpdateWithWhereUniqueWithoutTransporterItemInput | TransporterPaymentUpdateWithWhereUniqueWithoutTransporterItemInput[]
+    updateMany?: TransporterPaymentUpdateManyWithWhereWithoutTransporterItemInput | TransporterPaymentUpdateManyWithWhereWithoutTransporterItemInput[]
+    deleteMany?: TransporterPaymentScalarWhereInput | TransporterPaymentScalarWhereInput[]
+  }
+
+  export type TransporterItemCreateNestedOneWithoutPaymentsInput = {
+    create?: XOR<TransporterItemCreateWithoutPaymentsInput, TransporterItemUncheckedCreateWithoutPaymentsInput>
+    connectOrCreate?: TransporterItemCreateOrConnectWithoutPaymentsInput
+    connect?: TransporterItemWhereUniqueInput
+  }
+
+  export type UserCreateNestedOneWithoutTransporterPaymentsInput = {
+    create?: XOR<UserCreateWithoutTransporterPaymentsInput, UserUncheckedCreateWithoutTransporterPaymentsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutTransporterPaymentsInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type TransporterItemUpdateOneRequiredWithoutPaymentsNestedInput = {
+    create?: XOR<TransporterItemCreateWithoutPaymentsInput, TransporterItemUncheckedCreateWithoutPaymentsInput>
+    connectOrCreate?: TransporterItemCreateOrConnectWithoutPaymentsInput
+    upsert?: TransporterItemUpsertWithoutPaymentsInput
+    connect?: TransporterItemWhereUniqueInput
+    update?: XOR<XOR<TransporterItemUpdateToOneWithWhereWithoutPaymentsInput, TransporterItemUpdateWithoutPaymentsInput>, TransporterItemUncheckedUpdateWithoutPaymentsInput>
+  }
+
+  export type UserUpdateOneWithoutTransporterPaymentsNestedInput = {
+    create?: XOR<UserCreateWithoutTransporterPaymentsInput, UserUncheckedCreateWithoutTransporterPaymentsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutTransporterPaymentsInput
+    upsert?: UserUpsertWithoutTransporterPaymentsInput
+    disconnect?: UserWhereInput | boolean
+    delete?: UserWhereInput | boolean
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutTransporterPaymentsInput, UserUpdateWithoutTransporterPaymentsInput>, UserUncheckedUpdateWithoutTransporterPaymentsInput>
+  }
+
   export type NestedStringFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel>
     in?: string[] | ListStringFieldRefInput<$PrismaModel>
@@ -83604,6 +90619,23 @@ export namespace Prisma {
     _max?: NestedEnumTransitDirectionFilter<$PrismaModel>
   }
 
+  export type NestedEnumTransporterStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.TransporterStatus | EnumTransporterStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.TransporterStatus[] | ListEnumTransporterStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.TransporterStatus[] | ListEnumTransporterStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumTransporterStatusFilter<$PrismaModel> | $Enums.TransporterStatus
+  }
+
+  export type NestedEnumTransporterStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.TransporterStatus | EnumTransporterStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.TransporterStatus[] | ListEnumTransporterStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.TransporterStatus[] | ListEnumTransporterStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumTransporterStatusWithAggregatesFilter<$PrismaModel> | $Enums.TransporterStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumTransporterStatusFilter<$PrismaModel>
+    _max?: NestedEnumTransporterStatusFilter<$PrismaModel>
+  }
+
   export type ShipmentCreateWithoutCreatedByInput = {
     id?: string
     shipmentNumber: string
@@ -83631,6 +90663,7 @@ export namespace Prisma {
     documents?: DocumentCreateNestedManyWithoutShipmentInput
     invoices?: InvoiceCreateNestedManyWithoutShipmentInput
     transports?: TransportCreateNestedManyWithoutShipmentInput
+    transporters?: TransporterCreateNestedManyWithoutShipmentInput
     packingList?: PackingListCreateNestedOneWithoutShipmentInput
     allocation?: AllocationCreateNestedOneWithoutShipmentInput
     client: ClientCreateNestedOneWithoutShipmentsInput
@@ -83671,6 +90704,7 @@ export namespace Prisma {
     documents?: DocumentUncheckedCreateNestedManyWithoutShipmentInput
     invoices?: InvoiceUncheckedCreateNestedManyWithoutShipmentInput
     transports?: TransportUncheckedCreateNestedManyWithoutShipmentInput
+    transporters?: TransporterUncheckedCreateNestedManyWithoutShipmentInput
     packingList?: PackingListUncheckedCreateNestedOneWithoutShipmentInput
     transits?: TransitUncheckedCreateNestedManyWithoutShipmentInput
     transitMovements?: TransitMovementUncheckedCreateNestedManyWithoutShipmentInput
@@ -84524,6 +91558,112 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type TransporterPaymentCreateWithoutRecordedByInput = {
+    id?: string
+    amount: Decimal | DecimalJsLike | number | string
+    paymentType: $Enums.ItemPaymentType
+    paymentDate?: Date | string
+    paymentMethod?: string | null
+    reference?: string | null
+    description?: string | null
+    notes?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    transporterItem: TransporterItemCreateNestedOneWithoutPaymentsInput
+  }
+
+  export type TransporterPaymentUncheckedCreateWithoutRecordedByInput = {
+    id?: string
+    transportItemId: string
+    amount: Decimal | DecimalJsLike | number | string
+    paymentType: $Enums.ItemPaymentType
+    paymentDate?: Date | string
+    paymentMethod?: string | null
+    reference?: string | null
+    description?: string | null
+    notes?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type TransporterPaymentCreateOrConnectWithoutRecordedByInput = {
+    where: TransporterPaymentWhereUniqueInput
+    create: XOR<TransporterPaymentCreateWithoutRecordedByInput, TransporterPaymentUncheckedCreateWithoutRecordedByInput>
+  }
+
+  export type TransporterPaymentCreateManyRecordedByInputEnvelope = {
+    data: TransporterPaymentCreateManyRecordedByInput | TransporterPaymentCreateManyRecordedByInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type TransporterItemColumnLockCreateWithoutLockedByInput = {
+    id?: string
+    columnKey: string
+    isLocked?: boolean
+    lockedAt?: Date | string | null
+    lockReason?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type TransporterItemColumnLockUncheckedCreateWithoutLockedByInput = {
+    id?: string
+    columnKey: string
+    isLocked?: boolean
+    lockedAt?: Date | string | null
+    lockReason?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type TransporterItemColumnLockCreateOrConnectWithoutLockedByInput = {
+    where: TransporterItemColumnLockWhereUniqueInput
+    create: XOR<TransporterItemColumnLockCreateWithoutLockedByInput, TransporterItemColumnLockUncheckedCreateWithoutLockedByInput>
+  }
+
+  export type TransporterItemColumnLockCreateManyLockedByInputEnvelope = {
+    data: TransporterItemColumnLockCreateManyLockedByInput | TransporterItemColumnLockCreateManyLockedByInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type TransporterCreateWithoutUpdatedByInput = {
+    id?: string
+    transportNumber: string
+    transportDate: Date | string
+    truckOwnerName: string
+    remarks?: string | null
+    isLocked?: boolean
+    lockedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    shipment?: ShipmentCreateNestedOneWithoutTransportersInput
+    items?: TransporterItemCreateNestedManyWithoutTransporterInput
+  }
+
+  export type TransporterUncheckedCreateWithoutUpdatedByInput = {
+    id?: string
+    transportNumber: string
+    transportDate: Date | string
+    truckOwnerName: string
+    shipmentId?: string | null
+    remarks?: string | null
+    isLocked?: boolean
+    lockedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    items?: TransporterItemUncheckedCreateNestedManyWithoutTransporterInput
+  }
+
+  export type TransporterCreateOrConnectWithoutUpdatedByInput = {
+    where: TransporterWhereUniqueInput
+    create: XOR<TransporterCreateWithoutUpdatedByInput, TransporterUncheckedCreateWithoutUpdatedByInput>
+  }
+
+  export type TransporterCreateManyUpdatedByInputEnvelope = {
+    data: TransporterCreateManyUpdatedByInput | TransporterCreateManyUpdatedByInput[]
+    skipDuplicates?: boolean
+  }
+
   export type ShipmentUpsertWithWhereUniqueWithoutCreatedByInput = {
     where: ShipmentWhereUniqueInput
     update: XOR<ShipmentUpdateWithoutCreatedByInput, ShipmentUncheckedUpdateWithoutCreatedByInput>
@@ -85104,6 +92244,103 @@ export namespace Prisma {
     updatedAt?: DateTimeFilter<"TransitMovementItemColumnLock"> | Date | string
   }
 
+  export type TransporterPaymentUpsertWithWhereUniqueWithoutRecordedByInput = {
+    where: TransporterPaymentWhereUniqueInput
+    update: XOR<TransporterPaymentUpdateWithoutRecordedByInput, TransporterPaymentUncheckedUpdateWithoutRecordedByInput>
+    create: XOR<TransporterPaymentCreateWithoutRecordedByInput, TransporterPaymentUncheckedCreateWithoutRecordedByInput>
+  }
+
+  export type TransporterPaymentUpdateWithWhereUniqueWithoutRecordedByInput = {
+    where: TransporterPaymentWhereUniqueInput
+    data: XOR<TransporterPaymentUpdateWithoutRecordedByInput, TransporterPaymentUncheckedUpdateWithoutRecordedByInput>
+  }
+
+  export type TransporterPaymentUpdateManyWithWhereWithoutRecordedByInput = {
+    where: TransporterPaymentScalarWhereInput
+    data: XOR<TransporterPaymentUpdateManyMutationInput, TransporterPaymentUncheckedUpdateManyWithoutRecordedByInput>
+  }
+
+  export type TransporterPaymentScalarWhereInput = {
+    AND?: TransporterPaymentScalarWhereInput | TransporterPaymentScalarWhereInput[]
+    OR?: TransporterPaymentScalarWhereInput[]
+    NOT?: TransporterPaymentScalarWhereInput | TransporterPaymentScalarWhereInput[]
+    id?: StringFilter<"TransporterPayment"> | string
+    transportItemId?: StringFilter<"TransporterPayment"> | string
+    recordedById?: StringNullableFilter<"TransporterPayment"> | string | null
+    amount?: DecimalFilter<"TransporterPayment"> | Decimal | DecimalJsLike | number | string
+    paymentType?: EnumItemPaymentTypeFilter<"TransporterPayment"> | $Enums.ItemPaymentType
+    paymentDate?: DateTimeFilter<"TransporterPayment"> | Date | string
+    paymentMethod?: StringNullableFilter<"TransporterPayment"> | string | null
+    reference?: StringNullableFilter<"TransporterPayment"> | string | null
+    description?: StringNullableFilter<"TransporterPayment"> | string | null
+    notes?: StringNullableFilter<"TransporterPayment"> | string | null
+    createdAt?: DateTimeFilter<"TransporterPayment"> | Date | string
+    updatedAt?: DateTimeFilter<"TransporterPayment"> | Date | string
+  }
+
+  export type TransporterItemColumnLockUpsertWithWhereUniqueWithoutLockedByInput = {
+    where: TransporterItemColumnLockWhereUniqueInput
+    update: XOR<TransporterItemColumnLockUpdateWithoutLockedByInput, TransporterItemColumnLockUncheckedUpdateWithoutLockedByInput>
+    create: XOR<TransporterItemColumnLockCreateWithoutLockedByInput, TransporterItemColumnLockUncheckedCreateWithoutLockedByInput>
+  }
+
+  export type TransporterItemColumnLockUpdateWithWhereUniqueWithoutLockedByInput = {
+    where: TransporterItemColumnLockWhereUniqueInput
+    data: XOR<TransporterItemColumnLockUpdateWithoutLockedByInput, TransporterItemColumnLockUncheckedUpdateWithoutLockedByInput>
+  }
+
+  export type TransporterItemColumnLockUpdateManyWithWhereWithoutLockedByInput = {
+    where: TransporterItemColumnLockScalarWhereInput
+    data: XOR<TransporterItemColumnLockUpdateManyMutationInput, TransporterItemColumnLockUncheckedUpdateManyWithoutLockedByInput>
+  }
+
+  export type TransporterItemColumnLockScalarWhereInput = {
+    AND?: TransporterItemColumnLockScalarWhereInput | TransporterItemColumnLockScalarWhereInput[]
+    OR?: TransporterItemColumnLockScalarWhereInput[]
+    NOT?: TransporterItemColumnLockScalarWhereInput | TransporterItemColumnLockScalarWhereInput[]
+    id?: StringFilter<"TransporterItemColumnLock"> | string
+    columnKey?: StringFilter<"TransporterItemColumnLock"> | string
+    isLocked?: BoolFilter<"TransporterItemColumnLock"> | boolean
+    lockedAt?: DateTimeNullableFilter<"TransporterItemColumnLock"> | Date | string | null
+    lockedById?: StringNullableFilter<"TransporterItemColumnLock"> | string | null
+    lockReason?: StringNullableFilter<"TransporterItemColumnLock"> | string | null
+    createdAt?: DateTimeFilter<"TransporterItemColumnLock"> | Date | string
+    updatedAt?: DateTimeFilter<"TransporterItemColumnLock"> | Date | string
+  }
+
+  export type TransporterUpsertWithWhereUniqueWithoutUpdatedByInput = {
+    where: TransporterWhereUniqueInput
+    update: XOR<TransporterUpdateWithoutUpdatedByInput, TransporterUncheckedUpdateWithoutUpdatedByInput>
+    create: XOR<TransporterCreateWithoutUpdatedByInput, TransporterUncheckedCreateWithoutUpdatedByInput>
+  }
+
+  export type TransporterUpdateWithWhereUniqueWithoutUpdatedByInput = {
+    where: TransporterWhereUniqueInput
+    data: XOR<TransporterUpdateWithoutUpdatedByInput, TransporterUncheckedUpdateWithoutUpdatedByInput>
+  }
+
+  export type TransporterUpdateManyWithWhereWithoutUpdatedByInput = {
+    where: TransporterScalarWhereInput
+    data: XOR<TransporterUpdateManyMutationInput, TransporterUncheckedUpdateManyWithoutUpdatedByInput>
+  }
+
+  export type TransporterScalarWhereInput = {
+    AND?: TransporterScalarWhereInput | TransporterScalarWhereInput[]
+    OR?: TransporterScalarWhereInput[]
+    NOT?: TransporterScalarWhereInput | TransporterScalarWhereInput[]
+    id?: StringFilter<"Transporter"> | string
+    transportNumber?: StringFilter<"Transporter"> | string
+    transportDate?: DateTimeFilter<"Transporter"> | Date | string
+    truckOwnerName?: StringFilter<"Transporter"> | string
+    shipmentId?: StringNullableFilter<"Transporter"> | string | null
+    remarks?: StringNullableFilter<"Transporter"> | string | null
+    isLocked?: BoolFilter<"Transporter"> | boolean
+    lockedAt?: DateTimeNullableFilter<"Transporter"> | Date | string | null
+    updatedById?: StringNullableFilter<"Transporter"> | string | null
+    createdAt?: DateTimeFilter<"Transporter"> | Date | string
+    updatedAt?: DateTimeFilter<"Transporter"> | Date | string
+  }
+
   export type AllocationCreateWithoutDocumentsInput = {
     id?: string
     allocationNumber: string
@@ -85244,6 +92481,9 @@ export namespace Prisma {
     updatedTransports?: TransportCreateNestedManyWithoutUpdatedByInput
     transitMovementPayments?: TransitMovementPaymentCreateNestedManyWithoutRecordedByInput
     transitMovementColumnLocks?: TransitMovementItemColumnLockCreateNestedManyWithoutLockedByInput
+    transporterPayments?: TransporterPaymentCreateNestedManyWithoutRecordedByInput
+    transporterColumnLocks?: TransporterItemColumnLockCreateNestedManyWithoutLockedByInput
+    updatedTransporters?: TransporterCreateNestedManyWithoutUpdatedByInput
   }
 
   export type UserUncheckedCreateWithoutUploadedDocumentsInput = {
@@ -85275,6 +92515,9 @@ export namespace Prisma {
     updatedTransports?: TransportUncheckedCreateNestedManyWithoutUpdatedByInput
     transitMovementPayments?: TransitMovementPaymentUncheckedCreateNestedManyWithoutRecordedByInput
     transitMovementColumnLocks?: TransitMovementItemColumnLockUncheckedCreateNestedManyWithoutLockedByInput
+    transporterPayments?: TransporterPaymentUncheckedCreateNestedManyWithoutRecordedByInput
+    transporterColumnLocks?: TransporterItemColumnLockUncheckedCreateNestedManyWithoutLockedByInput
+    updatedTransporters?: TransporterUncheckedCreateNestedManyWithoutUpdatedByInput
   }
 
   export type UserCreateOrConnectWithoutUploadedDocumentsInput = {
@@ -85439,6 +92682,9 @@ export namespace Prisma {
     updatedTransports?: TransportUpdateManyWithoutUpdatedByNestedInput
     transitMovementPayments?: TransitMovementPaymentUpdateManyWithoutRecordedByNestedInput
     transitMovementColumnLocks?: TransitMovementItemColumnLockUpdateManyWithoutLockedByNestedInput
+    transporterPayments?: TransporterPaymentUpdateManyWithoutRecordedByNestedInput
+    transporterColumnLocks?: TransporterItemColumnLockUpdateManyWithoutLockedByNestedInput
+    updatedTransporters?: TransporterUpdateManyWithoutUpdatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutUploadedDocumentsInput = {
@@ -85470,6 +92716,9 @@ export namespace Prisma {
     updatedTransports?: TransportUncheckedUpdateManyWithoutUpdatedByNestedInput
     transitMovementPayments?: TransitMovementPaymentUncheckedUpdateManyWithoutRecordedByNestedInput
     transitMovementColumnLocks?: TransitMovementItemColumnLockUncheckedUpdateManyWithoutLockedByNestedInput
+    transporterPayments?: TransporterPaymentUncheckedUpdateManyWithoutRecordedByNestedInput
+    transporterColumnLocks?: TransporterItemColumnLockUncheckedUpdateManyWithoutLockedByNestedInput
+    updatedTransporters?: TransporterUncheckedUpdateManyWithoutUpdatedByNestedInput
   }
 
   export type DocumentCreateWithoutExporterInput = {
@@ -85669,6 +92918,7 @@ export namespace Prisma {
     documents?: DocumentCreateNestedManyWithoutShipmentInput
     invoices?: InvoiceCreateNestedManyWithoutShipmentInput
     transports?: TransportCreateNestedManyWithoutShipmentInput
+    transporters?: TransporterCreateNestedManyWithoutShipmentInput
     packingList?: PackingListCreateNestedOneWithoutShipmentInput
     allocation?: AllocationCreateNestedOneWithoutShipmentInput
     client: ClientCreateNestedOneWithoutShipmentsInput
@@ -85709,6 +92959,7 @@ export namespace Prisma {
     documents?: DocumentUncheckedCreateNestedManyWithoutShipmentInput
     invoices?: InvoiceUncheckedCreateNestedManyWithoutShipmentInput
     transports?: TransportUncheckedCreateNestedManyWithoutShipmentInput
+    transporters?: TransporterUncheckedCreateNestedManyWithoutShipmentInput
     packingList?: PackingListUncheckedCreateNestedOneWithoutShipmentInput
     transits?: TransitUncheckedCreateNestedManyWithoutShipmentInput
     transitMovements?: TransitMovementUncheckedCreateNestedManyWithoutShipmentInput
@@ -85941,6 +93192,7 @@ export namespace Prisma {
     documents?: DocumentCreateNestedManyWithoutShipmentInput
     invoices?: InvoiceCreateNestedManyWithoutShipmentInput
     transports?: TransportCreateNestedManyWithoutShipmentInput
+    transporters?: TransporterCreateNestedManyWithoutShipmentInput
     packingList?: PackingListCreateNestedOneWithoutShipmentInput
     allocation?: AllocationCreateNestedOneWithoutShipmentInput
     client: ClientCreateNestedOneWithoutShipmentsInput
@@ -85981,6 +93233,7 @@ export namespace Prisma {
     documents?: DocumentUncheckedCreateNestedManyWithoutShipmentInput
     invoices?: InvoiceUncheckedCreateNestedManyWithoutShipmentInput
     transports?: TransportUncheckedCreateNestedManyWithoutShipmentInput
+    transporters?: TransporterUncheckedCreateNestedManyWithoutShipmentInput
     packingList?: PackingListUncheckedCreateNestedOneWithoutShipmentInput
     transits?: TransitUncheckedCreateNestedManyWithoutShipmentInput
     transitMovements?: TransitMovementUncheckedCreateNestedManyWithoutShipmentInput
@@ -86312,6 +93565,44 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type TransporterCreateWithoutShipmentInput = {
+    id?: string
+    transportNumber: string
+    transportDate: Date | string
+    truckOwnerName: string
+    remarks?: string | null
+    isLocked?: boolean
+    lockedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    updatedBy?: UserCreateNestedOneWithoutUpdatedTransportersInput
+    items?: TransporterItemCreateNestedManyWithoutTransporterInput
+  }
+
+  export type TransporterUncheckedCreateWithoutShipmentInput = {
+    id?: string
+    transportNumber: string
+    transportDate: Date | string
+    truckOwnerName: string
+    remarks?: string | null
+    isLocked?: boolean
+    lockedAt?: Date | string | null
+    updatedById?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    items?: TransporterItemUncheckedCreateNestedManyWithoutTransporterInput
+  }
+
+  export type TransporterCreateOrConnectWithoutShipmentInput = {
+    where: TransporterWhereUniqueInput
+    create: XOR<TransporterCreateWithoutShipmentInput, TransporterUncheckedCreateWithoutShipmentInput>
+  }
+
+  export type TransporterCreateManyShipmentInputEnvelope = {
+    data: TransporterCreateManyShipmentInput | TransporterCreateManyShipmentInput[]
+    skipDuplicates?: boolean
+  }
+
   export type PackingListCreateWithoutShipmentInput = {
     id?: string
     packingListNumber: string
@@ -86585,6 +93876,9 @@ export namespace Prisma {
     updatedTransports?: TransportCreateNestedManyWithoutUpdatedByInput
     transitMovementPayments?: TransitMovementPaymentCreateNestedManyWithoutRecordedByInput
     transitMovementColumnLocks?: TransitMovementItemColumnLockCreateNestedManyWithoutLockedByInput
+    transporterPayments?: TransporterPaymentCreateNestedManyWithoutRecordedByInput
+    transporterColumnLocks?: TransporterItemColumnLockCreateNestedManyWithoutLockedByInput
+    updatedTransporters?: TransporterCreateNestedManyWithoutUpdatedByInput
   }
 
   export type UserUncheckedCreateWithoutShipmentsInput = {
@@ -86616,6 +93910,9 @@ export namespace Prisma {
     updatedTransports?: TransportUncheckedCreateNestedManyWithoutUpdatedByInput
     transitMovementPayments?: TransitMovementPaymentUncheckedCreateNestedManyWithoutRecordedByInput
     transitMovementColumnLocks?: TransitMovementItemColumnLockUncheckedCreateNestedManyWithoutLockedByInput
+    transporterPayments?: TransporterPaymentUncheckedCreateNestedManyWithoutRecordedByInput
+    transporterColumnLocks?: TransporterItemColumnLockUncheckedCreateNestedManyWithoutLockedByInput
+    updatedTransporters?: TransporterUncheckedCreateNestedManyWithoutUpdatedByInput
   }
 
   export type UserCreateOrConnectWithoutShipmentsInput = {
@@ -86861,6 +94158,22 @@ export namespace Prisma {
   export type TransportUpdateManyWithWhereWithoutShipmentInput = {
     where: TransportScalarWhereInput
     data: XOR<TransportUpdateManyMutationInput, TransportUncheckedUpdateManyWithoutShipmentInput>
+  }
+
+  export type TransporterUpsertWithWhereUniqueWithoutShipmentInput = {
+    where: TransporterWhereUniqueInput
+    update: XOR<TransporterUpdateWithoutShipmentInput, TransporterUncheckedUpdateWithoutShipmentInput>
+    create: XOR<TransporterCreateWithoutShipmentInput, TransporterUncheckedCreateWithoutShipmentInput>
+  }
+
+  export type TransporterUpdateWithWhereUniqueWithoutShipmentInput = {
+    where: TransporterWhereUniqueInput
+    data: XOR<TransporterUpdateWithoutShipmentInput, TransporterUncheckedUpdateWithoutShipmentInput>
+  }
+
+  export type TransporterUpdateManyWithWhereWithoutShipmentInput = {
+    where: TransporterScalarWhereInput
+    data: XOR<TransporterUpdateManyMutationInput, TransporterUncheckedUpdateManyWithoutShipmentInput>
   }
 
   export type PackingListUpsertWithoutShipmentInput = {
@@ -87171,6 +94484,9 @@ export namespace Prisma {
     updatedTransports?: TransportUpdateManyWithoutUpdatedByNestedInput
     transitMovementPayments?: TransitMovementPaymentUpdateManyWithoutRecordedByNestedInput
     transitMovementColumnLocks?: TransitMovementItemColumnLockUpdateManyWithoutLockedByNestedInput
+    transporterPayments?: TransporterPaymentUpdateManyWithoutRecordedByNestedInput
+    transporterColumnLocks?: TransporterItemColumnLockUpdateManyWithoutLockedByNestedInput
+    updatedTransporters?: TransporterUpdateManyWithoutUpdatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutShipmentsInput = {
@@ -87202,6 +94518,9 @@ export namespace Prisma {
     updatedTransports?: TransportUncheckedUpdateManyWithoutUpdatedByNestedInput
     transitMovementPayments?: TransitMovementPaymentUncheckedUpdateManyWithoutRecordedByNestedInput
     transitMovementColumnLocks?: TransitMovementItemColumnLockUncheckedUpdateManyWithoutLockedByNestedInput
+    transporterPayments?: TransporterPaymentUncheckedUpdateManyWithoutRecordedByNestedInput
+    transporterColumnLocks?: TransporterItemColumnLockUncheckedUpdateManyWithoutLockedByNestedInput
+    updatedTransporters?: TransporterUncheckedUpdateManyWithoutUpdatedByNestedInput
   }
 
   export type ExporterUpsertWithoutShipmentsInput = {
@@ -87431,6 +94750,7 @@ export namespace Prisma {
     containers?: ContainerCreateNestedManyWithoutShipmentInput
     documents?: DocumentCreateNestedManyWithoutShipmentInput
     transports?: TransportCreateNestedManyWithoutShipmentInput
+    transporters?: TransporterCreateNestedManyWithoutShipmentInput
     packingList?: PackingListCreateNestedOneWithoutShipmentInput
     allocation?: AllocationCreateNestedOneWithoutShipmentInput
     client: ClientCreateNestedOneWithoutShipmentsInput
@@ -87472,6 +94792,7 @@ export namespace Prisma {
     containers?: ContainerUncheckedCreateNestedManyWithoutShipmentInput
     documents?: DocumentUncheckedCreateNestedManyWithoutShipmentInput
     transports?: TransportUncheckedCreateNestedManyWithoutShipmentInput
+    transporters?: TransporterUncheckedCreateNestedManyWithoutShipmentInput
     packingList?: PackingListUncheckedCreateNestedOneWithoutShipmentInput
     transits?: TransitUncheckedCreateNestedManyWithoutShipmentInput
     transitMovements?: TransitMovementUncheckedCreateNestedManyWithoutShipmentInput
@@ -87616,6 +94937,7 @@ export namespace Prisma {
     containers?: ContainerUpdateManyWithoutShipmentNestedInput
     documents?: DocumentUpdateManyWithoutShipmentNestedInput
     transports?: TransportUpdateManyWithoutShipmentNestedInput
+    transporters?: TransporterUpdateManyWithoutShipmentNestedInput
     packingList?: PackingListUpdateOneWithoutShipmentNestedInput
     allocation?: AllocationUpdateOneWithoutShipmentNestedInput
     client?: ClientUpdateOneRequiredWithoutShipmentsNestedInput
@@ -87657,6 +94979,7 @@ export namespace Prisma {
     containers?: ContainerUncheckedUpdateManyWithoutShipmentNestedInput
     documents?: DocumentUncheckedUpdateManyWithoutShipmentNestedInput
     transports?: TransportUncheckedUpdateManyWithoutShipmentNestedInput
+    transporters?: TransporterUncheckedUpdateManyWithoutShipmentNestedInput
     packingList?: PackingListUncheckedUpdateOneWithoutShipmentNestedInput
     transits?: TransitUncheckedUpdateManyWithoutShipmentNestedInput
     transitMovements?: TransitMovementUncheckedUpdateManyWithoutShipmentNestedInput
@@ -87765,6 +95088,7 @@ export namespace Prisma {
     documents?: DocumentCreateNestedManyWithoutShipmentInput
     invoices?: InvoiceCreateNestedManyWithoutShipmentInput
     transports?: TransportCreateNestedManyWithoutShipmentInput
+    transporters?: TransporterCreateNestedManyWithoutShipmentInput
     packingList?: PackingListCreateNestedOneWithoutShipmentInput
     allocation?: AllocationCreateNestedOneWithoutShipmentInput
     client: ClientCreateNestedOneWithoutShipmentsInput
@@ -87806,6 +95130,7 @@ export namespace Prisma {
     documents?: DocumentUncheckedCreateNestedManyWithoutShipmentInput
     invoices?: InvoiceUncheckedCreateNestedManyWithoutShipmentInput
     transports?: TransportUncheckedCreateNestedManyWithoutShipmentInput
+    transporters?: TransporterUncheckedCreateNestedManyWithoutShipmentInput
     packingList?: PackingListUncheckedCreateNestedOneWithoutShipmentInput
     transits?: TransitUncheckedCreateNestedManyWithoutShipmentInput
     transitMovements?: TransitMovementUncheckedCreateNestedManyWithoutShipmentInput
@@ -88044,6 +95369,7 @@ export namespace Prisma {
     documents?: DocumentUpdateManyWithoutShipmentNestedInput
     invoices?: InvoiceUpdateManyWithoutShipmentNestedInput
     transports?: TransportUpdateManyWithoutShipmentNestedInput
+    transporters?: TransporterUpdateManyWithoutShipmentNestedInput
     packingList?: PackingListUpdateOneWithoutShipmentNestedInput
     allocation?: AllocationUpdateOneWithoutShipmentNestedInput
     client?: ClientUpdateOneRequiredWithoutShipmentsNestedInput
@@ -88085,6 +95411,7 @@ export namespace Prisma {
     documents?: DocumentUncheckedUpdateManyWithoutShipmentNestedInput
     invoices?: InvoiceUncheckedUpdateManyWithoutShipmentNestedInput
     transports?: TransportUncheckedUpdateManyWithoutShipmentNestedInput
+    transporters?: TransporterUncheckedUpdateManyWithoutShipmentNestedInput
     packingList?: PackingListUncheckedUpdateOneWithoutShipmentNestedInput
     transits?: TransitUncheckedUpdateManyWithoutShipmentNestedInput
     transitMovements?: TransitMovementUncheckedUpdateManyWithoutShipmentNestedInput
@@ -88464,6 +95791,7 @@ export namespace Prisma {
     documents?: DocumentCreateNestedManyWithoutShipmentInput
     invoices?: InvoiceCreateNestedManyWithoutShipmentInput
     transports?: TransportCreateNestedManyWithoutShipmentInput
+    transporters?: TransporterCreateNestedManyWithoutShipmentInput
     allocation?: AllocationCreateNestedOneWithoutShipmentInput
     client: ClientCreateNestedOneWithoutShipmentsInput
     consignee: ConsigneeCreateNestedOneWithoutShipmentsInput
@@ -88505,6 +95833,7 @@ export namespace Prisma {
     documents?: DocumentUncheckedCreateNestedManyWithoutShipmentInput
     invoices?: InvoiceUncheckedCreateNestedManyWithoutShipmentInput
     transports?: TransportUncheckedCreateNestedManyWithoutShipmentInput
+    transporters?: TransporterUncheckedCreateNestedManyWithoutShipmentInput
     transits?: TransitUncheckedCreateNestedManyWithoutShipmentInput
     transitMovements?: TransitMovementUncheckedCreateNestedManyWithoutShipmentInput
   }
@@ -88620,6 +95949,7 @@ export namespace Prisma {
     documents?: DocumentUpdateManyWithoutShipmentNestedInput
     invoices?: InvoiceUpdateManyWithoutShipmentNestedInput
     transports?: TransportUpdateManyWithoutShipmentNestedInput
+    transporters?: TransporterUpdateManyWithoutShipmentNestedInput
     allocation?: AllocationUpdateOneWithoutShipmentNestedInput
     client?: ClientUpdateOneRequiredWithoutShipmentsNestedInput
     consignee?: ConsigneeUpdateOneRequiredWithoutShipmentsNestedInput
@@ -88661,6 +95991,7 @@ export namespace Prisma {
     documents?: DocumentUncheckedUpdateManyWithoutShipmentNestedInput
     invoices?: InvoiceUncheckedUpdateManyWithoutShipmentNestedInput
     transports?: TransportUncheckedUpdateManyWithoutShipmentNestedInput
+    transporters?: TransporterUncheckedUpdateManyWithoutShipmentNestedInput
     transits?: TransitUncheckedUpdateManyWithoutShipmentNestedInput
     transitMovements?: TransitMovementUncheckedUpdateManyWithoutShipmentNestedInput
   }
@@ -88924,6 +96255,7 @@ export namespace Prisma {
     documents?: DocumentCreateNestedManyWithoutShipmentInput
     invoices?: InvoiceCreateNestedManyWithoutShipmentInput
     transports?: TransportCreateNestedManyWithoutShipmentInput
+    transporters?: TransporterCreateNestedManyWithoutShipmentInput
     packingList?: PackingListCreateNestedOneWithoutShipmentInput
     allocation?: AllocationCreateNestedOneWithoutShipmentInput
     client: ClientCreateNestedOneWithoutShipmentsInput
@@ -88965,6 +96297,7 @@ export namespace Prisma {
     documents?: DocumentUncheckedCreateNestedManyWithoutShipmentInput
     invoices?: InvoiceUncheckedCreateNestedManyWithoutShipmentInput
     transports?: TransportUncheckedCreateNestedManyWithoutShipmentInput
+    transporters?: TransporterUncheckedCreateNestedManyWithoutShipmentInput
     packingList?: PackingListUncheckedCreateNestedOneWithoutShipmentInput
     transitMovements?: TransitMovementUncheckedCreateNestedManyWithoutShipmentInput
   }
@@ -89095,6 +96428,7 @@ export namespace Prisma {
     documents?: DocumentUpdateManyWithoutShipmentNestedInput
     invoices?: InvoiceUpdateManyWithoutShipmentNestedInput
     transports?: TransportUpdateManyWithoutShipmentNestedInput
+    transporters?: TransporterUpdateManyWithoutShipmentNestedInput
     packingList?: PackingListUpdateOneWithoutShipmentNestedInput
     allocation?: AllocationUpdateOneWithoutShipmentNestedInput
     client?: ClientUpdateOneRequiredWithoutShipmentsNestedInput
@@ -89136,6 +96470,7 @@ export namespace Prisma {
     documents?: DocumentUncheckedUpdateManyWithoutShipmentNestedInput
     invoices?: InvoiceUncheckedUpdateManyWithoutShipmentNestedInput
     transports?: TransportUncheckedUpdateManyWithoutShipmentNestedInput
+    transporters?: TransporterUncheckedUpdateManyWithoutShipmentNestedInput
     packingList?: PackingListUncheckedUpdateOneWithoutShipmentNestedInput
     transitMovements?: TransitMovementUncheckedUpdateManyWithoutShipmentNestedInput
   }
@@ -89169,6 +96504,9 @@ export namespace Prisma {
     updatedTransports?: TransportCreateNestedManyWithoutUpdatedByInput
     transitMovementPayments?: TransitMovementPaymentCreateNestedManyWithoutRecordedByInput
     transitMovementColumnLocks?: TransitMovementItemColumnLockCreateNestedManyWithoutLockedByInput
+    transporterPayments?: TransporterPaymentCreateNestedManyWithoutRecordedByInput
+    transporterColumnLocks?: TransporterItemColumnLockCreateNestedManyWithoutLockedByInput
+    updatedTransporters?: TransporterCreateNestedManyWithoutUpdatedByInput
   }
 
   export type UserUncheckedCreateWithoutApprovedAllocationsInput = {
@@ -89200,6 +96538,9 @@ export namespace Prisma {
     updatedTransports?: TransportUncheckedCreateNestedManyWithoutUpdatedByInput
     transitMovementPayments?: TransitMovementPaymentUncheckedCreateNestedManyWithoutRecordedByInput
     transitMovementColumnLocks?: TransitMovementItemColumnLockUncheckedCreateNestedManyWithoutLockedByInput
+    transporterPayments?: TransporterPaymentUncheckedCreateNestedManyWithoutRecordedByInput
+    transporterColumnLocks?: TransporterItemColumnLockUncheckedCreateNestedManyWithoutLockedByInput
+    updatedTransporters?: TransporterUncheckedCreateNestedManyWithoutUpdatedByInput
   }
 
   export type UserCreateOrConnectWithoutApprovedAllocationsInput = {
@@ -89236,6 +96577,9 @@ export namespace Prisma {
     updatedTransports?: TransportCreateNestedManyWithoutUpdatedByInput
     transitMovementPayments?: TransitMovementPaymentCreateNestedManyWithoutRecordedByInput
     transitMovementColumnLocks?: TransitMovementItemColumnLockCreateNestedManyWithoutLockedByInput
+    transporterPayments?: TransporterPaymentCreateNestedManyWithoutRecordedByInput
+    transporterColumnLocks?: TransporterItemColumnLockCreateNestedManyWithoutLockedByInput
+    updatedTransporters?: TransporterCreateNestedManyWithoutUpdatedByInput
   }
 
   export type UserUncheckedCreateWithoutAssignedAllocationsInput = {
@@ -89267,6 +96611,9 @@ export namespace Prisma {
     updatedTransports?: TransportUncheckedCreateNestedManyWithoutUpdatedByInput
     transitMovementPayments?: TransitMovementPaymentUncheckedCreateNestedManyWithoutRecordedByInput
     transitMovementColumnLocks?: TransitMovementItemColumnLockUncheckedCreateNestedManyWithoutLockedByInput
+    transporterPayments?: TransporterPaymentUncheckedCreateNestedManyWithoutRecordedByInput
+    transporterColumnLocks?: TransporterItemColumnLockUncheckedCreateNestedManyWithoutLockedByInput
+    updatedTransporters?: TransporterUncheckedCreateNestedManyWithoutUpdatedByInput
   }
 
   export type UserCreateOrConnectWithoutAssignedAllocationsInput = {
@@ -89397,6 +96744,9 @@ export namespace Prisma {
     updatedTransports?: TransportCreateNestedManyWithoutUpdatedByInput
     transitMovementPayments?: TransitMovementPaymentCreateNestedManyWithoutRecordedByInput
     transitMovementColumnLocks?: TransitMovementItemColumnLockCreateNestedManyWithoutLockedByInput
+    transporterPayments?: TransporterPaymentCreateNestedManyWithoutRecordedByInput
+    transporterColumnLocks?: TransporterItemColumnLockCreateNestedManyWithoutLockedByInput
+    updatedTransporters?: TransporterCreateNestedManyWithoutUpdatedByInput
   }
 
   export type UserUncheckedCreateWithoutCreatedAllocationsInput = {
@@ -89428,6 +96778,9 @@ export namespace Prisma {
     updatedTransports?: TransportUncheckedCreateNestedManyWithoutUpdatedByInput
     transitMovementPayments?: TransitMovementPaymentUncheckedCreateNestedManyWithoutRecordedByInput
     transitMovementColumnLocks?: TransitMovementItemColumnLockUncheckedCreateNestedManyWithoutLockedByInput
+    transporterPayments?: TransporterPaymentUncheckedCreateNestedManyWithoutRecordedByInput
+    transporterColumnLocks?: TransporterItemColumnLockUncheckedCreateNestedManyWithoutLockedByInput
+    updatedTransporters?: TransporterUncheckedCreateNestedManyWithoutUpdatedByInput
   }
 
   export type UserCreateOrConnectWithoutCreatedAllocationsInput = {
@@ -89589,6 +96942,7 @@ export namespace Prisma {
     documents?: DocumentCreateNestedManyWithoutShipmentInput
     invoices?: InvoiceCreateNestedManyWithoutShipmentInput
     transports?: TransportCreateNestedManyWithoutShipmentInput
+    transporters?: TransporterCreateNestedManyWithoutShipmentInput
     packingList?: PackingListCreateNestedOneWithoutShipmentInput
     client: ClientCreateNestedOneWithoutShipmentsInput
     consignee: ConsigneeCreateNestedOneWithoutShipmentsInput
@@ -89629,6 +96983,7 @@ export namespace Prisma {
     documents?: DocumentUncheckedCreateNestedManyWithoutShipmentInput
     invoices?: InvoiceUncheckedCreateNestedManyWithoutShipmentInput
     transports?: TransportUncheckedCreateNestedManyWithoutShipmentInput
+    transporters?: TransporterUncheckedCreateNestedManyWithoutShipmentInput
     packingList?: PackingListUncheckedCreateNestedOneWithoutShipmentInput
     transits?: TransitUncheckedCreateNestedManyWithoutShipmentInput
     transitMovements?: TransitMovementUncheckedCreateNestedManyWithoutShipmentInput
@@ -89679,6 +97034,9 @@ export namespace Prisma {
     updatedTransports?: TransportUpdateManyWithoutUpdatedByNestedInput
     transitMovementPayments?: TransitMovementPaymentUpdateManyWithoutRecordedByNestedInput
     transitMovementColumnLocks?: TransitMovementItemColumnLockUpdateManyWithoutLockedByNestedInput
+    transporterPayments?: TransporterPaymentUpdateManyWithoutRecordedByNestedInput
+    transporterColumnLocks?: TransporterItemColumnLockUpdateManyWithoutLockedByNestedInput
+    updatedTransporters?: TransporterUpdateManyWithoutUpdatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutApprovedAllocationsInput = {
@@ -89710,6 +97068,9 @@ export namespace Prisma {
     updatedTransports?: TransportUncheckedUpdateManyWithoutUpdatedByNestedInput
     transitMovementPayments?: TransitMovementPaymentUncheckedUpdateManyWithoutRecordedByNestedInput
     transitMovementColumnLocks?: TransitMovementItemColumnLockUncheckedUpdateManyWithoutLockedByNestedInput
+    transporterPayments?: TransporterPaymentUncheckedUpdateManyWithoutRecordedByNestedInput
+    transporterColumnLocks?: TransporterItemColumnLockUncheckedUpdateManyWithoutLockedByNestedInput
+    updatedTransporters?: TransporterUncheckedUpdateManyWithoutUpdatedByNestedInput
   }
 
   export type UserUpsertWithoutAssignedAllocationsInput = {
@@ -89752,6 +97113,9 @@ export namespace Prisma {
     updatedTransports?: TransportUpdateManyWithoutUpdatedByNestedInput
     transitMovementPayments?: TransitMovementPaymentUpdateManyWithoutRecordedByNestedInput
     transitMovementColumnLocks?: TransitMovementItemColumnLockUpdateManyWithoutLockedByNestedInput
+    transporterPayments?: TransporterPaymentUpdateManyWithoutRecordedByNestedInput
+    transporterColumnLocks?: TransporterItemColumnLockUpdateManyWithoutLockedByNestedInput
+    updatedTransporters?: TransporterUpdateManyWithoutUpdatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutAssignedAllocationsInput = {
@@ -89783,6 +97147,9 @@ export namespace Prisma {
     updatedTransports?: TransportUncheckedUpdateManyWithoutUpdatedByNestedInput
     transitMovementPayments?: TransitMovementPaymentUncheckedUpdateManyWithoutRecordedByNestedInput
     transitMovementColumnLocks?: TransitMovementItemColumnLockUncheckedUpdateManyWithoutLockedByNestedInput
+    transporterPayments?: TransporterPaymentUncheckedUpdateManyWithoutRecordedByNestedInput
+    transporterColumnLocks?: TransporterItemColumnLockUncheckedUpdateManyWithoutLockedByNestedInput
+    updatedTransporters?: TransporterUncheckedUpdateManyWithoutUpdatedByNestedInput
   }
 
   export type ClientUpsertWithoutAllocationsInput = {
@@ -89931,6 +97298,9 @@ export namespace Prisma {
     updatedTransports?: TransportUpdateManyWithoutUpdatedByNestedInput
     transitMovementPayments?: TransitMovementPaymentUpdateManyWithoutRecordedByNestedInput
     transitMovementColumnLocks?: TransitMovementItemColumnLockUpdateManyWithoutLockedByNestedInput
+    transporterPayments?: TransporterPaymentUpdateManyWithoutRecordedByNestedInput
+    transporterColumnLocks?: TransporterItemColumnLockUpdateManyWithoutLockedByNestedInput
+    updatedTransporters?: TransporterUpdateManyWithoutUpdatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutCreatedAllocationsInput = {
@@ -89962,6 +97332,9 @@ export namespace Prisma {
     updatedTransports?: TransportUncheckedUpdateManyWithoutUpdatedByNestedInput
     transitMovementPayments?: TransitMovementPaymentUncheckedUpdateManyWithoutRecordedByNestedInput
     transitMovementColumnLocks?: TransitMovementItemColumnLockUncheckedUpdateManyWithoutLockedByNestedInput
+    transporterPayments?: TransporterPaymentUncheckedUpdateManyWithoutRecordedByNestedInput
+    transporterColumnLocks?: TransporterItemColumnLockUncheckedUpdateManyWithoutLockedByNestedInput
+    updatedTransporters?: TransporterUncheckedUpdateManyWithoutUpdatedByNestedInput
   }
 
   export type ExporterUpsertWithoutAllocationsInput = {
@@ -90071,6 +97444,7 @@ export namespace Prisma {
     documents?: DocumentUpdateManyWithoutShipmentNestedInput
     invoices?: InvoiceUpdateManyWithoutShipmentNestedInput
     transports?: TransportUpdateManyWithoutShipmentNestedInput
+    transporters?: TransporterUpdateManyWithoutShipmentNestedInput
     packingList?: PackingListUpdateOneWithoutShipmentNestedInput
     client?: ClientUpdateOneRequiredWithoutShipmentsNestedInput
     consignee?: ConsigneeUpdateOneRequiredWithoutShipmentsNestedInput
@@ -90111,6 +97485,7 @@ export namespace Prisma {
     documents?: DocumentUncheckedUpdateManyWithoutShipmentNestedInput
     invoices?: InvoiceUncheckedUpdateManyWithoutShipmentNestedInput
     transports?: TransportUncheckedUpdateManyWithoutShipmentNestedInput
+    transporters?: TransporterUncheckedUpdateManyWithoutShipmentNestedInput
     packingList?: PackingListUncheckedUpdateOneWithoutShipmentNestedInput
     transits?: TransitUncheckedUpdateManyWithoutShipmentNestedInput
     transitMovements?: TransitMovementUncheckedUpdateManyWithoutShipmentNestedInput
@@ -90259,6 +97634,7 @@ export namespace Prisma {
     documents?: DocumentCreateNestedManyWithoutShipmentInput
     invoices?: InvoiceCreateNestedManyWithoutShipmentInput
     transports?: TransportCreateNestedManyWithoutShipmentInput
+    transporters?: TransporterCreateNestedManyWithoutShipmentInput
     packingList?: PackingListCreateNestedOneWithoutShipmentInput
     allocation?: AllocationCreateNestedOneWithoutShipmentInput
     consignee: ConsigneeCreateNestedOneWithoutShipmentsInput
@@ -90299,6 +97675,7 @@ export namespace Prisma {
     documents?: DocumentUncheckedCreateNestedManyWithoutShipmentInput
     invoices?: InvoiceUncheckedCreateNestedManyWithoutShipmentInput
     transports?: TransportUncheckedCreateNestedManyWithoutShipmentInput
+    transporters?: TransporterUncheckedCreateNestedManyWithoutShipmentInput
     packingList?: PackingListUncheckedCreateNestedOneWithoutShipmentInput
     transits?: TransitUncheckedCreateNestedManyWithoutShipmentInput
     transitMovements?: TransitMovementUncheckedCreateNestedManyWithoutShipmentInput
@@ -90885,6 +98262,7 @@ export namespace Prisma {
     containers?: ContainerCreateNestedManyWithoutShipmentInput
     invoices?: InvoiceCreateNestedManyWithoutShipmentInput
     transports?: TransportCreateNestedManyWithoutShipmentInput
+    transporters?: TransporterCreateNestedManyWithoutShipmentInput
     packingList?: PackingListCreateNestedOneWithoutShipmentInput
     allocation?: AllocationCreateNestedOneWithoutShipmentInput
     client: ClientCreateNestedOneWithoutShipmentsInput
@@ -90926,6 +98304,7 @@ export namespace Prisma {
     containers?: ContainerUncheckedCreateNestedManyWithoutShipmentInput
     invoices?: InvoiceUncheckedCreateNestedManyWithoutShipmentInput
     transports?: TransportUncheckedCreateNestedManyWithoutShipmentInput
+    transporters?: TransporterUncheckedCreateNestedManyWithoutShipmentInput
     packingList?: PackingListUncheckedCreateNestedOneWithoutShipmentInput
     transits?: TransitUncheckedCreateNestedManyWithoutShipmentInput
     transitMovements?: TransitMovementUncheckedCreateNestedManyWithoutShipmentInput
@@ -91449,6 +98828,7 @@ export namespace Prisma {
     containers?: ContainerUpdateManyWithoutShipmentNestedInput
     invoices?: InvoiceUpdateManyWithoutShipmentNestedInput
     transports?: TransportUpdateManyWithoutShipmentNestedInput
+    transporters?: TransporterUpdateManyWithoutShipmentNestedInput
     packingList?: PackingListUpdateOneWithoutShipmentNestedInput
     allocation?: AllocationUpdateOneWithoutShipmentNestedInput
     client?: ClientUpdateOneRequiredWithoutShipmentsNestedInput
@@ -91490,6 +98870,7 @@ export namespace Prisma {
     containers?: ContainerUncheckedUpdateManyWithoutShipmentNestedInput
     invoices?: InvoiceUncheckedUpdateManyWithoutShipmentNestedInput
     transports?: TransportUncheckedUpdateManyWithoutShipmentNestedInput
+    transporters?: TransporterUncheckedUpdateManyWithoutShipmentNestedInput
     packingList?: PackingListUncheckedUpdateOneWithoutShipmentNestedInput
     transits?: TransitUncheckedUpdateManyWithoutShipmentNestedInput
     transitMovements?: TransitMovementUncheckedUpdateManyWithoutShipmentNestedInput
@@ -91577,6 +98958,9 @@ export namespace Prisma {
     updatedTransports?: TransportCreateNestedManyWithoutUpdatedByInput
     transitMovementPayments?: TransitMovementPaymentCreateNestedManyWithoutRecordedByInput
     transitMovementColumnLocks?: TransitMovementItemColumnLockCreateNestedManyWithoutLockedByInput
+    transporterPayments?: TransporterPaymentCreateNestedManyWithoutRecordedByInput
+    transporterColumnLocks?: TransporterItemColumnLockCreateNestedManyWithoutLockedByInput
+    updatedTransporters?: TransporterCreateNestedManyWithoutUpdatedByInput
   }
 
   export type UserUncheckedCreateWithoutPermissionsInput = {
@@ -91608,6 +98992,9 @@ export namespace Prisma {
     updatedTransports?: TransportUncheckedCreateNestedManyWithoutUpdatedByInput
     transitMovementPayments?: TransitMovementPaymentUncheckedCreateNestedManyWithoutRecordedByInput
     transitMovementColumnLocks?: TransitMovementItemColumnLockUncheckedCreateNestedManyWithoutLockedByInput
+    transporterPayments?: TransporterPaymentUncheckedCreateNestedManyWithoutRecordedByInput
+    transporterColumnLocks?: TransporterItemColumnLockUncheckedCreateNestedManyWithoutLockedByInput
+    updatedTransporters?: TransporterUncheckedCreateNestedManyWithoutUpdatedByInput
   }
 
   export type UserCreateOrConnectWithoutPermissionsInput = {
@@ -91655,6 +99042,9 @@ export namespace Prisma {
     updatedTransports?: TransportUpdateManyWithoutUpdatedByNestedInput
     transitMovementPayments?: TransitMovementPaymentUpdateManyWithoutRecordedByNestedInput
     transitMovementColumnLocks?: TransitMovementItemColumnLockUpdateManyWithoutLockedByNestedInput
+    transporterPayments?: TransporterPaymentUpdateManyWithoutRecordedByNestedInput
+    transporterColumnLocks?: TransporterItemColumnLockUpdateManyWithoutLockedByNestedInput
+    updatedTransporters?: TransporterUpdateManyWithoutUpdatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutPermissionsInput = {
@@ -91686,6 +99076,9 @@ export namespace Prisma {
     updatedTransports?: TransportUncheckedUpdateManyWithoutUpdatedByNestedInput
     transitMovementPayments?: TransitMovementPaymentUncheckedUpdateManyWithoutRecordedByNestedInput
     transitMovementColumnLocks?: TransitMovementItemColumnLockUncheckedUpdateManyWithoutLockedByNestedInput
+    transporterPayments?: TransporterPaymentUncheckedUpdateManyWithoutRecordedByNestedInput
+    transporterColumnLocks?: TransporterItemColumnLockUncheckedUpdateManyWithoutLockedByNestedInput
+    updatedTransporters?: TransporterUncheckedUpdateManyWithoutUpdatedByNestedInput
   }
 
   export type InvoiceCreateWithoutPaymentsInput = {
@@ -92045,6 +99438,9 @@ export namespace Prisma {
     updatedTransports?: TransportCreateNestedManyWithoutUpdatedByInput
     transitMovementPayments?: TransitMovementPaymentCreateNestedManyWithoutRecordedByInput
     transitMovementColumnLocks?: TransitMovementItemColumnLockCreateNestedManyWithoutLockedByInput
+    transporterPayments?: TransporterPaymentCreateNestedManyWithoutRecordedByInput
+    transporterColumnLocks?: TransporterItemColumnLockCreateNestedManyWithoutLockedByInput
+    updatedTransporters?: TransporterCreateNestedManyWithoutUpdatedByInput
   }
 
   export type UserUncheckedCreateWithoutRateCardsInput = {
@@ -92076,6 +99472,9 @@ export namespace Prisma {
     updatedTransports?: TransportUncheckedCreateNestedManyWithoutUpdatedByInput
     transitMovementPayments?: TransitMovementPaymentUncheckedCreateNestedManyWithoutRecordedByInput
     transitMovementColumnLocks?: TransitMovementItemColumnLockUncheckedCreateNestedManyWithoutLockedByInput
+    transporterPayments?: TransporterPaymentUncheckedCreateNestedManyWithoutRecordedByInput
+    transporterColumnLocks?: TransporterItemColumnLockUncheckedCreateNestedManyWithoutLockedByInput
+    updatedTransporters?: TransporterUncheckedCreateNestedManyWithoutUpdatedByInput
   }
 
   export type UserCreateOrConnectWithoutRateCardsInput = {
@@ -92383,6 +99782,9 @@ export namespace Prisma {
     updatedTransports?: TransportUpdateManyWithoutUpdatedByNestedInput
     transitMovementPayments?: TransitMovementPaymentUpdateManyWithoutRecordedByNestedInput
     transitMovementColumnLocks?: TransitMovementItemColumnLockUpdateManyWithoutLockedByNestedInput
+    transporterPayments?: TransporterPaymentUpdateManyWithoutRecordedByNestedInput
+    transporterColumnLocks?: TransporterItemColumnLockUpdateManyWithoutLockedByNestedInput
+    updatedTransporters?: TransporterUpdateManyWithoutUpdatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutRateCardsInput = {
@@ -92414,6 +99816,9 @@ export namespace Prisma {
     updatedTransports?: TransportUncheckedUpdateManyWithoutUpdatedByNestedInput
     transitMovementPayments?: TransitMovementPaymentUncheckedUpdateManyWithoutRecordedByNestedInput
     transitMovementColumnLocks?: TransitMovementItemColumnLockUncheckedUpdateManyWithoutLockedByNestedInput
+    transporterPayments?: TransporterPaymentUncheckedUpdateManyWithoutRecordedByNestedInput
+    transporterColumnLocks?: TransporterItemColumnLockUncheckedUpdateManyWithoutLockedByNestedInput
+    updatedTransporters?: TransporterUncheckedUpdateManyWithoutUpdatedByNestedInput
   }
 
   export type RateComponentUpsertWithWhereUniqueWithoutRateCardInput = {
@@ -94611,6 +102016,9 @@ export namespace Prisma {
     updatedTransports?: TransportCreateNestedManyWithoutUpdatedByInput
     transitMovementPayments?: TransitMovementPaymentCreateNestedManyWithoutRecordedByInput
     transitMovementColumnLocks?: TransitMovementItemColumnLockCreateNestedManyWithoutLockedByInput
+    transporterPayments?: TransporterPaymentCreateNestedManyWithoutRecordedByInput
+    transporterColumnLocks?: TransporterItemColumnLockCreateNestedManyWithoutLockedByInput
+    updatedTransporters?: TransporterCreateNestedManyWithoutUpdatedByInput
   }
 
   export type UserUncheckedCreateWithoutQuoteSubmissionsInput = {
@@ -94642,6 +102050,9 @@ export namespace Prisma {
     updatedTransports?: TransportUncheckedCreateNestedManyWithoutUpdatedByInput
     transitMovementPayments?: TransitMovementPaymentUncheckedCreateNestedManyWithoutRecordedByInput
     transitMovementColumnLocks?: TransitMovementItemColumnLockUncheckedCreateNestedManyWithoutLockedByInput
+    transporterPayments?: TransporterPaymentUncheckedCreateNestedManyWithoutRecordedByInput
+    transporterColumnLocks?: TransporterItemColumnLockUncheckedCreateNestedManyWithoutLockedByInput
+    updatedTransporters?: TransporterUncheckedCreateNestedManyWithoutUpdatedByInput
   }
 
   export type UserCreateOrConnectWithoutQuoteSubmissionsInput = {
@@ -94906,6 +102317,9 @@ export namespace Prisma {
     updatedTransports?: TransportUpdateManyWithoutUpdatedByNestedInput
     transitMovementPayments?: TransitMovementPaymentUpdateManyWithoutRecordedByNestedInput
     transitMovementColumnLocks?: TransitMovementItemColumnLockUpdateManyWithoutLockedByNestedInput
+    transporterPayments?: TransporterPaymentUpdateManyWithoutRecordedByNestedInput
+    transporterColumnLocks?: TransporterItemColumnLockUpdateManyWithoutLockedByNestedInput
+    updatedTransporters?: TransporterUpdateManyWithoutUpdatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutQuoteSubmissionsInput = {
@@ -94937,6 +102351,9 @@ export namespace Prisma {
     updatedTransports?: TransportUncheckedUpdateManyWithoutUpdatedByNestedInput
     transitMovementPayments?: TransitMovementPaymentUncheckedUpdateManyWithoutRecordedByNestedInput
     transitMovementColumnLocks?: TransitMovementItemColumnLockUncheckedUpdateManyWithoutLockedByNestedInput
+    transporterPayments?: TransporterPaymentUncheckedUpdateManyWithoutRecordedByNestedInput
+    transporterColumnLocks?: TransporterItemColumnLockUncheckedUpdateManyWithoutLockedByNestedInput
+    updatedTransporters?: TransporterUncheckedUpdateManyWithoutUpdatedByNestedInput
   }
 
   export type QuoteSubmissionItemUpsertWithWhereUniqueWithoutSubmissionInput = {
@@ -95412,6 +102829,9 @@ export namespace Prisma {
     updatedTransports?: TransportCreateNestedManyWithoutUpdatedByInput
     transitMovementPayments?: TransitMovementPaymentCreateNestedManyWithoutRecordedByInput
     transitMovementColumnLocks?: TransitMovementItemColumnLockCreateNestedManyWithoutLockedByInput
+    transporterPayments?: TransporterPaymentCreateNestedManyWithoutRecordedByInput
+    transporterColumnLocks?: TransporterItemColumnLockCreateNestedManyWithoutLockedByInput
+    updatedTransporters?: TransporterCreateNestedManyWithoutUpdatedByInput
   }
 
   export type UserUncheckedCreateWithoutQuoteMessagesInput = {
@@ -95443,6 +102863,9 @@ export namespace Prisma {
     updatedTransports?: TransportUncheckedCreateNestedManyWithoutUpdatedByInput
     transitMovementPayments?: TransitMovementPaymentUncheckedCreateNestedManyWithoutRecordedByInput
     transitMovementColumnLocks?: TransitMovementItemColumnLockUncheckedCreateNestedManyWithoutLockedByInput
+    transporterPayments?: TransporterPaymentUncheckedCreateNestedManyWithoutRecordedByInput
+    transporterColumnLocks?: TransporterItemColumnLockUncheckedCreateNestedManyWithoutLockedByInput
+    updatedTransporters?: TransporterUncheckedCreateNestedManyWithoutUpdatedByInput
   }
 
   export type UserCreateOrConnectWithoutQuoteMessagesInput = {
@@ -95684,6 +103107,9 @@ export namespace Prisma {
     updatedTransports?: TransportUpdateManyWithoutUpdatedByNestedInput
     transitMovementPayments?: TransitMovementPaymentUpdateManyWithoutRecordedByNestedInput
     transitMovementColumnLocks?: TransitMovementItemColumnLockUpdateManyWithoutLockedByNestedInput
+    transporterPayments?: TransporterPaymentUpdateManyWithoutRecordedByNestedInput
+    transporterColumnLocks?: TransporterItemColumnLockUpdateManyWithoutLockedByNestedInput
+    updatedTransporters?: TransporterUpdateManyWithoutUpdatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutQuoteMessagesInput = {
@@ -95715,6 +103141,9 @@ export namespace Prisma {
     updatedTransports?: TransportUncheckedUpdateManyWithoutUpdatedByNestedInput
     transitMovementPayments?: TransitMovementPaymentUncheckedUpdateManyWithoutRecordedByNestedInput
     transitMovementColumnLocks?: TransitMovementItemColumnLockUncheckedUpdateManyWithoutLockedByNestedInput
+    transporterPayments?: TransporterPaymentUncheckedUpdateManyWithoutRecordedByNestedInput
+    transporterColumnLocks?: TransporterItemColumnLockUncheckedUpdateManyWithoutLockedByNestedInput
+    updatedTransporters?: TransporterUncheckedUpdateManyWithoutUpdatedByNestedInput
   }
 
   export type QuoteAttachmentUpsertWithWhereUniqueWithoutMessageInput = {
@@ -95927,6 +103356,9 @@ export namespace Prisma {
     updatedTransports?: TransportCreateNestedManyWithoutUpdatedByInput
     transitMovementPayments?: TransitMovementPaymentCreateNestedManyWithoutRecordedByInput
     transitMovementColumnLocks?: TransitMovementItemColumnLockCreateNestedManyWithoutLockedByInput
+    transporterPayments?: TransporterPaymentCreateNestedManyWithoutRecordedByInput
+    transporterColumnLocks?: TransporterItemColumnLockCreateNestedManyWithoutLockedByInput
+    updatedTransporters?: TransporterCreateNestedManyWithoutUpdatedByInput
   }
 
   export type UserUncheckedCreateWithoutQuoteAttachmentsInput = {
@@ -95958,6 +103390,9 @@ export namespace Prisma {
     updatedTransports?: TransportUncheckedCreateNestedManyWithoutUpdatedByInput
     transitMovementPayments?: TransitMovementPaymentUncheckedCreateNestedManyWithoutRecordedByInput
     transitMovementColumnLocks?: TransitMovementItemColumnLockUncheckedCreateNestedManyWithoutLockedByInput
+    transporterPayments?: TransporterPaymentUncheckedCreateNestedManyWithoutRecordedByInput
+    transporterColumnLocks?: TransporterItemColumnLockUncheckedCreateNestedManyWithoutLockedByInput
+    updatedTransporters?: TransporterUncheckedCreateNestedManyWithoutUpdatedByInput
   }
 
   export type UserCreateOrConnectWithoutQuoteAttachmentsInput = {
@@ -96188,6 +103623,9 @@ export namespace Prisma {
     updatedTransports?: TransportUpdateManyWithoutUpdatedByNestedInput
     transitMovementPayments?: TransitMovementPaymentUpdateManyWithoutRecordedByNestedInput
     transitMovementColumnLocks?: TransitMovementItemColumnLockUpdateManyWithoutLockedByNestedInput
+    transporterPayments?: TransporterPaymentUpdateManyWithoutRecordedByNestedInput
+    transporterColumnLocks?: TransporterItemColumnLockUpdateManyWithoutLockedByNestedInput
+    updatedTransporters?: TransporterUpdateManyWithoutUpdatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutQuoteAttachmentsInput = {
@@ -96219,6 +103657,9 @@ export namespace Prisma {
     updatedTransports?: TransportUncheckedUpdateManyWithoutUpdatedByNestedInput
     transitMovementPayments?: TransitMovementPaymentUncheckedUpdateManyWithoutRecordedByNestedInput
     transitMovementColumnLocks?: TransitMovementItemColumnLockUncheckedUpdateManyWithoutLockedByNestedInput
+    transporterPayments?: TransporterPaymentUncheckedUpdateManyWithoutRecordedByNestedInput
+    transporterColumnLocks?: TransporterItemColumnLockUncheckedUpdateManyWithoutLockedByNestedInput
+    updatedTransporters?: TransporterUncheckedUpdateManyWithoutUpdatedByNestedInput
   }
 
   export type QuoteCreateWithoutNotificationsInput = {
@@ -96321,6 +103762,9 @@ export namespace Prisma {
     updatedTransports?: TransportCreateNestedManyWithoutUpdatedByInput
     transitMovementPayments?: TransitMovementPaymentCreateNestedManyWithoutRecordedByInput
     transitMovementColumnLocks?: TransitMovementItemColumnLockCreateNestedManyWithoutLockedByInput
+    transporterPayments?: TransporterPaymentCreateNestedManyWithoutRecordedByInput
+    transporterColumnLocks?: TransporterItemColumnLockCreateNestedManyWithoutLockedByInput
+    updatedTransporters?: TransporterCreateNestedManyWithoutUpdatedByInput
   }
 
   export type UserUncheckedCreateWithoutQuoteNotificationsInput = {
@@ -96352,6 +103796,9 @@ export namespace Prisma {
     updatedTransports?: TransportUncheckedCreateNestedManyWithoutUpdatedByInput
     transitMovementPayments?: TransitMovementPaymentUncheckedCreateNestedManyWithoutRecordedByInput
     transitMovementColumnLocks?: TransitMovementItemColumnLockUncheckedCreateNestedManyWithoutLockedByInput
+    transporterPayments?: TransporterPaymentUncheckedCreateNestedManyWithoutRecordedByInput
+    transporterColumnLocks?: TransporterItemColumnLockUncheckedCreateNestedManyWithoutLockedByInput
+    updatedTransporters?: TransporterUncheckedCreateNestedManyWithoutUpdatedByInput
   }
 
   export type UserCreateOrConnectWithoutQuoteNotificationsInput = {
@@ -96476,6 +103923,9 @@ export namespace Prisma {
     updatedTransports?: TransportUpdateManyWithoutUpdatedByNestedInput
     transitMovementPayments?: TransitMovementPaymentUpdateManyWithoutRecordedByNestedInput
     transitMovementColumnLocks?: TransitMovementItemColumnLockUpdateManyWithoutLockedByNestedInput
+    transporterPayments?: TransporterPaymentUpdateManyWithoutRecordedByNestedInput
+    transporterColumnLocks?: TransporterItemColumnLockUpdateManyWithoutLockedByNestedInput
+    updatedTransporters?: TransporterUpdateManyWithoutUpdatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutQuoteNotificationsInput = {
@@ -96507,6 +103957,9 @@ export namespace Prisma {
     updatedTransports?: TransportUncheckedUpdateManyWithoutUpdatedByNestedInput
     transitMovementPayments?: TransitMovementPaymentUncheckedUpdateManyWithoutRecordedByNestedInput
     transitMovementColumnLocks?: TransitMovementItemColumnLockUncheckedUpdateManyWithoutLockedByNestedInput
+    transporterPayments?: TransporterPaymentUncheckedUpdateManyWithoutRecordedByNestedInput
+    transporterColumnLocks?: TransporterItemColumnLockUncheckedUpdateManyWithoutLockedByNestedInput
+    updatedTransporters?: TransporterUncheckedUpdateManyWithoutUpdatedByNestedInput
   }
 
   export type QuoteCreateWithoutAuditEventsInput = {
@@ -96678,6 +104131,9 @@ export namespace Prisma {
     updatedTransports?: TransportCreateNestedManyWithoutUpdatedByInput
     transitMovementPayments?: TransitMovementPaymentCreateNestedManyWithoutRecordedByInput
     transitMovementColumnLocks?: TransitMovementItemColumnLockCreateNestedManyWithoutLockedByInput
+    transporterPayments?: TransporterPaymentCreateNestedManyWithoutRecordedByInput
+    transporterColumnLocks?: TransporterItemColumnLockCreateNestedManyWithoutLockedByInput
+    updatedTransporters?: TransporterCreateNestedManyWithoutUpdatedByInput
   }
 
   export type UserUncheckedCreateWithoutQuoteAuditEventsInput = {
@@ -96709,6 +104165,9 @@ export namespace Prisma {
     updatedTransports?: TransportUncheckedCreateNestedManyWithoutUpdatedByInput
     transitMovementPayments?: TransitMovementPaymentUncheckedCreateNestedManyWithoutRecordedByInput
     transitMovementColumnLocks?: TransitMovementItemColumnLockUncheckedCreateNestedManyWithoutLockedByInput
+    transporterPayments?: TransporterPaymentUncheckedCreateNestedManyWithoutRecordedByInput
+    transporterColumnLocks?: TransporterItemColumnLockUncheckedCreateNestedManyWithoutLockedByInput
+    updatedTransporters?: TransporterUncheckedCreateNestedManyWithoutUpdatedByInput
   }
 
   export type UserCreateOrConnectWithoutQuoteAuditEventsInput = {
@@ -96908,6 +104367,9 @@ export namespace Prisma {
     updatedTransports?: TransportUpdateManyWithoutUpdatedByNestedInput
     transitMovementPayments?: TransitMovementPaymentUpdateManyWithoutRecordedByNestedInput
     transitMovementColumnLocks?: TransitMovementItemColumnLockUpdateManyWithoutLockedByNestedInput
+    transporterPayments?: TransporterPaymentUpdateManyWithoutRecordedByNestedInput
+    transporterColumnLocks?: TransporterItemColumnLockUpdateManyWithoutLockedByNestedInput
+    updatedTransporters?: TransporterUpdateManyWithoutUpdatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutQuoteAuditEventsInput = {
@@ -96939,6 +104401,9 @@ export namespace Prisma {
     updatedTransports?: TransportUncheckedUpdateManyWithoutUpdatedByNestedInput
     transitMovementPayments?: TransitMovementPaymentUncheckedUpdateManyWithoutRecordedByNestedInput
     transitMovementColumnLocks?: TransitMovementItemColumnLockUncheckedUpdateManyWithoutLockedByNestedInput
+    transporterPayments?: TransporterPaymentUncheckedUpdateManyWithoutRecordedByNestedInput
+    transporterColumnLocks?: TransporterItemColumnLockUncheckedUpdateManyWithoutLockedByNestedInput
+    updatedTransporters?: TransporterUncheckedUpdateManyWithoutUpdatedByNestedInput
   }
 
   export type RateCardOptionCreateWithoutConfigurationInput = {
@@ -98552,6 +106017,7 @@ export namespace Prisma {
     containers?: ContainerCreateNestedManyWithoutShipmentInput
     documents?: DocumentCreateNestedManyWithoutShipmentInput
     invoices?: InvoiceCreateNestedManyWithoutShipmentInput
+    transporters?: TransporterCreateNestedManyWithoutShipmentInput
     packingList?: PackingListCreateNestedOneWithoutShipmentInput
     allocation?: AllocationCreateNestedOneWithoutShipmentInput
     client: ClientCreateNestedOneWithoutShipmentsInput
@@ -98593,6 +106059,7 @@ export namespace Prisma {
     containers?: ContainerUncheckedCreateNestedManyWithoutShipmentInput
     documents?: DocumentUncheckedCreateNestedManyWithoutShipmentInput
     invoices?: InvoiceUncheckedCreateNestedManyWithoutShipmentInput
+    transporters?: TransporterUncheckedCreateNestedManyWithoutShipmentInput
     packingList?: PackingListUncheckedCreateNestedOneWithoutShipmentInput
     transits?: TransitUncheckedCreateNestedManyWithoutShipmentInput
     transitMovements?: TransitMovementUncheckedCreateNestedManyWithoutShipmentInput
@@ -98632,6 +106099,9 @@ export namespace Prisma {
     transportColumnLocks?: TransportItemColumnLockCreateNestedManyWithoutLockedByInput
     transitMovementPayments?: TransitMovementPaymentCreateNestedManyWithoutRecordedByInput
     transitMovementColumnLocks?: TransitMovementItemColumnLockCreateNestedManyWithoutLockedByInput
+    transporterPayments?: TransporterPaymentCreateNestedManyWithoutRecordedByInput
+    transporterColumnLocks?: TransporterItemColumnLockCreateNestedManyWithoutLockedByInput
+    updatedTransporters?: TransporterCreateNestedManyWithoutUpdatedByInput
   }
 
   export type UserUncheckedCreateWithoutUpdatedTransportsInput = {
@@ -98663,6 +106133,9 @@ export namespace Prisma {
     transportColumnLocks?: TransportItemColumnLockUncheckedCreateNestedManyWithoutLockedByInput
     transitMovementPayments?: TransitMovementPaymentUncheckedCreateNestedManyWithoutRecordedByInput
     transitMovementColumnLocks?: TransitMovementItemColumnLockUncheckedCreateNestedManyWithoutLockedByInput
+    transporterPayments?: TransporterPaymentUncheckedCreateNestedManyWithoutRecordedByInput
+    transporterColumnLocks?: TransporterItemColumnLockUncheckedCreateNestedManyWithoutLockedByInput
+    updatedTransporters?: TransporterUncheckedCreateNestedManyWithoutUpdatedByInput
   }
 
   export type UserCreateOrConnectWithoutUpdatedTransportsInput = {
@@ -98759,6 +106232,7 @@ export namespace Prisma {
     containers?: ContainerUpdateManyWithoutShipmentNestedInput
     documents?: DocumentUpdateManyWithoutShipmentNestedInput
     invoices?: InvoiceUpdateManyWithoutShipmentNestedInput
+    transporters?: TransporterUpdateManyWithoutShipmentNestedInput
     packingList?: PackingListUpdateOneWithoutShipmentNestedInput
     allocation?: AllocationUpdateOneWithoutShipmentNestedInput
     client?: ClientUpdateOneRequiredWithoutShipmentsNestedInput
@@ -98800,6 +106274,7 @@ export namespace Prisma {
     containers?: ContainerUncheckedUpdateManyWithoutShipmentNestedInput
     documents?: DocumentUncheckedUpdateManyWithoutShipmentNestedInput
     invoices?: InvoiceUncheckedUpdateManyWithoutShipmentNestedInput
+    transporters?: TransporterUncheckedUpdateManyWithoutShipmentNestedInput
     packingList?: PackingListUncheckedUpdateOneWithoutShipmentNestedInput
     transits?: TransitUncheckedUpdateManyWithoutShipmentNestedInput
     transitMovements?: TransitMovementUncheckedUpdateManyWithoutShipmentNestedInput
@@ -98845,6 +106320,9 @@ export namespace Prisma {
     transportColumnLocks?: TransportItemColumnLockUpdateManyWithoutLockedByNestedInput
     transitMovementPayments?: TransitMovementPaymentUpdateManyWithoutRecordedByNestedInput
     transitMovementColumnLocks?: TransitMovementItemColumnLockUpdateManyWithoutLockedByNestedInput
+    transporterPayments?: TransporterPaymentUpdateManyWithoutRecordedByNestedInput
+    transporterColumnLocks?: TransporterItemColumnLockUpdateManyWithoutLockedByNestedInput
+    updatedTransporters?: TransporterUpdateManyWithoutUpdatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutUpdatedTransportsInput = {
@@ -98876,6 +106354,9 @@ export namespace Prisma {
     transportColumnLocks?: TransportItemColumnLockUncheckedUpdateManyWithoutLockedByNestedInput
     transitMovementPayments?: TransitMovementPaymentUncheckedUpdateManyWithoutRecordedByNestedInput
     transitMovementColumnLocks?: TransitMovementItemColumnLockUncheckedUpdateManyWithoutLockedByNestedInput
+    transporterPayments?: TransporterPaymentUncheckedUpdateManyWithoutRecordedByNestedInput
+    transporterColumnLocks?: TransporterItemColumnLockUncheckedUpdateManyWithoutLockedByNestedInput
+    updatedTransporters?: TransporterUncheckedUpdateManyWithoutUpdatedByNestedInput
   }
 
   export type TransportItemUpsertWithWhereUniqueWithoutTransportInput = {
@@ -99120,6 +106601,9 @@ export namespace Prisma {
     updatedTransports?: TransportCreateNestedManyWithoutUpdatedByInput
     transitMovementPayments?: TransitMovementPaymentCreateNestedManyWithoutRecordedByInput
     transitMovementColumnLocks?: TransitMovementItemColumnLockCreateNestedManyWithoutLockedByInput
+    transporterPayments?: TransporterPaymentCreateNestedManyWithoutRecordedByInput
+    transporterColumnLocks?: TransporterItemColumnLockCreateNestedManyWithoutLockedByInput
+    updatedTransporters?: TransporterCreateNestedManyWithoutUpdatedByInput
   }
 
   export type UserUncheckedCreateWithoutTransportPaymentsInput = {
@@ -99151,6 +106635,9 @@ export namespace Prisma {
     updatedTransports?: TransportUncheckedCreateNestedManyWithoutUpdatedByInput
     transitMovementPayments?: TransitMovementPaymentUncheckedCreateNestedManyWithoutRecordedByInput
     transitMovementColumnLocks?: TransitMovementItemColumnLockUncheckedCreateNestedManyWithoutLockedByInput
+    transporterPayments?: TransporterPaymentUncheckedCreateNestedManyWithoutRecordedByInput
+    transporterColumnLocks?: TransporterItemColumnLockUncheckedCreateNestedManyWithoutLockedByInput
+    updatedTransporters?: TransporterUncheckedCreateNestedManyWithoutUpdatedByInput
   }
 
   export type UserCreateOrConnectWithoutTransportPaymentsInput = {
@@ -99251,6 +106738,9 @@ export namespace Prisma {
     updatedTransports?: TransportUpdateManyWithoutUpdatedByNestedInput
     transitMovementPayments?: TransitMovementPaymentUpdateManyWithoutRecordedByNestedInput
     transitMovementColumnLocks?: TransitMovementItemColumnLockUpdateManyWithoutLockedByNestedInput
+    transporterPayments?: TransporterPaymentUpdateManyWithoutRecordedByNestedInput
+    transporterColumnLocks?: TransporterItemColumnLockUpdateManyWithoutLockedByNestedInput
+    updatedTransporters?: TransporterUpdateManyWithoutUpdatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutTransportPaymentsInput = {
@@ -99282,6 +106772,9 @@ export namespace Prisma {
     updatedTransports?: TransportUncheckedUpdateManyWithoutUpdatedByNestedInput
     transitMovementPayments?: TransitMovementPaymentUncheckedUpdateManyWithoutRecordedByNestedInput
     transitMovementColumnLocks?: TransitMovementItemColumnLockUncheckedUpdateManyWithoutLockedByNestedInput
+    transporterPayments?: TransporterPaymentUncheckedUpdateManyWithoutRecordedByNestedInput
+    transporterColumnLocks?: TransporterItemColumnLockUncheckedUpdateManyWithoutLockedByNestedInput
+    updatedTransporters?: TransporterUncheckedUpdateManyWithoutUpdatedByNestedInput
   }
 
   export type ClientCreateWithoutTransitMovementsInput = {
@@ -99364,6 +106857,7 @@ export namespace Prisma {
     documents?: DocumentCreateNestedManyWithoutShipmentInput
     invoices?: InvoiceCreateNestedManyWithoutShipmentInput
     transports?: TransportCreateNestedManyWithoutShipmentInput
+    transporters?: TransporterCreateNestedManyWithoutShipmentInput
     packingList?: PackingListCreateNestedOneWithoutShipmentInput
     allocation?: AllocationCreateNestedOneWithoutShipmentInput
     client: ClientCreateNestedOneWithoutShipmentsInput
@@ -99405,6 +106899,7 @@ export namespace Prisma {
     documents?: DocumentUncheckedCreateNestedManyWithoutShipmentInput
     invoices?: InvoiceUncheckedCreateNestedManyWithoutShipmentInput
     transports?: TransportUncheckedCreateNestedManyWithoutShipmentInput
+    transporters?: TransporterUncheckedCreateNestedManyWithoutShipmentInput
     packingList?: PackingListUncheckedCreateNestedOneWithoutShipmentInput
     transits?: TransitUncheckedCreateNestedManyWithoutShipmentInput
   }
@@ -99563,6 +107058,7 @@ export namespace Prisma {
     documents?: DocumentUpdateManyWithoutShipmentNestedInput
     invoices?: InvoiceUpdateManyWithoutShipmentNestedInput
     transports?: TransportUpdateManyWithoutShipmentNestedInput
+    transporters?: TransporterUpdateManyWithoutShipmentNestedInput
     packingList?: PackingListUpdateOneWithoutShipmentNestedInput
     allocation?: AllocationUpdateOneWithoutShipmentNestedInput
     client?: ClientUpdateOneRequiredWithoutShipmentsNestedInput
@@ -99604,6 +107100,7 @@ export namespace Prisma {
     documents?: DocumentUncheckedUpdateManyWithoutShipmentNestedInput
     invoices?: InvoiceUncheckedUpdateManyWithoutShipmentNestedInput
     transports?: TransportUncheckedUpdateManyWithoutShipmentNestedInput
+    transporters?: TransporterUncheckedUpdateManyWithoutShipmentNestedInput
     packingList?: PackingListUncheckedUpdateOneWithoutShipmentNestedInput
     transits?: TransitUncheckedUpdateManyWithoutShipmentNestedInput
   }
@@ -99854,6 +107351,9 @@ export namespace Prisma {
     transportColumnLocks?: TransportItemColumnLockCreateNestedManyWithoutLockedByInput
     updatedTransports?: TransportCreateNestedManyWithoutUpdatedByInput
     transitMovementColumnLocks?: TransitMovementItemColumnLockCreateNestedManyWithoutLockedByInput
+    transporterPayments?: TransporterPaymentCreateNestedManyWithoutRecordedByInput
+    transporterColumnLocks?: TransporterItemColumnLockCreateNestedManyWithoutLockedByInput
+    updatedTransporters?: TransporterCreateNestedManyWithoutUpdatedByInput
   }
 
   export type UserUncheckedCreateWithoutTransitMovementPaymentsInput = {
@@ -99885,6 +107385,9 @@ export namespace Prisma {
     transportColumnLocks?: TransportItemColumnLockUncheckedCreateNestedManyWithoutLockedByInput
     updatedTransports?: TransportUncheckedCreateNestedManyWithoutUpdatedByInput
     transitMovementColumnLocks?: TransitMovementItemColumnLockUncheckedCreateNestedManyWithoutLockedByInput
+    transporterPayments?: TransporterPaymentUncheckedCreateNestedManyWithoutRecordedByInput
+    transporterColumnLocks?: TransporterItemColumnLockUncheckedCreateNestedManyWithoutLockedByInput
+    updatedTransporters?: TransporterUncheckedCreateNestedManyWithoutUpdatedByInput
   }
 
   export type UserCreateOrConnectWithoutTransitMovementPaymentsInput = {
@@ -99985,6 +107488,9 @@ export namespace Prisma {
     transportColumnLocks?: TransportItemColumnLockUpdateManyWithoutLockedByNestedInput
     updatedTransports?: TransportUpdateManyWithoutUpdatedByNestedInput
     transitMovementColumnLocks?: TransitMovementItemColumnLockUpdateManyWithoutLockedByNestedInput
+    transporterPayments?: TransporterPaymentUpdateManyWithoutRecordedByNestedInput
+    transporterColumnLocks?: TransporterItemColumnLockUpdateManyWithoutLockedByNestedInput
+    updatedTransporters?: TransporterUpdateManyWithoutUpdatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutTransitMovementPaymentsInput = {
@@ -100016,6 +107522,9 @@ export namespace Prisma {
     transportColumnLocks?: TransportItemColumnLockUncheckedUpdateManyWithoutLockedByNestedInput
     updatedTransports?: TransportUncheckedUpdateManyWithoutUpdatedByNestedInput
     transitMovementColumnLocks?: TransitMovementItemColumnLockUncheckedUpdateManyWithoutLockedByNestedInput
+    transporterPayments?: TransporterPaymentUncheckedUpdateManyWithoutRecordedByNestedInput
+    transporterColumnLocks?: TransporterItemColumnLockUncheckedUpdateManyWithoutLockedByNestedInput
+    updatedTransporters?: TransporterUncheckedUpdateManyWithoutUpdatedByNestedInput
   }
 
   export type UserCreateWithoutTransitMovementColumnLocksInput = {
@@ -100047,6 +107556,9 @@ export namespace Prisma {
     transportColumnLocks?: TransportItemColumnLockCreateNestedManyWithoutLockedByInput
     updatedTransports?: TransportCreateNestedManyWithoutUpdatedByInput
     transitMovementPayments?: TransitMovementPaymentCreateNestedManyWithoutRecordedByInput
+    transporterPayments?: TransporterPaymentCreateNestedManyWithoutRecordedByInput
+    transporterColumnLocks?: TransporterItemColumnLockCreateNestedManyWithoutLockedByInput
+    updatedTransporters?: TransporterCreateNestedManyWithoutUpdatedByInput
   }
 
   export type UserUncheckedCreateWithoutTransitMovementColumnLocksInput = {
@@ -100078,6 +107590,9 @@ export namespace Prisma {
     transportColumnLocks?: TransportItemColumnLockUncheckedCreateNestedManyWithoutLockedByInput
     updatedTransports?: TransportUncheckedCreateNestedManyWithoutUpdatedByInput
     transitMovementPayments?: TransitMovementPaymentUncheckedCreateNestedManyWithoutRecordedByInput
+    transporterPayments?: TransporterPaymentUncheckedCreateNestedManyWithoutRecordedByInput
+    transporterColumnLocks?: TransporterItemColumnLockUncheckedCreateNestedManyWithoutLockedByInput
+    updatedTransporters?: TransporterUncheckedCreateNestedManyWithoutUpdatedByInput
   }
 
   export type UserCreateOrConnectWithoutTransitMovementColumnLocksInput = {
@@ -100125,6 +107640,9 @@ export namespace Prisma {
     transportColumnLocks?: TransportItemColumnLockUpdateManyWithoutLockedByNestedInput
     updatedTransports?: TransportUpdateManyWithoutUpdatedByNestedInput
     transitMovementPayments?: TransitMovementPaymentUpdateManyWithoutRecordedByNestedInput
+    transporterPayments?: TransporterPaymentUpdateManyWithoutRecordedByNestedInput
+    transporterColumnLocks?: TransporterItemColumnLockUpdateManyWithoutLockedByNestedInput
+    updatedTransporters?: TransporterUpdateManyWithoutUpdatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutTransitMovementColumnLocksInput = {
@@ -100156,6 +107674,9 @@ export namespace Prisma {
     transportColumnLocks?: TransportItemColumnLockUncheckedUpdateManyWithoutLockedByNestedInput
     updatedTransports?: TransportUncheckedUpdateManyWithoutUpdatedByNestedInput
     transitMovementPayments?: TransitMovementPaymentUncheckedUpdateManyWithoutRecordedByNestedInput
+    transporterPayments?: TransporterPaymentUncheckedUpdateManyWithoutRecordedByNestedInput
+    transporterColumnLocks?: TransporterItemColumnLockUncheckedUpdateManyWithoutLockedByNestedInput
+    updatedTransporters?: TransporterUncheckedUpdateManyWithoutUpdatedByNestedInput
   }
 
   export type UserCreateWithoutTransportColumnLocksInput = {
@@ -100187,6 +107708,9 @@ export namespace Prisma {
     updatedTransports?: TransportCreateNestedManyWithoutUpdatedByInput
     transitMovementPayments?: TransitMovementPaymentCreateNestedManyWithoutRecordedByInput
     transitMovementColumnLocks?: TransitMovementItemColumnLockCreateNestedManyWithoutLockedByInput
+    transporterPayments?: TransporterPaymentCreateNestedManyWithoutRecordedByInput
+    transporterColumnLocks?: TransporterItemColumnLockCreateNestedManyWithoutLockedByInput
+    updatedTransporters?: TransporterCreateNestedManyWithoutUpdatedByInput
   }
 
   export type UserUncheckedCreateWithoutTransportColumnLocksInput = {
@@ -100218,6 +107742,9 @@ export namespace Prisma {
     updatedTransports?: TransportUncheckedCreateNestedManyWithoutUpdatedByInput
     transitMovementPayments?: TransitMovementPaymentUncheckedCreateNestedManyWithoutRecordedByInput
     transitMovementColumnLocks?: TransitMovementItemColumnLockUncheckedCreateNestedManyWithoutLockedByInput
+    transporterPayments?: TransporterPaymentUncheckedCreateNestedManyWithoutRecordedByInput
+    transporterColumnLocks?: TransporterItemColumnLockUncheckedCreateNestedManyWithoutLockedByInput
+    updatedTransporters?: TransporterUncheckedCreateNestedManyWithoutUpdatedByInput
   }
 
   export type UserCreateOrConnectWithoutTransportColumnLocksInput = {
@@ -100265,6 +107792,9 @@ export namespace Prisma {
     updatedTransports?: TransportUpdateManyWithoutUpdatedByNestedInput
     transitMovementPayments?: TransitMovementPaymentUpdateManyWithoutRecordedByNestedInput
     transitMovementColumnLocks?: TransitMovementItemColumnLockUpdateManyWithoutLockedByNestedInput
+    transporterPayments?: TransporterPaymentUpdateManyWithoutRecordedByNestedInput
+    transporterColumnLocks?: TransporterItemColumnLockUpdateManyWithoutLockedByNestedInput
+    updatedTransporters?: TransporterUpdateManyWithoutUpdatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutTransportColumnLocksInput = {
@@ -100296,6 +107826,954 @@ export namespace Prisma {
     updatedTransports?: TransportUncheckedUpdateManyWithoutUpdatedByNestedInput
     transitMovementPayments?: TransitMovementPaymentUncheckedUpdateManyWithoutRecordedByNestedInput
     transitMovementColumnLocks?: TransitMovementItemColumnLockUncheckedUpdateManyWithoutLockedByNestedInput
+    transporterPayments?: TransporterPaymentUncheckedUpdateManyWithoutRecordedByNestedInput
+    transporterColumnLocks?: TransporterItemColumnLockUncheckedUpdateManyWithoutLockedByNestedInput
+    updatedTransporters?: TransporterUncheckedUpdateManyWithoutUpdatedByNestedInput
+  }
+
+  export type UserCreateWithoutTransporterColumnLocksInput = {
+    id?: string
+    name: string
+    email: string
+    password: string
+    role?: $Enums.Role
+    isActive?: boolean
+    phone?: string | null
+    department?: string | null
+    jobTitle?: string | null
+    avatar?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    shipments?: ShipmentCreateNestedManyWithoutCreatedByInput
+    rateCards?: RateCardCreateNestedManyWithoutCreatedByInput
+    permissions?: UserPermissionCreateNestedManyWithoutUserInput
+    createdAllocations?: AllocationCreateNestedManyWithoutCreatedByInput
+    assignedAllocations?: AllocationCreateNestedManyWithoutAssignedToInput
+    approvedAllocations?: AllocationCreateNestedManyWithoutApprovedByInput
+    uploadedDocuments?: AllocationDocumentCreateNestedManyWithoutUploadedByInput
+    quoteMessages?: QuoteMessageCreateNestedManyWithoutSenderInput
+    quoteAttachments?: QuoteAttachmentCreateNestedManyWithoutUploadedByInput
+    quoteNotifications?: QuoteNotificationCreateNestedManyWithoutRecipientInput
+    quoteAuditEvents?: QuoteAuditEventCreateNestedManyWithoutActorInput
+    quoteSubmissions?: QuoteSubmissionCreateNestedManyWithoutExporterInput
+    transportPayments?: TransportPaymentCreateNestedManyWithoutRecordedByInput
+    transportColumnLocks?: TransportItemColumnLockCreateNestedManyWithoutLockedByInput
+    updatedTransports?: TransportCreateNestedManyWithoutUpdatedByInput
+    transitMovementPayments?: TransitMovementPaymentCreateNestedManyWithoutRecordedByInput
+    transitMovementColumnLocks?: TransitMovementItemColumnLockCreateNestedManyWithoutLockedByInput
+    transporterPayments?: TransporterPaymentCreateNestedManyWithoutRecordedByInput
+    updatedTransporters?: TransporterCreateNestedManyWithoutUpdatedByInput
+  }
+
+  export type UserUncheckedCreateWithoutTransporterColumnLocksInput = {
+    id?: string
+    name: string
+    email: string
+    password: string
+    role?: $Enums.Role
+    isActive?: boolean
+    phone?: string | null
+    department?: string | null
+    jobTitle?: string | null
+    avatar?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    shipments?: ShipmentUncheckedCreateNestedManyWithoutCreatedByInput
+    rateCards?: RateCardUncheckedCreateNestedManyWithoutCreatedByInput
+    permissions?: UserPermissionUncheckedCreateNestedManyWithoutUserInput
+    createdAllocations?: AllocationUncheckedCreateNestedManyWithoutCreatedByInput
+    assignedAllocations?: AllocationUncheckedCreateNestedManyWithoutAssignedToInput
+    approvedAllocations?: AllocationUncheckedCreateNestedManyWithoutApprovedByInput
+    uploadedDocuments?: AllocationDocumentUncheckedCreateNestedManyWithoutUploadedByInput
+    quoteMessages?: QuoteMessageUncheckedCreateNestedManyWithoutSenderInput
+    quoteAttachments?: QuoteAttachmentUncheckedCreateNestedManyWithoutUploadedByInput
+    quoteNotifications?: QuoteNotificationUncheckedCreateNestedManyWithoutRecipientInput
+    quoteAuditEvents?: QuoteAuditEventUncheckedCreateNestedManyWithoutActorInput
+    quoteSubmissions?: QuoteSubmissionUncheckedCreateNestedManyWithoutExporterInput
+    transportPayments?: TransportPaymentUncheckedCreateNestedManyWithoutRecordedByInput
+    transportColumnLocks?: TransportItemColumnLockUncheckedCreateNestedManyWithoutLockedByInput
+    updatedTransports?: TransportUncheckedCreateNestedManyWithoutUpdatedByInput
+    transitMovementPayments?: TransitMovementPaymentUncheckedCreateNestedManyWithoutRecordedByInput
+    transitMovementColumnLocks?: TransitMovementItemColumnLockUncheckedCreateNestedManyWithoutLockedByInput
+    transporterPayments?: TransporterPaymentUncheckedCreateNestedManyWithoutRecordedByInput
+    updatedTransporters?: TransporterUncheckedCreateNestedManyWithoutUpdatedByInput
+  }
+
+  export type UserCreateOrConnectWithoutTransporterColumnLocksInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutTransporterColumnLocksInput, UserUncheckedCreateWithoutTransporterColumnLocksInput>
+  }
+
+  export type UserUpsertWithoutTransporterColumnLocksInput = {
+    update: XOR<UserUpdateWithoutTransporterColumnLocksInput, UserUncheckedUpdateWithoutTransporterColumnLocksInput>
+    create: XOR<UserCreateWithoutTransporterColumnLocksInput, UserUncheckedCreateWithoutTransporterColumnLocksInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutTransporterColumnLocksInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutTransporterColumnLocksInput, UserUncheckedUpdateWithoutTransporterColumnLocksInput>
+  }
+
+  export type UserUpdateWithoutTransporterColumnLocksInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    department?: NullableStringFieldUpdateOperationsInput | string | null
+    jobTitle?: NullableStringFieldUpdateOperationsInput | string | null
+    avatar?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    shipments?: ShipmentUpdateManyWithoutCreatedByNestedInput
+    rateCards?: RateCardUpdateManyWithoutCreatedByNestedInput
+    permissions?: UserPermissionUpdateManyWithoutUserNestedInput
+    createdAllocations?: AllocationUpdateManyWithoutCreatedByNestedInput
+    assignedAllocations?: AllocationUpdateManyWithoutAssignedToNestedInput
+    approvedAllocations?: AllocationUpdateManyWithoutApprovedByNestedInput
+    uploadedDocuments?: AllocationDocumentUpdateManyWithoutUploadedByNestedInput
+    quoteMessages?: QuoteMessageUpdateManyWithoutSenderNestedInput
+    quoteAttachments?: QuoteAttachmentUpdateManyWithoutUploadedByNestedInput
+    quoteNotifications?: QuoteNotificationUpdateManyWithoutRecipientNestedInput
+    quoteAuditEvents?: QuoteAuditEventUpdateManyWithoutActorNestedInput
+    quoteSubmissions?: QuoteSubmissionUpdateManyWithoutExporterNestedInput
+    transportPayments?: TransportPaymentUpdateManyWithoutRecordedByNestedInput
+    transportColumnLocks?: TransportItemColumnLockUpdateManyWithoutLockedByNestedInput
+    updatedTransports?: TransportUpdateManyWithoutUpdatedByNestedInput
+    transitMovementPayments?: TransitMovementPaymentUpdateManyWithoutRecordedByNestedInput
+    transitMovementColumnLocks?: TransitMovementItemColumnLockUpdateManyWithoutLockedByNestedInput
+    transporterPayments?: TransporterPaymentUpdateManyWithoutRecordedByNestedInput
+    updatedTransporters?: TransporterUpdateManyWithoutUpdatedByNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutTransporterColumnLocksInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    department?: NullableStringFieldUpdateOperationsInput | string | null
+    jobTitle?: NullableStringFieldUpdateOperationsInput | string | null
+    avatar?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    shipments?: ShipmentUncheckedUpdateManyWithoutCreatedByNestedInput
+    rateCards?: RateCardUncheckedUpdateManyWithoutCreatedByNestedInput
+    permissions?: UserPermissionUncheckedUpdateManyWithoutUserNestedInput
+    createdAllocations?: AllocationUncheckedUpdateManyWithoutCreatedByNestedInput
+    assignedAllocations?: AllocationUncheckedUpdateManyWithoutAssignedToNestedInput
+    approvedAllocations?: AllocationUncheckedUpdateManyWithoutApprovedByNestedInput
+    uploadedDocuments?: AllocationDocumentUncheckedUpdateManyWithoutUploadedByNestedInput
+    quoteMessages?: QuoteMessageUncheckedUpdateManyWithoutSenderNestedInput
+    quoteAttachments?: QuoteAttachmentUncheckedUpdateManyWithoutUploadedByNestedInput
+    quoteNotifications?: QuoteNotificationUncheckedUpdateManyWithoutRecipientNestedInput
+    quoteAuditEvents?: QuoteAuditEventUncheckedUpdateManyWithoutActorNestedInput
+    quoteSubmissions?: QuoteSubmissionUncheckedUpdateManyWithoutExporterNestedInput
+    transportPayments?: TransportPaymentUncheckedUpdateManyWithoutRecordedByNestedInput
+    transportColumnLocks?: TransportItemColumnLockUncheckedUpdateManyWithoutLockedByNestedInput
+    updatedTransports?: TransportUncheckedUpdateManyWithoutUpdatedByNestedInput
+    transitMovementPayments?: TransitMovementPaymentUncheckedUpdateManyWithoutRecordedByNestedInput
+    transitMovementColumnLocks?: TransitMovementItemColumnLockUncheckedUpdateManyWithoutLockedByNestedInput
+    transporterPayments?: TransporterPaymentUncheckedUpdateManyWithoutRecordedByNestedInput
+    updatedTransporters?: TransporterUncheckedUpdateManyWithoutUpdatedByNestedInput
+  }
+
+  export type ShipmentCreateWithoutTransportersInput = {
+    id?: string
+    shipmentNumber: string
+    shipmentDate: Date | string
+    xfNumber?: string | null
+    nxpNumber?: string | null
+    cciNumber?: string | null
+    eNumber?: string | null
+    bookingNumber?: string | null
+    transportMode: $Enums.TransportMode
+    shippingLine?: string | null
+    vesselName?: string | null
+    voyageNumber?: string | null
+    portOfLoading?: string | null
+    portOfDischarge?: string | null
+    expectedDeparture?: Date | string | null
+    expectedArrival?: Date | string | null
+    actualDeparture?: Date | string | null
+    actualArrival?: Date | string | null
+    remarks?: string | null
+    status?: $Enums.ShipmentStatus
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    containers?: ContainerCreateNestedManyWithoutShipmentInput
+    documents?: DocumentCreateNestedManyWithoutShipmentInput
+    invoices?: InvoiceCreateNestedManyWithoutShipmentInput
+    transports?: TransportCreateNestedManyWithoutShipmentInput
+    packingList?: PackingListCreateNestedOneWithoutShipmentInput
+    allocation?: AllocationCreateNestedOneWithoutShipmentInput
+    client: ClientCreateNestedOneWithoutShipmentsInput
+    consignee: ConsigneeCreateNestedOneWithoutShipmentsInput
+    createdBy: UserCreateNestedOneWithoutShipmentsInput
+    exporter: ExporterCreateNestedOneWithoutShipmentsInput
+    transits?: TransitCreateNestedManyWithoutShipmentInput
+    transitMovements?: TransitMovementCreateNestedManyWithoutShipmentInput
+  }
+
+  export type ShipmentUncheckedCreateWithoutTransportersInput = {
+    id?: string
+    shipmentNumber: string
+    shipmentDate: Date | string
+    xfNumber?: string | null
+    nxpNumber?: string | null
+    cciNumber?: string | null
+    eNumber?: string | null
+    bookingNumber?: string | null
+    transportMode: $Enums.TransportMode
+    shippingLine?: string | null
+    vesselName?: string | null
+    voyageNumber?: string | null
+    portOfLoading?: string | null
+    portOfDischarge?: string | null
+    expectedDeparture?: Date | string | null
+    expectedArrival?: Date | string | null
+    actualDeparture?: Date | string | null
+    actualArrival?: Date | string | null
+    remarks?: string | null
+    status?: $Enums.ShipmentStatus
+    clientId: string
+    exporterId: string
+    consigneeId: string
+    createdById: string
+    allocationId?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    containers?: ContainerUncheckedCreateNestedManyWithoutShipmentInput
+    documents?: DocumentUncheckedCreateNestedManyWithoutShipmentInput
+    invoices?: InvoiceUncheckedCreateNestedManyWithoutShipmentInput
+    transports?: TransportUncheckedCreateNestedManyWithoutShipmentInput
+    packingList?: PackingListUncheckedCreateNestedOneWithoutShipmentInput
+    transits?: TransitUncheckedCreateNestedManyWithoutShipmentInput
+    transitMovements?: TransitMovementUncheckedCreateNestedManyWithoutShipmentInput
+  }
+
+  export type ShipmentCreateOrConnectWithoutTransportersInput = {
+    where: ShipmentWhereUniqueInput
+    create: XOR<ShipmentCreateWithoutTransportersInput, ShipmentUncheckedCreateWithoutTransportersInput>
+  }
+
+  export type UserCreateWithoutUpdatedTransportersInput = {
+    id?: string
+    name: string
+    email: string
+    password: string
+    role?: $Enums.Role
+    isActive?: boolean
+    phone?: string | null
+    department?: string | null
+    jobTitle?: string | null
+    avatar?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    shipments?: ShipmentCreateNestedManyWithoutCreatedByInput
+    rateCards?: RateCardCreateNestedManyWithoutCreatedByInput
+    permissions?: UserPermissionCreateNestedManyWithoutUserInput
+    createdAllocations?: AllocationCreateNestedManyWithoutCreatedByInput
+    assignedAllocations?: AllocationCreateNestedManyWithoutAssignedToInput
+    approvedAllocations?: AllocationCreateNestedManyWithoutApprovedByInput
+    uploadedDocuments?: AllocationDocumentCreateNestedManyWithoutUploadedByInput
+    quoteMessages?: QuoteMessageCreateNestedManyWithoutSenderInput
+    quoteAttachments?: QuoteAttachmentCreateNestedManyWithoutUploadedByInput
+    quoteNotifications?: QuoteNotificationCreateNestedManyWithoutRecipientInput
+    quoteAuditEvents?: QuoteAuditEventCreateNestedManyWithoutActorInput
+    quoteSubmissions?: QuoteSubmissionCreateNestedManyWithoutExporterInput
+    transportPayments?: TransportPaymentCreateNestedManyWithoutRecordedByInput
+    transportColumnLocks?: TransportItemColumnLockCreateNestedManyWithoutLockedByInput
+    updatedTransports?: TransportCreateNestedManyWithoutUpdatedByInput
+    transitMovementPayments?: TransitMovementPaymentCreateNestedManyWithoutRecordedByInput
+    transitMovementColumnLocks?: TransitMovementItemColumnLockCreateNestedManyWithoutLockedByInput
+    transporterPayments?: TransporterPaymentCreateNestedManyWithoutRecordedByInput
+    transporterColumnLocks?: TransporterItemColumnLockCreateNestedManyWithoutLockedByInput
+  }
+
+  export type UserUncheckedCreateWithoutUpdatedTransportersInput = {
+    id?: string
+    name: string
+    email: string
+    password: string
+    role?: $Enums.Role
+    isActive?: boolean
+    phone?: string | null
+    department?: string | null
+    jobTitle?: string | null
+    avatar?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    shipments?: ShipmentUncheckedCreateNestedManyWithoutCreatedByInput
+    rateCards?: RateCardUncheckedCreateNestedManyWithoutCreatedByInput
+    permissions?: UserPermissionUncheckedCreateNestedManyWithoutUserInput
+    createdAllocations?: AllocationUncheckedCreateNestedManyWithoutCreatedByInput
+    assignedAllocations?: AllocationUncheckedCreateNestedManyWithoutAssignedToInput
+    approvedAllocations?: AllocationUncheckedCreateNestedManyWithoutApprovedByInput
+    uploadedDocuments?: AllocationDocumentUncheckedCreateNestedManyWithoutUploadedByInput
+    quoteMessages?: QuoteMessageUncheckedCreateNestedManyWithoutSenderInput
+    quoteAttachments?: QuoteAttachmentUncheckedCreateNestedManyWithoutUploadedByInput
+    quoteNotifications?: QuoteNotificationUncheckedCreateNestedManyWithoutRecipientInput
+    quoteAuditEvents?: QuoteAuditEventUncheckedCreateNestedManyWithoutActorInput
+    quoteSubmissions?: QuoteSubmissionUncheckedCreateNestedManyWithoutExporterInput
+    transportPayments?: TransportPaymentUncheckedCreateNestedManyWithoutRecordedByInput
+    transportColumnLocks?: TransportItemColumnLockUncheckedCreateNestedManyWithoutLockedByInput
+    updatedTransports?: TransportUncheckedCreateNestedManyWithoutUpdatedByInput
+    transitMovementPayments?: TransitMovementPaymentUncheckedCreateNestedManyWithoutRecordedByInput
+    transitMovementColumnLocks?: TransitMovementItemColumnLockUncheckedCreateNestedManyWithoutLockedByInput
+    transporterPayments?: TransporterPaymentUncheckedCreateNestedManyWithoutRecordedByInput
+    transporterColumnLocks?: TransporterItemColumnLockUncheckedCreateNestedManyWithoutLockedByInput
+  }
+
+  export type UserCreateOrConnectWithoutUpdatedTransportersInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutUpdatedTransportersInput, UserUncheckedCreateWithoutUpdatedTransportersInput>
+  }
+
+  export type TransporterItemCreateWithoutTransporterInput = {
+    id?: string
+    itemDate: Date | string
+    itemType: $Enums.TransportItemType
+    name?: string | null
+    frontPlateNumber?: string | null
+    backPlateNumber?: string | null
+    containerName?: string | null
+    containerNumber?: string | null
+    status?: $Enums.TransporterStatus
+    chargeAmount?: Decimal | DecimalJsLike | number | string
+    chargeCurrency?: $Enums.Currency
+    paymentStatus?: $Enums.PaymentStatus
+    remarks?: string | null
+    isLocked?: boolean
+    lockedFields?: TransporterItemCreatelockedFieldsInput | string[]
+    lockedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    payments?: TransporterPaymentCreateNestedManyWithoutTransporterItemInput
+  }
+
+  export type TransporterItemUncheckedCreateWithoutTransporterInput = {
+    id?: string
+    itemDate: Date | string
+    itemType: $Enums.TransportItemType
+    name?: string | null
+    frontPlateNumber?: string | null
+    backPlateNumber?: string | null
+    containerName?: string | null
+    containerNumber?: string | null
+    status?: $Enums.TransporterStatus
+    chargeAmount?: Decimal | DecimalJsLike | number | string
+    chargeCurrency?: $Enums.Currency
+    paymentStatus?: $Enums.PaymentStatus
+    remarks?: string | null
+    isLocked?: boolean
+    lockedFields?: TransporterItemCreatelockedFieldsInput | string[]
+    lockedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    payments?: TransporterPaymentUncheckedCreateNestedManyWithoutTransporterItemInput
+  }
+
+  export type TransporterItemCreateOrConnectWithoutTransporterInput = {
+    where: TransporterItemWhereUniqueInput
+    create: XOR<TransporterItemCreateWithoutTransporterInput, TransporterItemUncheckedCreateWithoutTransporterInput>
+  }
+
+  export type TransporterItemCreateManyTransporterInputEnvelope = {
+    data: TransporterItemCreateManyTransporterInput | TransporterItemCreateManyTransporterInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type ShipmentUpsertWithoutTransportersInput = {
+    update: XOR<ShipmentUpdateWithoutTransportersInput, ShipmentUncheckedUpdateWithoutTransportersInput>
+    create: XOR<ShipmentCreateWithoutTransportersInput, ShipmentUncheckedCreateWithoutTransportersInput>
+    where?: ShipmentWhereInput
+  }
+
+  export type ShipmentUpdateToOneWithWhereWithoutTransportersInput = {
+    where?: ShipmentWhereInput
+    data: XOR<ShipmentUpdateWithoutTransportersInput, ShipmentUncheckedUpdateWithoutTransportersInput>
+  }
+
+  export type ShipmentUpdateWithoutTransportersInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    shipmentNumber?: StringFieldUpdateOperationsInput | string
+    shipmentDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    xfNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    nxpNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    cciNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    eNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    bookingNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    transportMode?: EnumTransportModeFieldUpdateOperationsInput | $Enums.TransportMode
+    shippingLine?: NullableStringFieldUpdateOperationsInput | string | null
+    vesselName?: NullableStringFieldUpdateOperationsInput | string | null
+    voyageNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    portOfLoading?: NullableStringFieldUpdateOperationsInput | string | null
+    portOfDischarge?: NullableStringFieldUpdateOperationsInput | string | null
+    expectedDeparture?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    expectedArrival?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    actualDeparture?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    actualArrival?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    remarks?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumShipmentStatusFieldUpdateOperationsInput | $Enums.ShipmentStatus
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    containers?: ContainerUpdateManyWithoutShipmentNestedInput
+    documents?: DocumentUpdateManyWithoutShipmentNestedInput
+    invoices?: InvoiceUpdateManyWithoutShipmentNestedInput
+    transports?: TransportUpdateManyWithoutShipmentNestedInput
+    packingList?: PackingListUpdateOneWithoutShipmentNestedInput
+    allocation?: AllocationUpdateOneWithoutShipmentNestedInput
+    client?: ClientUpdateOneRequiredWithoutShipmentsNestedInput
+    consignee?: ConsigneeUpdateOneRequiredWithoutShipmentsNestedInput
+    createdBy?: UserUpdateOneRequiredWithoutShipmentsNestedInput
+    exporter?: ExporterUpdateOneRequiredWithoutShipmentsNestedInput
+    transits?: TransitUpdateManyWithoutShipmentNestedInput
+    transitMovements?: TransitMovementUpdateManyWithoutShipmentNestedInput
+  }
+
+  export type ShipmentUncheckedUpdateWithoutTransportersInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    shipmentNumber?: StringFieldUpdateOperationsInput | string
+    shipmentDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    xfNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    nxpNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    cciNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    eNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    bookingNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    transportMode?: EnumTransportModeFieldUpdateOperationsInput | $Enums.TransportMode
+    shippingLine?: NullableStringFieldUpdateOperationsInput | string | null
+    vesselName?: NullableStringFieldUpdateOperationsInput | string | null
+    voyageNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    portOfLoading?: NullableStringFieldUpdateOperationsInput | string | null
+    portOfDischarge?: NullableStringFieldUpdateOperationsInput | string | null
+    expectedDeparture?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    expectedArrival?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    actualDeparture?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    actualArrival?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    remarks?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumShipmentStatusFieldUpdateOperationsInput | $Enums.ShipmentStatus
+    clientId?: StringFieldUpdateOperationsInput | string
+    exporterId?: StringFieldUpdateOperationsInput | string
+    consigneeId?: StringFieldUpdateOperationsInput | string
+    createdById?: StringFieldUpdateOperationsInput | string
+    allocationId?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    containers?: ContainerUncheckedUpdateManyWithoutShipmentNestedInput
+    documents?: DocumentUncheckedUpdateManyWithoutShipmentNestedInput
+    invoices?: InvoiceUncheckedUpdateManyWithoutShipmentNestedInput
+    transports?: TransportUncheckedUpdateManyWithoutShipmentNestedInput
+    packingList?: PackingListUncheckedUpdateOneWithoutShipmentNestedInput
+    transits?: TransitUncheckedUpdateManyWithoutShipmentNestedInput
+    transitMovements?: TransitMovementUncheckedUpdateManyWithoutShipmentNestedInput
+  }
+
+  export type UserUpsertWithoutUpdatedTransportersInput = {
+    update: XOR<UserUpdateWithoutUpdatedTransportersInput, UserUncheckedUpdateWithoutUpdatedTransportersInput>
+    create: XOR<UserCreateWithoutUpdatedTransportersInput, UserUncheckedCreateWithoutUpdatedTransportersInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutUpdatedTransportersInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutUpdatedTransportersInput, UserUncheckedUpdateWithoutUpdatedTransportersInput>
+  }
+
+  export type UserUpdateWithoutUpdatedTransportersInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    department?: NullableStringFieldUpdateOperationsInput | string | null
+    jobTitle?: NullableStringFieldUpdateOperationsInput | string | null
+    avatar?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    shipments?: ShipmentUpdateManyWithoutCreatedByNestedInput
+    rateCards?: RateCardUpdateManyWithoutCreatedByNestedInput
+    permissions?: UserPermissionUpdateManyWithoutUserNestedInput
+    createdAllocations?: AllocationUpdateManyWithoutCreatedByNestedInput
+    assignedAllocations?: AllocationUpdateManyWithoutAssignedToNestedInput
+    approvedAllocations?: AllocationUpdateManyWithoutApprovedByNestedInput
+    uploadedDocuments?: AllocationDocumentUpdateManyWithoutUploadedByNestedInput
+    quoteMessages?: QuoteMessageUpdateManyWithoutSenderNestedInput
+    quoteAttachments?: QuoteAttachmentUpdateManyWithoutUploadedByNestedInput
+    quoteNotifications?: QuoteNotificationUpdateManyWithoutRecipientNestedInput
+    quoteAuditEvents?: QuoteAuditEventUpdateManyWithoutActorNestedInput
+    quoteSubmissions?: QuoteSubmissionUpdateManyWithoutExporterNestedInput
+    transportPayments?: TransportPaymentUpdateManyWithoutRecordedByNestedInput
+    transportColumnLocks?: TransportItemColumnLockUpdateManyWithoutLockedByNestedInput
+    updatedTransports?: TransportUpdateManyWithoutUpdatedByNestedInput
+    transitMovementPayments?: TransitMovementPaymentUpdateManyWithoutRecordedByNestedInput
+    transitMovementColumnLocks?: TransitMovementItemColumnLockUpdateManyWithoutLockedByNestedInput
+    transporterPayments?: TransporterPaymentUpdateManyWithoutRecordedByNestedInput
+    transporterColumnLocks?: TransporterItemColumnLockUpdateManyWithoutLockedByNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutUpdatedTransportersInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    department?: NullableStringFieldUpdateOperationsInput | string | null
+    jobTitle?: NullableStringFieldUpdateOperationsInput | string | null
+    avatar?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    shipments?: ShipmentUncheckedUpdateManyWithoutCreatedByNestedInput
+    rateCards?: RateCardUncheckedUpdateManyWithoutCreatedByNestedInput
+    permissions?: UserPermissionUncheckedUpdateManyWithoutUserNestedInput
+    createdAllocations?: AllocationUncheckedUpdateManyWithoutCreatedByNestedInput
+    assignedAllocations?: AllocationUncheckedUpdateManyWithoutAssignedToNestedInput
+    approvedAllocations?: AllocationUncheckedUpdateManyWithoutApprovedByNestedInput
+    uploadedDocuments?: AllocationDocumentUncheckedUpdateManyWithoutUploadedByNestedInput
+    quoteMessages?: QuoteMessageUncheckedUpdateManyWithoutSenderNestedInput
+    quoteAttachments?: QuoteAttachmentUncheckedUpdateManyWithoutUploadedByNestedInput
+    quoteNotifications?: QuoteNotificationUncheckedUpdateManyWithoutRecipientNestedInput
+    quoteAuditEvents?: QuoteAuditEventUncheckedUpdateManyWithoutActorNestedInput
+    quoteSubmissions?: QuoteSubmissionUncheckedUpdateManyWithoutExporterNestedInput
+    transportPayments?: TransportPaymentUncheckedUpdateManyWithoutRecordedByNestedInput
+    transportColumnLocks?: TransportItemColumnLockUncheckedUpdateManyWithoutLockedByNestedInput
+    updatedTransports?: TransportUncheckedUpdateManyWithoutUpdatedByNestedInput
+    transitMovementPayments?: TransitMovementPaymentUncheckedUpdateManyWithoutRecordedByNestedInput
+    transitMovementColumnLocks?: TransitMovementItemColumnLockUncheckedUpdateManyWithoutLockedByNestedInput
+    transporterPayments?: TransporterPaymentUncheckedUpdateManyWithoutRecordedByNestedInput
+    transporterColumnLocks?: TransporterItemColumnLockUncheckedUpdateManyWithoutLockedByNestedInput
+  }
+
+  export type TransporterItemUpsertWithWhereUniqueWithoutTransporterInput = {
+    where: TransporterItemWhereUniqueInput
+    update: XOR<TransporterItemUpdateWithoutTransporterInput, TransporterItemUncheckedUpdateWithoutTransporterInput>
+    create: XOR<TransporterItemCreateWithoutTransporterInput, TransporterItemUncheckedCreateWithoutTransporterInput>
+  }
+
+  export type TransporterItemUpdateWithWhereUniqueWithoutTransporterInput = {
+    where: TransporterItemWhereUniqueInput
+    data: XOR<TransporterItemUpdateWithoutTransporterInput, TransporterItemUncheckedUpdateWithoutTransporterInput>
+  }
+
+  export type TransporterItemUpdateManyWithWhereWithoutTransporterInput = {
+    where: TransporterItemScalarWhereInput
+    data: XOR<TransporterItemUpdateManyMutationInput, TransporterItemUncheckedUpdateManyWithoutTransporterInput>
+  }
+
+  export type TransporterItemScalarWhereInput = {
+    AND?: TransporterItemScalarWhereInput | TransporterItemScalarWhereInput[]
+    OR?: TransporterItemScalarWhereInput[]
+    NOT?: TransporterItemScalarWhereInput | TransporterItemScalarWhereInput[]
+    id?: StringFilter<"TransporterItem"> | string
+    transporterId?: StringFilter<"TransporterItem"> | string
+    itemDate?: DateTimeFilter<"TransporterItem"> | Date | string
+    itemType?: EnumTransportItemTypeFilter<"TransporterItem"> | $Enums.TransportItemType
+    name?: StringNullableFilter<"TransporterItem"> | string | null
+    frontPlateNumber?: StringNullableFilter<"TransporterItem"> | string | null
+    backPlateNumber?: StringNullableFilter<"TransporterItem"> | string | null
+    containerName?: StringNullableFilter<"TransporterItem"> | string | null
+    containerNumber?: StringNullableFilter<"TransporterItem"> | string | null
+    status?: EnumTransporterStatusFilter<"TransporterItem"> | $Enums.TransporterStatus
+    chargeAmount?: DecimalFilter<"TransporterItem"> | Decimal | DecimalJsLike | number | string
+    chargeCurrency?: EnumCurrencyFilter<"TransporterItem"> | $Enums.Currency
+    paymentStatus?: EnumPaymentStatusFilter<"TransporterItem"> | $Enums.PaymentStatus
+    remarks?: StringNullableFilter<"TransporterItem"> | string | null
+    isLocked?: BoolFilter<"TransporterItem"> | boolean
+    lockedFields?: StringNullableListFilter<"TransporterItem">
+    lockedAt?: DateTimeNullableFilter<"TransporterItem"> | Date | string | null
+    createdAt?: DateTimeFilter<"TransporterItem"> | Date | string
+    updatedAt?: DateTimeFilter<"TransporterItem"> | Date | string
+  }
+
+  export type TransporterCreateWithoutItemsInput = {
+    id?: string
+    transportNumber: string
+    transportDate: Date | string
+    truckOwnerName: string
+    remarks?: string | null
+    isLocked?: boolean
+    lockedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    shipment?: ShipmentCreateNestedOneWithoutTransportersInput
+    updatedBy?: UserCreateNestedOneWithoutUpdatedTransportersInput
+  }
+
+  export type TransporterUncheckedCreateWithoutItemsInput = {
+    id?: string
+    transportNumber: string
+    transportDate: Date | string
+    truckOwnerName: string
+    shipmentId?: string | null
+    remarks?: string | null
+    isLocked?: boolean
+    lockedAt?: Date | string | null
+    updatedById?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type TransporterCreateOrConnectWithoutItemsInput = {
+    where: TransporterWhereUniqueInput
+    create: XOR<TransporterCreateWithoutItemsInput, TransporterUncheckedCreateWithoutItemsInput>
+  }
+
+  export type TransporterPaymentCreateWithoutTransporterItemInput = {
+    id?: string
+    amount: Decimal | DecimalJsLike | number | string
+    paymentType: $Enums.ItemPaymentType
+    paymentDate?: Date | string
+    paymentMethod?: string | null
+    reference?: string | null
+    description?: string | null
+    notes?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    recordedBy?: UserCreateNestedOneWithoutTransporterPaymentsInput
+  }
+
+  export type TransporterPaymentUncheckedCreateWithoutTransporterItemInput = {
+    id?: string
+    recordedById?: string | null
+    amount: Decimal | DecimalJsLike | number | string
+    paymentType: $Enums.ItemPaymentType
+    paymentDate?: Date | string
+    paymentMethod?: string | null
+    reference?: string | null
+    description?: string | null
+    notes?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type TransporterPaymentCreateOrConnectWithoutTransporterItemInput = {
+    where: TransporterPaymentWhereUniqueInput
+    create: XOR<TransporterPaymentCreateWithoutTransporterItemInput, TransporterPaymentUncheckedCreateWithoutTransporterItemInput>
+  }
+
+  export type TransporterPaymentCreateManyTransporterItemInputEnvelope = {
+    data: TransporterPaymentCreateManyTransporterItemInput | TransporterPaymentCreateManyTransporterItemInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type TransporterUpsertWithoutItemsInput = {
+    update: XOR<TransporterUpdateWithoutItemsInput, TransporterUncheckedUpdateWithoutItemsInput>
+    create: XOR<TransporterCreateWithoutItemsInput, TransporterUncheckedCreateWithoutItemsInput>
+    where?: TransporterWhereInput
+  }
+
+  export type TransporterUpdateToOneWithWhereWithoutItemsInput = {
+    where?: TransporterWhereInput
+    data: XOR<TransporterUpdateWithoutItemsInput, TransporterUncheckedUpdateWithoutItemsInput>
+  }
+
+  export type TransporterUpdateWithoutItemsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    transportNumber?: StringFieldUpdateOperationsInput | string
+    transportDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    truckOwnerName?: StringFieldUpdateOperationsInput | string
+    remarks?: NullableStringFieldUpdateOperationsInput | string | null
+    isLocked?: BoolFieldUpdateOperationsInput | boolean
+    lockedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    shipment?: ShipmentUpdateOneWithoutTransportersNestedInput
+    updatedBy?: UserUpdateOneWithoutUpdatedTransportersNestedInput
+  }
+
+  export type TransporterUncheckedUpdateWithoutItemsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    transportNumber?: StringFieldUpdateOperationsInput | string
+    transportDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    truckOwnerName?: StringFieldUpdateOperationsInput | string
+    shipmentId?: NullableStringFieldUpdateOperationsInput | string | null
+    remarks?: NullableStringFieldUpdateOperationsInput | string | null
+    isLocked?: BoolFieldUpdateOperationsInput | boolean
+    lockedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    updatedById?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type TransporterPaymentUpsertWithWhereUniqueWithoutTransporterItemInput = {
+    where: TransporterPaymentWhereUniqueInput
+    update: XOR<TransporterPaymentUpdateWithoutTransporterItemInput, TransporterPaymentUncheckedUpdateWithoutTransporterItemInput>
+    create: XOR<TransporterPaymentCreateWithoutTransporterItemInput, TransporterPaymentUncheckedCreateWithoutTransporterItemInput>
+  }
+
+  export type TransporterPaymentUpdateWithWhereUniqueWithoutTransporterItemInput = {
+    where: TransporterPaymentWhereUniqueInput
+    data: XOR<TransporterPaymentUpdateWithoutTransporterItemInput, TransporterPaymentUncheckedUpdateWithoutTransporterItemInput>
+  }
+
+  export type TransporterPaymentUpdateManyWithWhereWithoutTransporterItemInput = {
+    where: TransporterPaymentScalarWhereInput
+    data: XOR<TransporterPaymentUpdateManyMutationInput, TransporterPaymentUncheckedUpdateManyWithoutTransporterItemInput>
+  }
+
+  export type TransporterItemCreateWithoutPaymentsInput = {
+    id?: string
+    itemDate: Date | string
+    itemType: $Enums.TransportItemType
+    name?: string | null
+    frontPlateNumber?: string | null
+    backPlateNumber?: string | null
+    containerName?: string | null
+    containerNumber?: string | null
+    status?: $Enums.TransporterStatus
+    chargeAmount?: Decimal | DecimalJsLike | number | string
+    chargeCurrency?: $Enums.Currency
+    paymentStatus?: $Enums.PaymentStatus
+    remarks?: string | null
+    isLocked?: boolean
+    lockedFields?: TransporterItemCreatelockedFieldsInput | string[]
+    lockedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    transporter: TransporterCreateNestedOneWithoutItemsInput
+  }
+
+  export type TransporterItemUncheckedCreateWithoutPaymentsInput = {
+    id?: string
+    transporterId: string
+    itemDate: Date | string
+    itemType: $Enums.TransportItemType
+    name?: string | null
+    frontPlateNumber?: string | null
+    backPlateNumber?: string | null
+    containerName?: string | null
+    containerNumber?: string | null
+    status?: $Enums.TransporterStatus
+    chargeAmount?: Decimal | DecimalJsLike | number | string
+    chargeCurrency?: $Enums.Currency
+    paymentStatus?: $Enums.PaymentStatus
+    remarks?: string | null
+    isLocked?: boolean
+    lockedFields?: TransporterItemCreatelockedFieldsInput | string[]
+    lockedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type TransporterItemCreateOrConnectWithoutPaymentsInput = {
+    where: TransporterItemWhereUniqueInput
+    create: XOR<TransporterItemCreateWithoutPaymentsInput, TransporterItemUncheckedCreateWithoutPaymentsInput>
+  }
+
+  export type UserCreateWithoutTransporterPaymentsInput = {
+    id?: string
+    name: string
+    email: string
+    password: string
+    role?: $Enums.Role
+    isActive?: boolean
+    phone?: string | null
+    department?: string | null
+    jobTitle?: string | null
+    avatar?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    shipments?: ShipmentCreateNestedManyWithoutCreatedByInput
+    rateCards?: RateCardCreateNestedManyWithoutCreatedByInput
+    permissions?: UserPermissionCreateNestedManyWithoutUserInput
+    createdAllocations?: AllocationCreateNestedManyWithoutCreatedByInput
+    assignedAllocations?: AllocationCreateNestedManyWithoutAssignedToInput
+    approvedAllocations?: AllocationCreateNestedManyWithoutApprovedByInput
+    uploadedDocuments?: AllocationDocumentCreateNestedManyWithoutUploadedByInput
+    quoteMessages?: QuoteMessageCreateNestedManyWithoutSenderInput
+    quoteAttachments?: QuoteAttachmentCreateNestedManyWithoutUploadedByInput
+    quoteNotifications?: QuoteNotificationCreateNestedManyWithoutRecipientInput
+    quoteAuditEvents?: QuoteAuditEventCreateNestedManyWithoutActorInput
+    quoteSubmissions?: QuoteSubmissionCreateNestedManyWithoutExporterInput
+    transportPayments?: TransportPaymentCreateNestedManyWithoutRecordedByInput
+    transportColumnLocks?: TransportItemColumnLockCreateNestedManyWithoutLockedByInput
+    updatedTransports?: TransportCreateNestedManyWithoutUpdatedByInput
+    transitMovementPayments?: TransitMovementPaymentCreateNestedManyWithoutRecordedByInput
+    transitMovementColumnLocks?: TransitMovementItemColumnLockCreateNestedManyWithoutLockedByInput
+    transporterColumnLocks?: TransporterItemColumnLockCreateNestedManyWithoutLockedByInput
+    updatedTransporters?: TransporterCreateNestedManyWithoutUpdatedByInput
+  }
+
+  export type UserUncheckedCreateWithoutTransporterPaymentsInput = {
+    id?: string
+    name: string
+    email: string
+    password: string
+    role?: $Enums.Role
+    isActive?: boolean
+    phone?: string | null
+    department?: string | null
+    jobTitle?: string | null
+    avatar?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    shipments?: ShipmentUncheckedCreateNestedManyWithoutCreatedByInput
+    rateCards?: RateCardUncheckedCreateNestedManyWithoutCreatedByInput
+    permissions?: UserPermissionUncheckedCreateNestedManyWithoutUserInput
+    createdAllocations?: AllocationUncheckedCreateNestedManyWithoutCreatedByInput
+    assignedAllocations?: AllocationUncheckedCreateNestedManyWithoutAssignedToInput
+    approvedAllocations?: AllocationUncheckedCreateNestedManyWithoutApprovedByInput
+    uploadedDocuments?: AllocationDocumentUncheckedCreateNestedManyWithoutUploadedByInput
+    quoteMessages?: QuoteMessageUncheckedCreateNestedManyWithoutSenderInput
+    quoteAttachments?: QuoteAttachmentUncheckedCreateNestedManyWithoutUploadedByInput
+    quoteNotifications?: QuoteNotificationUncheckedCreateNestedManyWithoutRecipientInput
+    quoteAuditEvents?: QuoteAuditEventUncheckedCreateNestedManyWithoutActorInput
+    quoteSubmissions?: QuoteSubmissionUncheckedCreateNestedManyWithoutExporterInput
+    transportPayments?: TransportPaymentUncheckedCreateNestedManyWithoutRecordedByInput
+    transportColumnLocks?: TransportItemColumnLockUncheckedCreateNestedManyWithoutLockedByInput
+    updatedTransports?: TransportUncheckedCreateNestedManyWithoutUpdatedByInput
+    transitMovementPayments?: TransitMovementPaymentUncheckedCreateNestedManyWithoutRecordedByInput
+    transitMovementColumnLocks?: TransitMovementItemColumnLockUncheckedCreateNestedManyWithoutLockedByInput
+    transporterColumnLocks?: TransporterItemColumnLockUncheckedCreateNestedManyWithoutLockedByInput
+    updatedTransporters?: TransporterUncheckedCreateNestedManyWithoutUpdatedByInput
+  }
+
+  export type UserCreateOrConnectWithoutTransporterPaymentsInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutTransporterPaymentsInput, UserUncheckedCreateWithoutTransporterPaymentsInput>
+  }
+
+  export type TransporterItemUpsertWithoutPaymentsInput = {
+    update: XOR<TransporterItemUpdateWithoutPaymentsInput, TransporterItemUncheckedUpdateWithoutPaymentsInput>
+    create: XOR<TransporterItemCreateWithoutPaymentsInput, TransporterItemUncheckedCreateWithoutPaymentsInput>
+    where?: TransporterItemWhereInput
+  }
+
+  export type TransporterItemUpdateToOneWithWhereWithoutPaymentsInput = {
+    where?: TransporterItemWhereInput
+    data: XOR<TransporterItemUpdateWithoutPaymentsInput, TransporterItemUncheckedUpdateWithoutPaymentsInput>
+  }
+
+  export type TransporterItemUpdateWithoutPaymentsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    itemDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    itemType?: EnumTransportItemTypeFieldUpdateOperationsInput | $Enums.TransportItemType
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    frontPlateNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    backPlateNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    containerName?: NullableStringFieldUpdateOperationsInput | string | null
+    containerNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumTransporterStatusFieldUpdateOperationsInput | $Enums.TransporterStatus
+    chargeAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    chargeCurrency?: EnumCurrencyFieldUpdateOperationsInput | $Enums.Currency
+    paymentStatus?: EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
+    remarks?: NullableStringFieldUpdateOperationsInput | string | null
+    isLocked?: BoolFieldUpdateOperationsInput | boolean
+    lockedFields?: TransporterItemUpdatelockedFieldsInput | string[]
+    lockedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    transporter?: TransporterUpdateOneRequiredWithoutItemsNestedInput
+  }
+
+  export type TransporterItemUncheckedUpdateWithoutPaymentsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    transporterId?: StringFieldUpdateOperationsInput | string
+    itemDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    itemType?: EnumTransportItemTypeFieldUpdateOperationsInput | $Enums.TransportItemType
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    frontPlateNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    backPlateNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    containerName?: NullableStringFieldUpdateOperationsInput | string | null
+    containerNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumTransporterStatusFieldUpdateOperationsInput | $Enums.TransporterStatus
+    chargeAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    chargeCurrency?: EnumCurrencyFieldUpdateOperationsInput | $Enums.Currency
+    paymentStatus?: EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
+    remarks?: NullableStringFieldUpdateOperationsInput | string | null
+    isLocked?: BoolFieldUpdateOperationsInput | boolean
+    lockedFields?: TransporterItemUpdatelockedFieldsInput | string[]
+    lockedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type UserUpsertWithoutTransporterPaymentsInput = {
+    update: XOR<UserUpdateWithoutTransporterPaymentsInput, UserUncheckedUpdateWithoutTransporterPaymentsInput>
+    create: XOR<UserCreateWithoutTransporterPaymentsInput, UserUncheckedCreateWithoutTransporterPaymentsInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutTransporterPaymentsInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutTransporterPaymentsInput, UserUncheckedUpdateWithoutTransporterPaymentsInput>
+  }
+
+  export type UserUpdateWithoutTransporterPaymentsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    department?: NullableStringFieldUpdateOperationsInput | string | null
+    jobTitle?: NullableStringFieldUpdateOperationsInput | string | null
+    avatar?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    shipments?: ShipmentUpdateManyWithoutCreatedByNestedInput
+    rateCards?: RateCardUpdateManyWithoutCreatedByNestedInput
+    permissions?: UserPermissionUpdateManyWithoutUserNestedInput
+    createdAllocations?: AllocationUpdateManyWithoutCreatedByNestedInput
+    assignedAllocations?: AllocationUpdateManyWithoutAssignedToNestedInput
+    approvedAllocations?: AllocationUpdateManyWithoutApprovedByNestedInput
+    uploadedDocuments?: AllocationDocumentUpdateManyWithoutUploadedByNestedInput
+    quoteMessages?: QuoteMessageUpdateManyWithoutSenderNestedInput
+    quoteAttachments?: QuoteAttachmentUpdateManyWithoutUploadedByNestedInput
+    quoteNotifications?: QuoteNotificationUpdateManyWithoutRecipientNestedInput
+    quoteAuditEvents?: QuoteAuditEventUpdateManyWithoutActorNestedInput
+    quoteSubmissions?: QuoteSubmissionUpdateManyWithoutExporterNestedInput
+    transportPayments?: TransportPaymentUpdateManyWithoutRecordedByNestedInput
+    transportColumnLocks?: TransportItemColumnLockUpdateManyWithoutLockedByNestedInput
+    updatedTransports?: TransportUpdateManyWithoutUpdatedByNestedInput
+    transitMovementPayments?: TransitMovementPaymentUpdateManyWithoutRecordedByNestedInput
+    transitMovementColumnLocks?: TransitMovementItemColumnLockUpdateManyWithoutLockedByNestedInput
+    transporterColumnLocks?: TransporterItemColumnLockUpdateManyWithoutLockedByNestedInput
+    updatedTransporters?: TransporterUpdateManyWithoutUpdatedByNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutTransporterPaymentsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    department?: NullableStringFieldUpdateOperationsInput | string | null
+    jobTitle?: NullableStringFieldUpdateOperationsInput | string | null
+    avatar?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    shipments?: ShipmentUncheckedUpdateManyWithoutCreatedByNestedInput
+    rateCards?: RateCardUncheckedUpdateManyWithoutCreatedByNestedInput
+    permissions?: UserPermissionUncheckedUpdateManyWithoutUserNestedInput
+    createdAllocations?: AllocationUncheckedUpdateManyWithoutCreatedByNestedInput
+    assignedAllocations?: AllocationUncheckedUpdateManyWithoutAssignedToNestedInput
+    approvedAllocations?: AllocationUncheckedUpdateManyWithoutApprovedByNestedInput
+    uploadedDocuments?: AllocationDocumentUncheckedUpdateManyWithoutUploadedByNestedInput
+    quoteMessages?: QuoteMessageUncheckedUpdateManyWithoutSenderNestedInput
+    quoteAttachments?: QuoteAttachmentUncheckedUpdateManyWithoutUploadedByNestedInput
+    quoteNotifications?: QuoteNotificationUncheckedUpdateManyWithoutRecipientNestedInput
+    quoteAuditEvents?: QuoteAuditEventUncheckedUpdateManyWithoutActorNestedInput
+    quoteSubmissions?: QuoteSubmissionUncheckedUpdateManyWithoutExporterNestedInput
+    transportPayments?: TransportPaymentUncheckedUpdateManyWithoutRecordedByNestedInput
+    transportColumnLocks?: TransportItemColumnLockUncheckedUpdateManyWithoutLockedByNestedInput
+    updatedTransports?: TransportUncheckedUpdateManyWithoutUpdatedByNestedInput
+    transitMovementPayments?: TransitMovementPaymentUncheckedUpdateManyWithoutRecordedByNestedInput
+    transitMovementColumnLocks?: TransitMovementItemColumnLockUncheckedUpdateManyWithoutLockedByNestedInput
+    transporterColumnLocks?: TransporterItemColumnLockUncheckedUpdateManyWithoutLockedByNestedInput
+    updatedTransporters?: TransporterUncheckedUpdateManyWithoutUpdatedByNestedInput
   }
 
   export type ShipmentCreateManyCreatedByInput = {
@@ -100646,6 +109124,43 @@ export namespace Prisma {
     updatedAt?: Date | string
   }
 
+  export type TransporterPaymentCreateManyRecordedByInput = {
+    id?: string
+    transportItemId: string
+    amount: Decimal | DecimalJsLike | number | string
+    paymentType: $Enums.ItemPaymentType
+    paymentDate?: Date | string
+    paymentMethod?: string | null
+    reference?: string | null
+    description?: string | null
+    notes?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type TransporterItemColumnLockCreateManyLockedByInput = {
+    id?: string
+    columnKey: string
+    isLocked?: boolean
+    lockedAt?: Date | string | null
+    lockReason?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type TransporterCreateManyUpdatedByInput = {
+    id?: string
+    transportNumber: string
+    transportDate: Date | string
+    truckOwnerName: string
+    shipmentId?: string | null
+    remarks?: string | null
+    isLocked?: boolean
+    lockedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
   export type ShipmentUpdateWithoutCreatedByInput = {
     id?: StringFieldUpdateOperationsInput | string
     shipmentNumber?: StringFieldUpdateOperationsInput | string
@@ -100673,6 +109188,7 @@ export namespace Prisma {
     documents?: DocumentUpdateManyWithoutShipmentNestedInput
     invoices?: InvoiceUpdateManyWithoutShipmentNestedInput
     transports?: TransportUpdateManyWithoutShipmentNestedInput
+    transporters?: TransporterUpdateManyWithoutShipmentNestedInput
     packingList?: PackingListUpdateOneWithoutShipmentNestedInput
     allocation?: AllocationUpdateOneWithoutShipmentNestedInput
     client?: ClientUpdateOneRequiredWithoutShipmentsNestedInput
@@ -100713,6 +109229,7 @@ export namespace Prisma {
     documents?: DocumentUncheckedUpdateManyWithoutShipmentNestedInput
     invoices?: InvoiceUncheckedUpdateManyWithoutShipmentNestedInput
     transports?: TransportUncheckedUpdateManyWithoutShipmentNestedInput
+    transporters?: TransporterUncheckedUpdateManyWithoutShipmentNestedInput
     packingList?: PackingListUncheckedUpdateOneWithoutShipmentNestedInput
     transits?: TransitUncheckedUpdateManyWithoutShipmentNestedInput
     transitMovements?: TransitMovementUncheckedUpdateManyWithoutShipmentNestedInput
@@ -101744,6 +110261,119 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type TransporterPaymentUpdateWithoutRecordedByInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    paymentType?: EnumItemPaymentTypeFieldUpdateOperationsInput | $Enums.ItemPaymentType
+    paymentDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    paymentMethod?: NullableStringFieldUpdateOperationsInput | string | null
+    reference?: NullableStringFieldUpdateOperationsInput | string | null
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    transporterItem?: TransporterItemUpdateOneRequiredWithoutPaymentsNestedInput
+  }
+
+  export type TransporterPaymentUncheckedUpdateWithoutRecordedByInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    transportItemId?: StringFieldUpdateOperationsInput | string
+    amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    paymentType?: EnumItemPaymentTypeFieldUpdateOperationsInput | $Enums.ItemPaymentType
+    paymentDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    paymentMethod?: NullableStringFieldUpdateOperationsInput | string | null
+    reference?: NullableStringFieldUpdateOperationsInput | string | null
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type TransporterPaymentUncheckedUpdateManyWithoutRecordedByInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    transportItemId?: StringFieldUpdateOperationsInput | string
+    amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    paymentType?: EnumItemPaymentTypeFieldUpdateOperationsInput | $Enums.ItemPaymentType
+    paymentDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    paymentMethod?: NullableStringFieldUpdateOperationsInput | string | null
+    reference?: NullableStringFieldUpdateOperationsInput | string | null
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type TransporterItemColumnLockUpdateWithoutLockedByInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    columnKey?: StringFieldUpdateOperationsInput | string
+    isLocked?: BoolFieldUpdateOperationsInput | boolean
+    lockedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lockReason?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type TransporterItemColumnLockUncheckedUpdateWithoutLockedByInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    columnKey?: StringFieldUpdateOperationsInput | string
+    isLocked?: BoolFieldUpdateOperationsInput | boolean
+    lockedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lockReason?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type TransporterItemColumnLockUncheckedUpdateManyWithoutLockedByInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    columnKey?: StringFieldUpdateOperationsInput | string
+    isLocked?: BoolFieldUpdateOperationsInput | boolean
+    lockedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lockReason?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type TransporterUpdateWithoutUpdatedByInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    transportNumber?: StringFieldUpdateOperationsInput | string
+    transportDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    truckOwnerName?: StringFieldUpdateOperationsInput | string
+    remarks?: NullableStringFieldUpdateOperationsInput | string | null
+    isLocked?: BoolFieldUpdateOperationsInput | boolean
+    lockedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    shipment?: ShipmentUpdateOneWithoutTransportersNestedInput
+    items?: TransporterItemUpdateManyWithoutTransporterNestedInput
+  }
+
+  export type TransporterUncheckedUpdateWithoutUpdatedByInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    transportNumber?: StringFieldUpdateOperationsInput | string
+    transportDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    truckOwnerName?: StringFieldUpdateOperationsInput | string
+    shipmentId?: NullableStringFieldUpdateOperationsInput | string | null
+    remarks?: NullableStringFieldUpdateOperationsInput | string | null
+    isLocked?: BoolFieldUpdateOperationsInput | boolean
+    lockedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    items?: TransporterItemUncheckedUpdateManyWithoutTransporterNestedInput
+  }
+
+  export type TransporterUncheckedUpdateManyWithoutUpdatedByInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    transportNumber?: StringFieldUpdateOperationsInput | string
+    transportDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    truckOwnerName?: StringFieldUpdateOperationsInput | string
+    shipmentId?: NullableStringFieldUpdateOperationsInput | string | null
+    remarks?: NullableStringFieldUpdateOperationsInput | string | null
+    isLocked?: BoolFieldUpdateOperationsInput | boolean
+    lockedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type DocumentCreateManyExporterInput = {
     id?: string
     type: $Enums.DocumentType
@@ -102094,6 +110724,7 @@ export namespace Prisma {
     documents?: DocumentUpdateManyWithoutShipmentNestedInput
     invoices?: InvoiceUpdateManyWithoutShipmentNestedInput
     transports?: TransportUpdateManyWithoutShipmentNestedInput
+    transporters?: TransporterUpdateManyWithoutShipmentNestedInput
     packingList?: PackingListUpdateOneWithoutShipmentNestedInput
     allocation?: AllocationUpdateOneWithoutShipmentNestedInput
     client?: ClientUpdateOneRequiredWithoutShipmentsNestedInput
@@ -102134,6 +110765,7 @@ export namespace Prisma {
     documents?: DocumentUncheckedUpdateManyWithoutShipmentNestedInput
     invoices?: InvoiceUncheckedUpdateManyWithoutShipmentNestedInput
     transports?: TransportUncheckedUpdateManyWithoutShipmentNestedInput
+    transporters?: TransporterUncheckedUpdateManyWithoutShipmentNestedInput
     packingList?: PackingListUncheckedUpdateOneWithoutShipmentNestedInput
     transits?: TransitUncheckedUpdateManyWithoutShipmentNestedInput
     transitMovements?: TransitMovementUncheckedUpdateManyWithoutShipmentNestedInput
@@ -102452,6 +111084,7 @@ export namespace Prisma {
     documents?: DocumentUpdateManyWithoutShipmentNestedInput
     invoices?: InvoiceUpdateManyWithoutShipmentNestedInput
     transports?: TransportUpdateManyWithoutShipmentNestedInput
+    transporters?: TransporterUpdateManyWithoutShipmentNestedInput
     packingList?: PackingListUpdateOneWithoutShipmentNestedInput
     allocation?: AllocationUpdateOneWithoutShipmentNestedInput
     client?: ClientUpdateOneRequiredWithoutShipmentsNestedInput
@@ -102492,6 +111125,7 @@ export namespace Prisma {
     documents?: DocumentUncheckedUpdateManyWithoutShipmentNestedInput
     invoices?: InvoiceUncheckedUpdateManyWithoutShipmentNestedInput
     transports?: TransportUncheckedUpdateManyWithoutShipmentNestedInput
+    transporters?: TransporterUncheckedUpdateManyWithoutShipmentNestedInput
     packingList?: PackingListUncheckedUpdateOneWithoutShipmentNestedInput
     transits?: TransitUncheckedUpdateManyWithoutShipmentNestedInput
     transitMovements?: TransitMovementUncheckedUpdateManyWithoutShipmentNestedInput
@@ -102664,6 +111298,19 @@ export namespace Prisma {
     transportNumber: string
     transportDate: Date | string
     ownerName: string
+    remarks?: string | null
+    isLocked?: boolean
+    lockedAt?: Date | string | null
+    updatedById?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type TransporterCreateManyShipmentInput = {
+    id?: string
+    transportNumber: string
+    transportDate: Date | string
+    truckOwnerName: string
     remarks?: string | null
     isLocked?: boolean
     lockedAt?: Date | string | null
@@ -102952,6 +111599,47 @@ export namespace Prisma {
     transportNumber?: StringFieldUpdateOperationsInput | string
     transportDate?: DateTimeFieldUpdateOperationsInput | Date | string
     ownerName?: StringFieldUpdateOperationsInput | string
+    remarks?: NullableStringFieldUpdateOperationsInput | string | null
+    isLocked?: BoolFieldUpdateOperationsInput | boolean
+    lockedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    updatedById?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type TransporterUpdateWithoutShipmentInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    transportNumber?: StringFieldUpdateOperationsInput | string
+    transportDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    truckOwnerName?: StringFieldUpdateOperationsInput | string
+    remarks?: NullableStringFieldUpdateOperationsInput | string | null
+    isLocked?: BoolFieldUpdateOperationsInput | boolean
+    lockedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedBy?: UserUpdateOneWithoutUpdatedTransportersNestedInput
+    items?: TransporterItemUpdateManyWithoutTransporterNestedInput
+  }
+
+  export type TransporterUncheckedUpdateWithoutShipmentInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    transportNumber?: StringFieldUpdateOperationsInput | string
+    transportDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    truckOwnerName?: StringFieldUpdateOperationsInput | string
+    remarks?: NullableStringFieldUpdateOperationsInput | string | null
+    isLocked?: BoolFieldUpdateOperationsInput | boolean
+    lockedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    updatedById?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    items?: TransporterItemUncheckedUpdateManyWithoutTransporterNestedInput
+  }
+
+  export type TransporterUncheckedUpdateManyWithoutShipmentInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    transportNumber?: StringFieldUpdateOperationsInput | string
+    transportDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    truckOwnerName?: StringFieldUpdateOperationsInput | string
     remarks?: NullableStringFieldUpdateOperationsInput | string | null
     isLocked?: BoolFieldUpdateOperationsInput | boolean
     lockedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -104346,6 +113034,7 @@ export namespace Prisma {
     documents?: DocumentUpdateManyWithoutShipmentNestedInput
     invoices?: InvoiceUpdateManyWithoutShipmentNestedInput
     transports?: TransportUpdateManyWithoutShipmentNestedInput
+    transporters?: TransporterUpdateManyWithoutShipmentNestedInput
     packingList?: PackingListUpdateOneWithoutShipmentNestedInput
     allocation?: AllocationUpdateOneWithoutShipmentNestedInput
     consignee?: ConsigneeUpdateOneRequiredWithoutShipmentsNestedInput
@@ -104386,6 +113075,7 @@ export namespace Prisma {
     documents?: DocumentUncheckedUpdateManyWithoutShipmentNestedInput
     invoices?: InvoiceUncheckedUpdateManyWithoutShipmentNestedInput
     transports?: TransportUncheckedUpdateManyWithoutShipmentNestedInput
+    transporters?: TransporterUncheckedUpdateManyWithoutShipmentNestedInput
     packingList?: PackingListUncheckedUpdateOneWithoutShipmentNestedInput
     transits?: TransitUncheckedUpdateManyWithoutShipmentNestedInput
     transitMovements?: TransitMovementUncheckedUpdateManyWithoutShipmentNestedInput
@@ -106729,6 +115419,148 @@ export namespace Prisma {
   }
 
   export type TransitMovementPaymentUncheckedUpdateManyWithoutTransitMovementItemInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    recordedById?: NullableStringFieldUpdateOperationsInput | string | null
+    amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    paymentType?: EnumItemPaymentTypeFieldUpdateOperationsInput | $Enums.ItemPaymentType
+    paymentDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    paymentMethod?: NullableStringFieldUpdateOperationsInput | string | null
+    reference?: NullableStringFieldUpdateOperationsInput | string | null
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type TransporterItemCreateManyTransporterInput = {
+    id?: string
+    itemDate: Date | string
+    itemType: $Enums.TransportItemType
+    name?: string | null
+    frontPlateNumber?: string | null
+    backPlateNumber?: string | null
+    containerName?: string | null
+    containerNumber?: string | null
+    status?: $Enums.TransporterStatus
+    chargeAmount?: Decimal | DecimalJsLike | number | string
+    chargeCurrency?: $Enums.Currency
+    paymentStatus?: $Enums.PaymentStatus
+    remarks?: string | null
+    isLocked?: boolean
+    lockedFields?: TransporterItemCreatelockedFieldsInput | string[]
+    lockedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type TransporterItemUpdateWithoutTransporterInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    itemDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    itemType?: EnumTransportItemTypeFieldUpdateOperationsInput | $Enums.TransportItemType
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    frontPlateNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    backPlateNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    containerName?: NullableStringFieldUpdateOperationsInput | string | null
+    containerNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumTransporterStatusFieldUpdateOperationsInput | $Enums.TransporterStatus
+    chargeAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    chargeCurrency?: EnumCurrencyFieldUpdateOperationsInput | $Enums.Currency
+    paymentStatus?: EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
+    remarks?: NullableStringFieldUpdateOperationsInput | string | null
+    isLocked?: BoolFieldUpdateOperationsInput | boolean
+    lockedFields?: TransporterItemUpdatelockedFieldsInput | string[]
+    lockedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    payments?: TransporterPaymentUpdateManyWithoutTransporterItemNestedInput
+  }
+
+  export type TransporterItemUncheckedUpdateWithoutTransporterInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    itemDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    itemType?: EnumTransportItemTypeFieldUpdateOperationsInput | $Enums.TransportItemType
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    frontPlateNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    backPlateNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    containerName?: NullableStringFieldUpdateOperationsInput | string | null
+    containerNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumTransporterStatusFieldUpdateOperationsInput | $Enums.TransporterStatus
+    chargeAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    chargeCurrency?: EnumCurrencyFieldUpdateOperationsInput | $Enums.Currency
+    paymentStatus?: EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
+    remarks?: NullableStringFieldUpdateOperationsInput | string | null
+    isLocked?: BoolFieldUpdateOperationsInput | boolean
+    lockedFields?: TransporterItemUpdatelockedFieldsInput | string[]
+    lockedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    payments?: TransporterPaymentUncheckedUpdateManyWithoutTransporterItemNestedInput
+  }
+
+  export type TransporterItemUncheckedUpdateManyWithoutTransporterInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    itemDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    itemType?: EnumTransportItemTypeFieldUpdateOperationsInput | $Enums.TransportItemType
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    frontPlateNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    backPlateNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    containerName?: NullableStringFieldUpdateOperationsInput | string | null
+    containerNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumTransporterStatusFieldUpdateOperationsInput | $Enums.TransporterStatus
+    chargeAmount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    chargeCurrency?: EnumCurrencyFieldUpdateOperationsInput | $Enums.Currency
+    paymentStatus?: EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
+    remarks?: NullableStringFieldUpdateOperationsInput | string | null
+    isLocked?: BoolFieldUpdateOperationsInput | boolean
+    lockedFields?: TransporterItemUpdatelockedFieldsInput | string[]
+    lockedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type TransporterPaymentCreateManyTransporterItemInput = {
+    id?: string
+    recordedById?: string | null
+    amount: Decimal | DecimalJsLike | number | string
+    paymentType: $Enums.ItemPaymentType
+    paymentDate?: Date | string
+    paymentMethod?: string | null
+    reference?: string | null
+    description?: string | null
+    notes?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type TransporterPaymentUpdateWithoutTransporterItemInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    paymentType?: EnumItemPaymentTypeFieldUpdateOperationsInput | $Enums.ItemPaymentType
+    paymentDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    paymentMethod?: NullableStringFieldUpdateOperationsInput | string | null
+    reference?: NullableStringFieldUpdateOperationsInput | string | null
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    recordedBy?: UserUpdateOneWithoutTransporterPaymentsNestedInput
+  }
+
+  export type TransporterPaymentUncheckedUpdateWithoutTransporterItemInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    recordedById?: NullableStringFieldUpdateOperationsInput | string | null
+    amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    paymentType?: EnumItemPaymentTypeFieldUpdateOperationsInput | $Enums.ItemPaymentType
+    paymentDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    paymentMethod?: NullableStringFieldUpdateOperationsInput | string | null
+    reference?: NullableStringFieldUpdateOperationsInput | string | null
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type TransporterPaymentUncheckedUpdateManyWithoutTransporterItemInput = {
     id?: StringFieldUpdateOperationsInput | string
     recordedById?: NullableStringFieldUpdateOperationsInput | string | null
     amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string

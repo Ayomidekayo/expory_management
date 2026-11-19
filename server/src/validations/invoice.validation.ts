@@ -17,6 +17,7 @@ export const invoiceStatuses = [
   "APPROVED",
   "PAID",
   "CANCELLED",
+    "PARTIALLY_PAID",
 ] as const;
 
 export const paymentTerms = [
