@@ -298,6 +298,40 @@ export const permissionGroups: PermissionGroup[] = [
       },
     ],
   },
+   {
+    title: "Transporter",
+    permissions: [
+      {
+        key: PERMISSIONS.VIEW_TRANSPORTERS,
+        label: "View Transporters",
+      },
+      {
+        key: PERMISSIONS.CREATE_TRANSPORTER,
+        label: "Create Transporters",
+      },
+      {
+        key: PERMISSIONS.EDIT_TRANSPORTER,
+        label: "Edit Transporters",
+      },
+      {
+        key: PERMISSIONS.DELETE_TRANSPORTER,
+        label: "Delete Transporters",
+      },
+      {
+        key: PERMISSIONS.LOCK_TRANSPORTER_ITEMS,
+        label: "Lock Transporter Items",
+      },
+      {
+        key: PERMISSIONS.LOCK_TRANSPORTER_COLUMNS,
+        label: "Manage Transporter Column Locks",
+      },
+      {
+        key: PERMISSIONS.MANAGE_TRANSPORTER_PAYMENTS,
+        label: "Manage Transporter Payments",
+      },
+    ],
+  },
+  
 
   {
     title: "Transit Movements",
